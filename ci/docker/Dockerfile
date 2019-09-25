@@ -4,7 +4,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y ca-certificates && \
     apt-get clean
 
-RUN apt-get install --no-install-recommends gnupg && \
+RUN apt-get install --no-install-recommends -y gnupg && \
     apt-key adv --fetch-keys \
         https://apt.repos.intel.com/openvino/2019/GPG-PUB-KEY-INTEL-OPENVINO-2019 \
         https://bazel.build/bazel-release.pub.gpg \
@@ -12,17 +12,18 @@ RUN apt-get install --no-install-recommends gnupg && \
     apt-get autoremove --purge -y gnupg && \
     apt-get clean
 
-RUN echo 'https://apt.repos.intel.com/openvino/2019 all main\n\
-https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /\n\
-https://storage.googleapis.com/bazel-apt/ stable jdk1.8' >> /etc/apt/sources.list
+RUN echo 'deb https://apt.repos.intel.com/openvino/2019 all main\n\
+deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /\n\
+deb https://storage.googleapis.com/bazel-apt/ stable jdk1.8' >> /etc/apt/sources.list
 
-RUN apt-get update &&
+RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         automake \
         bazel \
         clang-format \
         clang-tidy \
         flake8 \
+        git \
         iwyu \
         libclang-common-5.0-dev \
         libclang-common-6.0-dev \
