@@ -1,0 +1,21 @@
+[MASTER]
+jobs=0
+
+[MESSAGES CONTROL]
+disable = fixme,
+          no-else-return,
+          too-many-arguments,
+          too-few-public-methods,
+          too-many-locals,
+          too-many-instance-attributes,
+          no-member,
+          unnecessary-pass
+
+[FORMAT]
+max-line-length = 120
+
+[BASIC]
+good-names = i,
+             j,
+             k,
+             o
