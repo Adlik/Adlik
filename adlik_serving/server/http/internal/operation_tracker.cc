@@ -15,14 +15,12 @@ void OperationTracker::decOps() {
 
 void OperationTracker::waitDone() {
   absl::MutexLock l(&ops_mu);
-  ops_mu.Await(absl::Condition(
-      +[](int64_t* count) { return *count <= 0; }, &num_pending_ops));
+  ops_mu.Await(absl::Condition(+[](int64_t* count) { return *count <= 0; }, &num_pending_ops));
 }
 
 void OperationTracker::waitToOne() {
   absl::MutexLock l(&ops_mu);
-  ops_mu.Await(absl::Condition(
-      +[](int64_t* count) { return *count <= 1; }, &num_pending_ops));
+  ops_mu.Await(absl::Condition(+[](int64_t* count) { return *count <= 1; }, &num_pending_ops));
 }
 
 }  // namespace serving
