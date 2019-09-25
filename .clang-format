@@ -1,0 +1,12 @@
+BasedOnStyle: Chromium
+AccessModifierOffset: -2
+AlignTrailingComments: false
+AllowShortFunctionsOnASingleLine: None
+BinPackArguments: false
+BreakBeforeTernaryOperators: false
+ColumnLimit: 120
+IndentWidth: 2
+IndentWrappedFunctionNames: true
+SortIncludes: true
+Standard: Cpp11
+TabWidth: 2

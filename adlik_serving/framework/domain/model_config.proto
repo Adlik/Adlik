@@ -1,0 +1,380 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+import "adlik_serving/framework/domain/version_policy.proto";
+
+import "tensorflow/core/framework/types.proto";
+
+//@@
+//@@.. cpp:var:: message ModelInstanceGroup
+//@@
+//@@   A group of one or more instances of a model and resources made
+//@@   available for those instances.
+//@@
+message ModelInstanceGroup {
+  //@@
+  //@@  .. cpp:enum:: Kind
+  //@@
+  //@@     Kind of this instance group.
+  //@@
+  enum Kind {
+    //@@    .. cpp:enumerator:: Kind::KIND_AUTO = 0
+    //@@
+    //@@       This instance group represents instances that can run on either
+    //@@       CPU or GPU. If all GPUs listed in 'gpus' are available then
+    //@@       instances will be created on GPU(s), otherwise instances will
+    //@@       be created on CPU.
+    //@@
+    KIND_AUTO = 0;
+
+    //@@    .. cpp:enumerator:: Kind::KIND_GPU = 1
+    //@@
+    //@@       This instance group represents instances that must run on the
+    //@@       GPU.
+    //@@
+    KIND_GPU = 1;
+
+    //@@    .. cpp:enumerator:: Kind::KIND_CPU = 2
+    //@@
+    //@@       This instance group represents instances that must run on the
+    //@@       CPU.
+    //@@
+    KIND_CPU = 2;
+  }
+
+  //@@  .. cpp:var:: string name
+  //@@
+  //@@     Optional name of this group of instances. If not specified the
+  //@@     name will be formed as <model name>_<group number>. The name of
+  //@@     individual instances will be further formed by a unique instance
+  //@@     number and GPU index:
+  //@@
+  string name = 1;
+
+  //@@  .. cpp:var:: Kind kind
+  //@@
+  //@@     The kind of this instance group. Default is KIND_AUTO. If
+  //@@     KIND_AUTO or KIND_GPU then both 'count' and 'gpu' are valid and
+  //@@     may be specified. If KIND_CPU only 'count' is valid and 'gpu'
+  //@@     cannot be specified.
+  //@@
+  Kind kind = 4;
+
+  //@@  .. cpp:var:: int32 count
+  //@@
+  //@@     For a group assigned to GPU, the number of instances created for
+  //@@     each GPU listed in 'gpus'. For a group assigned to CPU the number
+  //@@     of instances created. Default is 1.
+  int32 count = 2;
+
+  //@@  .. cpp:var:: int32 gpus (repeated)
+  //@@
+  //@@     GPU(s) where instances should be available. For each GPU listed,
+  //@@     'count' instances of the model will be available. Setting 'gpus'
+  //@@     to empty (or not specifying at all) is eqivalent to listing all
+  //@@     available GPUs.
+  //@@
+  repeated int32 gpus = 3;
+}
+
+//@@
+//@@.. cpp:var:: message ModelInput
+//@@
+//@@   An input required by the model.
+//@@
+message ModelInput {
+  //@@
+  //@@  .. cpp:enum:: Format
+  //@@
+  //@@     The format for the input.
+  //@@
+  enum Format {
+    //@@    .. cpp:enumerator:: Format::FORMAT_NONE = 0
+    //@@
+    //@@       The input has no specific format. This is the default.
+    //@@
+    FORMAT_NONE = 0;
+
+    //@@    .. cpp:enumerator:: Format::FORMAT_NHWC = 1
+    //@@
+    //@@       HWC image format. Tensors with this format require 3 dimensions
+    //@@       if the model does not support batching (max_batch_size = 0) or 4
+    //@@       dimensions if the model does support batching (max_batch_size
+    //@@       >= 1). In either case the 'dims' below should only specify the
+    //@@       3 non-batch dimensions (i.e. HWC or CHW).
+    //@@
+    FORMAT_NHWC = 1;
+
+    //@@    .. cpp:enumerator:: Format::FORMAT_NCHW = 2
+    //@@
+    //@@       CHW image format. Tensors with this format require 3 dimensions
+    //@@       if the model does not support batching (max_batch_size = 0) or 4
+    //@@       dimensions if the model does support batching (max_batch_size
+    //@@       >= 1). In either case the 'dims' below should only specify the
+    //@@       3 non-batch dimensions (i.e. HWC or CHW).
+    //@@
+    FORMAT_NCHW = 2;
+  }
+
+  //@@  .. cpp:var:: string name
+  //@@
+  //@@     The name of the input.
+  //@@
+  string name = 1;
+
+  //@@  .. cpp:var:: DataType data_type
+  //@@
+  //@@     The data-type of the input.
+  //@@
+  tensorflow.DataType data_type = 2;
+
+  //@@  .. cpp:var:: Format format
+  //@@
+  //@@     The format of the input. Optional.
+  //@@
+  Format format = 3;
+
+  //@@  .. cpp:var:: int64 dims (repeated)
+  //@@
+  //@@     The dimensions/shape of the input tensor.
+  //@@
+  repeated int64 dims = 4;
+}
+
+//@@
+//@@.. cpp:var:: message ModelOutput
+//@@
+//@@   An output produced by the model.
+//@@
+message ModelOutput {
+  //@@  .. cpp:var:: string name
+  //@@
+  //@@     The name of the output.
+  //@@
+  string name = 1;
+
+  //@@  .. cpp:var:: DataType data_type
+  //@@
+  //@@     The data-type of the output.
+  //@@
+  tensorflow.DataType data_type = 2;
+
+  //@@  .. cpp:var:: int64 dims (repeated)
+  //@@
+  //@@     The dimensions/shape of the output tensor.
+  //@@
+  repeated int64 dims = 3;
+
+  //@@  .. cpp:var:: string label_filename
+  //@@
+  //@@     The label file associated with this output. Should be specified only
+  //@@     for outputs that represent classifications. Optional.
+  //@@
+  string label_filename = 4;
+}
+
+//@@
+//@@.. cpp:var:: message ModelOptimizationPolicy
+//@@
+//@@   Optimization settings for a model. These settings control if/how a
+//@@   model is optimized and prioritized by the backend framework when
+//@@   it is loaded.
+//@@
+message ModelOptimizationPolicy {
+  //@@
+  //@@  .. cpp:var:: message Graph
+  //@@
+  //@@     Enable generic graph optimization of the model. If not specified
+  //@@     the framework's default level of optimization is used. Currently
+  //@@     only supported for TensorFlow graphdef and savedmodel models and
+  //@@     causes XLA to be enabled/disabled for the model.
+  //@@
+  message Graph {
+    //@@    .. cpp:var:: int32 level
+    //@@
+    //@@       The optimization level. Defaults to 0 (zero) if not specified.
+    //@@
+    //@@         - -1: Disabled
+    //@@         -  0: Framework default
+    //@@         -  1+: Enable optimization level (greater values indicate
+    //@@            higher optimization levels)
+    //@@
+    int32 level = 1;
+  }
+
+  //@@
+  //@@  .. cpp:enum:: ModelPriority
+  //@@
+  //@@     Model priorities. A model will be given scheduling and execution
+  //@@     preference over models at lower priorities. Current model
+  //@@     priorities only work for TensorRT models.
+  //@@
+  enum ModelPriority {
+    //@@    .. cpp:enumerator:: ModelPriority::PRIORITY_DEFAULT = 0
+    //@@
+    //@@       The default model priority.
+    //@@
+    PRIORITY_DEFAULT = 0;
+
+    //@@    .. cpp:enumerator:: ModelPriority::PRIORITY_MAX = 1
+    //@@
+    //@@       The maximum model priority.
+    //@@
+    PRIORITY_MAX = 1;
+
+    //@@    .. cpp:enumerator:: ModelPriority::PRIORITY_MIN = 2
+    //@@
+    //@@       The minimum model priority.
+    //@@
+    PRIORITY_MIN = 2;
+  }
+
+  //@@  .. cpp:var:: Graph graph
+  //@@
+  //@@     The graph optimization setting for the model. Optional.
+  //@@
+  Graph graph = 1;
+
+  //@@  .. cpp:var:: ModelPriority priority
+  //@@
+  //@@     The priority setting for the model. Optional.
+  //@@
+  ModelPriority priority = 2;
+}
+
+//@@
+//@@.. cpp:var:: message ModelDynamicBatching
+//@@
+//@@   Dynamic batching configuration. These settings control if/how dynamic
+//@@   batching operates for the model.
+//@@
+message ModelDynamicBatching {
+  //@@  .. cpp:var:: int32 preferred_batch_size (repeated)
+  //@@
+  //@@     Preferred batch sizes for dynamic batching. If a batch of one of
+  //@@     these sizes can be formed it will be executed immediately.  If
+  //@@     not specified a preferred batch size will be chosen automatically
+  //@@     based on model and GPU characteristics.
+  //@@
+  repeated int32 preferred_batch_size = 1;
+
+  //@@  .. cpp:var:: int32 max_queue_delay_microseconds
+  //@@
+  //@@     The maximum time, in microseconds, a request will be delayed in
+  //@@     the scheduling queue to wait for additional requests for
+  //@@     batching. Default is 0.
+  //@@
+  int32 max_queue_delay_microseconds = 2;
+}
+
+//@@
+//@@.. cpp:var:: message ModelConfig
+//@@
+//@@   A model configuration.
+//@@
+message ModelConfigProto {
+  //@@  .. cpp:var:: string name
+  //@@
+  //@@     The name of the model.
+  //@@
+  string name = 1;
+
+  //@@  .. cpp:var:: string platform
+  //@@
+  //@@     The framework for the model. Possible values are
+  //@@     "tensorrt_plan", "tensorflow".
+  //@@
+  string platform = 2;
+
+  //@@  .. cpp:var:: string platform_version
+  //@@
+  //@@     The version of framework for the model.
+  //@@
+  string platform_version = 3;
+
+  //@@  .. cpp:var:: ModelVersionPolicy version_policy
+  //@@
+  //@@     Policy indicating which version(s) of the model will be served.
+  //@@
+  VersionPolicyProto version_policy = 4;
+
+  //@@  .. cpp:var:: int32 max_batch_size
+  //@@
+  //@@     Maximum batch size allowed for inference. This can only decrease
+  //@@     what is allowed by the model itself. A max_batch_size value of 0
+  //@@     indicates that batching is not allowed for the model and the
+  //@@     dimension/shape of the input and output tensors must exactly
+  //@@     match what is specified in the input and output configuration. A
+  //@@     max_batch_size value > 0 indicates that batching is allowed and
+  //@@     so the model expects the input tensors to have an additional
+  //@@     initial dimension for the batching that is not specified in the
+  //@@     input (for example, if the model supports batched inputs of
+  //@@     2-dimensional tensors then the model configuration will specify
+  //@@     the input shape as [ X, Y ] but the model will expect the actual
+  //@@     input tensors to have shape [ N, X, Y ]). For max_batch_size > 0
+  //@@     returned outputs will also have an additional initial dimension
+  //@@     for the batch.
+  //@@
+  int32 max_batch_size = 5;
+
+  //@@  .. cpp:var:: ModelInput input (repeated)
+  //@@
+  //@@     The inputs request by the model.
+  //@@
+  repeated ModelInput input = 6;
+
+  //@@  .. cpp:var:: ModelOutput output (repeated)
+  //@@
+  //@@     The outputs produced by the model.
+  //@@
+  repeated ModelOutput output = 7;
+
+  //@@  .. cpp:var:: ModelOptimizationPolicy optimization
+  //@@
+  //@@     Optimization configuration for the model. If not specified
+  //@@     then default optimization policy is used.
+  //@@
+  ModelOptimizationPolicy optimization = 13;
+
+  //@@  .. cpp:var:: ModelDynamicBatching dynamic_batching
+  //@@
+  //@@     Dynamic batching configuration for the model. If not specified
+  //@@     then dynamic batching is disabled for the model.
+  //@@
+  ModelDynamicBatching dynamic_batching = 12;
+
+  //@@  .. cpp:var:: ModelInstanceGroup instance_group (repeated)
+  //@@
+  //@@     Instances of this model. If not specified, one instance
+  //@@     of the model will be instantiated on each available GPU.
+  //@@
+  repeated ModelInstanceGroup instance_group = 8;
+
+  //@@  .. cpp:var:: string default_model_filename
+  //@@
+  //@@     Optional filename of the model file to use if a
+  //@@     compute-capability specific model is not specified in
+  //@@     :cpp:var:`cc_model_names`. If not specified the default name
+  //@@     is 'model.graphdef', 'model.savedmodel', 'model.plan' or
+  //@@     'model.netdef' depending on the model type.
+  //@@
+  string default_model_filename = 9;
+
+  //@@  .. cpp:var:: map<string,string> cc_model_filenames
+  //@@
+  //@@     Optional map from CUDA compute capability to the filename of
+  //@@     the model that supports that compute capability. The filename
+  //@@     refers to a file within the model version directory.
+  //@@
+  map<string, string> cc_model_filenames = 10;
+
+  //@@  .. cpp:var:: map<string,string> tags
+  //@@
+  //@@     Optional model tags. User-specific key-value pairs for this
+  //@@     model. These tags are applied to the metrics reported on the HTTP
+  //@@     metrics port.
+  //@@
+  map<string, string> tags = 11;
+}

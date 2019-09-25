@@ -1,0 +1,7 @@
+build --cxxopt=-std=c++14
+
+build --define=grpc_no_ares=true
+
+build:openvino --define=runtime=openvino
+build:tensorflow --define=runtime=tensorflow
+build:tensorrt --define=runtime=tensorrt

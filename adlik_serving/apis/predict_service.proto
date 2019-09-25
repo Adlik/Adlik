@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+import "adlik_serving/apis/predict.proto";
+import "adlik_serving/apis/get_model_meta.proto";
+
+service PredictService {
+  rpc predict(PredictRequest) returns (PredictResponse);
+
+  rpc getModelMeta(GetModelMetaRequest) returns (GetModelMetaResponse);
+
+  // todo: regress
+}

@@ -1,0 +1,62 @@
+package(
+    default_visibility = [
+        "//adlik_serving:internal",
+    ],
+    features = ["-layering_check"],
+)
+
+load("//adlik_serving:serving.bzl", "serving_cc_library")
+
+serving_cc_library(
+    name = "batch",
+    srcs = [
+        "batching_inputs.cc",
+        "batching_parameters.cc",
+        "batching_scheduler.cc",
+        "batching_session.cc",
+        "final_padding.cc",
+        "inferential_batch.cc",
+        "inferential_task.cc",
+        "merged_dimensions.cc",
+        "merged_inputs.cc",
+        "merged_tensors.cc",
+        "serving_session.cc",
+        "splited_outputs.cc",
+        "splited_sizes.cc",
+        "tensor_dimension.cc",
+    ],
+    hdrs = [
+        "atomic_batcher.h",
+        "batching_inputs.h",
+        "batching_parameters.h",
+        "batching_processor.h",
+        "batching_scheduler.h",
+        "batching_session.h",
+        "final_padding.h",
+        "inferential_batch.h",
+        "inferential_task.h",
+        "merged_dimensions.h",
+        "merged_inputs.h",
+        "merged_tensors.h",
+        "serving_session.h",
+        "shared_batcher.h",
+        "splited_outputs.h",
+        "splited_sizes.h",
+        "splited_tensors.h",
+        "tensor_dimension.h",
+    ],
+    deps = [
+        "//adlik_serving/runtime/tensorflow/factory:tf_plan_model_config",
+        "//adlik_serving/runtime/tensorflow/model",
+        "//cub/base:static_assert",
+        "//cub/base:struct_wrapper",
+        "//cub/env/concurrent:notification",
+        "//cub/env/time",
+        "@org_tensorflow//tensorflow/core:core_cpu",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:lib",
+        "@org_tensorflow//tensorflow/core:tensorflow",
+        "@org_tensorflow//tensorflow/core/kernels/batching_util:batch_scheduler",
+        "@org_tensorflow//tensorflow/core/kernels/batching_util:shared_batch_scheduler",
+    ],
+)

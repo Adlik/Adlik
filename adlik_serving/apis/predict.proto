@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+import "tensorflow/core/framework/tensor.proto";
+import "adlik_serving/framework/domain/model_spec.proto";
+
+message PredictRequest {
+  // Model Specification. If version is not specified, will use the latest
+  // (numerical) version.
+  ModelSpec model_spec = 1;
+
+  // map of name to tensor, it is recommended to put input in "tensor_content"
+  // field  of proto, especially for tensorRT model
+  map<string, tensorflow.TensorProto> inputs = 2;
+
+  //@@  .. cpp:var:: uint32 batch_size
+  //@@
+  //@@     The batch size of the inference request. This must be >= 1. For
+  //@@     models that don't support batching batch_size must be 1.
+  //@@
+  uint32 batch_size = 3;
+
+  message Class {
+    //@@      .. cpp:var:: uint32 count
+    //@@
+    //@@         Indicates how many classification values should be returned
+    //@@         for the output. The 'count' highest priority values are
+    //@@         returned.
+    //@@
+    uint32 count = 1;
+  }
+
+  message Output {
+    Class cls = 1;
+  }
+
+  map<string, Output> output_filter = 4;
+}
+
+message PredictResponse {
+  ModelSpec model_spec = 1;
+
+  message Class {
+    int32 idx = 1;
+    float score = 2;
+    string label = 3;
+  }
+
+  message Classes {
+    repeated Class cls = 1;
+  }
+
+  message Output {
+    tensorflow.TensorProto tensor = 1;
+    repeated Classes batch_classes = 2;
+  }
+  // Output tensors.
+  map<string, Output> outputs = 2;
+}
