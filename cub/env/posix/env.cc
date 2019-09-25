@@ -6,10 +6,7 @@
 namespace cub {
 
 namespace {
-struct PosixEnv : Env,
-                  private PosixConcurrent,
-                  private PosixTime,
-                  private PosixFileSystem {
+struct PosixEnv : Env, private PosixConcurrent, private PosixTime, private PosixFileSystem {
 private:
   IMPL_ROLE(Time);
   IMPL_ROLE(Concurrent);

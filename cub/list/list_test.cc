@@ -1,24 +1,23 @@
-#include "cut/cut.hpp"
 #include "cub/list/list.h"
 #include "cub/list/list_elem.h"
+#include "cut/cut.hpp"
 
 using namespace cum;
 using namespace cub;
 
 namespace {
-  struct Foo: ListElem<Foo> {
-    Foo(int a)
-        : x(a) {
-    }
+struct Foo : ListElem<Foo> {
+  Foo(int a) : x(a) {
+  }
 
-    int getValue() const {
-      return x;
-    }
+  int getValue() const {
+    return x;
+  }
 
-  private:
-    int x;
-  };
-}
+private:
+  int x;
+};
+}  // namespace
 
 FIXTURE(ListTest) {
   TEST("should be empty when init") {
@@ -51,7 +50,7 @@ FIXTURE(ListTest) {
     elems.pushBack(elem3);
 
     int i = 1;
-    LIST_FOREACH(elem, elems){
+    LIST_FOREACH(elem, elems) {
       ASSERT_THAT(elem->getValue(), eq(i++));
     }
   }
@@ -68,4 +67,3 @@ FIXTURE(ListTest) {
 
   List<Foo> elems;
 };
-

@@ -5,8 +5,7 @@
 
 namespace cub {
 
-LogStream::LogStream(const char* file, int line, LogLevel level)
-  : file(file), line(line), level(level) {
+LogStream::LogStream(const char* file, int line, LogLevel level) : file(file), line(line), level(level) {
 }
 
 namespace {
@@ -23,14 +22,7 @@ int threshold() {
 inline void LogStream::trace() const {
   char buf[32];
   timesystem().format(buf);
-  fprintf(
-      stderr,
-      "%s: %c %s:%d] %s\n",
-      buf,
-      "IWEF"[level],
-      file,
-      line,
-      str().c_str());
+  fprintf(stderr, "%s: %c %s:%d] %s\n", buf, "IWEF"[level], file, line, str().c_str());
 }
 
 LogStream::~LogStream() {

@@ -14,14 +14,13 @@ using Saver = std::function<bool(StringView)>;
 
 struct OptionImpl : Option {
   OptionImpl(const char* name, Saver saver, std::string&& usage)
-    : name(name), saver(std::move(saver)), usage(std::move(usage)) {
+      : name(name), saver(std::move(saver)), usage(std::move(usage)) {
   }
 
 private:
   OVERRIDE(bool parse(StringView arg)) {
     StringView rhs;
-    return Scanner(arg).literal("--").literal(name).literal("=").result(&rhs) &&
-           saver(rhs);
+    return Scanner(arg).literal("--").literal(name).literal("=").result(&rhs) && saver(rhs);
   }
 
   OVERRIDE(const std::string& help() const) {
@@ -57,18 +56,13 @@ std::string format(std::string* t) {
   return "\""s + *t + "\""s;
 }
 
-std::string help(
-    const char* name,
-    const char* type,
-    std::string&& init,
-    const char* usage) {
+std::string help(const char* name, const char* type, std::string&& init, const char* usage) {
   auto flag = stringprintf("--%s=%s", name, init.c_str());
   return stringprintf("  %-20s  %-12s  %s\n", flag.c_str(), type, usage);
 }
 }  // namespace
 
-#define OPTION(type, saver) \
-  new OptionImpl(name, saver, help(name, #type, format(dst), usage))
+#define OPTION(type, saver) new OptionImpl(name, saver, help(name, #type, format(dst), usage))
 
 Option* option(const char* name, int* dst, const char* usage) {
   return OPTION(int, saver(dst, "%d"));

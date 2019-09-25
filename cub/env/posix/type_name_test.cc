@@ -19,4 +19,4 @@ FIXTURE(TypeNameTest) {
   }
 };
 
-}
+}  // namespace cub

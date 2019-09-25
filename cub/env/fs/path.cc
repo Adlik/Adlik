@@ -36,11 +36,9 @@ std::pair<StringView, StringView> splitPath(StringView uri) {
   if (pos == StringView::npos) {
     return {{uri.begin(), size_t(host.end() - uri.begin())}, path};
   } else if (pos == 0) {
-    return {{uri.begin(), size_t(path.begin() + 1 - uri.begin())},
-            {path.data() + 1, path.size() - 1}};
+    return {{uri.begin(), size_t(path.begin() + 1 - uri.begin())}, {path.data() + 1, path.size() - 1}};
   } else {
-    return {{uri.begin(), size_t(path.begin() + pos - uri.begin())},
-            {path.data() + pos + 1, path.size() - (pos + 1)}};
+    return {{uri.begin(), size_t(path.begin() + pos - uri.begin())}, {path.data() + pos + 1, path.size() - (pos + 1)}};
   }
 }
 }  // namespace

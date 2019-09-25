@@ -7,16 +7,14 @@ namespace cub {
 
 namespace strutils {
 
-FIXTURE(JoinAndSplitSpec) {
-  TEST("basic") {
-    ASSERT_TRUE(split("", ",").empty());
-    ASSERT_EQ(join(split("a", ","), "|"), "a");
-    ASSERT_EQ(join(split(",", ","), "|"), "|");
-    ASSERT_EQ(join(split("a,b,c", ","), "|"), "a|b|c");
-    ASSERT_EQ(join(split("a,,,b,,c,", ","), "|"), "a|||b||c|");
-    ASSERT_EQ(join(split("a!,!b,!c,", ",!"), "|"), "a|||b||c|");
-  }
-};
+FIXTURE(JoinAndSplitSpec){TEST("basic"){ASSERT_TRUE(split("", ",").empty());
+ASSERT_EQ(join(split("a", ","), "|"), "a");
+ASSERT_EQ(join(split(",", ","), "|"), "|");
+ASSERT_EQ(join(split("a,b,c", ","), "|"), "a|b|c");
+ASSERT_EQ(join(split("a,,,b,,c,", ","), "|"), "a|||b||c|");
+ASSERT_EQ(join(split("a!,!b,!c,", ",!"), "|"), "a|||b||c|");
+}  // namespace strutils
+};  // namespace cub
 
 FIXTURE(ToInt32Spec) {
   int32_t result;
@@ -118,7 +116,5 @@ FIXTURE(StringToUInt32Spec) {
     ASSERT_FALSE(to_uint32(StringView(nullptr, 0), result));
   }
 };
-
 }
-
 }

@@ -5,7 +5,7 @@
 namespace cub {
 
 Retrier::Retrier(uint32_t maxNumTries, int64_t intervalMicros)
-  : maxNumTries(maxNumTries), intervalMicros(intervalMicros) {
+    : maxNumTries(maxNumTries), intervalMicros(intervalMicros) {
 }
 
 inline bool Retrier::finished(Status status, bool cancelled) const {

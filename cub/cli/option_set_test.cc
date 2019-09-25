@@ -11,11 +11,11 @@ FIXTURE(ProgOptionsTest) {
   bool v3 = false;
   std::string v4 = "v4";
 
-  OptionSet options {{
-    option("v1", &v1, "integer option"),
-    option("v2", &v2, "float option"),
-    option("v3", &v3, "boolean option"),
-    option("v4", &v4, "string option"),
+  OptionSet options{{
+      option("v1", &v1, "integer option"),
+      option("v2", &v2, "float option"),
+      option("v3", &v3, "boolean option"),
+      option("v4", &v4, "string option"),
   }};
 
   TEST("parse ok") {
@@ -43,4 +43,4 @@ FIXTURE(ProgOptionsTest) {
   }
 };
 
-}
+}  // namespace cub

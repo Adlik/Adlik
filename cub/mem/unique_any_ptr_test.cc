@@ -37,4 +37,4 @@ FIXTURE(AnyPtrTest) {
   }
 };
 
-}
+}  // namespace cub

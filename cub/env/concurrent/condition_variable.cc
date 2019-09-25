@@ -29,16 +29,12 @@ void ConditionVariable::wait(AutoLock& lock) {
   nsync::nsync_cv_wait(cond_var(native()), mutex(lock));
 }
 
-inline bool ConditionVariable::wait(
-    AutoLock& lock,
-    const std::chrono::system_clock::time_point& timeout) {
-  return nsync::nsync_cv_wait_with_deadline(
-             cond_var(native()), mutex(lock), timeout, nullptr) != 0;
+inline bool ConditionVariable::wait(AutoLock& lock, const std::chrono::system_clock::time_point& timeout) {
+  return nsync::nsync_cv_wait_with_deadline(cond_var(native()), mutex(lock), timeout, nullptr) != 0;
 }
 
 bool ConditionVariable::wait(AutoLock& lock, int64_t ms) {
-  return wait(
-      lock, std::chrono::system_clock::now() + std::chrono::milliseconds(ms));
+  return wait(lock, std::chrono::system_clock::now() + std::chrono::milliseconds(ms));
 }
 
 void ConditionVariable::notify() {
