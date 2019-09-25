@@ -5,126 +5,120 @@ using namespace cum;
 using namespace cub;
 
 namespace {
-  DEFINE_ROLE(Energy) {
-    ABSTRACT(void consume());ABSTRACT(bool isExhausted() const);
-  };
+DEFINE_ROLE(Energy) {
+  ABSTRACT(void consume());
+  ABSTRACT(bool isExhausted() const);
+};
 
-  const int MAX_CONSUME_TIMES = 10;
+const int MAX_CONSUME_TIMES = 10;
 
-  struct HumanEnergy: Energy {
-    HumanEnergy()
-        : isHungry(false), consumeTimes(0) {
+struct HumanEnergy : Energy {
+  HumanEnergy() : isHungry(false), consumeTimes(0) {
+  }
+
+  void supplyByFood() {
+    isHungry = false;
+    consumeTimes = 0;
+  }
+
+private:
+  OVERRIDE(void consume()) {
+    consumeTimes++;
+
+    if (consumeTimes >= MAX_CONSUME_TIMES) {
+      isHungry = true;
     }
+  }
 
-    void supplyByFood() {
-      isHungry = false;
-      consumeTimes = 0;
-    }
+  OVERRIDE(bool isExhausted() const) {
+    return isHungry;
+  }
 
-  private:
-    OVERRIDE(void consume()) {
-      consumeTimes++;
+private:
+  bool isHungry;
+  uint8_t consumeTimes;
+};
 
-      if (consumeTimes >= MAX_CONSUME_TIMES) {
-        isHungry = true;
-      }
-    }
+const int FULL_PERCENT = 100;
+const int CONSUME_PERCENT = 1;
 
-    OVERRIDE(bool isExhausted() const) {
-      return isHungry;
-    }
+struct ChargeEnergy : Energy {
+  ChargeEnergy() : percent(0) {
+  }
 
-  private:
-    bool isHungry;
-    uint8_t consumeTimes;
-  };
+  void charge() {
+    percent = FULL_PERCENT;
+  }
 
-  const int FULL_PERCENT = 100;
-  const int CONSUME_PERCENT = 1;
+private:
+  OVERRIDE(void consume()) {
+    if (percent > 0)
+      percent -= CONSUME_PERCENT;
+  }
 
-  struct ChargeEnergy: Energy {
-    ChargeEnergy()
-        : percent(0) {
-    }
+  OVERRIDE(bool isExhausted() const) {
+    return percent == 0;
+  }
 
-    void charge() {
-      percent = FULL_PERCENT;
-    }
+private:
+  uint8_t percent;
+};
 
-  private:
-    OVERRIDE(void consume()) {
-      if (percent > 0)
-        percent -= CONSUME_PERCENT;
-    }
+DEFINE_ROLE(Worker) {
+  Worker() : produceNum(0) {
+  }
 
-    OVERRIDE(bool isExhausted() const) {
-      return percent == 0;
-    }
+  void produce() {
+    if (ROLE(Energy).isExhausted())
+      return;
 
-  private:
-    uint8_t percent;
-  };
+    produceNum++;
 
-  DEFINE_ROLE(Worker) {
-    Worker()
-        : produceNum(0) {
-    }
+    ROLE(Energy).consume();
+  }
 
-    void produce() {
-      if (ROLE(Energy).isExhausted())
-        return;
+  uint32_t getProduceNum() const {
+    return produceNum;
+  }
 
-      produceNum++;
+private:
+  uint32_t produceNum;
 
-      ROLE(Energy).consume();
-    }
+private:
+  USE_ROLE(Energy);
+};
 
-    uint32_t getProduceNum() const {
-      return produceNum;
-    }
+struct Human : Worker, HumanEnergy {
+private:
+  IMPL_ROLE(Energy);
+};
 
-  private:
-    uint32_t produceNum;
+struct Robot : Worker, ChargeEnergy {
+private:
+  IMPL_ROLE(Energy);
+};
+}  // namespace
 
-  private:
-    USE_ROLE(Energy);
-  };
+FIXTURE(RoleTest){TEST("should cast to the public role correctly for human"){Human human;
 
-  struct Human: Worker, HumanEnergy {
-  private:
-    IMPL_ROLE(Energy)
-    ;
-  };
+while (!UPCAST(human, Energy).isExhausted()) {
+  UPCAST(human, Worker).produce();
+}
+ASSERT_THAT(UPCAST(human, Worker).getProduceNum(), eq(MAX_CONSUME_TIMES));
 
-  struct Robot: Worker, ChargeEnergy {
-  private:
-    IMPL_ROLE(Energy)
-    ;
-  };
+human.supplyByFood();
+ASSERT_THAT(UPCAST(human, Energy).isExhausted(), be_false());
 }
 
-FIXTURE(RoleTest) {
-  TEST("should cast to the public role correctly for human") {
-    Human human;
+TEST("should cast to the public role correctly for robot") {
+  Robot robot;
+  UPCAST(robot, ChargeEnergy).charge();
 
-    while (!UPCAST(human, Energy).isExhausted()) {
-      UPCAST(human, Worker).produce();
-    }
-    ASSERT_THAT(UPCAST(human, Worker).getProduceNum(), eq(MAX_CONSUME_TIMES));
-
-    human.supplyByFood();
-    ASSERT_THAT(UPCAST(human, Energy).isExhausted(), be_false());
+  while (!UPCAST(robot, Energy).isExhausted()) {
+    UPCAST(robot, Worker).produce();
   }
 
-  TEST("should cast to the public role correctly for robot") {
-    Robot robot;
-    UPCAST(robot, ChargeEnergy).charge();
-
-    while (!UPCAST(robot, Energy).isExhausted()) {
-      UPCAST(robot, Worker).produce();
-    }
-
-    ASSERT_THAT(UPCAST(robot, Worker).getProduceNum(),
-        eq(FULL_PERCENT / CONSUME_PERCENT));
-  }
-};
+  ASSERT_THAT(UPCAST(robot, Worker).getProduceNum(), eq(FULL_PERCENT / CONSUME_PERCENT));
+}
+}
+;

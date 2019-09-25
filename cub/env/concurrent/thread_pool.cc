@@ -36,8 +36,7 @@ struct ThreadPool::Impl : EigenTheadPool {
   }
 };
 
-ThreadPool::ThreadPool(int numThreads)
-  : impl(new ThreadPool::Impl(numThreads)) {
+ThreadPool::ThreadPool(int numThreads) : impl(new ThreadPool::Impl(numThreads)) {
 }
 
 ThreadPool::~ThreadPool() {

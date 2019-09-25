@@ -2,8 +2,7 @@
 
 namespace cub {
 
-OptionSet::OptionSet(std::vector<Option*>&& options)
-  : options(std::move(options)) {
+OptionSet::OptionSet(std::vector<Option*>&& options) : options(std::move(options)) {
 }
 
 OptionSet::~OptionSet() {

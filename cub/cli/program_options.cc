@@ -1,6 +1,6 @@
 #include "cub/cli/program_options.h"
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
 namespace cub {
 

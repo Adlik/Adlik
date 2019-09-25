@@ -3,8 +3,7 @@
 
 namespace cub {
 
-LibraryLoader::LibraryLoader(const char* filename)
-  : handle(dlopen(filename, RTLD_NOW | RTLD_LOCAL)) {
+LibraryLoader::LibraryLoader(const char* filename) : handle(dlopen(filename, RTLD_NOW | RTLD_LOCAL)) {
 }
 
 void* LibraryLoader::getSymbol(const char* symbol) const {

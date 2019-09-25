@@ -1,6 +1,6 @@
 #include "cub/mem/read_write_ptr.h"
-#include "cub/env/env.h"
 #include "cub/env/concurrent/concurrent.h"
+#include "cub/env/env.h"
 #include "cut/cut.hpp"
 
 #include <vector>

@@ -35,8 +35,7 @@ private:
 };
 
 struct ReadOnlyRegionMaker {
-  ReadOnlyRegionMaker(const std::string& fname)
-    : fd(open(fname.c_str(), O_RDONLY)) {
+  ReadOnlyRegionMaker(const std::string& fname) : fd(open(fname.c_str(), O_RDONLY)) {
   }
 
   ReadOnlyRegion* make() {
@@ -107,8 +106,7 @@ private:
 };
 }  // namespace
 
-Status PosixFileSystem::children(const std::string& dir, DirentVisitor& visitor)
-    const {
+Status PosixFileSystem::children(const std::string& dir, DirentVisitor& visitor) const {
   DirectReader reader(dir);
   return reader.read(visitor);
 }

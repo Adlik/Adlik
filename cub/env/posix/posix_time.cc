@@ -18,8 +18,7 @@ struct TimeSpec : timespec {
 
   uint64_t now(uint64_t seconds) {
     ::clock_gettime(CLOCK_REALTIME, this);
-    return static_cast<uint64_t>(tv_sec) * seconds +
-           static_cast<uint64_t>(tv_nsec);
+    return static_cast<uint64_t>(tv_sec) * seconds + static_cast<uint64_t>(tv_nsec);
   }
 
   void sleep(uint64_t& micros) {
@@ -36,8 +35,7 @@ private:
 
   void elapseSeconds(uint64_t& micros) {
     if (micros >= 1e6) {
-      tv_sec =
-          std::min<uint64_t>(micros / 1e6, std::numeric_limits<time_t>::max());
+      tv_sec = std::min<uint64_t>(micros / 1e6, std::numeric_limits<time_t>::max());
       micros -= static_cast<uint64_t>(tv_sec) * 1e6;
     }
   }

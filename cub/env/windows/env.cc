@@ -35,8 +35,7 @@ private:
     return nullptr;
   }
 
-  OVERRIDE(Status children(const std::string& dir, DirentVisitor& visitor)
-               const) {
+  OVERRIDE(Status children(const std::string& dir, DirentVisitor& visitor) const) {
     return cub::Failure;
   }
 
@@ -45,10 +44,7 @@ private:
   }
 };
 
-struct WindowsEnv : Env,
-                    private WindowsConcurrent,
-                    private WindowsTime,
-                    private WindowsFileSystem {
+struct WindowsEnv : Env, private WindowsConcurrent, private WindowsTime, private WindowsFileSystem {
 private:
   IMPL_ROLE(Time);
   IMPL_ROLE(Concurrent);

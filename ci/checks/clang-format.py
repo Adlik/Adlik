@@ -6,7 +6,7 @@ import subprocess
 
 
 def _get_source_files(root_path):
-    file_name_regex = re.compile(r'.*\.(cpp|h)')
+    file_name_regex = re.compile(r'.*\.(cc|cpp|h)')
 
     for path, dirs, file_names in os.walk(root_path):
         try:

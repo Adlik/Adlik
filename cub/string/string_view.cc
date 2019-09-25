@@ -63,16 +63,12 @@ bool StringView::contains(StringView sub) const {
 }
 
 bool StringView::starts(StringView prefix) const {
-  return prefix.empty() || (size() >= prefix.size() &&
-                            memcmp(data(), prefix.data(), prefix.size()) == 0);
+  return prefix.empty() || (size() >= prefix.size() && memcmp(data(), prefix.data(), prefix.size()) == 0);
 }
 
 bool StringView::ends(StringView suffix) const {
   return suffix.empty() ||
-         (size() >= suffix.size() && memcmp(
-                                         data() + (size() - suffix.size()),
-                                         suffix.data(),
-                                         suffix.size()) == 0);
+         (size() >= suffix.size() && memcmp(data() + (size() - suffix.size()), suffix.data(), suffix.size()) == 0);
 }
 
 void StringView::removePrefix(size_t n) {
@@ -145,8 +141,7 @@ StringView& StringView::trim() {
   return rtrim();
 }
 
-void StringView::split(StringView delims, std::vector<std::string>& result)
-    const {
+void StringView::split(StringView delims, std::vector<std::string>& result) const {
   if (empty())
     return;
   for (size_t start = 0, i = 0; i < size() + 1; ++i) {
