@@ -4,10 +4,15 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ci/azure-pipelines/run-ci-in-docker.yml
-        parameters:
-            command: ci/checks/bazel-build-clients.py --incompatible_no_support_tools_in_action_inputs=false
+      - template: ci/azure-pipelines/install-bazel.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: pip install -U wheel
+        displayName: Install additional dependencies
+      - script: ci/checks/bazel-build-clients.py --incompatible_no_support_tools_in_action_inputs=false
+        displayName: Bazel build clients
       - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
         inputs:
             pathtoPublish: __adlik_clients
             artifactName: adlik-clients
@@ -17,10 +22,13 @@ jobs:
         vmImage: ubuntu-latest
     timeoutInMinutes: 0
     steps:
-      - template: ci/azure-pipelines/run-ci-in-docker.yml
-        parameters:
-            command: ci/checks/bazel-build-serving.py --config=tensorflow -j 1 --discard_analysis_cache --nokeep_state_after_build --notrack_incremental_state --incompatible_no_support_tools_in_action_inputs=false
+      - template: ci/azure-pipelines/install-bazel.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: ci/checks/bazel-build-serving.py --config=tensorflow --incompatible_no_support_tools_in_action_inputs=false
+        displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
         inputs:
             pathtoPublish: __adlik_serving/adlik_serving
             artifactName: adlik-serving-tensorflow-cpu
@@ -29,30 +37,34 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ci/azure-pipelines/run-ci-in-docker.yml
-        parameters:
-            command: ci/checks/buildifier.py
+      - template: ci/azure-pipelines/install-buildifier.yml
+      - script: ci/checks/buildifier.py
+        displayName: Run Buildifier
   - job: ClangFormat
     displayName: Clang-Format
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ci/azure-pipelines/run-ci-in-docker.yml
-        parameters:
-            command: ci/checks/clang-format.py
+      - template: ci/azure-pipelines/install-clang-format.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: ci/checks/clang-format.py
+        displayName: Run Clang-Format
   - job: CommitMessage
     displayName: Commit message
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ci/azure-pipelines/run-ci-in-docker.yml
-        parameters:
-            command: ci/checks/commit-message.py
+      - script: ci/checks/commit-message.py
+        displayName: Check commit message
   - job: Flake8
     displayName: Flake8
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ci/azure-pipelines/run-ci-in-docker.yml
-        parameters:
-            command: ci/checks/flake8.py
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: python3 -m pip install -U flake8
+        displayName: Install Flake8
+      - script: ci/checks/flake8.py
+        displayName: Run Flake8
