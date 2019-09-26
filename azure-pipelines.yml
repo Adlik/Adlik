@@ -7,6 +7,10 @@ jobs:
       - template: ci/azure-pipelines/run-ci-in-docker.yml
         parameters:
             command: ci/checks/bazel-build-clients.py --incompatible_no_support_tools_in_action_inputs=false
+      - task: PublishBuildArtifacts@1
+        inputs:
+            pathtoPublish: __adlik_clients
+            artifactName: adlik-clients
   - job: BazelBuildServingTensorFlowCPU
     displayName: Bazel build serving (TensorFlow CPU)
     pool:
@@ -15,7 +19,11 @@ jobs:
     steps:
       - template: ci/azure-pipelines/run-ci-in-docker.yml
         parameters:
-            command: ci/checks/bazel-build-serving.py --config=tensorflow --incompatible_no_support_tools_in_action_inputs=false
+            command: ci/checks/bazel-build-serving.py --config=tensorflow -j 1 --discard_analysis_cache --nokeep_state_after_build --notrack_incremental_state --incompatible_no_support_tools_in_action_inputs=false
+      - task: PublishBuildArtifacts@1
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-tensorflow-cpu
   - job: Buildifier
     displayName: Buildifier
     pool:
