@@ -1,6 +1,6 @@
 # Adlik
 
-[![Build Status](https://dev.azure.com/ZTE-Corporation/GitHub/_apis/build/status/ZTE-Corporation.Introduction-to-Algorithms?branchName=master)](https://dev.azure.com/ZTE-Corporation/GitHub/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://dev.azure.com/ZTE-Corporation/GitHub/_apis/build/status/ZTE.Adlik?branchName=master)](https://dev.azure.com/ZTE-Corporation/GitHub/_build/latest?definitionId=1&branchName=master)
 
 ***Adlik*** is an end-to-end optimizing framework for deep learning models. The goal of Adlik is to accelerate deep
 learning inference process both on cloud and embedded environment.
