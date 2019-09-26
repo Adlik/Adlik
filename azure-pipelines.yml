@@ -1,0 +1,50 @@
+jobs:
+  - job: BazelBuildClients
+    displayName: Bazel build clients
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ci/azure-pipelines/run-ci-in-docker.yml
+        parameters:
+            command: ci/checks/bazel-build-clients.py --incompatible_no_support_tools_in_action_inputs=false
+  - job: BazelBuildServingTensorFlowCPU
+    displayName: Bazel build serving (TensorFlow CPU)
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - template: ci/azure-pipelines/run-ci-in-docker.yml
+        parameters:
+            command: ci/checks/bazel-build-serving.py --config=tensorflow --incompatible_no_support_tools_in_action_inputs=false
+  - job: Buildifier
+    displayName: Buildifier
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ci/azure-pipelines/run-ci-in-docker.yml
+        parameters:
+            command: ci/checks/buildifier.py
+  - job: ClangFormat
+    displayName: Clang-Format
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ci/azure-pipelines/run-ci-in-docker.yml
+        parameters:
+            command: ci/checks/clang-format.py
+  - job: CommitMessage
+    displayName: Commit message
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ci/azure-pipelines/run-ci-in-docker.yml
+        parameters:
+            command: ci/checks/commit-message.py
+  - job: Flake8
+    displayName: Flake8
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ci/azure-pipelines/run-ci-in-docker.yml
+        parameters:
+            command: ci/checks/flake8.py

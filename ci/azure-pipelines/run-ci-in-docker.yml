@@ -1,0 +1,19 @@
+parameters:
+    command: ''
+steps:
+  - script: |
+        set -e
+        user_id=$(id -u)
+        user_name=$(id -nu)
+        group_name=$(id -gn)
+        group_id=$(id -g)
+        ci/docker/build.sh
+        docker run --rm \
+                    -uroot \
+                    -v"$(mktemp -d):/home/$user_name" \
+                    -v"$(pwd):/home/$user_name/Adlik" \
+                    adlik-ci:latest \
+                    sh -ec "groupadd -g $group_id -o $group_name
+                            useradd -g $group_id -m -o -u $user_id $user_name
+                            exec su -c "'"$1"'" - $user_name" - 'cd Adlik && exec ${{ parameters.command }}'
+    displayName: Run CI in Docker
