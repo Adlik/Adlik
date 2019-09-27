@@ -7,8 +7,8 @@ RUN apt-get update && \
 RUN apt-get install --no-install-recommends -y gnupg && \
     apt-key adv --fetch-keys \
         https://apt.repos.intel.com/openvino/2019/GPG-PUB-KEY-INTEL-OPENVINO-2019 \
-        https://bazel.build/bazel-release.pub.gpg \
-        https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub && \
+        https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub \
+        https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg && \
     apt-get autoremove --purge -y gnupg && \
     apt-get clean
 

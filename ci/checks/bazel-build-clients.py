@@ -4,16 +4,18 @@ import os
 import re
 import subprocess
 import sys
-import tempfile
 
 
 def main(args):
     subprocess.check_call(['bazel', 'build', *args, '//adlik_serving/clients/python:build_pip_package'])
 
-    with tempfile.TemporaryDirectory() as wheel_directory:
-        subprocess.check_call(['bazel-bin/adlik_serving/clients/python/build_pip_package', wheel_directory])
+    wheel_directory = os.path.join(os.getcwd(), '__adlik_clients')
 
-        wheels = sorted(os.listdir(wheel_directory))
+    os.makedirs(wheel_directory, exist_ok=True)
+
+    subprocess.check_call(['bazel-bin/adlik_serving/clients/python/build_pip_package', wheel_directory])
+
+    wheels = sorted(os.listdir(wheel_directory))
 
     assert len(wheels) == 2
     assert re.fullmatch(r'adlik_serving_api-\d+\.\d+\.\d+-py2\.py3-none-any\.whl', wheels[0])
