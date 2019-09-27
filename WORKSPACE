@@ -11,6 +11,13 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_python/archive/54d1cb35cd54318d59bf38e52df3e628c07d4bbc.tar.gz"],
 )
 
+http_archive(
+    name = "rules_cc",
+    sha256 = "7c574de35acdbfd333eb3f8eb05990b377ef8dc2303664f4ddd6cc83bbf4a30a",
+    strip_prefix = "rules_cc-42ed56d8acbd9938b4ee8b2066d2c4c898a22504",
+    urls = ["https://github.com/bazelbuild/rules_cc/archive/42ed56d8acbd9938b4ee8b2066d2c4c898a22504.tar.gz"],
+)
+
 # TensorFlow.
 
 http_archive(
