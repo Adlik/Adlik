@@ -34,7 +34,7 @@ def is_success(msg):
     :param msg:
     :return:
     """
-    return msg['status' == 'success']
+    return msg['status'] == 'success'
 
 
 def send_response(url, message):
