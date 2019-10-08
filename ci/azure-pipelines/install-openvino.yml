@@ -1,0 +1,8 @@
+steps:
+  - script: |
+        set -e
+        . /etc/os-release
+        curl https://apt.repos.intel.com/openvino/2019/GPG-PUB-KEY-INTEL-OPENVINO-2019 | sudo apt-key add -
+        sudo apt-add-repository -u 'deb https://apt.repos.intel.com/openvino/2019 all main'
+        sudo apt-get install --no-install-recommends -y "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2019.3.344"
+    displayName: Install OpenVINO libraries

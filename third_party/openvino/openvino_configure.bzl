@@ -15,9 +15,7 @@ _INFERENCE_ENGINE_HEADERS = ["ie_plugin_dispatcher.hpp"]  # just list a few of h
 
 def auto_configure_fail(msg):
     """Output failure message when cuda configuration fails."""
-    red = "\033[0;31m"
-    no_color = "\033[0m"
-    fail("\n%sOpenVINO Configuration Error:%s %s\n" % (red, no_color, msg))
+    fail("\nOpenVINO Configuration Error: %s\n" % (msg,))
 
 def _headers_exist(repository_ctx, path):
     """Returns whether all IE header files could be found in 'path'.
@@ -53,7 +51,7 @@ def _find_ie_header_dir(repository_ctx, ie_path):
     return None
 
 def _find_ie_lib_dir(repository_ctx, ie_path):
-    path = str(repository_ctx.path("%s/lib/ubuntu_16.04/intel64" % ie_path).realpath)
+    path = str(repository_ctx.path("%s/lib/intel64" % ie_path).realpath)
     for lib in _INFERENCE_ENGINE_LIBS:
         if not repository_ctx.path("%s/lib%s.so" % (path, lib)).exists:
             auto_configure_fail(
@@ -125,6 +123,9 @@ cc_library(
 
 cc_library(
     name = "extension",
+    deps = [
+        ":ie_headers"
+    ],
     hdrs = glob(["extension/**/*.h*"]),
     srcs = ["extension/ext_list.cpp"],
     includes = [
