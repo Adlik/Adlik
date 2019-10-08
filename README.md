@@ -46,5 +46,5 @@ much flexible and easy way.
    ```bash
    git clone https://github.com/ZTE/Adlik.git
    cd Adlik
-   bazel build //adlik_serving
+   bazel build //adlik_serving --config=tensorflow-cpu --incompatible_no_support_tools_in_action_inputs=false
    ```
