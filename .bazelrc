@@ -2,6 +2,23 @@ build --cxxopt=-std=c++14
 
 build --define=grpc_no_ares=true
 
+# OpenVINO.
+
 build:openvino --define=runtime=openvino
-build:tensorflow --define=runtime=tensorflow
+
+# TensorFlow (CPU).
+
+build:tensorflow-cpu --define=runtime=tensorflow
+
+# TensorFlow (GPU).
+
+build:tensorflow-gpu --define=runtime=tensorflow
+build:tensorflow-gpu --crosstool_top=@local_config_cuda//crosstool:toolchain
+build:tensorflow-gpu --define=using_cuda=true
+build:tensorflow-gpu --define=using_cuda_nvcc=true
+build:tensorflow-gpu --action_env=TF_NEED_CUDA=1
+build:tensorflow-gpu --copt=-DNDEBUG # https://github.com/tensorflow/tensorflow/issues/22766
+
+# TensorRT.
+
 build:tensorrt --define=runtime=tensorrt
