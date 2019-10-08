@@ -13,12 +13,14 @@ RUN . /etc/os-release && \
     apt-get autoremove --purge -y gnupg && \
     apt-get clean
 
-RUN . /etc/os-release && echo "deb https://apt.repos.intel.com/openvino/2019 all main\n\
+RUN . /etc/os-release && \
+    echo "deb https://apt.repos.intel.com/openvino/2019 all main\n\
 deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
 deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
 deb https://storage.googleapis.com/bazel-apt/ stable jdk1.8" >> /etc/apt/sources.list
 
-RUN apt-get update && \
+RUN . /etc/os-release && \
+    apt-get update && \
     apt-get install --no-install-recommends -y \
         automake \
         bazel \
@@ -32,6 +34,7 @@ RUN apt-get update && \
         cuda-cusparse-dev-10-0 \
         flake8 \
         git \
+        "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2019.3.344" \
         iwyu \
         libclang-common-5.0-dev \
         libclang-common-6.0-dev \

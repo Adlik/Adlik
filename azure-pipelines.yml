@@ -20,6 +20,27 @@ jobs:
         inputs:
             pathtoPublish: __adlik_clients
             artifactName: adlik-clients
+  - job: BazelBuildServingTensorFlowOpenVINO
+    displayName: Bazel build serving (OpenVINO)
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - template: ci/azure-pipelines/install-bazel.yml
+      - template: ci/azure-pipelines/install-openvino.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: |
+            set -e
+            export INTEL_CVSDK_DIR=/opt/intel/openvino_2019.3.344
+            export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share
+            ci/checks/bazel-build-serving.py --config=openvino --incompatible_no_support_tools_in_action_inputs=false
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-tensorflow-openvino
   - job: BazelBuildServingTensorFlowCPU
     displayName: Bazel build serving (TensorFlow CPU)
     pool:
