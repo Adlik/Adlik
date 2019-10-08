@@ -76,6 +76,8 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
       - script: ci/checks/commit-message.py
         displayName: Check commit message
   - job: Flake8
