@@ -74,6 +74,23 @@ jobs:
         inputs:
             pathtoPublish: __adlik_serving/adlik_serving
             artifactName: adlik-serving-tensorflow-gpu
+  - job: BazelBuildServingTensorRT
+    displayName: Bazel build serving (TensorRT)
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - template: ci/azure-pipelines/install-bazel.yml
+      - template: ci/azure-pipelines/install-tensorrt.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: ci/checks/bazel-build-serving.py --config=tensorrt --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs --action_env=TF_CUDA_VERSION=10.0 --incompatible_no_support_tools_in_action_inputs=false
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-tensorrt
   - job: Buildifier
     displayName: Buildifier
     pool:
