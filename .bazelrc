@@ -17,6 +17,7 @@ build:tensorflow-gpu --crosstool_top=@local_config_cuda//crosstool:toolchain
 build:tensorflow-gpu --define=using_cuda=true
 build:tensorflow-gpu --define=using_cuda_nvcc=true
 build:tensorflow-gpu --action_env=TF_NEED_CUDA=1
+build:tensorflow-gpu --action_env=TF_CUDA_COMPUTE_CAPABILITIES=7.0
 build:tensorflow-gpu --copt=-DNDEBUG # https://github.com/tensorflow/tensorflow/issues/22766
 
 # TensorRT.
