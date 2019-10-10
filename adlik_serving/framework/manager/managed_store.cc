@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "adlik_serving/framework/manager/managed_store.h"
 
 #include "adlik_serving/framework/domain/event_bus.h"

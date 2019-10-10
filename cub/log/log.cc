@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "cub/log/log.h"
 #include <stdlib.h>
 #include "cub/env/time/time.h"

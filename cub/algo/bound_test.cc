@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "cub/algo/bound.h"
 #include "cub/array/array_size.h"
 #include "cut/cut.hpp"

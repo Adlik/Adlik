@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef ADLIK_SERVING_PROVIDER_PREDICT_RESPONSE_PROVIDER_H
 #define ADLIK_SERVING_PROVIDER_PREDICT_RESPONSE_PROVIDER_H
 

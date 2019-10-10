@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "adlik_serving/runtime/util/shared_batcher_wrapper.h"
 
 #include "cub/log/log.h"

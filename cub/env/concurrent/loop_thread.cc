@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "cub/env/concurrent/loop_thread.h"
 #include "cub/env/concurrent/concurrent.h"
 #include "cub/env/time/time.h"

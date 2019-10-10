@@ -1,3 +1,6 @@
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 """
 This is a mnist sample which can compile keras h5 model to tf serving/openvino/tensorrt model
 """

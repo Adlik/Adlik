@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 import os
 import shutil
 import subprocess

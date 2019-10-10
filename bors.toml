@@ -1,4 +1,5 @@
 status = [ "Adlik.Adlik" ]
 pr_status = [ "Adlik.Adlik" ]
 timeout_sec = 21600
+delete_merged_branches = true
 use_squash_merge = true

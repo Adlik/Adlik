@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef ADLIK_SERVING_RUNTIME_UTIL_UNIQUE_BATCHER_RUNTIME_HELPER_H
 #define ADLIK_SERVING_RUNTIME_UTIL_UNIQUE_BATCHER_RUNTIME_HELPER_H
 

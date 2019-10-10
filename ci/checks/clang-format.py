@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 import re
 import os
 import subprocess
@@ -36,7 +39,7 @@ def main():
     for file_path in _get_source_files(working_directory):
         if _needs_formatting(file_path):
             has_failure = True
-            print(f'Formatting needed: {os.path.relpath(file_path, working_directory)}')
+            print('Formatting needed:', os.path.relpath(file_path, working_directory))
 
     if has_failure:
         exit(1)
