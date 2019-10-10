@@ -1,3 +1,4 @@
 status = [ "Adlik.Adlik" ]
+pr_status = [ "Adlik.Adlik" ]
 timeout_sec = 21600
 use_squash_merge = true
