@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "adlik_serving/framework/manager/run_options.h"
 #include "adlik_serving/runtime/provider/predict_request_provider.h"
 #include "adlik_serving/runtime/provider/predict_response_provider.h"

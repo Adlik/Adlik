@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef FRAMEWORK_DOMAIN_DIMS_LIST_H_
 #define FRAMEWORK_DOMAIN_DIMS_LIST_H_
 

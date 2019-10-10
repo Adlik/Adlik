@@ -118,6 +118,15 @@ jobs:
         displayName: Use latest Python
       - script: ci/checks/commit-message.py
         displayName: Check commit message
+  - job: Copyright
+    displayName: Copyright
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: ci/checks/copyright.py
+        displayName: Check copyright notations
   - job: Flake8
     displayName: Flake8
     pool:

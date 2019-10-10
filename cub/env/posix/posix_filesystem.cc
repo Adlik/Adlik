@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "cub/env/posix/posix_filesystem.h"
 #include "cub/base/assertions.h"
 #include "cub/env/fs/path.h"

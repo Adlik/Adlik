@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "adlik_serving/server/grpc/grpc_options.h"
 
 #include "adlik_serving/server/grpc/ssl_config.pb.h"

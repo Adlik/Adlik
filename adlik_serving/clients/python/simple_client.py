@@ -1,3 +1,6 @@
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 """
 This is a sample for Adlik serving prediction,
 use model plan_float16_float32_float32 which runs on tensorRT platform

@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "cub/protobuf/text_protobuf.h"
 #include "cub/env/env.h"
 #include "google/protobuf/text_format.h"
