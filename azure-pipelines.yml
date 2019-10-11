@@ -34,7 +34,7 @@ jobs:
             set -e
             export INTEL_CVSDK_DIR=/opt/intel/openvino_2019.3.344
             export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share
-            ci/checks/bazel-build-serving.py --config=openvino --incompatible_no_support_tools_in_action_inputs=false
+            ci/checks/bazel-build-serving.py --config=openvino --incompatible_no_support_tools_in_action_inputs=false --incompatible_disable_nocopts=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
@@ -50,7 +50,7 @@ jobs:
       - template: ci/azure-pipelines/install-bazel.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: ci/checks/bazel-build-serving.py --config=tensorflow-cpu --incompatible_no_support_tools_in_action_inputs=false
+      - script: ci/checks/bazel-build-serving.py --config=tensorflow-cpu --incompatible_no_support_tools_in_action_inputs=false --incompatible_disable_nocopts=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
@@ -67,7 +67,7 @@ jobs:
       - template: ci/azure-pipelines/install-cuda.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: ci/checks/bazel-build-serving.py --config=tensorflow-gpu --action_env=TF_CUDA_VERSION=10.0 --incompatible_no_support_tools_in_action_inputs=false
+      - script: ci/checks/bazel-build-serving.py --config=tensorflow-gpu --action_env=TF_CUDA_VERSION=10.0 --incompatible_no_support_tools_in_action_inputs=false --incompatible_disable_nocopts=false --incompatible_use_specific_tool_files=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
@@ -84,7 +84,7 @@ jobs:
       - template: ci/azure-pipelines/install-tensorrt.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: ci/checks/bazel-build-serving.py --config=tensorrt --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs --action_env=TF_CUDA_VERSION=10.0 --incompatible_no_support_tools_in_action_inputs=false
+      - script: ci/checks/bazel-build-serving.py --config=tensorrt --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs --action_env=TF_CUDA_VERSION=10.0 --incompatible_no_support_tools_in_action_inputs=false --incompatible_disable_nocopts=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
