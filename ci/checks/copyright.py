@@ -23,12 +23,10 @@ _C_COPYRIGHT_REGEX = re.compile(r"""// Copyright \d+ ZTE corporation\. All Right
 
 _SCRIPT_COPYRIGHT_TEXT = """# Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-
 """
 
 _C_COPYRIGHT_TEXT = """// Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-
 """
 
 
@@ -83,7 +81,10 @@ def _fix_script(file_path):
             f.write('\n\n')
 
         f.write(_SCRIPT_COPYRIGHT_TEXT)
-        f.write(content)
+
+        if content:
+            f.write('\n')
+            f.write(content)
 
 
 def _fix_c_source(file_path):
@@ -92,7 +93,10 @@ def _fix_c_source(file_path):
 
     with open(file_path, 'w') as f:
         f.write(_C_COPYRIGHT_TEXT)
-        f.write(file_content)
+
+        if file_content:
+            f.write('\n')
+            f.write(file_content)
 
 
 def _fix(file_path):
