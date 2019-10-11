@@ -13,14 +13,18 @@ jobs:
         displayName: Use latest Python
       - script: pip install -U wheel
         displayName: Install additional dependencies
-      - script: ci/checks/bazel-build-clients.py --incompatible_no_support_tools_in_action_inputs=false
+      - template: ci/azure-pipelines/use-build-cache.yml
+        parameters:
+            key: bazel-build-clients
+            path: __bazel_cache
+      - script: ci/checks/bazel-build-clients.py -c opt --incompatible_no_support_tools_in_action_inputs=false
         displayName: Bazel build clients
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
         inputs:
             pathtoPublish: __adlik_clients
             artifactName: adlik-clients
-  - job: BazelBuildServingTensorFlowOpenVINO
+  - job: BazelBuildServingOpenVINO
     displayName: Bazel build serving (OpenVINO)
     pool:
         vmImage: ubuntu-latest
@@ -30,17 +34,24 @@ jobs:
       - template: ci/azure-pipelines/install-openvino.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
+      - template: ci/azure-pipelines/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-openvino
+            path: __bazel_cache
       - script: |
-            set -e
             export INTEL_CVSDK_DIR=/opt/intel/openvino_2019.3.344
             export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share
-            ci/checks/bazel-build-serving.py --config=openvino --incompatible_no_support_tools_in_action_inputs=false --incompatible_disable_nocopts=false
+            ci/checks/bazel-build-serving.py \
+                --config=openvino \
+                -c opt \
+                --incompatible_no_support_tools_in_action_inputs=false \
+                --incompatible_disable_nocopts=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
         inputs:
             pathtoPublish: __adlik_serving/adlik_serving
-            artifactName: adlik-serving-tensorflow-openvino
+            artifactName: adlik-serving-openvino
   - job: BazelBuildServingTensorFlowCPU
     displayName: Bazel build serving (TensorFlow CPU)
     pool:
@@ -50,7 +61,16 @@ jobs:
       - template: ci/azure-pipelines/install-bazel.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: ci/checks/bazel-build-serving.py --config=tensorflow-cpu --incompatible_no_support_tools_in_action_inputs=false --incompatible_disable_nocopts=false
+      - template: ci/azure-pipelines/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-tensorflow-cpu
+            path: __bazel_cache
+      - script: |
+            ci/checks/bazel-build-serving.py \
+                --config=tensorflow-cpu \
+                -c opt \
+                --incompatible_no_support_tools_in_action_inputs=false \
+                --incompatible_disable_nocopts=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
@@ -67,7 +87,18 @@ jobs:
       - template: ci/azure-pipelines/install-cuda.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: ci/checks/bazel-build-serving.py --config=tensorflow-gpu --action_env=TF_CUDA_VERSION=10.0 --incompatible_no_support_tools_in_action_inputs=false --incompatible_disable_nocopts=false --incompatible_use_specific_tool_files=false
+      - template: ci/azure-pipelines/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-tensorflow-gpu
+            path: __bazel_cache
+      - script: |
+            export TF_CUDA_VERSION=10.0
+            ci/checks/bazel-build-serving.py \
+                --config=tensorflow-gpu \
+                -c opt \
+                --incompatible_no_support_tools_in_action_inputs=false \
+                --incompatible_disable_nocopts=false \
+                --incompatible_use_specific_tool_files=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
@@ -84,7 +115,18 @@ jobs:
       - template: ci/azure-pipelines/install-tensorrt.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: ci/checks/bazel-build-serving.py --config=tensorrt --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs --action_env=TF_CUDA_VERSION=10.0 --incompatible_no_support_tools_in_action_inputs=false --incompatible_disable_nocopts=false
+      - template: ci/azure-pipelines/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-tensorrt
+            path: __bazel_cache
+      - script: |
+            export TF_CUDA_VERSION=10.0
+            ci/checks/bazel-build-serving.py \
+                --config=tensorrt \
+                --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
+                -c opt \
+                --incompatible_no_support_tools_in_action_inputs=false \
+                --incompatible_disable_nocopts=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
