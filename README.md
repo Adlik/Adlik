@@ -38,13 +38,134 @@ much flexible and easy way.
 4. Automatic selection of inference runtime.
 5. Ability to add customized runtime.
 
-## How to build
+## Build
 
-1. Install Git and [Bazel](https://docs.bazel.build/install.html).
+This guide is for building Adlik on [Ubuntu](https://ubuntu.com) systems.
+
+First, install [Git](https://git-scm.com/download) and [Bazel](https://docs.bazel.build/install.html).
+
+Then, clone Adlik and change the working directory into the source directory:
+
+```sh
+git clone https://github.com/ZTE/Adlik.git
+cd Adlik
+```
+
+### Build clients
+
+1. Install the following packages:
+   - `python3-setuptools`
+   - `python3-wheel`
+2. Build clients:
+
+   ```sh
+   bazel build //adlik_serving/clients/python:build_pip_package -c opt --incompatible_no_support_tools_in_action_inputs=false
+   ```
+
+3. Build pip package:
+
+   ```sh
+   mkdir /tmp/pip-packages && bazel-bin/adlik_serving/clients/python/build_pip_package /tmp/pip-packages
+   ```
+
+### Build serving
+
+First, install the following packages:
+
+- `automake`
+- `libtool`
+- `make`
+
+#### Build serving with OpenVINO runtime
+
+1. Install `intel-openvino-ie-rt-core` package from
+   [OpenVINO](https://software.intel.com/en-us/openvino-toolkit/choose-download).
+2. Assume the installation path of OpenVINO is `/opt/intel/openvino_VERSION`, run the following command:
+
+   ```sh
+   export INTEL_CVSDK_DIR=/opt/intel/openvino_VERSION
+   export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share
+   bazel build //adlik_serving \
+       --config=openvino \
+       -c opt \
+       --incompatible_no_support_tools_in_action_inputs=false \
+       --incompatible_disable_nocopts=false
+   ```
+
+#### Build serving with TensorFlow CPU runtime
+
+Run the following command:
+
+```sh
+bazel build //adlik_serving \
+    --config=tensorflow-cpu \
+    -c opt \
+    --incompatible_no_support_tools_in_action_inputs=false \
+    --incompatible_disable_nocopts=false
+```
+
+#### Build serving with TensorFlow GPU runtime
+
+Assume builing with CUDA version 10.0.
+
+1. Install the following packages from
+   [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
+   [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
+
+   - `cuda-cublas-dev-10-0`
+   - `cuda-cufft-dev-10-0`
+   - `cuda-cupti-10-0`
+   - `cuda-curand-dev-10-0`
+   - `cuda-cusolver-dev-10-0`
+   - `cuda-cusparse-dev-10-0`
+   - `libcudnn7=*+cuda10.0`
+   - `libcudnn7-dev=*+cuda10.0`
 2. Run the following command:
 
-   ```bash
-   git clone https://github.com/ZTE/Adlik.git
-   cd Adlik
-   bazel build //adlik_serving --config=tensorflow-cpu --incompatible_no_support_tools_in_action_inputs=false
+   ```sh
+   env TF_CUDA_VERSION=10.0 \
+       bazel build //adlik_serving \
+           --config=tensorflow-gpu \
+           -c opt \
+           --incompatible_no_support_tools_in_action_inputs=false \
+           --incompatible_disable_nocopts=false \
+           --incompatible_use_specific_tool_files=false
    ```
+
+#### Build serving with TensorRT runtime
+
+Assume builing with CUDA version 10.0.
+
+1. Install the following packages from
+   [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
+   [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
+
+   - `cuda-cublas-10-0`
+   - `cuda-cufft-10-0`
+   - `cuda-cupti-10-0`
+   - `cuda-curand-10-0`
+   - `cuda-cusolver-10-0`
+   - `cuda-cusparse-10-0`
+   - `cuda-nvml-dev-10-0`
+   - `libcudnn7=*+cuda10.0`
+   - `libcudnn7-dev=*+cuda10.0`
+   - `libnvinfer6=*+cuda10.0`
+   - `libnvinfer-dev=*+cuda10.0`
+   - `libnvonnxparsers6=*+cuda10.0`
+   - `libnvonnxparsers-dev=*+cuda10.0`
+2. Run the following command:
+
+   ```sh
+    env TF_CUDA_VERSION=10.0 \
+        bazel build //adlik_serving \
+            --config=tensorrt \
+            -c opt \
+            --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
+            --incompatible_no_support_tools_in_action_inputs=false \
+            --incompatible_disable_nocopts=false
+   ```
+
+### Build in Docker
+
+The `ci/docker/build.sh` file can be used to build a Docker images that contains all the requirements for building
+Adlik. You can build Adlik inside the Docker image.

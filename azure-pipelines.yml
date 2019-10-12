@@ -92,13 +92,13 @@ jobs:
             key: bazel-build-serving-tensorflow-gpu
             path: __bazel_cache
       - script: |
-            export TF_CUDA_VERSION=10.0
-            ci/checks/bazel-build-serving.py \
-                --config=tensorflow-gpu \
-                -c opt \
-                --incompatible_no_support_tools_in_action_inputs=false \
-                --incompatible_disable_nocopts=false \
-                --incompatible_use_specific_tool_files=false
+            env TF_CUDA_VERSION=10.0 \
+                ci/checks/bazel-build-serving.py \
+                    --config=tensorflow-gpu \
+                    -c opt \
+                    --incompatible_no_support_tools_in_action_inputs=false \
+                    --incompatible_disable_nocopts=false \
+                    --incompatible_use_specific_tool_files=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
@@ -120,13 +120,13 @@ jobs:
             key: bazel-build-serving-tensorrt
             path: __bazel_cache
       - script: |
-            export TF_CUDA_VERSION=10.0
-            ci/checks/bazel-build-serving.py \
-                --config=tensorrt \
-                --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
-                -c opt \
-                --incompatible_no_support_tools_in_action_inputs=false \
-                --incompatible_disable_nocopts=false
+            env TF_CUDA_VERSION=10.0 \
+                ci/checks/bazel-build-serving.py \
+                    --config=tensorrt \
+                    -c opt \
+                    --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
+                    --incompatible_no_support_tools_in_action_inputs=false \
+                    --incompatible_disable_nocopts=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
