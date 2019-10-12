@@ -11,7 +11,7 @@ import sys
 
 def main(args):
     target_file = '__adlik_serving/adlik_serving'
-    subprocess.check_call(['bazel', 'build', '--disk_cache=__bazel_cache', *args, '//adlik_serving'])
+    subprocess.check_call(['bazel', 'build', '//adlik_serving', *args, '--disk_cache=__bazel_cache'])
 
     os.makedirs(os.path.dirname(target_file), exist_ok=True)
 
