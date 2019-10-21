@@ -8,7 +8,7 @@ import subprocess
 
 
 def main():
-    subject_regex = re.compile(r'[^a-z\s]\S*( \S+)*')
+    subject_regex = re.compile(r'[^a-z\s]\S*( \S+)*[^.]')
     has_failure = False
 
     commit_messages = subprocess.check_output(args=['git', 'log', '--format=%s', 'origin/master..'],
@@ -19,7 +19,7 @@ def main():
             print('Valid commit message subject:', subject)
         else:
             has_failure = True
-            print('Invalid commit message subject', subject)
+            print('Invalid commit message subject:', subject)
 
     if has_failure:
         exit(1)
