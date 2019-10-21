@@ -117,7 +117,7 @@ cc_library(
 http_file(
     name = "bazel_extra_actions_base_proto",
     sha256 = "0d91fe29a80d2754f13e379713da37750c42425d92ef7de77f60acdb82479edc",
-    urls = ["https://github.com/bazelbuild/bazel/raw/0.29.1/src/main/protobuf/extra_actions_base.proto"],
+    urls = ["https://github.com/bazelbuild/bazel/raw/1.0.0/src/main/protobuf/extra_actions_base.proto"],
 )
 
 # Adlik serving dependencies.
