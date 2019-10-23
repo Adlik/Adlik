@@ -17,9 +17,9 @@ def _get_source_files(compilation_database):
 def _get_compilation_database(build_args):
     subprocess.check_call(['bazel',
                            'build',
-                           '--experimental_action_listener=//ci:ci-action-listener',
+                           '//adlik_serving',
                            *build_args,
-                           '//adlik_serving'])
+                           '--experimental_action_listener=//ci:ci-action-listener'])
 
     return subprocess.check_output(args=['ci/tools/build-compilation-database.py'], universal_newlines=True)
 

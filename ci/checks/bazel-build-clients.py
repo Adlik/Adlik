@@ -13,8 +13,7 @@ def main(args):
     subprocess.check_call(['bazel',
                            'build',
                            '//adlik_serving/clients/python:build_pip_package',
-                           *args,
-                           '--disk_cache=__bazel_cache'])
+                           *args])
 
     wheel_directory = os.path.join(os.getcwd(), '__adlik_clients')
 
