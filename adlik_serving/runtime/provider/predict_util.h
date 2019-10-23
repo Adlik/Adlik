@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef SERVINGLTE_RUNTIME_PROVIDER_PREDICT_UTIL_H
 #define SERVINGLTE_RUNTIME_PROVIDER_PREDICT_UTIL_H
 

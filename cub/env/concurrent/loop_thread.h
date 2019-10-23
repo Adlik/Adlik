@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef HE4857464_7416_4F76_8B8F_1612ADF91328
 #define HE4857464_7416_4F76_8B8F_1612ADF91328
 

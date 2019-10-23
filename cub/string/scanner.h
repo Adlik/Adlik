@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef RRTX_4775_BBGR_DRE2_BR64_BHDT0_12BVF
 #define RRTX_4775_BBGR_DRE2_BR64_BHDT0_12BVF
 

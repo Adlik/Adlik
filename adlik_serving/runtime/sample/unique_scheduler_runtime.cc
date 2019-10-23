@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "adlik_serving/runtime/batching/batch_processor.h"
 #include "adlik_serving/runtime/batching/batching_model.h"
 #include "adlik_serving/runtime/util/unique_batcher_runtime_helper.h"

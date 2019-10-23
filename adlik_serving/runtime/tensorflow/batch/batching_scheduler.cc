@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "adlik_serving/runtime/tensorflow/batch/batching_scheduler.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_parameters.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_processor.h"

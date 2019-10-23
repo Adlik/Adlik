@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "cub/algo/range.h"
 #include <type_traits>
 #include "cub/base/static_assert.h"

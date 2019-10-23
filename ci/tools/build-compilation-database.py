@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 import json
 import os
 import re
-import subprocess
 import sys
 
 
 _UNKNOWN_ARGUMENTS = [
     '-fno-canonical-system-headers'
 ]
-
-
-def _bazel_info(key):
-    return subprocess.check_output(args=['bazel', 'info', key], universal_newlines=True).strip()
 
 
 def _get_compile_command_files(dump_command_command_action_root):
@@ -49,8 +47,8 @@ def _sanitize_compile_command(compile_command, execution_root):
 
 
 def main():
-    execution_root = _bazel_info('execution_root')
-    build_root = os.path.dirname(_bazel_info('bazel-bin'))
+    build_root = os.path.dirname(os.readlink('bazel-bin'))
+    execution_root = os.path.dirname(os.path.dirname(build_root))
 
     dump_command_command_action_root = os.path.join(build_root,
                                                     'extra_actions',

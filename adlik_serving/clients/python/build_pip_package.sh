@@ -25,13 +25,13 @@ function main() {
   mkdir -p ${TMPDIR}/adlik_serving/apis
 
   echo "Adding python files"
-  cp bazel-genfiles/adlik_serving/apis/*_pb2.py \
+  cp bazel-bin/adlik_serving/apis/*_pb2.py \
     "${TMPDIR}/adlik_serving/apis"
 
-  cp bazel-genfiles/adlik_serving/apis/*_pb2_grpc.py \
+  cp bazel-bin/adlik_serving/apis/*_pb2_grpc.py \
     "${TMPDIR}/adlik_serving/apis"
 
-  cp bazel-genfiles/adlik_serving/framework/domain/*_pb2.py \
+  cp bazel-bin/adlik_serving/framework/domain/*_pb2.py \
     "${TMPDIR}/adlik_serving/framework/domain"
 
   cp adlik_serving/clients/python/__init__.py \

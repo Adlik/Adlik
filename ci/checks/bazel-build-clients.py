@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 import os
 import re
 import subprocess
@@ -7,7 +10,10 @@ import sys
 
 
 def main(args):
-    subprocess.check_call(['bazel', 'build', *args, '//adlik_serving/clients/python:build_pip_package'])
+    subprocess.check_call(['bazel',
+                           'build',
+                           '//adlik_serving/clients/python:build_pip_package',
+                           *args])
 
     wheel_directory = os.path.join(os.getcwd(), '__adlik_clients')
 

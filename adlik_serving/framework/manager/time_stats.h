@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef FRAMEWORK_MANAGER_TIME_STATS_H
 #define FRAMEWORK_MANAGER_TIME_STATS_H
 

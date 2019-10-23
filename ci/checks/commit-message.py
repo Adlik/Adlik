@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 import re
 import subprocess
 
 
 def main():
-    commit_message_subject = subprocess.check_output(args=['git', 'log', '-1', '--format=%s'], universal_newlines=True)
+    subject_regex = re.compile(r'[^a-z\s]\S*( \S+)*[^.]')
+    has_failure = False
 
-    if not re.fullmatch(r'[A-Z0-9][^\s]*( [^\s]+)*\n', commit_message_subject):
-        print('Invalid commit message subject:')
-        print(commit_message_subject)
+    commit_messages = subprocess.check_output(args=['git', 'log', '--format=%s', 'origin/master..'],
+                                              universal_newlines=True)
 
+    for subject in commit_messages.splitlines():
+        if subject_regex.fullmatch(subject):
+            print('Valid commit message subject:', subject)
+        else:
+            has_failure = True
+            print('Invalid commit message subject:', subject)
+
+    if has_failure:
         exit(1)
 
 

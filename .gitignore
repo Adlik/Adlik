@@ -1,8 +1,9 @@
+/__*
 /bazel-*
 *.egg-info/
 *.pyc
 .cache/
+.idea/
 .pytest_cache/
 .tox/
 .vscode/
-
