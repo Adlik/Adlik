@@ -1,6 +1,6 @@
 #include "adlik_serving/framework/domain/version_list.h"
 #include "adlik_serving/framework/domain/version_policy.pb.h"
-
+#include <algorithm>
 namespace adlik {
 namespace serving {
 

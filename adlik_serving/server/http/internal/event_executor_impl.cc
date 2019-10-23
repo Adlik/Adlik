@@ -1,6 +1,7 @@
 #include "adlik_serving/server/http/internal/event_executor.h"
 
 #include "cub/task/concurrent_executor.h"
+#include <algorithm>
 
 namespace adlik {
 namespace serving {

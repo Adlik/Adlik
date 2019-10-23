@@ -4,6 +4,8 @@
 #include <NvOnnxParserRuntime.h>
 #include <cuda_runtime_api.h>
 
+#include <algorithm>
+
 #include "adlik_serving/framework/domain/model_config_helper.h"
 #include "adlik_serving/framework/manager/time_stats.h"
 #include "adlik_serving/runtime/batching/batch_processor.h"
@@ -13,7 +15,6 @@
 #include "adlik_serving/runtime/tensorrt/model/trt_util.h"
 #include "cub/log/log.h"
 #include "tensorflow/core/lib/core/errors.h"
-
 namespace tensorrt {
 
 using namespace adlik::serving;

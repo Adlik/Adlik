@@ -1,6 +1,7 @@
 #include "cub/env/concurrent/loop_thread.h"
 #include "cub/env/concurrent/concurrent.h"
 #include "cub/env/time/time.h"
+#include <algorithm>
 
 namespace cub {
 
