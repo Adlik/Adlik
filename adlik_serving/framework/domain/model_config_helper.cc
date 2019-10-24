@@ -3,10 +3,11 @@
 
 #include "adlik_serving/framework/domain/model_config_helper.h"
 
+#include <algorithm>
+
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/io/path.h"
 #include "tensorflow/core/platform/env.h"
-#include <algorithm>
 
 #if GOOGLE_CUDA
 

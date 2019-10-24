@@ -1,10 +1,10 @@
 // Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-#include "adlik_serving/server/http/internal/event_executor.h"
-
-#include "cub/task/concurrent_executor.h"
 #include <algorithm>
+
+#include "adlik_serving/server/http/internal/event_executor.h"
+#include "cub/task/concurrent_executor.h"
 
 namespace adlik {
 namespace serving {

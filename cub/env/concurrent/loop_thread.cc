@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/env/concurrent/loop_thread.h"
+
+#include <algorithm>
+
 #include "cub/env/concurrent/concurrent.h"
 #include "cub/env/time/time.h"
-#include <algorithm>
 
 namespace cub {
 
