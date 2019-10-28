@@ -168,4 +168,4 @@ Assume builing with CUDA version 10.0.
 ### Build in Docker
 
 The `ci/docker/build.sh` file can be used to build a Docker images that contains all the requirements for building
-Adlik. You can build Adlik inside the Docker image.
+Adlik. You can build Adlik with the Docker image.
