@@ -5,8 +5,8 @@ steps:
   - task: CacheBeta@1
     displayName: Set up build cache
     inputs:
-        key: ${{ parameters.key }} | $(Build.SourceVersion)
+        key: ${{ parameters.key }} | $(Agent.OS) | $(Build.SourceVersion)
         path: ${{ parameters.path }}
         restoreKeys: |
-            ${{ parameters.key }} | $(Build.SourceVersion)
-            ${{ parameters.key }}
+            ${{ parameters.key }} | $(Agent.OS) | $(Build.SourceVersion)
+            ${{ parameters.key }} | $(Agent.OS)
