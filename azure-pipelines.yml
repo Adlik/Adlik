@@ -61,8 +61,14 @@ jobs:
             artifactName: adlik-serving-openvino
   - job: BazelBuildServingTensorFlowCPU
     displayName: Bazel build serving (TensorFlow CPU)
+    strategy:
+        matrix:
+            Linux:
+              vmImage: ubuntu-latest
+            macOS:
+              vmImage: macos-latest
     pool:
-        vmImage: ubuntu-latest
+        vmImage: $(vmImage)
     timeoutInMinutes: 0
     steps:
       - template: ci/azure-pipelines/install-bazel.yml
