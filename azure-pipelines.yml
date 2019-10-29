@@ -90,7 +90,7 @@ jobs:
         displayName: Publish build artifacts
         inputs:
             pathtoPublish: __adlik_serving/adlik_serving
-            artifactName: adlik-serving-tensorflow-cpu
+            artifactName: adlik-serving-tensorflow-cpu ($(Agent.OS))
   - job: BazelBuildServingTensorFlowGPU
     displayName: Bazel build serving (TensorFlow GPU)
     pool:
