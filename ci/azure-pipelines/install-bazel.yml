@@ -6,6 +6,6 @@ steps:
             sudo apt-get install --no-install-recommends -y bazel
         elif [ "$AGENT_OS" = Darwin ]; then
             brew tap bazelbuild/tap
-            brew install automake bazelbuild/tap/bazel
+            brew install automake bazelbuild/tap/bazel libtool
         fi
     displayName: Install Bazel
