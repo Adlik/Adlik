@@ -16,7 +16,7 @@ struct BatchingParameters;
 
 DEFINE_ROLE(BatchingScheduler) {
   Status config();
-  Status append(const ModelSignature&, BatchingProcessor&, UniqueBatcher&);
+  Status append(const SharedBatcher::QueueOptions&, const ModelSignature&, BatchingProcessor&, UniqueBatcher&);
 
 private:
   SharedBatcher::QueueOptions options() const;
