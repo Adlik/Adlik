@@ -4,6 +4,7 @@
 """
 Entry for model compiler.
 """
+import argparse
 
 from .config import create_config
 from .log_util import get_logger, setup_logger
@@ -11,6 +12,7 @@ from .message import fail, send_response
 from .runtime import create_compiler
 
 _LOGGER = get_logger(__name__)
+FLAGS = None
 
 
 def main():
@@ -22,7 +24,7 @@ def main():
 
     config = None
     try:
-        config = create_config()
+        config = create_config(FLAGS.config_source, FLAGS.json_file)
         _LOGGER.info('Begin to compile model, config: %s', config)
     except Exception as error:  # pylint:disable=broad-except
         _LOGGER.fatal("create config fail, error: %s, and can't send response", error)
@@ -41,4 +43,11 @@ def main():
 
 
 if __name__ == "__main__":
+    PARSER = argparse.ArgumentParser()
+    PARSER.add_argument('-s', '--config-source', type=str, required=False, default='env',
+                        help='source of model config, can be env or json')
+    PARSER.add_argument('-p', '--json-file', type=str, required=False, default=None,
+                        help='path of json file')
+
+    FLAGS = PARSER.parse_args()
     main()
