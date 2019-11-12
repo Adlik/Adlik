@@ -13,6 +13,9 @@
 | Yongcheng Wang |   ZTE   | wang.yongcheng@zte.com.cn | wangyongcheng126914 |
 | Zhenyu Wang    |   ZTE   | wang.zhenyu32@zte.com.cn  | wangzhenyu32        |
 | Lufan Zhao     |   ZTE   |  zhao.lufan30@zte.com.cn  | EFanZh              |
+| Liya Yuan      |   ZTE   |   yuan.liya@zte.com.cn    | yuanliya            |
+| Tengfei Liu    |   China Unicom   |  liutf24@chinaunicom.cn  | liutengfei0 |
+| Jie Wu         |   China Mobile   |  wujieyjy@chinamobile.com  | wuqufuhua |
 
 ## Maintainers
 
