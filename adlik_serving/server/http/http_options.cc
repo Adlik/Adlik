@@ -27,7 +27,7 @@ void HttpOptions::subscribe(cub::ProgramOptions& prog) {
                   "set, will be auto set based on number of CPUs."),
       cub::option("http_timeout_in_ms", &timeout, "Timeout for HTTP/REST API calls."),
   }};
-  return prog.add(options);
+  prog.add(options);
 }
 
 std::unique_ptr<ServerInterface> HttpOptions::build() {
