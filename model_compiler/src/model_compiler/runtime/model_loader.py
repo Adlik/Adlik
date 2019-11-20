@@ -28,11 +28,14 @@ def _get_tensor_shape_in_list(tensor):
     :param tensor: Tensor
     :return:list, not contain batch dimension
     """
-    shape = tensor.shape.as_list()
-    if shape[0] is None:
-        shape.pop(0)
-    shape = [-1 if i is None else i for i in shape]
-    return shape
+    if tensor.shape:
+        shape = tensor.shape.as_list()
+        if shape and shape[0] is None:
+            shape.pop(0)
+        shape = [-1 if i is None else i for i in shape]
+        return shape
+    else:
+        return []
 
 
 class _Input:
