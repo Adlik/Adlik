@@ -119,6 +119,7 @@ tensorflow::Status NormalizeModelConfig(ModelConfigProto& config) {
     return tensorflow::errors::Internal(
         "unable to get number of CUDA devices for ", config.name(), ": ", cudaGetErrorString(cuerr));
   }
+
 #endif
 
   // Assign default name, kind and count to each instance group that
