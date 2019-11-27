@@ -32,12 +32,8 @@ std::string nameOfPlan(const ModelConfigProto& config, const int gpu_device) {
   cudaError_t cuerr = cudaGetDeviceProperties(&cuprops, gpu_device);
   if (cuerr != cudaSuccess) {
     FATAL_LOG << "unable to get CUDA device properties for " << config.name() << ": " << cudaGetErrorString(cuerr);
-    return kTensorRTPlanFilename;
   }
-
-  const std::string cc = std::to_string(cuprops.major) + "." + std::to_string(cuprops.minor);
-  const auto cc_itr = config.cc_model_filenames().find(cc);
-  return (cc_itr == config.cc_model_filenames().end()) ? kTensorRTPlanFilename : cc_itr->second;
+  return kTensorRTPlanFilename;
 }
 
 tensorflow::Status createInstance(const ModelConfigProto& config,

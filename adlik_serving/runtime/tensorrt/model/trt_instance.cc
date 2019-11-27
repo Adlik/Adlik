@@ -243,9 +243,9 @@ tensorflow::Status Instance::createExecuteContext() {
     return tensorflow::errors::Internal("unable to create TensorRT context");
   }
 
-  // Create CUDA stream associated with the execution context
+  // Create CUDA stream associated with the execution context, should call "cudaDeviceGetStreamPriorityRange" and
+  // get numerical values that correspond to the least and greatest stream priorities. But now we use default "0"
   int cuda_stream_priority = 0;
-  TF_RETURN_IF_ERROR(GetCudaPriority(config.optimization().priority(), &cuda_stream_priority));
   auto cuerr = cudaStreamCreateWithPriority(&stream, cudaStreamDefault, cuda_stream_priority);
   if (cuerr != cudaSuccess) {
     return tensorflow::errors::Internal("unable to create stream for ", config.name(), ": ", cudaGetErrorString(cuerr));

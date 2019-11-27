@@ -42,7 +42,7 @@ struct ErrorListener : IErrorListener {
 ErrorListener error_listener;
 
 struct PluginLoader : BatchProcessor {
-  explicit PluginLoader(const adlik::serving::ModelConfigProto& config) : config(config) {
+  PluginLoader(const std::string& name, const adlik::serving::ModelConfigProto& config) : name(name), config(config) {
   }
 
   tensorflow::Status load(const std::string& path);
@@ -51,14 +51,16 @@ struct PluginLoader : BatchProcessor {
   OVERRIDE(tensorflow::Status processBatch(MyBatch&));
 
 private:
+  std::string name;
   adlik::serving::ModelConfigProto config;
   mutable InferRequest infer_request;
   BlobMap outputs;
   BlobMap inputs;
+  InferenceEngine::Core core;
 
   tensorflow::Status setInputBlob(InputsDataMap inputsInfo);
   tensorflow::Status setOutputBlob(OutputsDataMap outputsInfo);
-  ExecutableNetwork getExeNetWork(CNNNetwork cnnNetwork);
+  ExecutableNetwork getExeNetWork(const CNNNetwork& cnnNetwork);
 
   tensorflow::Status mergeInputs(MyBatch&);
   tensorflow::Status splitOutputs(MyBatch&);
@@ -79,7 +81,7 @@ tensorflow::Status PluginLoader::load(const std::string& path) {
     INFO_LOG << "Cannot load the model";
     return tensorflow::errors::Internal("Cannot load the model ", config.name());
   }
-  const int currentBatchSize = netReader.getNetwork().getBatchSize();
+  auto currentBatchSize = netReader.getNetwork().getBatchSize();
   if (currentBatchSize != config.max_batch_size()) {
     netReader.getNetwork().setBatchSize(config.max_batch_size());
   }
@@ -134,37 +136,22 @@ tensorflow::Status PluginLoader::setOutputBlob(OutputsDataMap outputsInfo) {
   return tensorflow::Status::OK();
 }
 
-ExecutableNetwork PluginLoader::getExeNetWork(CNNNetwork cnnNetwork) {
-  std::string pluginPath = getenv("INTEL_CVSDK_DIR");
-  pluginPath += "/deployment_tools/inference_engine/lib/ubuntu_16.04/intel64";
-  std::vector<std::string> pluginPathVec = {pluginPath};
-  InferencePlugin plugin = PluginDispatcher(pluginPathVec).getPluginByDevice("CPU");
-  static_cast<InferenceEngine::InferenceEnginePluginPtr>(plugin)->SetLogCallback(error_listener);
-  plugin.AddExtension(std::make_shared<Extensions::Cpu::CpuExtensions>());
-  std::map<std::string, std::string> plugInConfig;
-  plugInConfig[PluginConfigParams::KEY_PERF_COUNT] = PluginConfigParams::YES;
-  // limit threading for CPU portion of inference
-  plugInConfig[PluginConfigParams::KEY_CPU_THREADS_NUM] = std::to_string(1);
-  // pin threads for CPU portion of inference
-  plugInConfig[PluginConfigParams::KEY_CPU_BIND_THREAD] = PluginConfigParams::YES;
-  // for pure CPU execution, more throughput-oriented execution via streams
-  plugInConfig[PluginConfigParams::KEY_CPU_THROUGHPUT_STREAMS] = std::to_string(1);
-  return plugin.LoadNetwork(cnnNetwork, plugInConfig);
+ExecutableNetwork PluginLoader::getExeNetWork(const CNNNetwork& cnnNetwork) {
+  return core.LoadNetwork(cnnNetwork, "CPU");
 }
 
 tensorflow::Status PluginLoader::processBatch(MyBatch& batch) {
-  INFO_LOG << "Running with " << batch.size() << " request payloads";
+  DEBUG_LOG << "Instance \"" << name << "\" running with " << batch.size() << " request payloads";
 
-  tensorflow::Status status = tensorflow::Status::OK();
-  status = mergeInputs(batch);
+  auto status = mergeInputs(batch);
   if (!status.ok()) {
-    INFO_LOG << status.error_message() << std::endl;
+    ERR_LOG << "After merge inputs, error message: " << status.error_message() << std::endl;
     return status;
   }
   infer_request.Infer();
   status = splitOutputs(batch);
   if (!status.ok()) {
-    INFO_LOG << "After predict, error message: " << status.error_message();
+    ERR_LOG << "After predict, error message: " << status.error_message();
   }
   return status;
 }
@@ -273,10 +260,11 @@ Precision PluginLoader::getOutputDataType(const std::string& outputName) {
   return Precision::UNSPECIFIED;
 }
 
-tensorflow::Status createInstance(const ModelConfig& config,
+tensorflow::Status createInstance(const std::string& instance_name,
+                                  const ModelConfig& config,
                                   const std::string& path,
                                   std::unique_ptr<BatchProcessor>* model) {
-  std::unique_ptr<PluginLoader> raw = std::make_unique<PluginLoader>(config);
+  std::unique_ptr<PluginLoader> raw = std::make_unique<PluginLoader>(instance_name, config);
   TF_RETURN_IF_ERROR(raw->load(path));
   *model = std::move(raw);
   return tensorflow::Status::OK();
@@ -288,9 +276,11 @@ IRModel::IRModel(const ModelConfig& config, const ModelId& model_id) : config(co
 }
 
 tensorflow::Status IRModel::init() {
-  std::unique_ptr<BatchProcessor> instance;
-  TF_RETURN_IF_ERROR(createInstance(config, config.getModelPath(model_id), &instance));
-  add(std::move(instance));
+  for (const auto& group : config.instance_group()) {
+    std::unique_ptr<BatchProcessor> instance;
+    TF_RETURN_IF_ERROR(createInstance(group.name(), config, config.getModelPath(model_id), &instance));
+    add(std::move(instance));
+  }
   return tensorflow::Status::OK();
 }
 
