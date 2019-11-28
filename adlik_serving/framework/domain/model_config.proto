@@ -73,29 +73,27 @@ message ModelOutput {
   string label_filename = 4;
 }
 
-//@@
-//@@.. cpp:var:: message ModelDynamicBatching
-//@@
-//@@   Dynamic batching configuration. These settings control if/how dynamic
-//@@   batching operates for the model.
-//@@
+// Dynamic batching configuration. These settings control if/how dynamic
+// batching operates for the model.
 message ModelDynamicBatching {
-  //@@  .. cpp:var:: int32 preferred_batch_size (repeated)
-  //@@
-  //@@     Preferred batch sizes for dynamic batching. If a batch of one of
-  //@@     these sizes can be formed it will be executed immediately.  If
-  //@@     not specified a preferred batch size will be chosen automatically
-  //@@     based on model and GPU characteristics.
-  //@@
+  // Preferred batch sizes for dynamic batching. If a batch of one of
+  // these sizes can be formed it will be executed immediately.  If
+  // not specified a preferred batch size will be chosen automatically
+  // based on model and GPU characteristics.
   repeated int32 preferred_batch_size = 1;
 
-  //@@  .. cpp:var:: int32 max_queue_delay_microseconds
-  //@@
-  //@@     The maximum time, in microseconds, a request will be delayed in
-  //@@     the scheduling queue to wait for additional requests for
-  //@@     batching. Default is 0.
-  //@@
+  // The maximum time, in microseconds, a request will be delayed in
+  // the scheduling queue to wait for additional requests for
+  // batching. Default is 0.
   int32 max_queue_delay_microseconds = 2;
+
+  // The maximum length of the queue, in terms of the number of batches. (A
+  // batch that has been scheduled on a thread is considered to have been
+  // removed from the queue.)
+  int32 max_enqueued_batches = 3;
+
+  // Whether to pad variable-length inputs when a batch is formed.
+  bool pad_variable_length_inputs = 7;
 }
 
 message ModelConfigProto {
@@ -123,11 +121,8 @@ message ModelConfigProto {
 
   repeated ModelOutput output = 7;
 
-  //@@  .. cpp:var:: ModelDynamicBatching dynamic_batching
-  //@@
-  //@@     Dynamic batching configuration for the model. If not specified
-  //@@     then dynamic batching is disabled for the model.
-  //@@
+  // Dynamic batching configuration for the model. If not specified
+  // then dynamic batching is disabled for the model.
   ModelDynamicBatching dynamic_batching = 12;
 
   repeated ModelInstanceGroup instance_group = 8;
