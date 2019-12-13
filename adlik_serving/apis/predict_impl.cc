@@ -32,11 +32,11 @@ void addClassResults(PredictResponse_Output& output,
   const tensorflow::TensorProto& tensor = output.tensor();
   const size_t entry_cnt = tensor.tensor_content().size() / (batch_size * sizeof(T));
   if (entry_cnt <= 0) {
-    INFO_LOG << "tensor content size is 0, can't set classes info";
+    DEBUG_LOG << "tensor content size is 0, can't set classes info";
     return;
   }
 
-  INFO_LOG << "addClassResults: batch size: " << batch_size << ", class count: " << entry_cnt;
+  DEBUG_LOG << "addClassResults: batch size: " << batch_size << ", class count: " << entry_cnt;
 
   const T* probs = reinterpret_cast<const T*>(tensor.tensor_content().c_str());
   const size_t class_cnt = std::min((size_t)expected_class_count, entry_cnt);
@@ -104,19 +104,22 @@ tensorflow::Status postProcessOutputs(const PredictRequest& req,
 }  // namespace
 
 tensorflow::Status PredictImpl::predict(const RunOptions& options, const PredictRequest& req, PredictResponse& rsp) {
-  TimeStats stats("PredictServiceImpl::predict: process request, model " + req.model_spec().name() + ", batch size " +
-                  std::to_string(req.batch_size()));
-
   std::unique_ptr<ModelHandle> handle = ROLE(ServingStore).find(req.model_spec());
   auto config = ROLE(ModelStore).find(req.model_spec().name());
   if (handle && config) {
     if (auto runtime = RuntimeSuite::inst().get(config->platform())) {
-      auto status = runtime->predict(options, handle.get(), req, rsp);
-      INFO_LOG << "After predict, status: " << status.error_message() << ", code: " << status.code();
+      tensorflow::Status status;
+      {
+        TimeStats stats("PredictServiceImpl::predict: process request, model " + req.model_spec().name() +
+                        ", batch size " + std::to_string(req.batch_size()));
+        status = runtime->predict(options, handle.get(), req, rsp);
+      }
+
+      DEBUG_LOG << "After predict, code: " << status.code() << ", status: " << status.error_message();
       if (status.ok()) {
         if (auto model_config = ROLE(ModelStore).find(req.model_spec().name())) {
           status = postProcessOutputs(req, *model_config, rsp);
-          INFO_LOG << "After postProcessOutputs, status: " << status.error_message() << ", code: " << status.code();
+          DEBUG_LOG << "After postProcessOutputs, status: " << status.error_message() << ", code: " << status.code();
         } else {
           ERR_LOG << "Not found model config when postprocess predict response, "
                      "model name="

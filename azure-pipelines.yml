@@ -61,8 +61,14 @@ jobs:
             artifactName: adlik-serving-openvino
   - job: BazelBuildServingTensorFlowCPU
     displayName: Bazel build serving (TensorFlow CPU)
+    strategy:
+        matrix:
+            Linux:
+              vmImage: ubuntu-latest
+            macOS:
+              vmImage: macos-latest
     pool:
-        vmImage: ubuntu-latest
+        vmImage: $(vmImage)
     timeoutInMinutes: 0
     steps:
       - template: ci/azure-pipelines/install-bazel.yml
@@ -84,7 +90,7 @@ jobs:
         displayName: Publish build artifacts
         inputs:
             pathtoPublish: __adlik_serving/adlik_serving
-            artifactName: adlik-serving-tensorflow-cpu
+            artifactName: adlik-serving-tensorflow-cpu ($(Agent.OS))
   - job: BazelBuildServingTensorFlowGPU
     displayName: Bazel build serving (TensorFlow GPU)
     pool:
@@ -136,7 +142,8 @@ jobs:
                     --disk_cache="$BAZEL_BUILD_CACHE" \
                     --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
                     --incompatible_no_support_tools_in_action_inputs=false \
-                    --incompatible_disable_nocopts=false
+                    --incompatible_disable_nocopts=false \
+                    --incompatible_use_specific_tool_files=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts

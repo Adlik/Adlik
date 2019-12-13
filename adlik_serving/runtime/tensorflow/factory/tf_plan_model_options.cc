@@ -6,7 +6,7 @@
 #include "cub/protobuf/text_protobuf.h"
 
 namespace tensorflow {
-TfPlanModelOptions::TfPlanModelOptions() : enableBatching(false), enableWarmup(true), parallelism(0), fraction(0.0f) {
+TfPlanModelOptions::TfPlanModelOptions() : enableBatching(true), enableWarmup(true), parallelism(0), fraction(0.0f) {
 }
 
 void TfPlanModelOptions::subscribe(cub::ProgramOptions& prog) {

@@ -51,32 +51,6 @@ bool CompareDims(const nvinfer1::Dims& model_dims, const adlik::serving::DimsLis
   return true;
 }
 
-tensorflow::Status GetCudaPriority(adlik::serving::ModelOptimizationPolicy::ModelPriority priority,
-                                   int* cuda_stream_priority) {
-  // Default priority is 0
-  *cuda_stream_priority = 0;
-
-  int min, max;
-  cudaError_t cuerr = cudaDeviceGetStreamPriorityRange(&min, &max);
-  if ((cuerr != cudaErrorNoDevice) && (cuerr != cudaSuccess)) {
-    return tensorflow::errors::Internal("unable to get allowed CUDA stream priorities: ", cudaGetErrorString(cuerr));
-  }
-
-  switch (priority) {
-    case adlik::serving::ModelOptimizationPolicy::PRIORITY_MAX:
-      *cuda_stream_priority = max;
-      break;
-    case adlik::serving::ModelOptimizationPolicy::PRIORITY_MIN:
-      *cuda_stream_priority = min;
-      break;
-    default:
-      *cuda_stream_priority = 0;
-      break;
-  }
-
-  return tensorflow::Status::OK();
-}
-
 tensorflow::Status GetModelVersionFromPath(const tensorflow::StringPiece& path, uint32_t* version) {
   auto version_dir = tensorflow::io::Basename(path);
 

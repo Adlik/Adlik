@@ -1,7 +1,11 @@
 steps:
   - script: |
-        set -e
-        curl https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg | sudo apt-key add -
-        sudo add-apt-repository -u 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8'
-        sudo apt-get install --no-install-recommends -y bazel
+        if [ "$AGENT_OS" = Linux ]; then
+            curl https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg | sudo apt-key add -
+            sudo add-apt-repository -u 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8'
+            sudo apt-get install --no-install-recommends -y bazel
+        elif [ "$AGENT_OS" = Darwin ]; then
+            brew tap bazelbuild/tap
+            brew install automake bazelbuild/tap/bazel libtool
+        fi
     displayName: Install Bazel

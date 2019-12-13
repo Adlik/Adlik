@@ -32,9 +32,6 @@ const std::string DimsDebugString(const T& values) {
   return str;
 }
 
-tensorflow::Status GetCudaPriority(adlik::serving::ModelOptimizationPolicy::ModelPriority priority,
-                                   int* cuda_stream_priority);
-
 tensorflow::Status GetModelVersionFromPath(const tensorflow::StringPiece& path, uint32_t* version);
 
 tensorflow::Status ValidateModelInput(const adlik::serving::ModelInput& io);

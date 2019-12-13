@@ -25,7 +25,7 @@ int threshold() {
 inline void LogStream::trace() const {
   char buf[32];
   timesystem().format(buf);
-  fprintf(stderr, "%s: %c %s:%d] %s\n", buf, "IWEF"[level], file, line, str().c_str());
+  fprintf(stderr, "%s: %c %s:%d] %s\n", buf, "DIWEF"[level], file, line, str().c_str());
 }
 
 LogStream::~LogStream() {

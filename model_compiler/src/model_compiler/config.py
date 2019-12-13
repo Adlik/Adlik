@@ -16,8 +16,6 @@ class _Config:
     def __init__(self, **kwargs):
         if 'job_id' not in kwargs:
             raise Exception('Not found job id in config, config: %s' % kwargs)
-        if 'callback' not in kwargs:
-            raise Exception('Not found callback in config, config: %s' % kwargs)
         self._config = kwargs
         _LOGGER.info('Dump config: %s', self._config)
 
@@ -72,20 +70,29 @@ def _create_config_from_env():
                    output_names=output_names)
 
 
-def _create_config_from_json(json_message):
-    if isinstance(json_message, str):
-        json_message = json.loads(json_message)
+def _create_config_from_json(json_file):
+    with open(json_file) as input_file:
+        json_message = json.load(input_file)
     return _Config(**json_message)
 
 
-def create_config(from_source='env', json_message=None) -> object:
+def create_config(from_source='env', json_file=None) -> object:
     """
     Create message config, default from environment variables
     :param from_source: from where parse message, e.g. 'env' or 'json'
-    :param json_message: json message
+    :param json_file: json message
     :return:
     """
     if from_source == 'env':
         return _create_config_from_env()
     else:
-        return _create_config_from_json(json_message)
+        return _create_config_from_json(json_file)
+
+
+def create_config_from_obj(obj) -> object:
+    """
+    Create message config from a dictionary
+    :param obj: dict
+    :return:
+    """
+    return _Config(**obj)

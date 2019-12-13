@@ -10,6 +10,12 @@
 #include "adlik_serving/runtime/tensorflow/batch/serving_session.h"
 #include "adlik_serving/runtime/tensorflow/model/model_signature.h"
 
+namespace adlik {
+namespace serving {
+struct ModelConfig;
+}
+}  // namespace adlik
+
 namespace tensorflow {
 
 struct MetaGraph;
@@ -19,7 +25,7 @@ struct BatchingParameters;
 struct BatchingSession : private BatchingProcessor, ServingSession {
   BatchingSession(Session&);
 
-  void config();
+  void config(const adlik::serving::ModelConfig&);
 
 private:
   OVERRIDE(Status Run(const RunOptions&,
