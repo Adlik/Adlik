@@ -1,22 +1,18 @@
 # Roadmap
 
-## Initial Commit
+## 2019-12 Release 1
 
-- Supporting H5, checkpoint to be compiled to TensorFlow serving, TensorRT and OpenVINO model
+- Support model optimizer.
+- Support compiling models from more frameworks.
+- Support custom runtimes and service cores.
+- Support FPGA runtime.
 
-## 2019.12 Release 1
+## 2020-06 Release 2
 
-- Model optimizer
-- Supporting compliation for models from more frameworks
-- Supporting customization of runtime and service core
-- Support FPGA runtime
+- Support more hardwares.
+- Support model orchestration DSL.
+- Auto optimize parameters.
 
-## 2020.6 Release 2
+## 2020-12 Release 3
 
-- Supporting more hardware
-- Model orchestration DSL
-- Auto engeneering parameters optimization
-
-## 2020.12 Release 3
-
-- Adlik cloud service
+- Adlik cloud service.
