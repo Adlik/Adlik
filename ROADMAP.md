@@ -1,50 +1,22 @@
 # Roadmap
 
-## Model Optimizer
+## Initial Commit
 
-- 2019-12
-  - [ ] 8-bit model quantization
-  - [ ] Model pruning
-- 2020-06
-  - [ ] ??
-  - [ ] Model pruning / compression algorithm
-- 2020-12
-  - [ ] Model optimization ?? automatic machine learning algorithm
+- Supporting H5, checkpoint to be compiled to TensorFlow serving, TensorRT and OpenVINO model
 
-## Model Compiler
+## 2019.12 Release 1
 
-- Now
-  - [x] Keras model to TensorFlow serving
-  - [x] TensorFlow model to TensorFlow serving
-  - [x] Keras model to TensorRT
-  - [x] TensorFlow model to TensorRT
-  - [x] Keras model to OpenVINO
-  - [x] TensorFlow model to OpenVINO
-- 2019-12
-  - [ ] PyTorch model to TensorRT
-  - [ ] PyTorch model to OpenVINO
-- 2020-06
-  - [ ] Caffe model to ??
-  - [ ] Support Layer fusion optimization algorithm
-- 2020-12
-  - [ ] Support compiling PaddlePaddle model
+- Model optimizer
+- Supporting compliation for models from more frameworks
+- Supporting customization of runtime and service core
+- Support FPGA runtime
 
-## Adlik Serving
+## 2020.6 Release 2
 
-- Now
-  - [x] TensorFlow serving runtime
-  - [x] TensorRT runtime
-  - [x] OpenVINO runtime
-- 2019-12
-  - [ ] Custom runtime: user defined model ??
-  - [ ] Custom service core: user define model server
-  - [ ] Adlik serving SDK version 1.0
-  - [ ] FPGA runtime
-  - [ ] Multiple inference model instances
-- 2020-06
-  - [ ] Model inference engine efficient scheduler
-  - [ ] Adlik serving SDK version 2.0
-  - [ ] Rich service interfaces (classification, regression)
-  - [ ] More FPGA runtime operators
-- 2020-12
-  - [ ] PaddlePaddle runtime
+- Supporting more hardware
+- Model orchestration DSL
+- Auto engeneering parameters optimization
+
+## 2020.12 Release 3
+
+- Adlik cloud service
