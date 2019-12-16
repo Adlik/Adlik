@@ -15,6 +15,16 @@ serving_cc_library(
 )
 
 serving_cc_library(
+    name = "queue_options",
+    hdrs = [
+        "queue_options.h",
+    ],
+    deps = [
+        "//adlik_serving/framework/domain:model_config_proto",
+    ],
+)
+
+serving_cc_library(
     name = "default_model_wrapper",
     hdrs = [
         "default_model_wrapper.h",
@@ -118,6 +128,7 @@ serving_cc_library(
         "unique_batcher_model_wrapper.h",
     ],
     deps = [
+        ":queue_options",
         "//adlik_serving/framework/domain",
         "//adlik_serving/framework/manager",
         "//adlik_serving/runtime/batching:basic_batch_scheduler",

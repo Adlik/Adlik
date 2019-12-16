@@ -14,6 +14,7 @@
 #include "adlik_serving/runtime/batching/basic_batch_scheduler.h"
 #include "adlik_serving/runtime/batching/batch_scheduler.h"
 #include "adlik_serving/runtime/batching/batching_message_task.h"
+#include "adlik_serving/runtime/util/queue_options.h"
 
 namespace adlik {
 namespace serving {
@@ -61,10 +62,9 @@ private:
 
   typename Batcher::Options options() {
     typename Batcher::Options options;
-    options.max_batch_size = config.max_batch_size();
     options.num_batch_threads = model_bundle->count();
     options.thread_pool_name = config.name() + "_batch_threads";
-    options.batch_timeout_micros = 0;  // modify this value if needed
+    optionsFromConfig<Batcher::Options>(config, options);
     return options;
   }
 

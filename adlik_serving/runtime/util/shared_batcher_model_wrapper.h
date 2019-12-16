@@ -12,6 +12,7 @@
 #include "adlik_serving/framework/domain/model_config.h"
 #include "adlik_serving/framework/domain/model_handle.h"
 #include "adlik_serving/runtime/batching/batch_scheduler.h"
+#include "adlik_serving/runtime/util/queue_options.h"
 #include "adlik_serving/runtime/util/shared_batcher_wrapper.h"
 
 namespace adlik {
@@ -44,7 +45,6 @@ private:
 
   cub::Status createScheduler() {
     SharedBatcherWrapper::QueueOptions queue_options = queueOptions();
-
     using BatchProcessor = std::function<void(std::unique_ptr<Batch<BatchingMessageTask>> batch)>;
     auto status = model_bundle->createScheduler(
         [&](BatchProcessor processor, std::unique_ptr<BatchScheduler<BatchingMessageTask>>* queue) {
@@ -55,8 +55,7 @@ private:
 
   typename SharedBatcherWrapper::QueueOptions queueOptions() {
     SharedBatcherWrapper::QueueOptions queue_options;
-    queue_options.max_batch_size = this->config.max_batch_size();
-    queue_options.batch_timeout_micros = 0;  // modify if need
+    optionsFromConfig<SharedBatcherWrapper::QueueOptions>(this->config, queue_options);
     return queue_options;
   }
 
