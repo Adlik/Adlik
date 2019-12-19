@@ -6,6 +6,7 @@ Model compiler base class
 """
 from abc import abstractmethod
 import os
+import shutil
 
 import tensorflow as tf
 
@@ -28,6 +29,7 @@ class BaseCompiler:
         "checkpoint_path",
         "frozen_graph_path",
         "onnx_path",
+        "input_model",
         "script_path",
         "model_name",
         "input_layer_names",
@@ -36,7 +38,8 @@ class BaseCompiler:
         "input_formats",
         "output_names",
         "export_path",
-        "max_batch_size"
+        "max_batch_size",
+        "version"
     ]
     _COMMON_REQUIRED = [
         "model_name",
@@ -54,7 +57,6 @@ class BaseCompiler:
         self.source_type, self.model_path = self._get_source_model()
         self.model_info = ModelInfo(self.model_name, self.max_batch_size, self.source_type)
         self.target_dir = self._make_target_dir()
-        self.version = self._get_model_version(self.target_dir)
         self.version_dir = self._make_version_dir()
         self.inputs = []
         self.outputs = []
@@ -74,6 +76,12 @@ class BaseCompiler:
         elif self.checkpoint_path:
             source_type = 'Checkpoint'
             model_path = self.checkpoint_path
+        elif self.input_model:
+            ex_name = os.path.splitext(self.input_model)[1].lower()
+            types = {'.h5': 'H5', '.pb': 'Frozen Graph', '.pbtxt': 'Frozen Graph', '.onnx': 'ONNX',
+                     '.ckpt': 'Checkpoint', '': 'Checkpoint'}
+            source_type = types[ex_name]
+            model_path = self.input_model
         else:
             raise ImportError('Can not get the input model')
         return source_type, model_path
@@ -91,6 +99,7 @@ class BaseCompiler:
         except Exception as error:  # pylint:disable=broad-except
             _LOGGER.error('Compile model failure, error: %s', error)
             _LOGGER.exception(error)
+            shutil.rmtree(self.version_dir)
             return fail(str(error))
 
     def _export_config(self):
@@ -106,16 +115,15 @@ class BaseCompiler:
         Compress model to .zip
         :return:
         """
-        # self.target_dir -> model_name.zip
-        zip_file_path = os.path.join(self.export_path, self.model_name + '.zip')
+        # self.target_dir -> modelName_version.zip
+        zip_file_path = os.path.join(self.export_path, self.model_name + '_' + str(self.version) + '.zip')
         return compress_dir(self.target_dir, zip_file_path)
 
     def _do_compile(self):
-
         if self.source_type == 'ONNX':
             loader = OnnxLoader(self.input_names, self.output_names, self.input_formats)
         elif self.source_type == 'H5':
-            loader = KerasModelLoader(self.input_layer_names, self.output_layer_names)
+            loader = KerasModelLoader(self)
         elif self.source_type == 'Frozen Graph':
             loader = FrozenGraphLoader(self.input_names, self.output_names, self.input_formats)
         else:
@@ -171,20 +179,18 @@ class BaseCompiler:
         return target_dir
 
     def _make_version_dir(self):
+        version = getattr(self, "version", None)
+        if version is None:
+            self.version = self._get_model_default_version()
+        self.version = str(self.version)
         version_dir = os.path.join(self.target_dir, self.version)
         if os.path.exists(version_dir):
             raise Exception('Output version is already exist: {}'.format(version_dir))
         return version_dir
 
-    def _get_model_version(self, model_dir):
-        try:
-            version = getattr(self, 'version')
-            if isinstance(version, int):
-                version = str(version)
-            return version
-        except AttributeError:
-            sub_dirs = [fold for fold in os.listdir(model_dir)
-                        if os.path.isdir(os.path.join(model_dir, fold)) and fold.isdigit()]
-            sub_dirs.sort()
-            version = str(int(sub_dirs[-1]) + 1) if sub_dirs else "1"
-            return version
+    def _get_model_default_version(self):
+        sub_dirs = [int(child) for child in os.listdir(self.target_dir)
+                    if os.path.isdir(os.path.join(self.target_dir, child)) and child.isdigit()]
+        sub_dirs.sort()
+        version = str(sub_dirs[-1] + 1) if sub_dirs else "1"
+        return version

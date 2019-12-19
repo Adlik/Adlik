@@ -7,9 +7,9 @@ Serving model compiler
 
 import os
 
+from model_compiler import log_util
 import tensorflow as tf
 
-from model_compiler import log_util
 from ..compiler_base import BaseCompiler
 
 _LOGGER = log_util.get_logger(__name__)
@@ -26,17 +26,16 @@ class Compiler(BaseCompiler):
     def __init__(self, config):
         super(Compiler, self).__init__(config)
         for item in self._REQUIRED:
-            if not isinstance(config.get_attribute(item), list):
-                _LOGGER.error('Require "%s" but not found or type is invalid', item)
-                raise Exception('Require {} but not found or type is invalid'.format(item))
-            self.__setattr__(item, config.get_attribute(item))
-        if len(self.input_signatures) != len(self.input_layer_names) and len(self.input_signatures) != len(
-                self.input_names):
-            raise Exception('input signatures number is not equal to inputs')
+            self.__setattr__(item, config.get_attribute(item, []))
 
-        if len(self.output_signatures) != len(self.output_layer_names) and len(self.output_signatures) != len(
-                self.output_names):
-            raise Exception('output signatures number is not equal to outputs')
+    def _normalize_config(self, inputs, outputs):
+        if len(self.input_signatures) < len(inputs):
+            for i in range(len(self.input_signatures), len(inputs)):
+                self.input_signatures.append(inputs[i].name)
+
+        if len(self.output_signatures) < len(outputs):
+            for i in range(len(self.output_signatures), len(outputs)):
+                self.output_signatures.append(outputs[i].name)
 
     def _after_load_model(self, session, inputs, outputs):
         """
@@ -44,17 +43,18 @@ class Compiler(BaseCompiler):
         :return: Return compile result
         """
         _LOGGER.info('Start to compile serving model')
+        self._normalize_config(inputs, outputs)
         inputs_dict = {sign: tensor for (sign, tensor) in
                        zip(self.input_signatures, [i.tensor for i in inputs])}
         outputs_dict = {sign: tensor for (sign, tensor) in
                         zip(self.output_signatures, [o.tensor for o in outputs])}
         _LOGGER.info('Serving model signature info: inputs: %s, outputs: %s', inputs_dict, outputs_dict)
 
-        signature = tf.saved_model.signature_def_utils.predict_signature_def(inputs=inputs_dict,
-                                                                             outputs=outputs_dict)
+        signature = tf.compat.v1.saved_model.signature_def_utils.predict_signature_def(inputs=inputs_dict,
+                                                                                       outputs=outputs_dict)
         _LOGGER.info('Create signature def success')
-        builder = tf.saved_model.builder.SavedModelBuilder(self.version_dir)
-        builder.add_meta_graph_and_variables(sess=session, tags=[tf.saved_model.tag_constants.SERVING],
+        builder = tf.compat.v1.saved_model.builder.SavedModelBuilder(self.version_dir)
+        builder.add_meta_graph_and_variables(sess=session, tags=[tf.saved_model.SERVING],
                                              signature_def_map={'predict': signature}, clear_devices=True)
 
         serving_path = builder.save(True)

@@ -18,7 +18,8 @@ _REQUIRED_PACKAGES = [
     'torch==1.1.0',
     'torchvision==0.3.0',
     'requests',
-    'tensorflow==1.14.0'
+    'tensorflow==1.14.0',
+    'jsonschema==3.1.1',
 ]
 
 _TEST_REQUIRES = [
@@ -39,4 +40,8 @@ setup(
     keywords='compile serving model',
     install_requires=_REQUIRED_PACKAGES,
     extras_require={'test': _TEST_REQUIRES},
+    package_data={
+        'model_compiler': ['*.json']
+    },
+
 )
