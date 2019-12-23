@@ -149,9 +149,9 @@ Assume builing with CUDA version 10.0.
    - `cuda-nvml-dev-10-0`
    - `libcudnn7=*+cuda10.0`
    - `libcudnn7-dev=*+cuda10.0`
-   - `libnvinfer6=*+cuda10.0`
+   - `libnvinfer7=*+cuda10.0`
    - `libnvinfer-dev=*+cuda10.0`
-   - `libnvonnxparsers6=*+cuda10.0`
+   - `libnvonnxparsers7=*+cuda10.0`
    - `libnvonnxparsers-dev=*+cuda10.0`
 2. Run the following command:
 
