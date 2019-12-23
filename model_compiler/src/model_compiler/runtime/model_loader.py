@@ -117,12 +117,13 @@ class _Loader:
         :return:
         """
         _LOGGER.info('Begin to parse custom object, data format: %s', K.image_data_format())
-        try:
-            if not os.path.exists(script_path):
-                _LOGGER.warning('Script path %s not exist', script_path)
-                return None
-        except Exception as error:  # pylint: disable=broad-except
-            _LOGGER.error('read script exception, error: %s', error)
+
+        if not script_path:
+            _LOGGER.info('Script path is null')
+            return None
+
+        if not os.path.exists(script_path):
+            _LOGGER.warning('Script path %s not exist', script_path)
             return None
 
         module_name = os.path.basename(script_path)
@@ -363,8 +364,7 @@ class FrozenGraphLoader(CheckpointLoader):
             ops = session.graph.get_operations()
             input_objs = []
             for operation in ops:
-                # pylint: disable=len-as-condition
-                if len(operation.inputs) == 0 and operation.type == 'Placeholder':
+                if not operation.input and operation.type == 'Placeholder':
                     input_objs.append(_Input(operation.outputs[0], None))
             return input_objs
 
