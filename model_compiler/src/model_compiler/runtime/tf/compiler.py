@@ -53,7 +53,7 @@ class Compiler(BaseCompiler):
         signature = tf.compat.v1.saved_model.signature_def_utils.predict_signature_def(inputs=inputs_dict,
                                                                                        outputs=outputs_dict)
         _LOGGER.info('Create signature def success')
-        builder = tf.compat.v1.saved_model.builder.SavedModelBuilder(self.version_dir)
+        builder = tf.compat.v1.saved_model.builder.SavedModelBuilder(self.target_dir)
         builder.add_meta_graph_and_variables(sess=session, tags=[tf.saved_model.SERVING],
                                              signature_def_map={'predict': signature}, clear_devices=True)
 
