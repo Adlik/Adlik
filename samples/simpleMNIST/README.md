@@ -9,7 +9,7 @@ This sample demonstrates how to use Adlik to compile serving model and deploy se
 
 ## Build and install packages
 
-1. Build clients and serving binary (see [README.md](../../README.md)).
+1. Build clients and serving binary and make client pip packages (see [README.md](../../README.md)).
 
 2. Install clients pip package:
 
@@ -39,7 +39,7 @@ This sample demonstrates how to use Adlik to compile serving model and deploy se
     │   └── mnist.h5
     ```
 
-2. Convert the .h5 file to TensorFlow serving model:
+2. Convert the .h5 file to TensorFlow serving model (see [compile_model.py](./compile_model.py) and [config_schema.json](../../model_compiler/src/model_compiler/config_schema.json) which show how to build a request about compiling models):
 
     ```sh
     python3 compile_model.py

@@ -34,6 +34,7 @@ class ModelProtoExporter:
             with open(self._config_path, "w") as config_file:
                 config_file.write(text_format.MessageToString(config_proto))
             _LOGGER.info("Save config.pbtxt success, path: %s", self._config_path)
+            return self._config_path
         else:
             raise Exception("Not generate config proto, can't save config.pbtxt!")
 

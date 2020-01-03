@@ -38,6 +38,13 @@ def _get_tensor_shape_in_list(tensor):
         return []
 
 
+def _get_tensor_by_fuzzy_name(graph, name):
+    if ":" in name:
+        return graph.get_tensor_by_name(name)
+    else:
+        return graph.get_operation_by_name(name).outputs[0]
+
+
 class _Input:
     """
     Input description, for export config file
@@ -111,11 +118,16 @@ class _Loader:
         """
         _LOGGER.info('Begin to parse custom object, data format: %s', K.image_data_format())
 
+        if not script_path:
+            _LOGGER.info('Script path is null')
+            return None
+
         if not os.path.exists(script_path):
             _LOGGER.warning('Script path %s not exist', script_path)
             return None
 
         module_name = os.path.basename(script_path)
+
         try:
             keras_model = import_file(script_path)
             custom_dict = {}
@@ -141,10 +153,9 @@ class KerasModelLoader(_Loader):
     Load keras model
     """
 
-    def __init__(self, input_layer_names, output_layer_names):
+    def __init__(self, config):
         super(KerasModelLoader, self).__init__()
-        self.input_layer_names = input_layer_names
-        self.output_layer_names = output_layer_names
+        self.config = config
 
     def _do_load(self, session, model_path, _):
         _LOGGER.info('Begin to load h5 model, data format: %s, model_path: %s', K.image_data_format(), model_path)
@@ -156,8 +167,19 @@ class KerasModelLoader(_Loader):
         return self._update_inputs(model), self._update_outputs(model)
 
     def _update_inputs(self, model):
+        if self.config.input_layer_names:
+            inputs = self._update_inputs_by_layer(model)
+        elif self.config.input_names:
+            inputs = self._update_inputs_by_name(model)
+        else:
+            inputs = [_Input(tensor, None) for tensor in model.inputs]
+        for i in inputs:
+            _LOGGER.info('dump input: %s', i)
+        return inputs
+
+    def _update_inputs_by_layer(self, model):
         inputs = []
-        for layer_name in self.input_layer_names:
+        for layer_name in self.config.input_layer_names:
             layer = self._get_layer(model, layer_name)
             tensors = layer.input
             if not isinstance(tensors, list):
@@ -179,9 +201,32 @@ class KerasModelLoader(_Loader):
             _LOGGER.info('dump input: %s', i)
         return inputs
 
+    def _update_inputs_by_name(self, _):
+        if self.config.input_formats:
+            if len(self.config.input_names) > len(self.config.input_formats):
+                self.config.input_formats.extend(
+                    [None for _ in range(len(self.config.input_names) - len(self.config.input_formats))])
+        else:
+            self.config.input_formats = [None for _ in self.config.input_names]
+        graph = K.get_session().graph
+        return [_Input(_get_tensor_by_fuzzy_name(graph, name), data_format) for name, data_format in
+                zip(self.config.input_names, self.config.input_formats)]
+
     def _update_outputs(self, model):
+        if self.config.output_layer_names:
+            outputs = self._update_outputs_by_layer(model)
+        elif self.config.output_names:
+            outputs = self._update_outputs_by_name(model)
+        else:
+            outputs = [_Output(tensor) for tensor in model.outputs]
+        _LOGGER.info('Update model output info: %s', outputs)
+        for output in outputs:
+            _LOGGER.info('dump output: %s', output)
+        return outputs
+
+    def _update_outputs_by_layer(self, model):
         outputs = []
-        for layer_name in self.output_layer_names:
+        for layer_name in self.config.output_layer_names:
             tensors = self._get_layer(model, layer_name).output
             if not isinstance(tensors, list):
                 tensors = [tensors]
@@ -190,6 +235,10 @@ class KerasModelLoader(_Loader):
         for output in outputs:
             _LOGGER.info('dump output: %s', output)
         return outputs
+
+    def _update_outputs_by_name(self, _):
+        graph = K.get_session().graph
+        return [_Output(_get_tensor_by_fuzzy_name(graph, name)) for name in self.config.output_names]
 
     @staticmethod
     def _get_layer(model, layer_name):
@@ -227,10 +276,6 @@ class CheckpointLoader(_Loader):
         self.input_names = input_names
         self.output_names = output_names
         self.input_formats = input_formats
-        if not isinstance(self.input_formats, list):
-            self.input_formats = [self.input_formats]
-        if len(self.input_formats) < len(self.input_names):
-            self.input_formats.extend([None for _ in range(len(self.input_formats) - len(self.input_formats))])
 
     def _do_load(self, session, model_path, script_path):
         _LOGGER.info('Begin to load checkpoint, data format: %s, checkpoint path: %s', K.image_data_format(),
@@ -239,7 +284,8 @@ class CheckpointLoader(_Loader):
         meta_path = model_path + '.meta'
         if os.path.exists(meta_path):
             _LOGGER.info('Import meta from .meta file')
-            tf_saver = tf.train.import_meta_graph(model_path + '.meta', clear_devices=True, graph=session.graph)
+            tf_saver = tf.compat.v1.train.import_meta_graph(model_path + '.meta', clear_devices=True,
+                                                            graph=session.graph)
         elif os.path.exists(script_path):
             _LOGGER.info('Import meta from py script')
             module = import_file(script_path)
@@ -261,10 +307,8 @@ class CheckpointLoader(_Loader):
         pass
 
     def _update_tensors(self, session):
-        graph = session.graph
-        input_objs = [_Input(graph.get_tensor_by_name(name), data_format) for name, data_format in
-                      zip(self.input_names, self.input_formats)]
-        output_objs = [_Output(graph.get_tensor_by_name(name)) for name in self.output_names]
+        input_objs = self._update_input_tensors(session)
+        output_objs = self._update_output_tensors(session)
 
         _LOGGER.info('_update_tensors: inputs: %s, outputs: %s', input_objs, output_objs)
         for i in input_objs:
@@ -273,6 +317,24 @@ class CheckpointLoader(_Loader):
             _LOGGER.info('dump output: %s', output)
 
         return input_objs, output_objs
+
+    def _update_input_tensors(self, session):
+        if self.input_names:
+            if not self.input_formats:
+                self.input_formats = [None for _ in self.input_names]
+            if len(self.input_formats) < len(self.input_names):
+                self.input_formats.extend([None for _ in range(len(self.input_formats), len(self.input_formats))])
+            graph = session.graph
+            return [_Input(_get_tensor_by_fuzzy_name(graph, name), data_format) for name, data_format in
+                    zip(self.input_names, self.input_formats)]
+        else:
+            raise AttributeError("input names is null!")
+
+    def _update_output_tensors(self, session):
+        if self.output_names:
+            return [_Output(_get_tensor_by_fuzzy_name(session.graph, name)) for name in self.output_names]
+        else:
+            raise AttributeError("output names is null!")
 
 
 class FrozenGraphLoader(CheckpointLoader):
@@ -288,12 +350,38 @@ class FrozenGraphLoader(CheckpointLoader):
     def _do_load(self, session, model_path, script_path):
         _LOGGER.info('Begin to load frozen graph, data format: %s, frozen graph path: %s', K.image_data_format(),
                      model_path)
-        with tf.gfile.GFile(model_path, "rb") as graph_file:
-            graph_def = tf.GraphDef()
+        with tf.io.gfile.GFile(model_path, "rb") as graph_file:
+            graph_def = tf.compat.v1.GraphDef()
             graph_def.ParseFromString(graph_file.read())
             tf.import_graph_def(graph_def, name="")
         _LOGGER.info('After load frozen graph')
         return self._update_tensors(session)
+
+    def _update_input_tensors(self, session):
+        try:
+            return super(FrozenGraphLoader, self)._update_input_tensors(session)
+        except AttributeError:
+            ops = session.graph.get_operations()
+            input_objs = []
+            for operation in ops:
+                if not operation.input and operation.type == 'Placeholder':
+                    input_objs.append(_Input(operation.outputs[0], None))
+            return input_objs
+
+    def _update_output_tensors(self, session):
+        try:
+            return super(FrozenGraphLoader, self)._update_output_tensors(session)
+        except AttributeError:
+            ops = session.graph.get_operations()
+            outputs_set = set(ops)
+            for operation in ops:
+                for input_tensor in operation.inputs:
+                    if input_tensor.op in outputs_set:
+                        outputs_set.remove(input_tensor.op)
+            output_ops = [op for op in list(outputs_set) if
+                          op.type not in ['Assign', 'Identity', 'NoOp', 'SaveV2', 'IsVariableInitialized',
+                                          'Placeholder', 'Const']]
+            return [_Output(op.outputs[0]) for op in output_ops]
 
 
 def _get_layer_information(model, layer_name):
