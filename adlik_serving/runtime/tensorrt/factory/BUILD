@@ -9,6 +9,7 @@ serving_cc_library(
         "-pthread",
         "-lnvinfer",
         "-lnvidia-ml",
+        "-lnvonnxparser_runtime",
         "-L/usr/local/cuda/lib64/stubs",
     ],
     deps = [
