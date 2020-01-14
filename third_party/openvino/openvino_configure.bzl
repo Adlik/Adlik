@@ -76,6 +76,11 @@ def _create_dummy_repository(repository_ctx):
     """
 
     _tpl(repository_ctx, "build_defs.bzl", {"%{openvino_is_configured}": "False"})
+    repository_ctx.template(
+        "LICENSE",
+        Label("//third_party/openvino:LICENSE"),
+        {},
+    )
     repository_ctx.file("BUILD", """
 exports_files(["LICENSE"])
 
@@ -107,6 +112,11 @@ def _openvino_configure_impl(repository_ctx):
     repository_ctx.symlink(ie_lib_dir, "lib")
     ie_extension_dir = _find_ie_extension_dir(repository_ctx, ie_dir)
     repository_ctx.symlink(ie_extension_dir, "extension")
+    repository_ctx.template(
+        "LICENSE",
+        Label("//third_party/openvino:LICENSE"),
+        {},
+    )
     repository_ctx.file("BUILD", """
 exports_files(["LICENSE"])
 
