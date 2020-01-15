@@ -4,7 +4,6 @@
 #include "adlik_serving/runtime/tensorrt/model/trt_instance.h"
 
 #include <NvInfer.h>
-#include <NvOnnxParserRuntime.h>
 #include <cuda_runtime_api.h>
 
 #include <algorithm>
@@ -193,14 +192,13 @@ tensorflow::Status Instance::loadPlan(const std::vector<char>& model_data) {
   if (cuerr != cudaSuccess) {
     return tensorflow::errors::Internal("unable to set device for ", config.name(), ": ", cudaGetErrorString(cuerr));
   }
-  nvonnxparser::IPluginFactory* onnx_plugin_factory = nvonnxparser::createPluginFactory(tensorrt_logger);
 
   runtime = nvinfer1::createInferRuntime(tensorrt_logger);
   if (runtime == nullptr) {
     return tensorflow::errors::Internal("Unable to create TensorRT runtime");
   }
 
-  engine = runtime->deserializeCudaEngine(&model_data[0], model_data.size(), onnx_plugin_factory);
+  engine = runtime->deserializeCudaEngine(&model_data[0], model_data.size(), nullptr);
   if (engine == nullptr) {
     return tensorflow::errors::Internal("Unable to create TensorRT engine");
   }

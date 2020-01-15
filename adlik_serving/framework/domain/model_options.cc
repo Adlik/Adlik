@@ -6,7 +6,7 @@
 namespace adlik {
 namespace serving {
 
-ModelOptions::ModelOptions() : intervalInSecond(1) {
+ModelOptions::ModelOptions() : intervalInSecond(10) {
 }
 
 void ModelOptions::subscribe(cub::ProgramOptions& prog) {

@@ -14,6 +14,7 @@ VersionList::VersionList(const std::vector<int>& versions) : versions(versions) 
 
 void VersionList::add(int version) {
   versions.push_back(version);
+  std::sort(versions.begin(), versions.end());
 }
 
 inline void VersionList::latest(int max, VersionList& result) const {
