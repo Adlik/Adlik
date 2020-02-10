@@ -162,7 +162,8 @@ Assume building with CUDA version 10.0.
             -c opt \
             --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
             --incompatible_no_support_tools_in_action_inputs=false \
-            --incompatible_disable_nocopts=false
+            --incompatible_disable_nocopts=false \
+            --incompatible_use_specific_tool_files=false
    ```
 
 ### Build in Docker
