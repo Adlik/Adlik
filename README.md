@@ -147,6 +147,7 @@ Assume building with CUDA version 10.0.
    - `cuda-cusolver-10-0`
    - `cuda-cusparse-10-0`
    - `cuda-nvml-dev-10-0`
+   - `cuda-nvrtc-10-0`
    - `libcudnn7=*+cuda10.0`
    - `libcudnn7-dev=*+cuda10.0`
    - `libnvinfer7=*+cuda10.0`
