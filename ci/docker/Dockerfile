@@ -44,9 +44,9 @@ RUN . /etc/os-release && \
         libclang-common-6.0-dev \
         'libcudnn7=*+cuda10.0' \
         'libcudnn7-dev=*+cuda10.0' \
-        'libnvinfer6=*+cuda10.0' \
+        'libnvinfer7=*+cuda10.0' \
         'libnvinfer-dev=*+cuda10.0' \
-        'libnvonnxparsers6=*+cuda10.0' \
+        'libnvonnxparsers7=*+cuda10.0' \
         'libnvonnxparsers-dev=*+cuda10.0' \
         libtool \
         python3-wheel && \
