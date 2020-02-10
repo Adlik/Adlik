@@ -147,6 +147,7 @@ Assume building with CUDA version 10.0.
    - `cuda-cusolver-10-0`
    - `cuda-cusparse-10-0`
    - `cuda-nvml-dev-10-0`
+   - `cuda-nvrtc-10-0`
    - `libcudnn7=*+cuda10.0`
    - `libcudnn7-dev=*+cuda10.0`
    - `libnvinfer7=*+cuda10.0`
@@ -162,7 +163,8 @@ Assume building with CUDA version 10.0.
             -c opt \
             --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
             --incompatible_no_support_tools_in_action_inputs=false \
-            --incompatible_disable_nocopts=false
+            --incompatible_disable_nocopts=false \
+            --incompatible_use_specific_tool_files=false
    ```
 
 ### Build in Docker
