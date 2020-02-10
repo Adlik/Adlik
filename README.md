@@ -79,7 +79,7 @@ First, install the following packages:
 #### Build serving with OpenVINO runtime
 
 1. Install `intel-openvino-ie-rt-core` package from
-   [OpenVINO](https://software.intel.com/en-us/openvino-toolkit/choose-download).
+   [OpenVINO](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_apt.html).
 2. Assume the installation path of OpenVINO is `/opt/intel/openvino_VERSION`, run the following command:
 
    ```sh
@@ -134,7 +134,7 @@ Assume builing with CUDA version 10.0.
 
 #### Build serving with TensorRT runtime
 
-Assume builing with CUDA version 10.0.
+Assume building with CUDA version 10.0.
 
 1. Install the following packages from
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
