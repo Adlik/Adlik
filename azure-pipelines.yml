@@ -120,6 +120,38 @@ jobs:
         inputs:
             pathtoPublish: __adlik_serving/adlik_serving
             artifactName: adlik-serving-tensorflow-gpu
+  - job: BazelBuildServingTensorFlowLiteCPU
+    displayName: Bazel build serving (TensorFlow Lite CPU)
+    strategy:
+        matrix:
+            Linux:
+              vmImage: ubuntu-latest
+            macOS:
+              vmImage: macos-latest
+    pool:
+        vmImage: $(vmImage)
+    timeoutInMinutes: 0
+    steps:
+      - template: ci/azure-pipelines/install-bazel.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - template: ci/azure-pipelines/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-tensorflow-lite-cpu
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            ci/checks/bazel-build-serving.py \
+                --config=tensorflow-lite-cpu \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE" \
+                --incompatible_no_support_tools_in_action_inputs=false \
+                --incompatible_disable_nocopts=false
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-tensorflow-lite-cpu ($(Agent.OS))
   - job: BazelBuildServingTensorRT
     displayName: Bazel build serving (TensorRT)
     pool:
