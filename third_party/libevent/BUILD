@@ -1,6 +1,8 @@
 # libevent (libevent.org) library.
 # from https://github.com/libevent/libevent
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
 package(
     default_visibility = ["//visibility:public"],
 )
@@ -8,8 +10,6 @@ package(
 licenses(["notice"])  # BSD
 
 exports_files(["LICENSE"])
-
-load("@rules_cc//cc:defs.bzl", "cc_library")
 
 include_files = [
     "libevent/include/evdns.h",

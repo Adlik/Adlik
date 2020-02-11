@@ -1,5 +1,8 @@
 # Description: CUB library which is a set of primitives for GPU programming.
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@local_config_cuda//cuda:build_defs.bzl", "if_cuda")
+
 package(
     default_visibility = ["//visibility:public"],
 )
@@ -7,9 +10,6 @@ package(
 licenses(["notice"])  # BSD
 
 exports_files(["LICENSE.TXT"])
-
-load("@rules_cc//cc:defs.bzl", "cc_library")
-load("@local_config_cuda//cuda:build_defs.bzl", "if_cuda")
 
 filegroup(
     name = "cub_header_files",

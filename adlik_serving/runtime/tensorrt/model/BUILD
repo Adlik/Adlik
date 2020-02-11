@@ -1,9 +1,9 @@
-package(default_visibility = ["//adlik_serving:internal"])
-
 load(
     "@org_tensorflow//tensorflow:tensorflow.bzl",
     "tf_cuda_library",
 )
+
+package(default_visibility = ["//adlik_serving:internal"])
 
 tf_cuda_library(
     name = "trt_util",
