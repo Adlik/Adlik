@@ -1,11 +1,11 @@
+load("@protobuf_archive//:protobuf.bzl", "py_proto_library")
+load("//adlik_serving:serving.bzl", "serving_cc_library", "serving_proto_library", "serving_proto_library_py")
+
 package(
     default_visibility = [
         "//adlik_serving:internal",
     ],
 )
-
-load("@protobuf_archive//:protobuf.bzl", "py_proto_library")
-load("//adlik_serving:serving.bzl", "serving_cc_library", "serving_proto_library", "serving_proto_library_py")
 
 serving_proto_library(
     name = "predict_proto",

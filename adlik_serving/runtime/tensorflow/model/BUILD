@@ -1,11 +1,11 @@
+load("//adlik_serving:serving.bzl", "serving_cc_library")
+
 package(
     default_visibility = [
         "//adlik_serving:internal",
     ],
     features = ["-layering_check"],
 )
-
-load("//adlik_serving:serving.bzl", "serving_cc_library")
 
 serving_cc_library(
     name = "model",

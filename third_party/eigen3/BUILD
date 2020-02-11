@@ -1,3 +1,5 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
 licenses([
     # Note: Eigen is an MPL2 library that includes GPL v3 and LGPL v2.1+ code.
     #       We've taken special care to not reference any restricted code.
@@ -6,8 +8,6 @@ licenses([
 ])
 
 exports_files(["LICENSE"])
-
-load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
     name = "eigen3",

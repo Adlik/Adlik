@@ -1,3 +1,5 @@
+load("//adlik_serving:serving.bzl", "serving_cc_binary")
+
 package(
     default_visibility = ["//adlik_serving:internal"],
 )
@@ -8,8 +10,6 @@ package_group(
         "//adlik_serving/...",
     ],
 )
-
-load("//adlik_serving:serving.bzl", "serving_cc_binary")
 
 serving_cc_binary(
     name = "adlik_serving",
