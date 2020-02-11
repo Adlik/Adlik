@@ -25,6 +25,10 @@ build:tensorflow-gpu --define=runtime=tensorflow
 build:tensorflow-gpu --config=using_cuda
 build:tensorflow-gpu --copt=-DNDEBUG # https://github.com/tensorflow/tensorflow/issues/22766
 
+# TensorFlow Lite (CPU).
+
+build:tensorflow-lite-cpu --define=runtime=tensorflow-lite
+
 # TensorRT.
 
 build:tensorrt --define=runtime=tensorrt
