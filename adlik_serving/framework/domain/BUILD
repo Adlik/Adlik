@@ -1,13 +1,13 @@
-package(
-    default_visibility = [
-        "//adlik_serving:internal",
-    ],
-)
-
 load("//adlik_serving:serving.bzl", "serving_cc_library", "serving_proto_library", "serving_proto_library_py")
 load(
     "@org_tensorflow//tensorflow:tensorflow.bzl",
     "tf_cuda_library",
+)
+
+package(
+    default_visibility = [
+        "//adlik_serving:internal",
+    ],
 )
 
 serving_proto_library(

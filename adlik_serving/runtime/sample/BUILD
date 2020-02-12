@@ -1,6 +1,6 @@
-package(default_visibility = ["//adlik_serving:internal"])
-
 load("//adlik_serving:serving.bzl", "serving_cc_library")
+
+package(default_visibility = ["//adlik_serving:internal"])
 
 serving_cc_library(
     name = "no_scheduler_runtime",
