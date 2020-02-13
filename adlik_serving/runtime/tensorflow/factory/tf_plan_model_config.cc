@@ -7,8 +7,8 @@
 #include "adlik_serving/runtime/tensorflow/model/plan_model.h"
 #include "tensorflow/cc/saved_model/loader.h"
 #include "tensorflow/cc/saved_model/tag_constants.h"
-// #include "tensorflow/contrib/session_bundle/bundle_shim.h"
 #include "tensorflow/core/framework/tensor_util.h"
+#include "tensorflow_serving/session_bundle/session_bundle_util.h"
 
 namespace tensorflow {
 
@@ -36,7 +36,7 @@ inline RunOptions TfPlanModelConfig::getRunOptions() const {
 }
 
 Status TfPlanModelConfig::load(const std::string& path, SavedModelBundle& bundle) const {
-  return serving::LoadSessionBundleOrSavedModelBundle(
+  return serving::session_bundle::LoadSessionBundleOrSavedModelBundle(
       getSessionOptions(), getRunOptions(), path, getModelTags(), &bundle);
 }
 

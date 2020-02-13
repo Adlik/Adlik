@@ -23,6 +23,15 @@ http_archive(
 # TensorFlow.
 
 http_archive(
+    name = "tf_serving",
+    sha256 = "7e499926ac29491bd69d0a31ba834c12eba67e4b79576a16f34a67137a6af05b",
+    strip_prefix = "serving-d83512c6b5b2b8433df2fd61bbbfb22e0295b3d3",
+    urls = [
+        "https://github.com/tensorflow/serving/archive/d83512c6b5b2b8433df2fd61bbbfb22e0295b3d3.tar.gz",
+    ],
+)
+
+http_archive(
     name = "org_tensorflow",
     sha256 = "1f4b09e6bff7f847bb1034699076055e50e87534d76008af8295ed71195b2b36",
     strip_prefix = "tensorflow-e5bf8de410005de06a7ff5393fafdf832ef1d4ad",
