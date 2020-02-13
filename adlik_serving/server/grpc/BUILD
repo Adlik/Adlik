@@ -11,7 +11,7 @@ serving_proto_library(
     srcs = ["ssl_config.proto"],
     cc_api_version = 2,
     deps = [
-        "@protobuf_archive//:cc_wkt_protos",
+        "@com_google_protobuf//:cc_wkt_protos",
     ],
 )
 

@@ -11,6 +11,8 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_python/archive/54d1cb35cd54318d59bf38e52df3e628c07d4bbc.tar.gz"],
 )
 
+# C++ rules.
+
 http_archive(
     name = "rules_cc",
     sha256 = "7c574de35acdbfd333eb3f8eb05990b377ef8dc2303664f4ddd6cc83bbf4a30a",
@@ -22,40 +24,28 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    sha256 = "c4da79385dfbfb30c1aaf73fae236bc6e208c3171851dfbe0e1facf7ca127a6a",
-    strip_prefix = "tensorflow-87989f69597d6b2d60de8f112e1e3cea23be7298",
+    sha256 = "1f4b09e6bff7f847bb1034699076055e50e87534d76008af8295ed71195b2b36",
+    strip_prefix = "tensorflow-e5bf8de410005de06a7ff5393fafdf832ef1d4ad",
     urls = [
-        "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/87989f69597d6b2d60de8f112e1e3cea23be7298.tar.gz",
-        "https://github.com/tensorflow/tensorflow/archive/87989f69597d6b2d60de8f112e1e3cea23be7298.tar.gz",
+        "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/e5bf8de410005de06a7ff5393fafdf832ef1d4ad.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/e5bf8de410005de06a7ff5393fafdf832ef1d4ad.tar.gz",
     ],
 )
 
 http_archive(
     name = "io_bazel_rules_closure",
-    sha256 = "ddce3b3a3909f99b28b25071c40b7fec7e2e1d1d1a4b2e933f3082aa99517105",
-    strip_prefix = "rules_closure-316e6133888bfc39fb860a4f1a31cfcbae485aef",
+    sha256 = "5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
+    strip_prefix = "rules_closure-308b05b2419edb5c8ee0471b67a40403df940149",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_closure/archive/316e6133888bfc39fb860a4f1a31cfcbae485aef.tar.gz",
-        "https://github.com/bazelbuild/rules_closure/archive/316e6133888bfc39fb860a4f1a31cfcbae485aef.tar.gz",
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
+        "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
     ],
 )
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "2c62d8cd4ab1e65c08647eb4afe38f51591f43f7f0885e7769832fa137633dcb",
-    strip_prefix = "bazel-skylib-0.7.0",
-    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/0.7.0.tar.gz"],
-)
-
-# Xunit.
-
-http_archive(
-    name = "xunit_cut",
-    sha256 = "f7c2c339a5ab06dc1d16cb03b157a96e6c591f9833f5c072f56af4a8f8013b53",
-    strip_prefix = "cut-1ce2bed5cbf7e9a282eee546ff5637a040e42abe",
-    urls = [
-        "https://github.com/horance-liu/cut/archive/1ce2bed5cbf7e9a282eee546ff5637a040e42abe.tar.gz",
-    ],
+    sha256 = "1dde365491125a3db70731e25658dfdd3bc5dbdfd11b840b3e987ecf043c7ca0",
+    urls = ["https://github.com/bazelbuild/bazel-skylib/releases/download/0.9.0/bazel_skylib-0.9.0.tar.gz"],
 )
 
 # TensorRT.
@@ -117,7 +107,7 @@ cc_library(
 http_file(
     name = "bazel_extra_actions_base_proto",
     sha256 = "0d91fe29a80d2754f13e379713da37750c42425d92ef7de77f60acdb82479edc",
-    urls = ["https://github.com/bazelbuild/bazel/raw/1.0.0/src/main/protobuf/extra_actions_base.proto"],
+    urls = ["https://github.com/bazelbuild/bazel/raw/2.1.0/src/main/protobuf/extra_actions_base.proto"],
 )
 
 # Adlik serving dependencies.
@@ -130,4 +120,4 @@ adlik_serving_workspace()
 
 load("@org_tensorflow//tensorflow:version_check.bzl", "check_bazel_version_at_least")
 
-check_bazel_version_at_least(minimum_bazel_version = "0.24.1")
+check_bazel_version_at_least(minimum_bazel_version = "2.1.0")

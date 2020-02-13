@@ -11,8 +11,8 @@ serving_proto_library(
     srcs = ["tf_plan_model_config.proto"],
     cc_api_version = 2,
     deps = [
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
-        "@protobuf_archive//:cc_wkt_protos",
+        "@com_google_protobuf//:cc_wkt_protos",
+        "@org_tensorflow//tensorflow/core:protos_all",
     ],
 )
 
@@ -27,10 +27,8 @@ serving_cc_library(
         "//adlik_serving/runtime/tensorflow/model",
         "@org_tensorflow//tensorflow/cc/saved_model:loader",
         "@org_tensorflow//tensorflow/cc/saved_model:tag_constants",
-        "@org_tensorflow//tensorflow/contrib/session_bundle:bundle_shim",
         "@org_tensorflow//tensorflow/core:core_cpu",
         "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
 

@@ -15,18 +15,6 @@ def adlik_serving_workspace():
 
     tf_workspace(path_prefix = "", tf_repo_name = "org_tensorflow")
 
-    # ===== gRPC dependencies =====
-    native.bind(
-        name = "libssl",
-        actual = "@boringssl//:ssl",
-    )
-
-    native.bind(
-        name = "zlib",
-        actual = "@zlib_archive//:zlib",
-    )
-
-    # ===== libevent (libevent.org) dependencies =====
     http_archive(
         name = "com_github_libevent_libevent",
         urls = [
