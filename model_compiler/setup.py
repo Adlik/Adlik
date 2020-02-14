@@ -18,7 +18,7 @@ _REQUIRED_PACKAGES = [
     'torch==1.1.0',
     'torchvision==0.3.0',
     'requests',
-    'tensorflow==1.14.0',
+    'tensorflow==2.1.0',
     'jsonschema==3.1.1',
 ]
 

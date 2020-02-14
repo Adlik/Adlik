@@ -61,7 +61,7 @@ cd Adlik
 2. Build clients:
 
    ```sh
-   bazel build //adlik_serving/clients/python:build_pip_package -c opt --incompatible_no_support_tools_in_action_inputs=false
+   bazel build //adlik_serving/clients/python:build_pip_package -c opt
    ```
 
 3. Build pip package:
@@ -75,9 +75,10 @@ cd Adlik
 First, install the following packages:
 
 - `automake`
+- `libtbb2`
 - `libtool`
 - `make`
-- `libtbb2`
+- `python3-six`
 
 #### Build serving with OpenVINO runtime
 
@@ -90,9 +91,7 @@ First, install the following packages:
    export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share
    bazel build //adlik_serving \
        --config=openvino \
-       -c opt \
-       --incompatible_no_support_tools_in_action_inputs=false \
-       --incompatible_disable_nocopts=false
+       -c opt
    ```
 
 #### Build serving with TensorFlow CPU runtime
@@ -102,9 +101,7 @@ Run the following command:
 ```sh
 bazel build //adlik_serving \
     --config=tensorflow-cpu \
-    -c opt \
-    --incompatible_no_support_tools_in_action_inputs=false \
-    --incompatible_disable_nocopts=false
+    -c opt
 ```
 
 #### Build serving with TensorFlow GPU runtime
@@ -130,8 +127,6 @@ Assume builing with CUDA version 10.0.
        bazel build //adlik_serving \
            --config=tensorflow-gpu \
            -c opt \
-           --incompatible_no_support_tools_in_action_inputs=false \
-           --incompatible_disable_nocopts=false \
            --incompatible_use_specific_tool_files=false
    ```
 
@@ -165,8 +160,6 @@ Assume building with CUDA version 10.0.
             --config=tensorrt \
             -c opt \
             --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
-            --incompatible_no_support_tools_in_action_inputs=false \
-            --incompatible_disable_nocopts=false \
             --incompatible_use_specific_tool_files=false
    ```
 

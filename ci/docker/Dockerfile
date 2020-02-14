@@ -50,6 +50,7 @@ RUN . /etc/os-release && \
         'libnvonnxparsers7=*+cuda10.0' \
         'libnvonnxparsers-dev=*+cuda10.0' \
         libtool \
+        python3-six && \
         python3-wheel && \
     apt-get clean && \
     find /var/lib/apt/lists -delete

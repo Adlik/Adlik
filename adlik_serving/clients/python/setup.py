@@ -6,8 +6,7 @@
 
 import sys
 
-from setuptools import find_packages
-from setuptools import setup
+from setuptools import find_packages, setup
 
 DOCLINES = __doc__.split('\n')
 
@@ -22,12 +21,12 @@ if '--project_name' in sys.argv:
     sys.argv.remove('--project_name')
     sys.argv.pop(project_name_idx)
 
-_TF_REQ = ['tensorflow==1.14.0']
+_TF_REQ = ['tensorflow==2.1.0']
 
 # GPU build (note: the only difference is we depend on tensorflow-gpu so
 # pip doesn't overwrite it with the CPU build)
 if 'adlik-serving-api-gpu' in project_name:
-    _TF_REQ = ['tensorflow-gpu==1.14.0']
+    _TF_REQ = ['tensorflow-gpu==2.1.0']
 
 
 REQUIRED_PACKAGES = [
