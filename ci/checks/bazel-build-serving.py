@@ -10,6 +10,8 @@ import sys
 
 
 def main(args):
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-U', 'six'])
+
     target_file = '__adlik_serving/adlik_serving'
     subprocess.check_call(['bazel', 'build', '//adlik_serving', *args])
 
