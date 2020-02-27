@@ -5,7 +5,6 @@
 
 #include <NvInfer.h>
 #include <cuda_runtime_api.h>
-
 #include <algorithm>
 
 #include "adlik_serving/framework/domain/model_config_helper.h"
@@ -17,6 +16,7 @@
 #include "adlik_serving/runtime/tensorrt/model/trt_util.h"
 #include "cub/log/log.h"
 #include "tensorflow/core/lib/core/errors.h"
+
 namespace tensorrt {
 
 using namespace adlik::serving;
@@ -85,23 +85,17 @@ private:
 
   const ModelConfigProto& config;
 
-  // config.name() of the model instance
   const std::string name;
 
   // The GPU index active when this context was created.
   const int gpu_device;
 
-  // Maximum batch size to allow. This is the minimum of what is
-  // supported by the model and what is requested in the
-  // configuration.
   const int max_batch_size;
 
-  // TensorRT components for the model
   TrtPtr<nvinfer1::IRuntime> runtime;
   TrtPtr<nvinfer1::ICudaEngine> engine;
   TrtPtr<nvinfer1::IExecutionContext> context;
 
-  // The number of inputs required for this model.
   size_t num_inputs;
 
   // For each binding index of the TensorRT engine, the size of the
@@ -117,7 +111,7 @@ private:
 
 Instance::Instance(const ModelConfigProto& config, const std::string& name, const int gpu_device)
     : config(config), name(name), gpu_device(gpu_device), max_batch_size(config.max_batch_size()), num_inputs(0) {
-}  // namespace
+}
 
 Instance::~Instance() {
   INFO_LOG << "~Instance::Instance ";
