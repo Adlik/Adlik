@@ -8,6 +8,8 @@ serving_cc_library(
         "//adlik_serving/runtime/batching:batching_model",
         "//adlik_serving/runtime/batching:composite_batch_processor",
         "//adlik_serving/runtime/util:unique_batcher_runtime_helper",
+        "@org_tensorflow//tensorflow/lite:framework",
+        "@org_tensorflow//tensorflow/lite/kernels:builtin_ops",
     ],
     alwayslink = 1,
 )

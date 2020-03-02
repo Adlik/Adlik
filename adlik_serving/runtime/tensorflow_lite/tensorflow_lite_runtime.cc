@@ -4,6 +4,9 @@
 #include "adlik_serving/runtime/batching/batching_model.h"
 #include "adlik_serving/runtime/batching/composite_batch_processor.h"
 #include "adlik_serving/runtime/util/unique_batcher_runtime_helper.h"
+#include "tensorflow/lite/interpreter.h"
+#include "tensorflow/lite/kernels/register.h"
+#include "tensorflow/lite/model.h"
 
 namespace {
 
@@ -14,10 +17,23 @@ using adlik::serving::BatchProcessor;
 using adlik::serving::CompositeBatchProcessor;
 using adlik::serving::ModelConfig;
 using adlik::serving::ModelId;
+using std::make_unique;
+using std::shared_ptr;
+using std::unique_ptr;
+using tflite::FlatBufferModel;
+using tflite::Interpreter;
 
 class TensorFlowLiteBatchProcessor : public BatchProcessor {
+  shared_ptr<FlatBufferModel> model;  // Make sure the model is alive when interpreter is alive.
+  unique_ptr<Interpreter> interpreter;
+
   virtual tensorflow::Status processBatch(Batch<BatchingMessageTask>& batch) override {
     throw std::logic_error("TODO");
+  }
+
+public:
+  TensorFlowLiteBatchProcessor(shared_ptr<FlatBufferModel> model, unique_ptr<Interpreter> interpreter)
+      : model(std::move(model)), interpreter(std::move(interpreter)) {
   }
 };
 
@@ -27,14 +43,24 @@ public:
 
   static cub::Status create(const ModelConfig& modelConfig,
                             const ModelId& modelId,
-                            std::unique_ptr<TensorFlowLiteModel>* model) {
-    auto tempModel = std::make_unique<TensorFlowLiteModel>();
+                            unique_ptr<TensorFlowLiteModel>* model) {
+    auto result = make_unique<TensorFlowLiteModel>();
+    auto modelPath = modelConfig.getModelPath(modelId);
+    shared_ptr<FlatBufferModel> flatBufferModel = FlatBufferModel::BuildFromFile(modelPath.c_str());
+    tflite::ops::builtin::BuiltinOpResolver opResolver;
+    tflite::InterpreterBuilder interpreterBuilder{*flatBufferModel, opResolver};
 
-    for (const auto& _ : modelConfig.instance_group()) {
-      tempModel->add(std::make_unique<TensorFlowLiteBatchProcessor>());
+    for (const auto& instanceGroup : modelConfig.instance_group()) {
+      unique_ptr<Interpreter> interpreter;
+
+      if (interpreterBuilder(&interpreter) == TfLiteStatus::kTfLiteOk) {
+        result->add(make_unique<TensorFlowLiteBatchProcessor>(flatBufferModel, std::move(interpreter)));
+      } else {
+        return cub::Failure;
+      }
     }
 
-    *model = std::move(tempModel);
+    *model = std::move(result);
 
     return cub::Success;
   }
