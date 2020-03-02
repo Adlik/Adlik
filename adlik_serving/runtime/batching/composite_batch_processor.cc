@@ -11,7 +11,7 @@ namespace serving {
 
 void CompositeBatchProcessor::add(std::unique_ptr<BatchProcessor> instance) {
   tensorflow::mutex_lock lock(mu);
-  processors.push_back({AVAILABLE, std::move(instance)});
+  processors.push_back(std::move(instance));
 }
 
 uint32_t CompositeBatchProcessor::count() const {
@@ -19,27 +19,27 @@ uint32_t CompositeBatchProcessor::count() const {
 }
 
 tensorflow::Status CompositeBatchProcessor::processBatch(Batch<BatchingMessageTask>& batch) {
-  auto it = processors.begin();
+  std::unique_ptr<BatchProcessor> processor;
+
   {
     tensorflow::mutex_lock lock(mu);
-    it = std::find_if(processors.begin(), processors.end(), [](const auto& item) { return item.first == AVAILABLE; });
 
-    if (it == processors.end()) {
+    if (processors.empty()) {
       return tensorflow::errors::Internal(
-          "Can't find an available instance, should check whether number of threads "
-          "match instances!");
-    } else {
-      // Make model unavailable
-      it->first = UNAVAILABLE;
+          "Can't find an available instance, should check whether number of threads match instances!");
     }
+
+    processor = std::move(processors.back());
+    processors.pop_back();
   }
 
-  auto status = it->second->processBatch(batch);
+  auto status = processor->processBatch(batch);
+
   {
-    // Make model available
     tensorflow::mutex_lock lock(mu);
-    it->first = AVAILABLE;
+    processors.push_back(std::move(processor));
   }
+
   return status;
 }
 
