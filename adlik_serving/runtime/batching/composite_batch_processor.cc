@@ -11,11 +11,12 @@ namespace serving {
 
 void CompositeBatchProcessor::add(std::unique_ptr<BatchProcessor> instance) {
   tensorflow::mutex_lock lock(mu);
-  processors.push_back(std::move(instance));
+  availableProcessors.push_back(std::move(instance));
+  numProcessors += 1;
 }
 
 uint32_t CompositeBatchProcessor::count() const {
-  return processors.size();
+  return this->numProcessors;
 }
 
 tensorflow::Status CompositeBatchProcessor::processBatch(Batch<BatchingMessageTask>& batch) {
@@ -24,20 +25,20 @@ tensorflow::Status CompositeBatchProcessor::processBatch(Batch<BatchingMessageTa
   {
     tensorflow::mutex_lock lock(mu);
 
-    if (processors.empty()) {
+    if (availableProcessors.empty()) {
       return tensorflow::errors::Internal(
           "Can't find an available instance, should check whether number of threads match instances!");
     }
 
-    processor = std::move(processors.back());
-    processors.pop_back();
+    processor = std::move(availableProcessors.back());
+    availableProcessors.pop_back();
   }
 
   auto status = processor->processBatch(batch);
 
   {
     tensorflow::mutex_lock lock(mu);
-    processors.push_back(std::move(processor));
+    availableProcessors.push_back(std::move(processor));
   }
 
   return status;
