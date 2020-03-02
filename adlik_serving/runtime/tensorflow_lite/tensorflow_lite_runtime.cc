@@ -51,12 +51,14 @@ public:
     tflite::InterpreterBuilder interpreterBuilder{*flatBufferModel, opResolver};
 
     for (const auto& instanceGroup : modelConfig.instance_group()) {
-      unique_ptr<Interpreter> interpreter;
+      for (int i = 0; i != instanceGroup.count(); ++i) {
+        unique_ptr<Interpreter> interpreter;
 
-      if (interpreterBuilder(&interpreter) == TfLiteStatus::kTfLiteOk) {
-        result->add(make_unique<TensorFlowLiteBatchProcessor>(flatBufferModel, std::move(interpreter)));
-      } else {
-        return cub::Failure;
+        if (interpreterBuilder(&interpreter, 1) == TfLiteStatus::kTfLiteOk) {
+          result->add(make_unique<TensorFlowLiteBatchProcessor>(flatBufferModel, std::move(interpreter)));
+        } else {
+          return cub::Failure;
+        }
       }
     }
 
