@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+import "adlik_serving/apis/task.proto";
+
+service TaskService {
+  rpc create(CreateTaskRequest) returns (CreateTaskResponse);
+}

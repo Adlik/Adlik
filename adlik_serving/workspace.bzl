@@ -26,7 +26,6 @@ def adlik_serving_workspace():
         actual = "@zlib_archive//:zlib",
     )
 
-    # ===== libevent (libevent.org) dependencies =====
     http_archive(
         name = "com_github_libevent_libevent",
         urls = [
@@ -35,4 +34,25 @@ def adlik_serving_workspace():
         sha256 = "70158101eab7ed44fd9cc34e7f247b3cae91a8e4490745d9d6eb7edc184e4d96",
         strip_prefix = "libevent-release-2.1.8-stable",
         build_file = "@//third_party/libevent:BUILD",
+    )
+
+    # ===== dlib dependencies, for machine learning =====
+    http_archive(
+        name = "dlib_archive",
+        urls = [
+            "https://github.com/davisking/dlib/archive/v19.19.zip",
+        ],
+        sha256 = "af1773d39eef0838421c70d34057e975b6d7ac885f490b6a383eb5d6da5baa84",
+        strip_prefix = "dlib-19.19",
+        build_file = "@//third_party/dlib:BUILD",
+    )
+
+    http_archive(
+        name = "csv",
+        urls = [
+            "https://github.com/p-ranav/csv/archive/v1.1.zip",
+        ],
+        sha256 = "e8214428ec7a5b4c4d2245a0824c00baec11ae3a2e9563c5d0d0d643b2b1ee60",
+        strip_prefix = "csv-1.1",
+        build_file = "@//third_party/csv:BUILD",
     )
