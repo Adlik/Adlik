@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "cub/base/status_wrapper.h"
 
 #include <assert.h>
@@ -29,4 +32,5 @@ const std::string& StatusWrapper::empty_string() {
   static std::string empty;
   return empty;
 }
+
 }  // namespace cub
