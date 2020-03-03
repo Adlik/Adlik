@@ -52,8 +52,7 @@ size_t GRPCPredictRequestProvider::inputSize() const {
 
 void GRPCPredictRequestProvider::visitInputs(InputVisitor visitor) const {
   for (auto& i : req.inputs()) {
-    const auto& content = i.second.tensor_content();
-    if (!visitor(i.first, content.c_str(), content.size()))
+    if (!visitor(i.first, i.second))
       break;
   }
 }

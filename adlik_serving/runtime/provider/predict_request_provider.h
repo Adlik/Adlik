@@ -13,7 +13,7 @@
 namespace adlik {
 namespace serving {
 
-using InputVisitor = std::function<bool(const std::string& name, const void* content, size_t total_byte_size)>;
+using InputVisitor = std::function<bool(const std::string& name, const tensorflow::TensorProto& tensor)>;
 
 struct PredictRequestProvider {
 public:

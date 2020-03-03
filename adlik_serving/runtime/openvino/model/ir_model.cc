@@ -164,7 +164,10 @@ tensorflow::Status PluginLoader::mergeInputs(MyBatch& batch) {
     const BatchingMessageTask& task = batch.task(i);
     const PredictRequestProvider* requestProvider = task.request;
     const size_t batchSize = requestProvider->batchSize();
-    auto func = [&](const std::string& name, const void* content, size_t totalByteSize) {
+    auto func = [&](const std::string& name, const tensorflow::TensorProto& tensor) {
+      const void* content = tensor.tensor_content().c_str();
+      size_t totalByteSize = tensor.tensor_content().size();
+
       for (auto& item : inputs) {
         if (name == item.first) {
           Blob::Ptr inputPtr = item.second;
