@@ -383,7 +383,7 @@ tensorflow::Status Instance::mergeInputs(MyBatch& batch) {
 
       auto func = [&](const std::string& cur_name, const tensorflow::TensorProto& tensor) {
         const void* content = tensor.tensor_content().c_str();
-        size_t totalByteSize = tensor.tensor_content().size();
+        size_t content_byte_size = tensor.tensor_content().size();
 
         if (cur_name == name) {
           size_t copied_byte_size = 0;
