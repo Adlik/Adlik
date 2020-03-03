@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/env/concurrent/mutex.h"
+
 #include "nsync_mu.h"
 
 namespace cub {

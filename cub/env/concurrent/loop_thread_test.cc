@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/env/concurrent/loop_thread.h"
-#include "cub/env/env.h"
-#include "cub/env/time/time.h"
-#include "cut/cut.hpp"
 
 #include <memory>
 #include <string>
+
+#include "cub/env/env.h"
+#include "cub/env/time/time.h"
+#include "cut/cut.hpp"
 
 using namespace cum;
 

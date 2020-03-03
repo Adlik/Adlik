@@ -5,6 +5,7 @@
 #define HA65BB825_A944_4634_AE53_FC4EE2BEF414
 
 #include <map>
+
 #include "adlik_serving/runtime/tensorflow/batch/final_padding.h"
 #include "adlik_serving/runtime/tensorflow/batch/merged_tensors.h"
 #include "adlik_serving/runtime/tensorflow/model/model_inputs.h"

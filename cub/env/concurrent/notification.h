@@ -5,6 +5,7 @@
 #define HE09984E6_309D_4E7D_AEE7_E43A1B3E9FA6
 
 #include <atomic>
+
 #include "cub/env/concurrent/condition_variable.h"
 
 namespace cub {

@@ -5,6 +5,7 @@
 #define HE7018187_E230_4AB2_A4D0_9B93A1B1FA77
 
 #include <vector>
+
 #include "adlik_serving/runtime/tensorflow/model/model_signature.h"
 #include "tensorflow/core/protobuf/meta_graph.pb.h"
 

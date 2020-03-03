@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/env/posix/posix_filesystem.h"
-#include "cub/base/assertions.h"
-#include "cub/env/fs/path.h"
 
 #include <dirent.h>
 #include <errno.h>
@@ -11,6 +9,9 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include "cub/base/assertions.h"
+#include "cub/env/fs/path.h"
 
 namespace cub {
 

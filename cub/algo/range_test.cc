@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/algo/range.h"
+
 #include <type_traits>
+
 #include "cub/base/static_assert.h"
 #include "cut/cut.hpp"
 

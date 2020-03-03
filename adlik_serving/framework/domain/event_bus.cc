@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/framework/domain/event_bus.h"
+
 #include "adlik_serving/framework/domain/event_handler.h"
 #include "adlik_serving/framework/domain/monitored_event.h"
 #include "cub/env/time/time.h"

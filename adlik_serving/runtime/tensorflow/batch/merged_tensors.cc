@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/batch/merged_tensors.h"
+
 #include "adlik_serving/runtime/tensorflow/batch/final_padding.h"
 #include "tensorflow/core/framework/tensor_util.h"
 

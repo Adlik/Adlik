@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/framework/manager/storage_loop.h"
+
 #include "adlik_serving/framework/domain/model_options.h"
 #include "adlik_serving/framework/domain/model_store.h"
 #include "adlik_serving/framework/domain/model_stream.h"
 #include "adlik_serving/framework/domain/model_target.h"
-
 #include "cub/env/fs/file_system.h"
 #include "cub/log/log.h"
 #include "cub/string/str_utils.h"

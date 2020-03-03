@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+
 #include "adlik_serving/framework/domain/monitored_notifier.h"
 
 namespace adlik {

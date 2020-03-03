@@ -3,12 +3,12 @@
 
 #include "cub/env/posix/posix_time.h"
 
-#include <algorithm>
-#include <limits>
-
 #include <errno.h>
 #include <sys/time.h>
 #include <time.h>
+
+#include <algorithm>
+#include <limits>
 
 namespace cub {
 

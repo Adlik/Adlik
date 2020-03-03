@@ -5,6 +5,7 @@
 #define H2D5C8307_DC65_4726_A755_CCA25FBCCE22
 
 #include <deque>
+
 #include "adlik_serving/framework/domain/event_handler.h"
 #include "adlik_serving/framework/domain/monitored_probe.h"
 #include "adlik_serving/framework/domain/monitored_store.h"

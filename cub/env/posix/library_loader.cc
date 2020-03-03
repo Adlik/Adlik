@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/env/posix/library_loader.h"
+
 #include <dlfcn.h>
 
 namespace cub {

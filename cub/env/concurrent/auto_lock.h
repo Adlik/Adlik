@@ -5,6 +5,7 @@
 #define H91A7D2E3_7EDF_4994_811B_5168E331A336
 
 #include <mutex>
+
 #include "cub/env/concurrent/mutex.h"
 
 namespace cub {

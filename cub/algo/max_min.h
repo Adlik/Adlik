@@ -5,6 +5,7 @@
 #define H1BEBC79D_5BA8_1123_AD8C_94F820EC7D5B
 
 #include <stdint.h>
+
 #include <algorithm>
 
 namespace cub {

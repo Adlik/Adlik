@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/env/posix/posix_concurrent.h"
+
 #include <thread>
+
 #include "cub/env/time/time.h"
 
 namespace cub {

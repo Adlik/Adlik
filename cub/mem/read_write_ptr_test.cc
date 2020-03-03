@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/mem/read_write_ptr.h"
+
+#include <vector>
+
 #include "cub/env/concurrent/concurrent.h"
 #include "cub/env/env.h"
 #include "cut/cut.hpp"
-
-#include <vector>
 
 using namespace cum;
 

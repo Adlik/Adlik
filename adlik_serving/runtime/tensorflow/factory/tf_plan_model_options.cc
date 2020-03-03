@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/factory/tf_plan_model_options.h"
+
 #include "adlik_serving/runtime/tensorflow/factory/tf_plan_model_config.pb.h"
 #include "cub/protobuf/text_protobuf.h"
 

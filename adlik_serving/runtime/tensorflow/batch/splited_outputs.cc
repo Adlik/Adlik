@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/batch/splited_outputs.h"
+
 #include "adlik_serving/runtime/tensorflow/batch/splited_sizes.h"
 
 namespace tensorflow {

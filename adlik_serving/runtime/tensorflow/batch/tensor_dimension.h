@@ -5,6 +5,7 @@
 #define H1C7D1984_3AD8_4CFA_9E99_7E4D107FE4B9
 
 #include <vector>
+
 #include "tensorflow/core/lib/core/status.h"
 
 namespace tensorflow {

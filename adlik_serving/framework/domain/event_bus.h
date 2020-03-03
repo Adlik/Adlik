@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <vector>
+
 #include "cub/env/concurrent/mutex.h"
 
 namespace adlik {

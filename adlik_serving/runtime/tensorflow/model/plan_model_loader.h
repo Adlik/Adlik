@@ -5,6 +5,7 @@
 #define H3DFDF919_D321_4ECB_8BC1_43733F9485FC
 
 #include <memory>
+
 #include "adlik_serving/framework/domain/bare_model_loader.h"
 #include "adlik_serving/framework/domain/model_handle.h"
 #include "adlik_serving/runtime/tensorflow/model/plan_model.h"

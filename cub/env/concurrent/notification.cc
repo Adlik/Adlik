@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/env/concurrent/notification.h"
+
 #include "cub/env/concurrent/auto_lock.h"
 
 namespace cub {

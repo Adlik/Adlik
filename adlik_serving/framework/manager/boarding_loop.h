@@ -7,11 +7,10 @@
 #include <memory>
 #include <vector>
 
-#include "cub/env/concurrent/loop_thread.h"
-#include "cub/env/concurrent/mutex.h"
-
 #include "adlik_serving/framework/domain/model_stream.h"
 #include "adlik_serving/framework/domain/model_target.h"
+#include "cub/env/concurrent/loop_thread.h"
+#include "cub/env/concurrent/mutex.h"
 
 namespace adlik {
 namespace serving {

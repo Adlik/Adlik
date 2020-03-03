@@ -5,6 +5,7 @@
 #define H0F166B02_2E75_43A3_9C1E_4BF6E8D7B586
 
 #include <stdint.h>
+
 #include "cub/dci/role.h"
 #include "cub/env/concurrent/thread.h"
 #include "cub/env/env.h"

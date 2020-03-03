@@ -3,12 +3,12 @@
 
 #include "adlik_serving/runtime/tensorrt/model/trt_model.h"
 
+#include <cuda_runtime_api.h>
+
 #include <mutex>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include <cuda_runtime_api.h>
 
 #include "adlik_serving/framework/domain/model_config_helper.h"
 #include "adlik_serving/runtime/batching/basic_batch_scheduler.h"
