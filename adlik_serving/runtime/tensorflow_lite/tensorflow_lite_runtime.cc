@@ -44,9 +44,9 @@ public:
 class TensorFlowLiteModel : public CompositeBatchProcessor, public BatchingModel {
   static unique_ptr<TensorFlowLiteModel> internalCreate(const ModelConfig& modelConfig, const ModelId& modelId) {
     auto result = make_unique<TensorFlowLiteModel>();
-    auto modelPath = modelConfig.getModelPath(modelId);
-    auto flatBufferModel = shared_ptr<FlatBufferModel>(FlatBufferModel::BuildFromFile(modelPath.c_str()));
-    BuiltinOpResolver opResolver;
+    const auto modelPath = modelConfig.getModelPath(modelId);
+    const auto flatBufferModel = shared_ptr<FlatBufferModel>(FlatBufferModel::BuildFromFile(modelPath.c_str()));
+    const BuiltinOpResolver opResolver;
     InterpreterBuilder interpreterBuilder{*flatBufferModel, opResolver};
 
     for (const auto& instanceGroup : modelConfig.instance_group()) {
