@@ -7,14 +7,15 @@ import "adlik_serving/framework/domain/version_policy.proto";
 
 import "tensorflow/core/framework/types.proto";
 
-// A group of one or more instances of a model and resources made available for those instances.
+// A group of one or more instances of a model and resources made available for
+// those instances.
 message ModelInstanceGroup {
 
   // Kind of this instance group.
   enum Kind {
-    // This instance group represents instances that can run on either CPU or GPU.
-    // If all GPUs listed in 'gpus' are available then instances will be created
-    // on GPU(s), otherwise instances will be created on CPU.
+    // This instance group represents instances that can run on either CPU or
+    // GPU. If all GPUs listed in 'gpus' are available then instances will be
+    // created on GPU(s), otherwise instances will be created on CPU.
     KIND_AUTO = 0;
 
     // This instance group represents instances that must run on the GPU.
@@ -25,25 +26,25 @@ message ModelInstanceGroup {
   }
 
   // Optional name of this group of instances. If not specified the name will be
-  // formed as <model name>_<group number>. The name of individual instances will
-  // be further formed by a unique instance number and GPU index:
+  // formed as <model name>_<group number>. The name of individual instances
+  // will be further formed by a unique instance number and GPU index:
   string name = 1;
 
-  // The kind of this instance group. Default is KIND_AUTO. If KIND_AUTO or KIND_GPU
-  // then both 'count' and 'gpu' are valid and  may be specified. If KIND_CPU only
-  // 'count' is valid and 'gpu'  cannot be specified.
+  // The kind of this instance group. Default is KIND_AUTO. If KIND_AUTO or
+  // KIND_GPU then both 'count' and 'gpu' are valid and  may be specified. If
+  // KIND_CPU only 'count' is valid and 'gpu'  cannot be specified.
   Kind kind = 4;
 
-  // For a group assigned to GPU, the number of instances created for each GPU listed
-  // in 'gpus'. For a group assigned to CPU the number of instances created. Default is 1.
+  // For a group assigned to GPU, the number of instances created for each GPU
+  // listed in 'gpus'. For a group assigned to CPU the number of instances
+  // created. Default is 1.
   int32 count = 2;
 
-  // GPU(s) where instances should be available. For each GPU listed, 'count' instances
-  // of the model will be available. Setting 'gpus' to empty (or not specifying at all)
-  // is eqivalent to listing all  available GPUs.
+  // GPU(s) where instances should be available. For each GPU listed, 'count'
+  // instances of the model will be available. Setting 'gpus' to empty (or not
+  // specifying at all) is eqivalent to listing all  available GPUs.
   repeated int32 gpus = 3;
 }
-
 
 message ModelInput {
   enum Format {
@@ -101,7 +102,8 @@ message ModelConfigProto {
   // The name of the model.
   string name = 1;
 
-  // The framework for the model. Possible values "tensorrt", "tensorflow", "openvino".
+  // The framework for the model. Possible values "tensorrt", "tensorflow",
+  // "openvino".
   string platform = 2;
 
   // The version of framework for the model.
@@ -126,4 +128,14 @@ message ModelConfigProto {
   ModelDynamicBatching dynamic_batching = 12;
 
   repeated ModelInstanceGroup instance_group = 8;
+
+  enum MLAlgorithm {
+    Unknown = 0;
+    K_means = 1;
+  }
+
+  // now only support "k-means"
+  string algorithm = 20;
+
+  // Other parameters about algorithm
 }

@@ -9,7 +9,6 @@
 namespace cub {
 
 struct SimpleExecutor : Executor {
-private:
   void schedule(thread_t) override;
 };
 

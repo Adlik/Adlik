@@ -30,6 +30,11 @@ config_setting(
     values = {"define": "runtime=openvino"},
 )
 
+config_setting(
+    name = "ml",
+    values = {"define": "runtime=ml"},
+)
+
 serving_cc_library(
     name = "server_core",
     srcs = [
@@ -49,5 +54,6 @@ serving_cc_library(
         ":tensorflow": ["//adlik_serving/runtime/tensorflow/factory:tf_runtime"],
         ":tensorrt": ["//adlik_serving/runtime/tensorrt/factory:trt_runtime"],
         ":openvino": ["//adlik_serving/runtime/openvino/factory:openvino_runtime"],
+        ":ml": ["//adlik_serving/runtime/ml/factory:ml_runtime"],
     }),
 )

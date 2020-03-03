@@ -48,6 +48,24 @@ serving_proto_library_py(
 )
 
 serving_proto_library(
+    name = "task_proto",
+    srcs = ["task.proto"],
+    cc_api_version = 2,
+    deps = [
+        "//adlik_serving/framework/domain:model_spec_proto",
+    ],
+)
+
+serving_proto_library_py(
+    name = "task_proto_py_pb2",
+    srcs = ["task.proto"],
+    proto_library = "task_proto",
+    deps = [
+        "//adlik_serving/framework/domain:model_spec_proto_py_pb2",
+    ],
+)
+
+serving_proto_library(
     name = "predict_service_proto",
     srcs = ["predict_service.proto"],
     has_services = 1,
