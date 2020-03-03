@@ -1,3 +1,6 @@
+// Copyright 2019 ZTE corporation. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef CUB_BASE_STATUS_WRAPPER_H
 #define CUB_BASE_STATUS_WRAPPER_H
 
