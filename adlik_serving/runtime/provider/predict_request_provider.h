@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "adlik_serving/framework/domain/model_id.h"
+#include "tensorflow/core/framework/tensor.pb.h"
 
 namespace adlik {
 namespace serving {
