@@ -91,6 +91,30 @@ py_proto_library(
     ],
 )
 
+serving_proto_library(
+    name = "task_service_proto",
+    srcs = ["task_service.proto"],
+    has_services = 1,
+    cc_api_version = 2,
+    cc_grpc_version = 1,
+    deps = [
+        ":task_proto",
+    ],
+)
+
+py_proto_library(
+    name = "task_service_proto_py_pb2",
+    srcs = ["task_service.proto"],
+    default_runtime = "@protobuf_archive//:protobuf_python",
+    protoc = "@protobuf_archive//:protoc",
+    srcs_version = "PY2AND3",
+    use_grpc_plugin = True,
+    deps = [
+        ":task_proto_py_pb2",
+        "@protobuf_archive//:protobuf_python",
+    ],
+)
+
 serving_cc_library(
     name = "predict_impl",
     srcs = ["predict_impl.cc"],
@@ -109,6 +133,17 @@ serving_cc_library(
     hdrs = ["get_model_meta_impl.h"],
     deps = [
         ":get_model_meta_proto",
+        "//adlik_serving/framework/manager",
+        "//cub/dci",
+    ],
+)
+
+serving_cc_library(
+    name = "task_op_impl",
+    srcs = ["task_op_impl.cc"],
+    hdrs = ["task_op_impl.h"],
+    deps = [
+        ":task_proto",
         "//adlik_serving/framework/manager",
         "//cub/dci",
     ],
