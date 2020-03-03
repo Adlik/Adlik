@@ -31,6 +31,14 @@ message CreateTaskRequest {
 }
 
 message CreateTaskResponse {
-  ModelSpec model_spec = 1;
-  string output = 2; // output file path
+
+  // If task is synchronous and compute lable, response output path
+  string output = 1; // output file path
+
+  // If task is asynchronous, should response a task id for query later
+  string task_id = 2;
 }
+
+message QueryTaskRequest { string task_id = 1; }
+
+message QueryTaskResponse { string status = 1; }

@@ -5,6 +5,7 @@
 
 #include "adlik_serving/apis/get_model_meta_impl.h"
 #include "adlik_serving/apis/predict_impl.h"
+#include "adlik_serving/apis/task_op_impl.h"
 #include "adlik_serving/framework/domain/event_bus.h"
 #include "adlik_serving/framework/domain/model_options.h"
 #include "adlik_serving/framework/domain/model_store.h"
@@ -38,6 +39,7 @@ struct ServerCoreImpl : private ModelOptions,
                         private RuntimeContext,
                         private PredictImpl,
                         private GetModelMetaImpl,
+                        private TaskOpImpl,
                         private GrpcServer,
                         private HttpServer,
                         ServerCore {
@@ -126,6 +128,7 @@ private:
   IMPL_ROLE(EventBus)
   IMPL_ROLE(PredictImpl)
   IMPL_ROLE(GetModelMetaImpl)
+  IMPL_ROLE(TaskOpImpl)
 };
 
 ServerCore& ServerCore::inst() {

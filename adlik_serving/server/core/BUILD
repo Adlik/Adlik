@@ -55,6 +55,7 @@ serving_cc_library(
         "//adlik_serving/server/http",
         "//adlik_serving/apis:predict_impl",
         "//adlik_serving/apis:get_model_meta_impl",
+        "//adlik_serving/apis:task_op_impl",
     ] + select({
         ":tensorflow": ["//adlik_serving/runtime/tensorflow/factory:tf_runtime"],
         ":tensorflow-lite": ["//adlik_serving/runtime/tensorflow_lite:tensorflow_lite_runtime"],
