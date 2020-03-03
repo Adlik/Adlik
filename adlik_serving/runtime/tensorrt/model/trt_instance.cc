@@ -381,7 +381,10 @@ tensorflow::Status Instance::mergeInputs(MyBatch& batch) {
       auto* request = batch.task(i).request;
       const size_t expected_byte_size = request->batchSize() * batch1_byte_size;
 
-      auto func = [&](const std::string& cur_name, const void* content, size_t content_byte_size) {
+      auto func = [&](const std::string& cur_name, const tensorflow::TensorProto& tensor) {
+        const void* content = tensor.tensor_content().c_str();
+        size_t content_byte_size = tensor.tensor_content().size();
+
         if (cur_name == name) {
           size_t copied_byte_size = 0;
           if (content == nullptr) {

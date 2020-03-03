@@ -9,11 +9,12 @@
 #include <vector>
 
 #include "adlik_serving/framework/domain/model_id.h"
+#include "tensorflow/core/framework/tensor.pb.h"
 
 namespace adlik {
 namespace serving {
 
-using InputVisitor = std::function<bool(const std::string& name, const void* content, size_t total_byte_size)>;
+using InputVisitor = std::function<bool(const std::string& name, const tensorflow::TensorProto& tensor)>;
 
 struct PredictRequestProvider {
 public:
