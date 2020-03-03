@@ -5,6 +5,7 @@
 #define HECE68A2F_8AC8_4621_B5E9_387341887A6A
 
 #include <memory>
+
 #include "cub/env/concurrent/thread.h"
 
 namespace cub {

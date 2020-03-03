@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/batch/batching_session.h"
+
 #include "adlik_serving/framework/domain/model_config.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_parameters.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_scheduler.h"

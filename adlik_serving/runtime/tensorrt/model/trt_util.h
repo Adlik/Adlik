@@ -4,9 +4,9 @@
 #ifndef ADLIK_SERVING_RUNTIME_TENSORRT_MODEL_TRT_UTIL_H_
 #define ADLIK_SERVING_RUNTIME_TENSORRT_MODEL_TRT_UTIL_H_
 
-#include <string>
-
 #include <NvInfer.h>
+
+#include <string>
 
 #include "absl/strings/str_join.h"
 #include "adlik_serving/framework/domain/dims_list.h"

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/framework/domain/monitored_model.h"
+
 #include "adlik_serving/framework/domain/monitored_event.h"
 #include "adlik_serving/framework/domain/monitored_predicate.h"
 

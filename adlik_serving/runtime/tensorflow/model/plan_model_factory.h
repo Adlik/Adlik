@@ -5,6 +5,7 @@
 #define HB3D6BA8F_B9C5_49CA_AA4B_EFE318E6BB0F
 
 #include <memory>
+
 #include "adlik_serving/framework/domain/model_config.h"
 #include "adlik_serving/framework/domain/model_id.h"
 #include "cub/dci/role.h"

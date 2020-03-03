@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/string/str_utils.h"
+
 #include "cut/cut.hpp"
 
 using namespace cum;

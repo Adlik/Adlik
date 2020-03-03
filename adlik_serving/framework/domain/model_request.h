@@ -5,6 +5,7 @@
 #define H005764D3_3958_49F0_A5D4_EDE849D88268
 
 #include <string>
+
 #include "adlik_serving/framework/domain/model_spec.pb.h"
 #include "cub/base/comparator.h"
 #include "cub/base/optional.h"

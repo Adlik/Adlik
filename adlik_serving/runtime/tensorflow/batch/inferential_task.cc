@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/batch/inferential_task.h"
+
 #include "cub/env/time/time.h"
 
 namespace tensorflow {

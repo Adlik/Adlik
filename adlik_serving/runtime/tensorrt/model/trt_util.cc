@@ -3,9 +3,9 @@
 
 #include "adlik_serving/runtime/tensorrt/model/trt_util.h"
 
-#include <algorithm>
-
 #include <cuda_runtime_api.h>
+
+#include <algorithm>
 
 #include "absl/strings/numbers.h"
 #include "tensorflow/core/lib/io/path.h"

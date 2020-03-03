@@ -4,12 +4,12 @@
 #ifndef H300C6653_1D9E_486D_A7C7_0A248855D000
 #define H300C6653_1D9E_486D_A7C7_0A248855D000
 
+#include <functional>
+#include <memory>
+
 #include "cub/env/concurrent/auto_lock.h"
 #include "cub/env/concurrent/notification.h"
 #include "cub/env/concurrent/shared_lock.h"
-
-#include <functional>
-#include <memory>
 
 namespace cub {
 

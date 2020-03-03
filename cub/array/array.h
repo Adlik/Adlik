@@ -4,13 +4,14 @@
 #ifndef H5C910113_6FE0_4972_8A42_F9CC943F5B74
 #define H5C910113_6FE0_4972_8A42_F9CC943F5B74
 
+#include <stddef.h>
+
+#include <type_traits>
+#include <utility>
+
 #include "cub/base/comparator.h"
 #include "cub/base/placement.h"
 #include "cub/base/static_assert.h"
-
-#include <stddef.h>
-#include <type_traits>
-#include <utility>
 
 namespace cub {
 

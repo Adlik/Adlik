@@ -5,6 +5,7 @@
 #define HD4EA67C3_E52A_4121_8267_255FF1E93F6C
 
 #include <unordered_map>
+
 #include "adlik_serving/runtime/tensorflow/batch/atomic_batcher.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_processor.h"
 #include "adlik_serving/runtime/tensorflow/batch/serving_session.h"

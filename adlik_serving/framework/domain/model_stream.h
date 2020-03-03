@@ -5,6 +5,7 @@
 #define HC366A848_840F_4E47_8EB2_CB9402478873
 
 #include <string>
+
 #include "adlik_serving/framework/domain/version_list.h"
 
 namespace adlik {

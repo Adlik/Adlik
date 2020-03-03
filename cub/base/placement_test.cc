@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/base/placement.h"
+
 #include "cub/algo/loop.h"
 #include "cub/dci/role.h"
 #include "cut/cut.hpp"

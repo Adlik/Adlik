@@ -5,6 +5,7 @@
 
 #include <NvInfer.h>
 #include <cuda_runtime_api.h>
+
 #include <algorithm>
 
 #include "adlik_serving/framework/domain/model_config_helper.h"
@@ -102,7 +103,7 @@ private:
   // corresponding tensor and pointer to the CUDA buffer for the
   // tensor. These are arrays with size equal to number of bindings.
   std::unique_ptr<uint64_t[]> byte_sizes;
-  std::unique_ptr<void* []> buffers;
+  std::unique_ptr<void*[]> buffers;
 
   // The stream where operations are executed.
   std::unique_ptr<CUstream_st, StreamDeleter> stream;
@@ -170,7 +171,7 @@ tensorflow::Status Instance::loadPlan(const std::vector<char>& model_data) {
 tensorflow::Status Instance::allocBuffer() {
   const int num_expected_bindings = engine->getNbBindings();
   byte_sizes = std::make_unique<uint64_t[]>(num_expected_bindings);
-  buffers = std::make_unique<void* []>(num_expected_bindings);
+  buffers = std::make_unique<void*[]>(num_expected_bindings);
 
   TF_RETURN_IF_ERROR(initializeInputBindings(config.input()));
   TF_RETURN_IF_ERROR(initializeOutputBindings(config.output()));

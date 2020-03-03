@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/batch/merged_inputs.h"
+
 #include "adlik_serving/runtime/tensorflow/batch/merged_dimensions.h"
 #include "adlik_serving/runtime/tensorflow/batch/tensor_dimension.h"
 #include "adlik_serving/runtime/tensorflow/model/model_signature.h"

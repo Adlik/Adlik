@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/factory/tf_model_factory.h"
+
 #include "adlik_serving/framework/domain/model.h"
 #include "adlik_serving/framework/domain/model_config.h"
 #include "adlik_serving/runtime/tensorflow/model/plan_model_factory.h"

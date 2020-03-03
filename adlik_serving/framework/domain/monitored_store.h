@@ -5,6 +5,7 @@
 #define H4B4D8F72_A4E0_4120_A0F8_A817E87D3430
 
 #include <unordered_map>
+
 #include "adlik_serving/framework/domain/monitored_model.h"
 #include "adlik_serving/framework/domain/monitored_predicate.h"
 #include "cub/dci/role.h"

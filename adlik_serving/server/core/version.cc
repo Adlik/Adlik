@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/server/core/version.h"
+
 #include "cub/base/symbol.h"
 
 namespace adlik {

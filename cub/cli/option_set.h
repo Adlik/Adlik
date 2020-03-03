@@ -6,6 +6,7 @@
 
 #include <ostream>
 #include <vector>
+
 #include "cub/cli/option.h"
 
 namespace cub {

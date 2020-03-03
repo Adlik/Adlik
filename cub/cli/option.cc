@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/cli/option.h"
+
+#include <stdio.h>
+
+#include <functional>
+#include <iostream>
+
 #include "cub/string/scanner.h"
 #include "cub/string/str_printf.h"
 #include "cub/string/str_utils.h"
-
-#include <stdio.h>
-#include <functional>
-#include <iostream>
 
 namespace cub {
 

@@ -5,6 +5,7 @@
 #define H3D5C68CE_1D25_490D_A2CB_D5EA3D79906A
 
 #include <condition_variable>
+
 #include "cub/env/concurrent/auto_lock.h"
 
 namespace cub {

@@ -5,6 +5,7 @@
 #define HE26FC613_3D2E_49C8_95D1_67677F86FECD
 
 #include <memory>
+
 #include "adlik_serving/framework/domain/model_handle.h"
 
 namespace adlik {

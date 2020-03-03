@@ -5,6 +5,7 @@
 #define H67177F30_1107_45A0_A764_8E764C4693D7
 
 #include <initializer_list>
+
 #include "cub/string/string_view.h"
 
 namespace cub {
