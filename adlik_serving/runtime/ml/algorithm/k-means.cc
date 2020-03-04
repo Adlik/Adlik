@@ -109,8 +109,8 @@ void KMeans::run(MLTask& task) {
 
   if (config.compute_labels) {
     csv::Writer writer(config.output);
-    if (config.lable_name.length() > 0) {
-      writer.configure_dialect().column_names(config.lable_name);
+    if (config.label_name.length() > 0) {
+      writer.configure_dialect().column_names(config.label_name);
     }
     for (unsigned long i = 0; i < samples.size(); ++i) {
       writer.write_row(std::to_string(method(samples[i])));

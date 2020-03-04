@@ -10,7 +10,7 @@ message KMeansTask {
   string input = 2; // input csv path
   uint32 max_iter = 3;
   bool compute_labels = 4;
-  string lable_name = 5;
+  string label_name = 5;
   string output = 6; // output csv path
 }
 
