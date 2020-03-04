@@ -4,11 +4,11 @@
 #ifndef ADLIK_SERVING_RUNTIME_ML_ALGORITHM_ALGORITHM_FACTORY_H
 #define ADLIK_SERVING_RUNTIME_ML_ALGORITHM_ALGORITHM_FACTORY_H
 
-#include "adlik_serving/runtime/ml/algorithm/algorithm_creator.h"
-#include "cub/gof/singleton.h"
-
 #include <string>
 #include <unordered_map>
+
+#include "adlik_serving/runtime/ml/algorithm/algorithm_creator.h"
+#include "cub/gof/singleton.h"
 
 namespace ml_runtime {
 
