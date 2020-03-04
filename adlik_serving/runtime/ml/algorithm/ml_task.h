@@ -15,7 +15,7 @@ struct KMeansTaskInternal {
   size_t n_clusters;
   uint32_t max_iter;  // default 100
   bool compute_labels;  // default true
-  std::string lable_name;
+  std::string label_name;
   std::string output;
 };
 

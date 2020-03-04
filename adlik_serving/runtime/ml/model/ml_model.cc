@@ -100,7 +100,7 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
   task.n_clusters = request.kmeans_task().n_clusters();
   task.max_iter = request.kmeans_task().max_iter();
   task.compute_labels = request.kmeans_task().compute_labels();
-  task.lable_name = request.kmeans_task().lable_name();
+  task.label_name = request.kmeans_task().label_name();
   task.output = request.kmeans_task().output();
 
   cub::Notification notification;
