@@ -4,9 +4,9 @@
 #ifndef ADLIK_SERVING_RUNTIME_ML_ALGORITHM_ML_TASK_H
 #define ADLIK_SERVING_RUNTIME_ML_ALGORITHM_ML_TASK_H
 
-#include "cub/base/status_wrapper.h"
-
 #include <string>
+
+#include "cub/base/status_wrapper.h"
 
 namespace ml_runtime {
 

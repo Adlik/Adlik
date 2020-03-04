@@ -4,9 +4,9 @@
 #ifndef ADLIK_SERVING_RUNTIMEK_ML_ALGORITHM_ALGORITHM_REGISTER_H
 #define ADLIK_SERVING_RUNTIMEK_ML_ALGORITHM_ALGORITHM_REGISTER_H
 
-#include "adlik_serving/runtime/ml/algorithm/algorithm_creator.h"
-
 #include <string>
+
+#include "adlik_serving/runtime/ml/algorithm/algorithm_creator.h"
 
 namespace ml_runtime {
 

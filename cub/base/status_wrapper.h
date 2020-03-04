@@ -4,10 +4,10 @@
 #ifndef CUB_BASE_STATUS_WRAPPER_H
 #define CUB_BASE_STATUS_WRAPPER_H
 
-#include "cub/base/status.h"
-
 #include <memory>
 #include <string>
+
+#include "cub/base/status.h"
 
 namespace cub {
 
