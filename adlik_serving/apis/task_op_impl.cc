@@ -7,6 +7,7 @@
 #include "adlik_serving/framework/domain/model_store.h"
 #include "adlik_serving/framework/manager/runtime_suite.h"
 #include "adlik_serving/framework/manager/serving_store.h"
+#include "cub/log/log.h"
 
 namespace adlik {
 namespace serving {
@@ -14,6 +15,7 @@ namespace serving {
 cub::StatusWrapper TaskOpImpl::create(const RunOptions& options,
                                       const CreateTaskRequest& req,
                                       CreateTaskResponse& rsp) {
+  DEBUG_LOG << "Receive create task request";
   std::unique_ptr<ModelHandle> handle = ROLE(ServingStore).find(req.model_spec());
   auto config = ROLE(ModelStore).find(req.model_spec().name());
   if (handle && config) {

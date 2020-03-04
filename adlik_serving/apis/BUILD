@@ -146,5 +146,6 @@ serving_cc_library(
         ":task_proto",
         "//adlik_serving/framework/manager",
         "//cub/dci",
+        "//cub/log",
     ],
 )

@@ -1,6 +1,9 @@
 // Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+#include <memory>
+#include <vector>
+
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_register.h"
 #include "adlik_serving/runtime/ml/algorithm/ml_task.h"
@@ -11,9 +14,6 @@
 #include "cub/log/log.h"
 #include "dlib/clustering.h"
 #include "dlib/rand.h"
-
-#include <memory>
-#include <vector>
 
 namespace ml_runtime {
 
@@ -39,13 +39,17 @@ std::vector<SampleType> loadCSV(const std::string& file_path) {
     samples.push_back(s);
   };
 
-  csv::Reader reader;
-  reader.read(file_path);
-  while (reader.busy()) {
-    if (reader.ready()) {
-      auto row = reader.next_row();
-      func(row);
+  try {
+    csv::Reader reader;
+    reader.read(file_path);
+    while (reader.busy()) {
+      if (reader.ready()) {
+        auto row = reader.next_row();
+        func(row);
+      }
     }
+  } catch (...) {
+    ERR_LOG << "catch (...)";
   }
 
   return samples;
@@ -69,8 +73,9 @@ void KMeans::create(const AlgorithmConfig&, std::unique_ptr<Algorithm>* algorith
 
 // should try catch exceptions
 void KMeans::run(MLTask& task) {
-  const auto& config = task.kmeans;
+  DEBUG_LOG << "Prepare to run k-means";
 
+  const auto& config = task.kmeans;
   if (!cub::filesystem().exists(config.input)) {
     task.status = cub::StatusWrapper(cub::InvalidArgument, "Input file doesn't exist");
     return;
@@ -82,15 +87,17 @@ void KMeans::run(MLTask& task) {
   }
 
   if (config.compute_labels) {
-    auto dir = cub::Path(config.output).dirName();
-    if (!cub::filesystem().exists(std::string(dir.to_s()))) {
+    auto path = cub::Path(config.output);
+    auto dir = path.dirName();
+    if (!cub::filesystem().exists(dir.to_s())) {
       task.status = cub::StatusWrapper(cub::InvalidArgument, "Output directory doesn't exist");
       return;
     }
   }
 
+  DEBUG_LOG << "Prepare to load samples";
   std::vector<SampleType> samples = loadCSV(config.input);
-  INFO_LOG << "Samples size: " << samples.size() << ", k=" << config.n_clusters;
+  DEBUG_LOG << "Samples size: " << samples.size() << ", k=" << config.n_clusters;
 
   dlib::kcentroid<KernelType> kc(KernelType(0.1), 0.01);  // Should config?
   dlib::kkmeans<KernelType> method(kc);

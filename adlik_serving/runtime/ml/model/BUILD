@@ -17,9 +17,9 @@ serving_cc_library(
         "//adlik_serving/runtime/ml/algorithm",
         "//adlik_serving/runtime/provider:predict_request_provider",
         "//adlik_serving/runtime/provider:predict_response_provider",
+        "//cub/base:status_wrapper",
         "//cub/env/posix",
         "//cub/log",
         "//cub/task:simple_executor",
-        "@org_tensorflow//tensorflow/core:lib",
     ],
 )
