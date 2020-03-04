@@ -13,7 +13,7 @@ tensorflow::Status Runtime::predict(const RunOptions&, ModelHandle*, const Predi
 }
 
 cub::StatusWrapper Runtime::createTask(const RunOptions&, ModelHandle*, const CreateTaskRequest&, CreateTaskResponse&) {
-  return cub::StatusWrapper::OK();
+  return cub::StatusWrapper(cub::Internal, "createTask function not implemented!");
 }
 
 }  // namespace serving

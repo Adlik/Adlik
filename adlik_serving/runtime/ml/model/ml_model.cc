@@ -15,7 +15,6 @@
 #include "cub/env/concurrent/notification.h"
 #include "cub/log/log.h"
 #include "cub/task/simple_executor.h"
-#include "tensorflow/core/lib/core/errors.h"
 
 namespace ml_runtime {
 
@@ -23,15 +22,10 @@ using namespace adlik::serving;
 
 namespace {
 
-tensorflow::Status create_algorithm(std::unique_ptr<Algorithm>* algorithm) {
+void create_algorithm(std::unique_ptr<Algorithm>* algorithm) {
   AlgorithmConfig algorithm_config;
   AlgorithmFactory::inst().create("k-means", algorithm_config, algorithm);
-  if (!algorithm) {
-    ERR_LOG << "Create ml algorithm failure";
-    return tensorflow::errors::Internal("Create ml algorithm failure!");
-  }
-
-  return tensorflow::Status::OK();
+  return;
 }
 
 }  // namespace
@@ -39,59 +33,66 @@ tensorflow::Status create_algorithm(std::unique_ptr<Algorithm>* algorithm) {
 MLModel::MLModel(const ModelConfig& config, const ModelId& model_id) : config(config), model_id(model_id) {
 }
 
-tensorflow::Status MLModel::init() {
+cub::Status MLModel::init() {
   if (config.algorithm().length() == 0) {
     INFO_LOG << "Config algorithm is null, not create algorithm object!";
-    return tensorflow::errors::InvalidArgument("Config algorithm is null, not create algorithm object!");
+    return cub::Success;
   }
 
   // just temporaryl
   if (config.algorithm() != "k-means") {
-    return tensorflow::errors::Internal("Unsupported algorithm '", config.algorithm(), "', now only support k-means!");
+    ERR_LOG << "Unsupported algorithm '" << config.algorithm() << "', now only support k-means!";
+    return cub::InvalidArgument;
   }
 
-  AlgorithmConfig algorithm_config;
-  AlgorithmFactory::inst().create(config.algorithm(), algorithm_config, &algorithm);
+  create_algorithm(&algorithm);
   if (!algorithm) {
     ERR_LOG << "Create ml algorithm failure";
-    return tensorflow::errors::Internal("Create ml algorithm failure!");
+    return cub::Internal;
   }
 
-  return tensorflow::Status::OK();
+  return cub::Success;
 }
 
 cub::Status MLModel::create(const ModelConfig& config, const ModelId& model_id, std::unique_ptr<MLModel>* bundle) {
   INFO_LOG << "Prepare to create ML model, name: " << model_id.getName() << ", version: " << model_id.getVersion();
   auto raw = std::make_unique<MLModel>(config, model_id);
   auto status = raw->init();
-  if (status.ok()) {
+  if (cub::isSuccStatus(status)) {
     *bundle = std::move(raw);
   }
 
-  INFO_LOG << "After Create MLModel, status: " << status.error_message();
-  return cub::Status(status.code());
+  INFO_LOG << "After Create MLModel, status: " << status;
+  return status;
 }
 
-tensorflow::Status MLModel::run(const CreateTaskRequest& request, CreateTaskResponse&) {
+cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResponse&) {
   if (request.task_type() != CreateTaskRequest_TaskType::CreateTaskRequest_TaskType_TRAINING_TASK) {
-    return tensorflow::errors::InvalidArgument("Now only support train task");
+    return cub::StatusWrapper(cub::InvalidArgument, "Now only support train task");
   }
 
   if (!request.is_sync()) {
-    return tensorflow::errors::InvalidArgument("Now only suuport synchronous task");
+    return cub::StatusWrapper(cub::InvalidArgument, "Now only suuport synchronous task");
   }
 
   if (request.algorithm().length() > 0) {
     if (request.algorithm() != "k-means") {
-      return tensorflow::errors::InvalidArgument("Now only suuport k-means task");
+      return cub::StatusWrapper(cub::InvalidArgument, "Now only suuport k-means task");
     }
-    if (!create_algorithm(&algorithm).ok())
-      return tensorflow::errors::Internal("Create algorithm failure");
+    if (!request.has_kmeans_task()) {
+      return cub::StatusWrapper(cub::InvalidArgument, "Not have k-means task parameters");
+    }
+    if (!algorithm) {
+      create_algorithm(&algorithm);
+    }
   }
 
-  if (!request.has_kmeans_task()) {
-    return tensorflow::errors::InvalidArgument("Not have k-means task parameters");
+  if (!algorithm) {
+    ERR_LOG << "Algorithm is null!";
+    return cub::StatusWrapper(cub::Internal, "Algorithm is null");
   }
+
+  DEBUG_LOG << "Prepare construct task";
 
   MLTask ml_task;
   auto& task = ml_task.kmeans;
@@ -111,10 +112,13 @@ tensorflow::Status MLModel::run(const CreateTaskRequest& request, CreateTaskResp
   cub::SimpleExecutor executor;
   executor.schedule(f);
 
+  DEBUG_LOG << "Before wait to task";
   notification.wait();
 
+  DEBUG_LOG << "Task is over, status: " << ml_task.status.error_message();
+
   // TODO: do something for exception
-  return tensorflow::Status::OK();
+  return ml_task.status;
 }
 
 }  // namespace ml_runtime
