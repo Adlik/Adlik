@@ -58,9 +58,9 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--is-sync', type=bool, required=False, default=True,
                         help='Whether run task synchronously, wait result until task is done if synchronous. '
                              'Default is True.')
-    parser.add_argument('-i', '--input', type=str, required=True,  # required should be 'True'
+    parser.add_argument('-i', '--input', type=str, required=True,
                         help='File path of input csv.')
-    parser.add_argument('-o', '--output', type=str, required=True,  # required should be 'True'
+    parser.add_argument('-o', '--output', type=str, required=True,
                         help='File path of output csv.')
 
     FLAGS = parser.parse_args()
