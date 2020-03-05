@@ -8,7 +8,7 @@
 namespace cub {
 
 void SimpleExecutor::schedule(thread_t f) {
-  concurrent().start(f);
+  concurrent().sched(f);
 }
 
 }  // namespace cub

@@ -31,12 +31,13 @@ message CreateTaskRequest {
 }
 
 message CreateTaskResponse {
+  string task_status = 1; // NEW, RUNNING, ERROR, DONE
 
-  // If task is synchronous and compute lable, response output path
-  string output = 1; // output file path
+  // If task is done and compute lables, response output path
+  string output = 2; // output file path
 
   // If task is asynchronous, should response a task id for query later
-  string task_id = 2;
+  string task_id = 3;
 }
 
 message QueryTaskRequest { string task_id = 1; }
