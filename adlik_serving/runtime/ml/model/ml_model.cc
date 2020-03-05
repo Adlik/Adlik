@@ -66,7 +66,7 @@ cub::Status MLModel::create(const ModelConfig& config, const ModelId& model_id, 
   return status;
 }
 
-cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResponse&) {
+cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResponse& response) {
   if (request.task_type() != CreateTaskRequest_TaskType::CreateTaskRequest_TaskType_TRAINING_TASK) {
     return cub::StatusWrapper(cub::InvalidArgument, "Now only support train task");
   }
@@ -116,6 +116,15 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
   notification.wait();
 
   DEBUG_LOG << "Task is over, status: " << ml_task.status.error_message();
+
+  if (ml_task.status.ok()) {
+    response.set_task_status("DONE");
+    if (task.compute_labels) {
+      response.set_output(task.output);
+    }
+  } else {
+    response.set_task_status("ERROR");
+  }
 
   // TODO: do something for exception
   return ml_task.status;
