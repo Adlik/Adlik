@@ -2,7 +2,7 @@ parameters:
     key: ''
     path: ''
 steps:
-  - task: CacheBeta@1
+  - task: Cache@2
     displayName: Set up build cache
     inputs:
         key: ${{ parameters.key }} | $(Agent.OS) | $(Build.SourceVersion)

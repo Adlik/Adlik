@@ -1,8 +1,7 @@
 steps:
   - script: |
         set -e
-        . /etc/os-release
-        sudo apt-add-repository "deb http://apt.llvm.org/$VERSION_CODENAME llvm-toolchain-$VERSION_CODENAME-9 main"
-        sudo apt-get install --no-install-recommends -y clang-format-9
-        sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-9 100
+        clang_version=$(clang --version | grep -m 1 -oP '(?<=^clang version )\d+')
+        sudo apt-get install --no-install-recommends -y "clang-format-$clang_version"
+        sudo update-alternatives --install /usr/bin/clang-format clang-format "/usr/bin/clang-format-$clang_version" 100
     displayName: Install Clang-Format

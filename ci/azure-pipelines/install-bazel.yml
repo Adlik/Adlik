@@ -1,8 +1,7 @@
 steps:
   - script: |
         if [ "$AGENT_OS" = Linux ]; then
-            curl https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg | sudo apt-key add -
-            sudo add-apt-repository -u 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8'
+            sudo apt-get update
             sudo apt-get install --no-install-recommends -y bazel
         elif [ "$AGENT_OS" = Darwin ]; then
             brew tap bazelbuild/tap
