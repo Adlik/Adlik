@@ -1,8 +1,8 @@
 // Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSOR_DIMS_H
-#define ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSOR_DIMS_H
+#ifndef ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSOR_SHAPE_DIMS_H
+#define ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSOR_SHAPE_DIMS_H
 
 #include "tensorflow/core/framework/tensor_shape.pb.h"
 
@@ -11,8 +11,8 @@ namespace serving {
 class TensorShapeDims {
   std::vector<std::unique_ptr<tensorflow::TensorShapeProto_Dim>> dimStorage;
   std::unique_ptr<const tensorflow::TensorShapeProto_Dim*[]> dimsStorage;
-  const tensorflow::TensorShapeProto_Dim* const* const first;
-  const tensorflow::TensorShapeProto_Dim* const* const last;
+  const tensorflow::TensorShapeProto_Dim* const* first;
+  const tensorflow::TensorShapeProto_Dim* const* last;
 
   TensorShapeDims(std::vector<std::unique_ptr<tensorflow::TensorShapeProto_Dim>> dimStorage,
                   std::unique_ptr<const tensorflow::TensorShapeProto_Dim*[]> dimsStorage,
@@ -54,7 +54,7 @@ public:
     return TensorShapeDims{std::move(dimStorage), std::move(dimsStorage), dimsStorage.get(), dimsStorage.get() + size};
   }
 
-  static TensorShapeDims nonOwned(const tensorflow::TensorShapeProto_Dim* const* first,
+  static TensorShapeDims notOwned(const tensorflow::TensorShapeProto_Dim* const* first,
                                   const tensorflow::TensorShapeProto_Dim* const* last) {
     return TensorShapeDims{{}, nullptr, first, last};
   }
@@ -62,4 +62,4 @@ public:
 }  // namespace serving
 }  // namespace adlik
 
-#endif  // ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSOR_DIMS_H
+#endif  // ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSOR_SHAPE_DIMS_H
