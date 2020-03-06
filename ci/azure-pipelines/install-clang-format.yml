@@ -1,7 +1,7 @@
 steps:
   - script: |
         set -e
-        clang_version=$(readlink "$(which clang)" | cut -d - -f 2)
+        clang_version=$(realpath "$(which clang)" | cut -d - -f 2)
         sudo apt-get install --no-install-recommends -y "clang-format-$clang_version"
         sudo update-alternatives --install /usr/bin/clang-format clang-format "/usr/bin/clang-format-$clang_version" 100
     displayName: Install Clang-Format
