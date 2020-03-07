@@ -6,6 +6,8 @@ serving_cc_library(
         "tensor_shape_dims.h",
         "tensorflow_lite_batch_processor.cc",
         "tensorflow_lite_batch_processor.h",
+        "tensorflow_lite_engine.cc",
+        "tensorflow_lite_engine.h",
         "tensorflow_lite_model.cc",
         "tensorflow_lite_model.h",
     ],

@@ -4,6 +4,7 @@
 #include "adlik_serving/runtime/tensorflow_lite/tensorflow_lite_batch_processor.h"
 
 #include "adlik_serving/runtime/provider/predict_request_provider.h"
+#include "adlik_serving/runtime/tensorflow_lite/tensorflow_lite_engine.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/gtl/cleanup.h"
 
@@ -219,7 +220,7 @@ Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& ba
     this->lastBatchSize = batchSize;
   }
 
-  throw std::logic_error("Not implemented");
+  return processTensorFlowLiteTask(*this->interpreter, batch);
 }
 
 variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchProcessor::create(
