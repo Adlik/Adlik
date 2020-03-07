@@ -13,20 +13,31 @@
 namespace adlik {
 namespace serving {
 class TensorFlowLiteBatchProcessor : public BatchProcessor {
+  static constexpr struct ConstructCredential {
+  } constructCredential = {};
+
   using InputSignature = std::unordered_map<absl::string_view,
                                             std::tuple<tensorflow::DataType, TensorShapeDims>,
                                             absl::Hash<absl::string_view>>;
 
   const std::shared_ptr<tflite::FlatBufferModel> model;  // Make sure the model is alive when interpreter is alive.
   std::unique_ptr<tflite::Interpreter> interpreter;
-  const InputSignature inputSignature;
+  const InputSignature parameterSignature;
+  size_t lastBatchSize;
   mutable InputSignature argumentSignatureCache;
 
   virtual tensorflow::Status processBatch(Batch<BatchingMessageTask>& batch) override;
 
 public:
-  TensorFlowLiteBatchProcessor(std::shared_ptr<tflite::FlatBufferModel> model,
-                               std::unique_ptr<tflite::Interpreter> interpreter);
+  TensorFlowLiteBatchProcessor(ConstructCredential,
+                               std::shared_ptr<tflite::FlatBufferModel> model,
+                               std::unique_ptr<tflite::Interpreter> interpreter,
+                               InputSignature parameterSignature,
+                               size_t lastBatchSize);
+
+  static absl::variant<std::unique_ptr<TensorFlowLiteBatchProcessor>, tensorflow::Status> create(
+      std::shared_ptr<tflite::FlatBufferModel> model,
+      const tflite::OpResolver& opResolver);
 };
 }  // namespace serving
 }  // namespace adlik

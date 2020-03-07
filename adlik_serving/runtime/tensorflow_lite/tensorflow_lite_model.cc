@@ -9,6 +9,7 @@
 #include "tensorflow/lite/model.h"
 
 namespace {
+using absl::variant;
 using adlik::serving::ModelConfig;
 using adlik::serving::ModelId;
 using adlik::serving::TensorFlowLiteBatchProcessor;
@@ -16,36 +17,37 @@ using adlik::serving::TensorFlowLiteModel;
 using std::make_unique;
 using std::shared_ptr;
 using std::unique_ptr;
+using tensorflow::Status;
+using tensorflow::error::Code;
 using tflite::FlatBufferModel;
 using tflite::Interpreter;
-using tflite::InterpreterBuilder;
 using tflite::ops::builtin::BuiltinOpResolver;
 
-unique_ptr<TensorFlowLiteModel> internalCreate(const ModelConfig& modelConfig, const ModelId& modelId) {
+variant<unique_ptr<TensorFlowLiteModel>, Status> internalCreate(const ModelConfig& modelConfig,
+                                                                const ModelId& modelId) {
   const auto modelPath = modelConfig.getModelPath(modelId);
-  const auto flatBufferModel = shared_ptr<FlatBufferModel>(FlatBufferModel::BuildFromFile(modelPath.c_str()));
+  const auto flatBufferModel = shared_ptr<FlatBufferModel>{FlatBufferModel::BuildFromFile(modelPath.c_str())};
 
   if (!flatBufferModel) {
-    return nullptr;
+    return Status{Code::INTERNAL, "Failed to create model"};
   }
 
-  const BuiltinOpResolver opResolver;
-  InterpreterBuilder interpreterBuilder{*flatBufferModel, opResolver};
   auto result = make_unique<TensorFlowLiteModel>();
+  const BuiltinOpResolver opResolver;
 
   for (const auto& instanceGroup : modelConfig.instance_group()) {
     for (int i = 0; i != instanceGroup.count(); ++i) {
-      unique_ptr<Interpreter> interpreter;
+      auto processor = TensorFlowLiteBatchProcessor::create(flatBufferModel, opResolver);
 
-      if (interpreterBuilder(&interpreter, 1) == TfLiteStatus::kTfLiteOk) {
-        result->add(make_unique<TensorFlowLiteBatchProcessor>(flatBufferModel, std::move(interpreter)));
+      if (processor.index() == 0) {
+        result->add(absl::get<0>(std::move(processor)));
       } else {
-        return nullptr;
+        return absl::get<1>(std::move(processor));
       }
     }
   }
 
-  return result;
+  return std::move(result);
 }
 }  // namespace
 
@@ -56,19 +58,17 @@ cub::Status TensorFlowLiteModel::create(const ModelConfig& modelConfig,
                                         unique_ptr<TensorFlowLiteModel>* model) {
   auto normalizedModelConfig = modelConfig;
 
-  if (!NormalizeModelConfig(normalizedModelConfig).ok() || !ValidateModelConfig(normalizedModelConfig).ok()) {
-    return cub::Failure;
-  };
+  if (NormalizeModelConfig(normalizedModelConfig).ok() && ValidateModelConfig(normalizedModelConfig).ok()) {
+    auto result = internalCreate(normalizedModelConfig, modelId);
 
-  auto result = internalCreate(normalizedModelConfig, modelId);
+    if (result.index() == 0) {
+      *model = absl::get<0>(std::move(result));
 
-  if (result) {
-    *model = std::move(result);
-
-    return cub::Success;
-  } else {
-    return cub::Failure;
+      return cub::Success;
+    }
   }
+
+  return cub::Failure;
 }
 }  // namespace serving
 }  // namespace adlik

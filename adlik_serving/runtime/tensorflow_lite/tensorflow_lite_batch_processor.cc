@@ -3,12 +3,10 @@
 
 #include "adlik_serving/runtime/tensorflow_lite/tensorflow_lite_batch_processor.h"
 
-#include "absl/types/variant.h"
 #include "adlik_serving/runtime/provider/predict_request_provider.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/gtl/cleanup.h"
 
-namespace {
 using absl::Hash;
 using absl::string_view;
 using absl::variant;
@@ -16,6 +14,7 @@ using adlik::serving::Batch;
 using adlik::serving::BatchingMessageTask;
 using adlik::serving::PredictRequestProvider;
 using adlik::serving::TensorShapeDims;
+using std::make_unique;
 using std::shared_ptr;
 using std::string;
 using std::tuple;
@@ -26,14 +25,19 @@ using tensorflow::Status;
 using tensorflow::TensorProto;
 using tensorflow::error::Code;
 using tensorflow::gtl::MakeCleanup;
+using tflite::FlatBufferModel;
 using tflite::Interpreter;
+using tflite::InterpreterBuilder;
+using tflite::OpResolver;
 
 using InputSignature = unordered_map<string_view, tuple<DataType, TensorShapeDims>, Hash<string_view>>;
 
+namespace {
 DataType getTfDataType(TfLiteType type) {
   switch (type) {
     case TfLiteType::kTfLiteNoType:
-      return DataType::DT_FLOAT;  //
+      // https://github.com/tensorflow/tensorflow/blob/4601949937145e66df37483c460ba9b7bfdfa680/tensorflow/lite/delegates/flex/util.cc#L60
+      return DataType::DT_FLOAT;
     case TfLiteType::kTfLiteFloat32:
       return DataType::DT_FLOAT;
     case TfLiteType::kTfLiteInt32:
@@ -59,8 +63,10 @@ DataType getTfDataType(TfLiteType type) {
   }
 }
 
-InputSignature getInputSignature(const Interpreter& interpreter) {
+variant<tuple<InputSignature, size_t>, Status> getInputSignature(const Interpreter& interpreter) {
+  constexpr auto invalidBatchSize = -1;
   InputSignature result;
+  auto batchSize = invalidBatchSize;
 
   for (const auto i : interpreter.inputs()) {
     const auto& tensor = *interpreter.tensor(i);
@@ -69,17 +75,23 @@ InputSignature getInputSignature(const Interpreter& interpreter) {
     // TODO: check same first dimension size.
 
     if (tfLiteDims.size > 0) {
+      if (batchSize == invalidBatchSize) {
+        batchSize = tfLiteDims.data[0];
+      } else if (tfLiteDims.data[0] != batchSize) {
+        return Status{Code::INVALID_ARGUMENT, "Inconsistent batch size"};
+      }
+
       result.emplace(
           std::piecewise_construct,
           std::forward_as_tuple(tensor.name),
           std::forward_as_tuple(getTfDataType(tensor.type),
                                 TensorShapeDims::owned(tfLiteDims.data + 1, tfLiteDims.data + tfLiteDims.size)));
     } else {
-      throw std::invalid_argument("Scalar tensors are not supported");
+      return Status{Code::INVALID_ARGUMENT, "Scalar tensors are not supported"};
     }
   }
 
-  return result;
+  return make_tuple(std::move(result), batchSize);
 }
 
 variant<size_t, Status> checkRequestArguments(InputSignature& argumentSignatureCache,
@@ -87,11 +99,11 @@ variant<size_t, Status> checkRequestArguments(InputSignature& argumentSignatureC
                                               const InputSignature& parameterSignature) {
   constexpr auto invalidBatchSize = static_cast<size_t>(-1);
 
-  const auto cleanup = MakeCleanup([&argumentSignatureCache] { argumentSignatureCache.clear(); });
+  const auto cleanup = MakeCleanup([&] { argumentSignatureCache.clear(); });
   auto status = Status::OK();
   size_t batchSize = invalidBatchSize;
 
-  request.visitInputs([&argumentSignatureCache, &batchSize, &status](const string& name, const TensorProto& tensor) {
+  request.visitInputs([&](const string& name, const TensorProto& tensor) {
     const auto& dims = tensor.tensor_shape().dim();
 
     if (dims.size() > 0) {
@@ -133,27 +145,17 @@ variant<size_t, Status> checkRequestArguments(InputSignature& argumentSignatureC
 variant<size_t, Status> checkBatchArguments(InputSignature& argumentSignatureCache,
                                             Batch<BatchingMessageTask>& batch,
                                             const InputSignature& parameterSignature) {
-  struct Visitor {
-    size_t& totalBatchSize;
-
-    Status operator()(size_t batchSize) {
-      this->totalBatchSize += batchSize;
-
-      return Status::OK();
-    }
-
-    Status operator()(Status&& status) {
-      return status;
-    }
-  };
-
   size_t totalBatchSize = 0;
   const auto numTasks = batch.num_tasks();
 
   for (int i = 0; i != numTasks; ++i) {
-    TF_RETURN_IF_ERROR(
-        absl::visit(Visitor{totalBatchSize},
-                    checkRequestArguments(argumentSignatureCache, *batch.task(i).request, parameterSignature)));
+    auto result = checkRequestArguments(argumentSignatureCache, *batch.task(i).request, parameterSignature);
+
+    if (result.index() == 0) {
+      totalBatchSize += absl::get<0>(std::move(result));
+    } else {
+      return absl::get<1>(std::move(result));
+    }
   }
 
   return totalBatchSize;
@@ -162,25 +164,46 @@ variant<size_t, Status> checkBatchArguments(InputSignature& argumentSignatureCac
 
 namespace adlik {
 namespace serving {
-TensorFlowLiteBatchProcessor::TensorFlowLiteBatchProcessor(shared_ptr<tflite::FlatBufferModel> model,
-                                                           unique_ptr<Interpreter> interpreter)
+TensorFlowLiteBatchProcessor::TensorFlowLiteBatchProcessor(ConstructCredential,
+                                                           shared_ptr<tflite::FlatBufferModel> model,
+                                                           unique_ptr<Interpreter> interpreter,
+                                                           InputSignature parameterSignature,
+                                                           size_t lastBatchSize)
     : model(std::move(model)),
       interpreter(std::move(interpreter)),
-      inputSignature(getInputSignature(*this->interpreter)) {
+      parameterSignature(std::move(parameterSignature)),
+      lastBatchSize(lastBatchSize) {
 }
 
 Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& batch) {
-  struct Visitor {
-    Status operator()(size_t totalBatchSize) {
-      throw std::logic_error("Not implemented");
-    }
+  auto result = checkBatchArguments(this->argumentSignatureCache, batch, this->parameterSignature);
 
-    Status operator()(Status&& status) {
-      return status;
-    }
-  };
+  if (result.index() == 1) {
+    return absl::get<1>(std::move(result));
+  }
 
-  return absl::visit(Visitor{}, checkBatchArguments(this->argumentSignatureCache, batch, this->inputSignature));
+  throw std::logic_error("Not implemented");
+}
+
+variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchProcessor::create(
+    shared_ptr<FlatBufferModel> model,
+    const OpResolver& opResolver) {
+  unique_ptr<Interpreter> interpreter;
+
+  if (InterpreterBuilder{*model, opResolver}(&interpreter, 1) != TfLiteStatus::kTfLiteOk) {
+    return Status(Code::INTERNAL, "Unable to create interpreter");
+  }
+
+  auto signatureAndBatchSize = getInputSignature(*interpreter);
+
+  if (signatureAndBatchSize.index() == 0) {
+    auto [signature, batchSize] = absl::get<0>(std::move(signatureAndBatchSize));
+
+    return make_unique<TensorFlowLiteBatchProcessor>(
+        constructCredential, std::move(model), std::move(interpreter), std::move(signature), batchSize);
+  } else {
+    return absl::get<1>(std::move(signatureAndBatchSize));
+  }
 }
 }  // namespace serving
 }  // namespace adlik
