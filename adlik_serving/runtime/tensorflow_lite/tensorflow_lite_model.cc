@@ -39,10 +39,10 @@ variant<unique_ptr<TensorFlowLiteModel>, Status> internalCreate(const ModelConfi
     for (int i = 0; i != instanceGroup.count(); ++i) {
       auto processor = TensorFlowLiteBatchProcessor::create(flatBufferModel, opResolver);
 
-      if (processor.index() == 0) {
-        result->add(absl::get<0>(std::move(processor)));
+      if (absl::holds_alternative<unique_ptr<TensorFlowLiteBatchProcessor>>(processor)) {
+        result->add(absl::get<unique_ptr<TensorFlowLiteBatchProcessor>>(std::move(processor)));
       } else {
-        return absl::get<1>(std::move(processor));
+        return absl::get<Status>(std::move(processor));
       }
     }
   }
@@ -61,8 +61,8 @@ cub::Status TensorFlowLiteModel::create(const ModelConfig& modelConfig,
   if (NormalizeModelConfig(normalizedModelConfig).ok() && ValidateModelConfig(normalizedModelConfig).ok()) {
     auto result = internalCreate(normalizedModelConfig, modelId);
 
-    if (result.index() == 0) {
-      *model = absl::get<0>(std::move(result));
+    if (absl::holds_alternative<unique_ptr<TensorFlowLiteModel>>(result)) {
+      *model = absl::get<unique_ptr<TensorFlowLiteModel>>(std::move(result));
 
       return cub::Success;
     }

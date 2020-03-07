@@ -20,6 +20,7 @@ using std::string;
 using std::tuple;
 using std::unique_ptr;
 using std::unordered_map;
+using std::vector;
 using tensorflow::DataType;
 using tensorflow::Status;
 using tensorflow::TensorProto;
@@ -151,14 +152,38 @@ variant<size_t, Status> checkBatchArguments(InputSignature& argumentSignatureCac
   for (int i = 0; i != numTasks; ++i) {
     auto result = checkRequestArguments(argumentSignatureCache, *batch.task(i).request, parameterSignature);
 
-    if (result.index() == 0) {
-      totalBatchSize += absl::get<0>(std::move(result));
+    if (absl::holds_alternative<size_t>(result)) {
+      totalBatchSize += absl::get<size_t>(std::move(result));
     } else {
-      return absl::get<1>(std::move(result));
+      return absl::get<Status>(std::move(result));
     }
   }
 
   return totalBatchSize;
+}
+
+Status updateInterpreterBatchSize(Interpreter& interpreter, size_t batchSize, vector<int>& dimsCache) {
+  const auto cleanup1 = MakeCleanup([&] { dimsCache.clear(); });
+
+  dimsCache.push_back(static_cast<int>(batchSize));
+
+  for (const auto i : interpreter.inputs()) {
+    const auto& dims = *interpreter.tensor(i)->dims;
+
+    dimsCache.resize(static_cast<size_t>(dims.size));
+
+    std::copy(dims.data + 1, dims.data + dims.size, dimsCache.begin() + 1);
+
+    if (interpreter.ResizeInputTensor(i, dimsCache) != TfLiteStatus::kTfLiteOk) {
+      return Status{Code::INTERNAL, "Unable to resize input tensor"};
+    }
+  }
+
+  if (interpreter.AllocateTensors() != TfLiteStatus::kTfLiteOk) {
+    return Status{Code::INTERNAL, "Unable to allocate tensors"};
+  }
+
+  return Status::OK();
 }
 }  // namespace
 
@@ -178,8 +203,20 @@ TensorFlowLiteBatchProcessor::TensorFlowLiteBatchProcessor(ConstructCredential,
 Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& batch) {
   auto result = checkBatchArguments(this->argumentSignatureCache, batch, this->parameterSignature);
 
-  if (result.index() == 1) {
-    return absl::get<1>(std::move(result));
+  if (absl::holds_alternative<Status>(result)) {
+    return absl::get<Status>(std::move(result));
+  }
+
+  const auto batchSize = absl::get<0>(result);
+
+  if (batchSize != this->lastBatchSize) {
+    auto updateBatchSizeResult = updateInterpreterBatchSize(*this->interpreter, batchSize, this->inputTensorDimsCache);
+
+    if (!updateBatchSizeResult.ok()) {
+      return std::move(updateBatchSizeResult);
+    }
+
+    this->lastBatchSize = batchSize;
   }
 
   throw std::logic_error("Not implemented");
@@ -194,15 +231,22 @@ variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchPro
     return Status(Code::INTERNAL, "Unable to create interpreter");
   }
 
-  auto signatureAndBatchSize = getInputSignature(*interpreter);
+  if (interpreter->AllocateTensors() != TfLiteStatus::kTfLiteOk) {
+    return Status(Code::INTERNAL, "Unable to allocate tensors");
+  }
 
-  if (signatureAndBatchSize.index() == 0) {
-    auto [signature, batchSize] = absl::get<0>(std::move(signatureAndBatchSize));
+  auto maybeSignatureAndBatchSize = getInputSignature(*interpreter);
 
-    return make_unique<TensorFlowLiteBatchProcessor>(
-        constructCredential, std::move(model), std::move(interpreter), std::move(signature), batchSize);
+  if (absl::holds_alternative<tuple<InputSignature, size_t>>(maybeSignatureAndBatchSize)) {
+    auto signatureAndBatchSize = absl::get<tuple<InputSignature, size_t>>(std::move(maybeSignatureAndBatchSize));
+
+    return make_unique<TensorFlowLiteBatchProcessor>(constructCredential,
+                                                     std::move(model),
+                                                     std::move(interpreter),
+                                                     std::move(std::get<0>(signatureAndBatchSize)),
+                                                     std::move(std::get<1>(signatureAndBatchSize)));
   } else {
-    return absl::get<1>(std::move(signatureAndBatchSize));
+    return absl::get<1>(std::move(maybeSignatureAndBatchSize));
   }
 }
 }  // namespace serving

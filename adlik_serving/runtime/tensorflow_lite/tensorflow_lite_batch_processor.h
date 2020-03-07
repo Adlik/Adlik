@@ -24,7 +24,8 @@ class TensorFlowLiteBatchProcessor : public BatchProcessor {
   std::unique_ptr<tflite::Interpreter> interpreter;
   const InputSignature parameterSignature;
   size_t lastBatchSize;
-  mutable InputSignature argumentSignatureCache;
+  InputSignature argumentSignatureCache;
+  std::vector<int> inputTensorDimsCache;
 
   virtual tensorflow::Status processBatch(Batch<BatchingMessageTask>& batch) override;
 
