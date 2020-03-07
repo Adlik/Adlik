@@ -1,0 +1,22 @@
+{
+  "serving_type": "openvino",
+  "input_model": "model/mnist.h5",
+  "export_path":  "model_repos",
+  "input_layer_names": [
+      "conv2d_1"
+  ],
+  "output_layer_names": [
+      "dense_2"
+  ],
+  "input_formats": [
+      "channels_last"
+  ],
+  "input_signatures": [
+      "image"
+  ],
+  "output_signatures": [
+      "label"
+  ],
+  "model_name": "mnist",
+  "max_batch_size": 128
+}

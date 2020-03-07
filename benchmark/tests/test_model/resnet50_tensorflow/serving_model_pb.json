@@ -1,0 +1,22 @@
+{
+  "serving_type": "tf",
+  "input_model": "model/frozen_graph.pb",
+  "export_path":  "model_repos_tf2",
+  "input_names": [
+      "x:0"
+  ],
+  "output_names": [
+      "Identity:0"
+  ],
+  "input_formats": [
+      "channels_last"
+  ],
+  "input_signatures": [
+      "image"
+  ],
+  "output_signatures": [
+      "label"
+  ],
+  "model_name": "resnet50",
+  "max_batch_size": 128
+}

@@ -1,0 +1,22 @@
+{
+  "serving_type": "tf",
+  "input_model": "model/resnet50.h5",
+  "export_path": "model_repos",
+  "input_layer_names": [
+    "input_1"
+  ],
+  "output_layer_names": [
+    "fc1000"
+  ],
+  "input_formats": [
+    "channels_last"
+  ],
+  "input_signatures": [
+    "image"
+  ],
+  "output_signatures": [
+    "label"
+  ],
+  "model_name": "resnet50",
+  "max_batch_size": 128
+}

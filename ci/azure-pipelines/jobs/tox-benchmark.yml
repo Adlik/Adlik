@@ -1,0 +1,15 @@
+jobs:
+  - job: ToxBenchmark
+    displayName: Tox benchmark
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use Python 3.7
+        inputs:
+            versionSpec: '3.7'
+      - script: pip install -U tox
+        displayName: Install tox
+      - script: cd benchmark && tox
+        displayName: Run tox

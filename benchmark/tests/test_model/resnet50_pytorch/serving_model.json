@@ -1,0 +1,25 @@
+{
+  "serving_type": "openvino",
+  "input_model": "./model/resnet50.onnx",
+  "export_path":  "model_repos",
+  "script_path": "./model/mnist_pytorch.py",
+  "input_names": [
+    "input.1"
+  ],
+  "input_formats": [
+    "channels_first"
+  ],
+  "output_names": [
+    "495"
+  ],
+  "input_signatures": [
+    "image"
+  ],
+  "output_signatures": [
+    "label"
+  ],
+  "model_name": "resnet50",
+  "job_id": "resnst50_pytorch",
+  "callback": "",
+  "max_batch_size": 128
+}
