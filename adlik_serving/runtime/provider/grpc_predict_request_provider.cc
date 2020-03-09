@@ -59,7 +59,7 @@ void GRPCPredictRequestProvider::visitInputs(InputVisitor visitor) const {
 }
 
 void GRPCPredictRequestProvider::outputNames(OutputNames& output_names) const {
-  std::set<absl::string_view, absl::Hash<absl::string_view>> seens;
+  std::set<absl::string_view> seens;
 
   for (auto& it : req.output_filter()) {
     if (seens.emplace(it.first).second) {

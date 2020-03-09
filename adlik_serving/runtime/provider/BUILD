@@ -33,7 +33,6 @@ serving_cc_library(
         ":predict_request_provider",
         "//adlik_serving/apis:predict_proto",
         "//cub/log",
-        "@com_google_absl//absl/hash",
         "@org_tensorflow//tensorflow/core:lib",
     ],
 )
