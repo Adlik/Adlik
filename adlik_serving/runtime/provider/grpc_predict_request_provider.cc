@@ -5,6 +5,7 @@
 
 #include <set>
 
+#include "absl/hash/hash.h"
 #include "adlik_serving/apis/predict.pb.h"
 #include "cub/log/log.h"
 #include "tensorflow/core/lib/core/errors.h"
@@ -58,10 +59,10 @@ void GRPCPredictRequestProvider::visitInputs(InputVisitor visitor) const {
 }
 
 void GRPCPredictRequestProvider::outputNames(OutputNames& output_names) const {
-  std::set<std::string> seens;
+  std::set<absl::string_view, absl::Hash<absl::string_view>> seens;
+
   for (auto& it : req.output_filter()) {
-    if (seens.find(it.first) == seens.end()) {
-      seens.insert(it.first);
+    if (seens.emplace(it.first).second) {
       output_names.emplace_back(it.first);
     }
   }
