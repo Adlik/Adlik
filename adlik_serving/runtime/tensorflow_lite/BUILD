@@ -5,7 +5,7 @@ serving_cc_library(
     srcs = [
         "input_context.h",
         "tensor_shape_dims.h",
-        "tensor_utilities.cpp",
+        "tensor_utilities.cc",
         "tensor_utilities.h",
         "tensorflow_lite_batch_processor.cc",
         "tensorflow_lite_batch_processor.h",
