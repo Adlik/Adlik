@@ -5,7 +5,6 @@
 
 #include <set>
 
-#include "absl/hash/hash.h"
 #include "adlik_serving/apis/predict.pb.h"
 #include "cub/log/log.h"
 #include "tensorflow/core/lib/core/errors.h"
