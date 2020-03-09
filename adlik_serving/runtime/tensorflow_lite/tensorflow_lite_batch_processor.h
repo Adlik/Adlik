@@ -6,6 +6,7 @@
 
 #include "absl/hash/hash.h"
 #include "adlik_serving/runtime/batching/batch_processor.h"
+#include "adlik_serving/runtime/tensorflow_lite/input_context.h"
 #include "adlik_serving/runtime/tensorflow_lite/tensor_shape_dims.h"
 #include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/lite/model.h"
@@ -24,7 +25,7 @@ class TensorFlowLiteBatchProcessor : public BatchProcessor {
   std::unique_ptr<tflite::Interpreter> interpreter;
   const InputSignature parameterSignature;
   size_t lastBatchSize;
-  const std::unordered_map<absl::string_view, int, absl::Hash<absl::string_view>> inputIndexMap;
+  const std::unordered_map<absl::string_view, InputContext, absl::Hash<absl::string_view>> inputContextMap;
   InputSignature argumentSignatureCache;
   std::vector<int> inputTensorDimsCache;
 
@@ -37,7 +38,7 @@ public:
       std::unique_ptr<tflite::Interpreter> interpreter,
       InputSignature parameterSignature,
       size_t lastBatchSize,
-      const std::unordered_map<absl::string_view, int, absl::Hash<absl::string_view>> inputIndexMap);
+      const std::unordered_map<absl::string_view, InputContext, absl::Hash<absl::string_view>> inputContextMap);
 
   static absl::variant<std::unique_ptr<TensorFlowLiteBatchProcessor>, tensorflow::Status> create(
       std::shared_ptr<tflite::FlatBufferModel> model,

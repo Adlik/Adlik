@@ -6,13 +6,14 @@
 
 #include "absl/hash/hash.h"
 #include "adlik_serving/runtime/batching/batching_message_task.h"
+#include "adlik_serving/runtime/tensorflow_lite/input_context.h"
 #include "tensorflow/lite/interpreter.h"
 
 namespace adlik {
 namespace serving {
 tensorflow::Status processTensorFlowLiteTask(
     tflite::Interpreter& interpreter,
-    const std::unordered_map<absl::string_view, int, absl::Hash<absl::string_view>>& inputIndexMap,
+    const std::unordered_map<absl::string_view, InputContext, absl::Hash<absl::string_view>>& inputContextMap,
     Batch<BatchingMessageTask>& batch);
 }  // namespace serving
 }  // namespace adlik

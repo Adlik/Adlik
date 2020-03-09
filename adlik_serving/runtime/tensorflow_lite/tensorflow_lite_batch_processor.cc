@@ -4,6 +4,7 @@
 #include "adlik_serving/runtime/tensorflow_lite/tensorflow_lite_batch_processor.h"
 
 #include "adlik_serving/runtime/provider/predict_request_provider.h"
+#include "adlik_serving/runtime/tensorflow_lite/tensor_utilities.h"
 #include "adlik_serving/runtime/tensorflow_lite/tensorflow_lite_engine.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/gtl/cleanup.h"
@@ -13,8 +14,10 @@ using absl::string_view;
 using absl::variant;
 using adlik::serving::Batch;
 using adlik::serving::BatchingMessageTask;
+using adlik::serving::InputContext;
 using adlik::serving::PredictRequestProvider;
 using adlik::serving::TensorShapeDims;
+using adlik::serving::tfLiteTypeToTfType;
 using std::make_unique;
 using std::shared_ptr;
 using std::string;
@@ -33,43 +36,13 @@ using tflite::InterpreterBuilder;
 using tflite::OpResolver;
 
 using InputSignature = unordered_map<string_view, tuple<DataType, TensorShapeDims>, Hash<string_view>>;
-using InputIndexMap = unordered_map<string_view, int, Hash<string_view>>;
+using InputContextMap = unordered_map<string_view, InputContext, Hash<string_view>>;
 
 namespace {
-DataType getTfDataType(TfLiteType type) {
-  switch (type) {
-    case TfLiteType::kTfLiteNoType:
-      // https://github.com/tensorflow/tensorflow/blob/4601949937145e66df37483c460ba9b7bfdfa680/tensorflow/lite/delegates/flex/util.cc#L60
-      return DataType::DT_FLOAT;
-    case TfLiteType::kTfLiteFloat32:
-      return DataType::DT_FLOAT;
-    case TfLiteType::kTfLiteInt32:
-      return DataType::DT_INT32;
-    case TfLiteType::kTfLiteUInt8:
-      return DataType::DT_UINT8;
-    case TfLiteType::kTfLiteInt64:
-      return DataType::DT_INT64;
-    case TfLiteType::kTfLiteString:
-      return DataType::DT_STRING;
-    case TfLiteType::kTfLiteBool:
-      return DataType::DT_BOOL;
-    case TfLiteType::kTfLiteInt16:
-      return DataType::DT_INT16;
-    case TfLiteType::kTfLiteComplex64:
-      return DataType::DT_COMPLEX64;
-    case TfLiteType::kTfLiteInt8:
-      return DataType::DT_INT8;
-    case TfLiteType::kTfLiteFloat16:
-      return DataType::DT_HALF;
-    default:
-      throw std::logic_error("Unreachable");
-  }
-}
-
-variant<tuple<InputSignature, InputIndexMap, size_t>, Status> getInputSignature(const Interpreter& interpreter) {
+variant<tuple<InputSignature, InputContextMap, size_t>, Status> getInputSignature(const Interpreter& interpreter) {
   constexpr auto invalidBatchSize = -1;
   InputSignature result;
-  InputIndexMap inputIndexMap;
+  InputContextMap inputContextMap;
   auto batchSize = invalidBatchSize;
 
   for (const auto i : interpreter.inputs()) {
@@ -88,16 +61,16 @@ variant<tuple<InputSignature, InputIndexMap, size_t>, Status> getInputSignature(
       result.emplace(
           std::piecewise_construct,
           std::forward_as_tuple(tensor.name),
-          std::forward_as_tuple(getTfDataType(tensor.type),
+          std::forward_as_tuple(tfLiteTypeToTfType(tensor.type),
                                 TensorShapeDims::owned(tfLiteDims.data + 1, tfLiteDims.data + tfLiteDims.size)));
 
-      inputIndexMap.emplace(tensor.name, i);
+      inputContextMap.emplace(tensor.name, i);
     } else {
       return Status{Code::INVALID_ARGUMENT, "Scalar tensors are not supported"};
     }
   }
 
-  return make_tuple(std::move(result), std::move(inputIndexMap), batchSize);
+  return make_tuple(std::move(result), std::move(inputContextMap), batchSize);
 }
 
 variant<size_t, Status> checkRequestArguments(InputSignature& argumentSignatureCache,
@@ -199,12 +172,12 @@ TensorFlowLiteBatchProcessor::TensorFlowLiteBatchProcessor(ConstructCredential,
                                                            unique_ptr<Interpreter> interpreter,
                                                            InputSignature parameterSignature,
                                                            size_t lastBatchSize,
-                                                           InputIndexMap inputIndexMap)
+                                                           InputContextMap inputContextMap)
     : model(std::move(model)),
       interpreter(std::move(interpreter)),
       parameterSignature(std::move(parameterSignature)),
       lastBatchSize(lastBatchSize),
-      inputIndexMap(std::move(inputIndexMap)) {
+      inputContextMap(std::move(inputContextMap)) {
 }
 
 Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& batch) {
@@ -226,7 +199,7 @@ Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& ba
     this->lastBatchSize = batchSize;
   }
 
-  return processTensorFlowLiteTask(*this->interpreter, this->inputIndexMap, batch);
+  return processTensorFlowLiteTask(*this->interpreter, this->inputContextMap, batch);
 }
 
 variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchProcessor::create(
@@ -244,15 +217,15 @@ variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchPro
 
   auto maybeSignature = getInputSignature(*interpreter);
 
-  if (absl::holds_alternative<tuple<InputSignature, InputIndexMap, size_t>>(maybeSignature)) {
-    auto signature = absl::get<tuple<InputSignature, InputIndexMap, size_t>>(std::move(maybeSignature));
+  if (absl::holds_alternative<tuple<InputSignature, InputContextMap, size_t>>(maybeSignature)) {
+    auto signature = absl::get<tuple<InputSignature, InputContextMap, size_t>>(std::move(maybeSignature));
 
     return make_unique<TensorFlowLiteBatchProcessor>(constructCredential,
                                                      std::move(model),
                                                      std::move(interpreter),
                                                      std::move(std::get<InputSignature>(signature)),
                                                      std::move(std::get<size_t>(signature)),
-                                                     std::move(std::get<InputIndexMap>(signature)));
+                                                     std::move(std::get<InputContextMap>(signature)));
   } else {
     return absl::get<1>(std::move(maybeSignature));
   }
