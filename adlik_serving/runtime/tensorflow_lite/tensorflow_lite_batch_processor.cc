@@ -33,6 +33,7 @@ using tflite::InterpreterBuilder;
 using tflite::OpResolver;
 
 using InputSignature = unordered_map<string_view, tuple<DataType, TensorShapeDims>, Hash<string_view>>;
+using InputIndexMap = unordered_map<string_view, int, Hash<string_view>>;
 
 namespace {
 DataType getTfDataType(TfLiteType type) {
@@ -65,9 +66,10 @@ DataType getTfDataType(TfLiteType type) {
   }
 }
 
-variant<tuple<InputSignature, size_t>, Status> getInputSignature(const Interpreter& interpreter) {
+variant<tuple<InputSignature, InputIndexMap, size_t>, Status> getInputSignature(const Interpreter& interpreter) {
   constexpr auto invalidBatchSize = -1;
   InputSignature result;
+  InputIndexMap inputIndexMap;
   auto batchSize = invalidBatchSize;
 
   for (const auto i : interpreter.inputs()) {
@@ -88,12 +90,14 @@ variant<tuple<InputSignature, size_t>, Status> getInputSignature(const Interpret
           std::forward_as_tuple(tensor.name),
           std::forward_as_tuple(getTfDataType(tensor.type),
                                 TensorShapeDims::owned(tfLiteDims.data + 1, tfLiteDims.data + tfLiteDims.size)));
+
+      inputIndexMap.emplace(tensor.name, i);
     } else {
       return Status{Code::INVALID_ARGUMENT, "Scalar tensors are not supported"};
     }
   }
 
-  return make_tuple(std::move(result), batchSize);
+  return make_tuple(std::move(result), std::move(inputIndexMap), batchSize);
 }
 
 variant<size_t, Status> checkRequestArguments(InputSignature& argumentSignatureCache,
@@ -191,14 +195,16 @@ Status updateInterpreterBatchSize(Interpreter& interpreter, size_t batchSize, ve
 namespace adlik {
 namespace serving {
 TensorFlowLiteBatchProcessor::TensorFlowLiteBatchProcessor(ConstructCredential,
-                                                           shared_ptr<tflite::FlatBufferModel> model,
+                                                           shared_ptr<FlatBufferModel> model,
                                                            unique_ptr<Interpreter> interpreter,
                                                            InputSignature parameterSignature,
-                                                           size_t lastBatchSize)
+                                                           size_t lastBatchSize,
+                                                           InputIndexMap inputIndexMap)
     : model(std::move(model)),
       interpreter(std::move(interpreter)),
       parameterSignature(std::move(parameterSignature)),
-      lastBatchSize(lastBatchSize) {
+      lastBatchSize(lastBatchSize),
+      inputIndexMap(std::move(inputIndexMap)) {
 }
 
 Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& batch) {
@@ -220,7 +226,7 @@ Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& ba
     this->lastBatchSize = batchSize;
   }
 
-  return processTensorFlowLiteTask(*this->interpreter, batch);
+  return processTensorFlowLiteTask(*this->interpreter, this->inputIndexMap, batch);
 }
 
 variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchProcessor::create(
@@ -236,18 +242,19 @@ variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchPro
     return Status(Code::INTERNAL, "Unable to allocate tensors");
   }
 
-  auto maybeSignatureAndBatchSize = getInputSignature(*interpreter);
+  auto maybeSignature = getInputSignature(*interpreter);
 
-  if (absl::holds_alternative<tuple<InputSignature, size_t>>(maybeSignatureAndBatchSize)) {
-    auto signatureAndBatchSize = absl::get<tuple<InputSignature, size_t>>(std::move(maybeSignatureAndBatchSize));
+  if (absl::holds_alternative<tuple<InputSignature, InputIndexMap, size_t>>(maybeSignature)) {
+    auto signature = absl::get<tuple<InputSignature, InputIndexMap, size_t>>(std::move(maybeSignature));
 
     return make_unique<TensorFlowLiteBatchProcessor>(constructCredential,
                                                      std::move(model),
                                                      std::move(interpreter),
-                                                     std::move(std::get<0>(signatureAndBatchSize)),
-                                                     std::move(std::get<1>(signatureAndBatchSize)));
+                                                     std::move(std::get<InputSignature>(signature)),
+                                                     std::move(std::get<size_t>(signature)),
+                                                     std::move(std::get<InputIndexMap>(signature)));
   } else {
-    return absl::get<1>(std::move(maybeSignatureAndBatchSize));
+    return absl::get<1>(std::move(maybeSignature));
   }
 }
 }  // namespace serving

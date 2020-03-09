@@ -24,17 +24,20 @@ class TensorFlowLiteBatchProcessor : public BatchProcessor {
   std::unique_ptr<tflite::Interpreter> interpreter;
   const InputSignature parameterSignature;
   size_t lastBatchSize;
+  const std::unordered_map<absl::string_view, int, absl::Hash<absl::string_view>> inputIndexMap;
   InputSignature argumentSignatureCache;
   std::vector<int> inputTensorDimsCache;
 
   virtual tensorflow::Status processBatch(Batch<BatchingMessageTask>& batch) override;
 
 public:
-  TensorFlowLiteBatchProcessor(ConstructCredential,
-                               std::shared_ptr<tflite::FlatBufferModel> model,
-                               std::unique_ptr<tflite::Interpreter> interpreter,
-                               InputSignature parameterSignature,
-                               size_t lastBatchSize);
+  TensorFlowLiteBatchProcessor(
+      ConstructCredential,
+      std::shared_ptr<tflite::FlatBufferModel> model,
+      std::unique_ptr<tflite::Interpreter> interpreter,
+      InputSignature parameterSignature,
+      size_t lastBatchSize,
+      const std::unordered_map<absl::string_view, int, absl::Hash<absl::string_view>> inputIndexMap);
 
   static absl::variant<std::unique_ptr<TensorFlowLiteBatchProcessor>, tensorflow::Status> create(
       std::shared_ptr<tflite::FlatBufferModel> model,

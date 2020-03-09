@@ -4,12 +4,16 @@
 #ifndef ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSORFLOW_LITE_ENGINE_H
 #define ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSORFLOW_LITE_ENGINE_H
 
+#include "absl/hash/hash.h"
 #include "adlik_serving/runtime/batching/batching_message_task.h"
 #include "tensorflow/lite/interpreter.h"
 
 namespace adlik {
 namespace serving {
-tensorflow::Status processTensorFlowLiteTask(tflite::Interpreter& interpreter, Batch<BatchingMessageTask>& batch);
+tensorflow::Status processTensorFlowLiteTask(
+    tflite::Interpreter& interpreter,
+    const std::unordered_map<absl::string_view, int, absl::Hash<absl::string_view>>& inputIndexMap,
+    Batch<BatchingMessageTask>& batch);
 }  // namespace serving
 }  // namespace adlik
 
