@@ -53,6 +53,7 @@ serving_proto_library(
     cc_api_version = 2,
     deps = [
         "//adlik_serving/framework/domain:model_spec_proto",
+        "//adlik_serving/runtime/ml/algorithm/proto:task_config_proto",
     ],
 )
 
@@ -62,6 +63,7 @@ serving_proto_library_py(
     proto_library = "task_proto",
     deps = [
         "//adlik_serving/framework/domain:model_spec_proto_py_pb2",
+        "//adlik_serving/runtime/ml/algorithm/proto:task_config_proto_py_pb2",
     ],
 )
 

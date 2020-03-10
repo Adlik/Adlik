@@ -3,30 +3,24 @@ load("//adlik_serving:serving.bzl", "serving_cc_library")
 package(default_visibility = ["//adlik_serving:internal"])
 
 serving_cc_library(
-    name = "algorithm_factory",
+    name = "grid",
     srcs = [
-        "algorithm_factory.cc",
-        "algorithm_register.cc",
+        "k-means.cc",
     ],
     hdrs = [
-        "algorithm.h",
-        "algorithm_creator.h",
-        "algorithm_factory.h",
-        "algorithm_register.h",
-        "ml_task.h",
     ],
+    # copts = ["-std=c++17"],
+    # linkstatic = 1,
     deps = [
-        "//cub/gof:singleton",
+        "//adlik_serving/runtime/ml/algorithm:algorithm_factory",
+        "//adlik_serving/runtime/ml/algorithm/proto:task_config_proto",
+        "//csv",
+        "//cub/base:status_wrapper",
+        "//cub/env/fs",
+        "//cub/env/fs:path",
         "//cub/log",
-    ],
-)
-
-serving_cc_library(
-    name = "algorithm",
-    linkstatic = 1,
-    deps = [
-        ":algorithm_factory",
-        "//adlik_serving/runtime/ml/algorithm/grid",
+        "//cub/string:string_view",
+        "@dlib_archive//:dlib",
     ],
     alwayslink = 1,
 )

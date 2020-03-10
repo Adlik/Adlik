@@ -3,6 +3,8 @@
 
 #include "adlik_serving/runtime/ml/algorithm/algorithm_factory.h"
 
+#include "cub/log/log.h"
+
 namespace ml_runtime {
 
 void AlgorithmFactory::create(const std::string& name,
@@ -11,6 +13,8 @@ void AlgorithmFactory::create(const std::string& name,
   auto it = creators.find(name);
   if (it != creators.end())
     it->second(config, algo);
+  else
+    FATAL_LOG << "Not found algorithm creator by name " << name;
 }
 
 void AlgorithmFactory::add(const std::string& name, AlgoCreator creator) {
