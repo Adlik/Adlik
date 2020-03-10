@@ -4,7 +4,7 @@ package adlik.serving;
 option cc_enable_arenas = true;
 
 import "adlik_serving/framework/domain/version_policy.proto";
-
+import "adlik_serving/framework/domain/algorithm_config.proto";
 import "tensorflow/core/framework/types.proto";
 
 // A group of one or more instances of a model and resources made available for
@@ -137,5 +137,5 @@ message ModelConfigProto {
   // now only support "k-means"
   string algorithm = 20;
 
-  // Other parameters about algorithm
+  AlgorithmConfig algorithm_config = 21;
 }
