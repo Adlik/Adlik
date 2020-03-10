@@ -7,12 +7,18 @@
 #include <functional>
 #include <memory>
 
+namespace adlik {
+namespace serving {
+struct AlgorithmConfig;
+}
+}  // namespace adlik
+
 namespace ml_runtime {
 
 struct Algorithm;
 struct AlgorithmConfig;
 
-using AlgoCreator = std::function<void(const AlgorithmConfig&, std::unique_ptr<Algorithm>*)>;
+using AlgoCreator = std::function<void(const adlik::serving::AlgorithmConfig&, std::unique_ptr<Algorithm>*)>;
 
 }  // namespace ml_runtime
 

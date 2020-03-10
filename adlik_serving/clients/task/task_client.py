@@ -18,7 +18,7 @@ def _create_request():
     request = task_pb2.CreateTaskRequest()
     request.model_spec.name = FLAGS.model_name
     request.task_type = 1  # Training task
-    request.algorithm = 'k-means'
+    # request.algorithm = 'k-means'
     request.is_sync = FLAGS.is_sync
     request.kmeans_task.n_clusters = FLAGS.clusters
     request.kmeans_task.input = FLAGS.input

@@ -9,7 +9,6 @@
 #include "adlik_serving/apis/task.pb.h"
 #include "adlik_serving/framework/domain/model_config_helper.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
-#include "adlik_serving/runtime/ml/algorithm/algorithm_config.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_factory.h"
 #include "adlik_serving/runtime/ml/algorithm/ml_task.h"
 #include "cub/env/concurrent/notification.h"
@@ -22,9 +21,10 @@ using namespace adlik::serving;
 
 namespace {
 
-void create_algorithm(std::unique_ptr<Algorithm>* algorithm) {
-  AlgorithmConfig algorithm_config;
-  AlgorithmFactory::inst().create("k-means", algorithm_config, algorithm);
+void createAlgorithm(const std::string& name,
+                     const adlik::serving::AlgorithmConfig& config,
+                     std::unique_ptr<Algorithm>* algorithm) {
+  AlgorithmFactory::inst().create(name, config, algorithm);
   return;
 }
 
@@ -39,13 +39,12 @@ cub::Status MLModel::init() {
     return cub::Success;
   }
 
-  // just temporaryl
-  if (config.algorithm() != "k-means") {
-    ERR_LOG << "Unsupported algorithm '" << config.algorithm() << "', now only support k-means!";
+  if (config.algorithm().length() == 0) {
+    ERR_LOG << "Algorithm is null!";
     return cub::InvalidArgument;
   }
 
-  create_algorithm(&algorithm);
+  createAlgorithm(config.algorithm(), config.algorithm_config(), &algorithm);
   if (!algorithm) {
     ERR_LOG << "Create ml algorithm failure";
     return cub::Internal;
@@ -73,18 +72,6 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
 
   if (!request.is_sync()) {
     return cub::StatusWrapper(cub::InvalidArgument, "Now only suuport synchronous task");
-  }
-
-  if (request.algorithm().length() > 0) {
-    if (request.algorithm() != "k-means") {
-      return cub::StatusWrapper(cub::InvalidArgument, "Now only suuport k-means task");
-    }
-    if (!request.has_kmeans_task()) {
-      return cub::StatusWrapper(cub::InvalidArgument, "Not have k-means task parameters");
-    }
-    if (!algorithm) {
-      create_algorithm(&algorithm);
-    }
   }
 
   if (!algorithm) {

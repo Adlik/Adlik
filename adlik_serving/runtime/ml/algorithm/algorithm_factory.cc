@@ -6,7 +6,7 @@
 namespace ml_runtime {
 
 void AlgorithmFactory::create(const std::string& name,
-                              const AlgorithmConfig& config,
+                              const adlik::serving::AlgorithmConfig& config,
                               std::unique_ptr<Algorithm>* algo) {
   auto it = creators.find(name);
   if (it != creators.end())

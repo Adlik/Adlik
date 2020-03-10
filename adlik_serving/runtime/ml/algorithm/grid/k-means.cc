@@ -12,6 +12,7 @@
 #include "cub/env/fs/file_system.h"
 #include "cub/env/fs/path.h"
 #include "cub/log/log.h"
+#include "cub/string/string_view.h"
 #include "dlib/clustering.h"
 #include "dlib/rand.h"
 
@@ -23,7 +24,8 @@ using SampleType = dlib::matrix<double, 0, 1>;
 using KernelType = dlib::radial_basis_kernel<SampleType>;
 
 std::vector<SampleType> loadCSV(const std::string& file_path) {
-  using Row = csv::unordered_flat_map<std::string_view, std::string>;
+  // using Row = csv::unordered_flat_map<std::string_view, std::string>;
+  using Row = csv::unordered_flat_map<cub::StringView, std::string>;
 
   std::vector<SampleType> samples;
 
@@ -58,7 +60,7 @@ std::vector<SampleType> loadCSV(const std::string& file_path) {
 }  // namespace
 
 struct KMeans : Algorithm {
-  static void create(const AlgorithmConfig&, std::unique_ptr<Algorithm>*);
+  static void create(const adlik::serving::AlgorithmConfig&, std::unique_ptr<Algorithm>*);
 
   void run(MLTask&) override;
   const std::string name() const override {
@@ -66,7 +68,7 @@ struct KMeans : Algorithm {
   }
 };
 
-void KMeans::create(const AlgorithmConfig&, std::unique_ptr<Algorithm>* algorithm) {
+void KMeans::create(const adlik::serving::AlgorithmConfig&, std::unique_ptr<Algorithm>* algorithm) {
   *algorithm = std::make_unique<KMeans>();
   // TODO: should have some other parameters to set, expecially for prediction scene
 }

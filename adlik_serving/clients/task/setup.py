@@ -39,7 +39,7 @@ if 'adlik-serving-api-gpu' in project_name:
 
 REQUIRED_PACKAGES = [
     'requests',
-    'grpcio>=1.0<2',
+    'grpcio==1.27.2',
     'protobuf>=3.6.0',
 ]
 
