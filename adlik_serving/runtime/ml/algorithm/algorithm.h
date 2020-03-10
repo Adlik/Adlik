@@ -6,6 +6,15 @@
 
 #include <string>
 
+#include "cub/base/status_wrapper.h"
+
+namespace adlik {
+namespace serving {
+struct TaskReq;
+struct TaskRsp;
+}  // namespace serving
+}  // namespace adlik
+
 namespace ml_runtime {
 
 struct MLTask;
@@ -15,7 +24,7 @@ struct Algorithm {
   }
 
   virtual const std::string name() const = 0;
-  virtual void run(MLTask&) = 0;
+  virtual cub::StatusWrapper run(const adlik::serving::TaskReq&, adlik::serving::TaskRsp&) = 0;
 };
 
 }  // namespace ml_runtime

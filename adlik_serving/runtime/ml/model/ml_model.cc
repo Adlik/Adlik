@@ -81,18 +81,10 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
 
   DEBUG_LOG << "Prepare construct task";
 
-  MLTask ml_task;
-  auto& task = ml_task.kmeans;
-  task.input = request.kmeans_task().input();
-  task.n_clusters = request.kmeans_task().n_clusters();
-  task.max_iter = request.kmeans_task().max_iter();
-  task.compute_labels = request.kmeans_task().compute_labels();
-  task.label_name = request.kmeans_task().label_name();
-  task.output = request.kmeans_task().output();
-
   cub::Notification notification;
+  cub::StatusWrapper status;
   auto f = [&]() {
-    this->algorithm->run(ml_task);
+    status = this->algorithm->run(request.task(), *response.mutable_task());
     notification.notify();
   };
 
@@ -102,19 +94,15 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
   DEBUG_LOG << "Before wait to task";
   notification.wait();
 
-  DEBUG_LOG << "Task is over, status: " << ml_task.status.error_message();
+  DEBUG_LOG << "Task is over, status: " << status.error_message();
 
-  if (ml_task.status.ok()) {
+  if (status.ok()) {
     response.set_task_status("DONE");
-    if (task.compute_labels) {
-      response.set_output(task.output);
-    }
   } else {
     response.set_task_status("ERROR");
   }
 
-  // TODO: do something for exception
-  return ml_task.status;
+  return status;
 }
 
 }  // namespace ml_runtime

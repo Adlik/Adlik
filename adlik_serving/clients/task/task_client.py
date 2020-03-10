@@ -20,12 +20,12 @@ def _create_request():
     request.task_type = 1  # Training task
     # request.algorithm = 'k-means'
     request.is_sync = FLAGS.is_sync
-    request.kmeans_task.n_clusters = FLAGS.clusters
-    request.kmeans_task.input = FLAGS.input
-    request.kmeans_task.max_iter = FLAGS.max_iter
-    request.kmeans_task.compute_labels = True
-    request.kmeans_task.label_name = FLAGS.label_name
-    request.kmeans_task.output = FLAGS.output
+    request.task.grid.n_clusters = FLAGS.clusters
+    request.task.grid.input = FLAGS.input
+    request.task.grid.max_iter = FLAGS.max_iter
+    request.task.grid.compute_labels = True
+    request.task.grid.label_name = FLAGS.label_name
+    request.task.grid.output = FLAGS.output
     return request
 
 
@@ -58,9 +58,9 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--is-sync', type=bool, required=False, default=True,
                         help='Whether run task synchronously, wait result until task is done if synchronous. '
                              'Default is True.')
-    parser.add_argument('-i', '--input', type=str, required=True,
+    parser.add_argument('-i', '--input', type=str, required=False, default='/home/jsy/ai/code/Adlik/adlik_serving/runtime/ml/algorithm/grid/test_data/good_data2.csv',
                         help='File path of input csv.')
-    parser.add_argument('-o', '--output', type=str, required=True,
+    parser.add_argument('-o', '--output', type=str, required=False, default='/home/jsy/ai/code/Adlik/adlik_serving/runtime/ml/algorithm/grid/test_data/result.csv',
                         help='File path of output csv.')
 
     FLAGS = parser.parse_args()
