@@ -16,6 +16,7 @@ serving_cc_library(
         "ml_task.h",
     ],
     deps = [
+        "//cub/base:status_wrapper",
         "//cub/gof:singleton",
         "//cub/log",
     ],
@@ -26,6 +27,7 @@ serving_cc_library(
     linkstatic = 1,
     deps = [
         ":algorithm_factory",
+        "//adlik_serving/runtime/ml/algorithm/amc",
         "//adlik_serving/runtime/ml/algorithm/grid",
     ],
     alwayslink = 1,
