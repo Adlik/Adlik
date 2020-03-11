@@ -203,7 +203,7 @@ Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& ba
     return std::move(absl::get<Status>(result));
   }
 
-  const auto batchSize = absl::get<0>(result);
+  const auto batchSize = absl::get<size_t>(result);
 
   if (batchSize != this->lastBatchSize) {
     auto updateBatchSizeResult = updateInterpreterBatchSize(*this->interpreter, batchSize, this->inputTensorDimsCache);
@@ -246,7 +246,7 @@ variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchPro
                                                      std::move(inputContextMap),
                                                      std::move(outputContexts));
   } else {
-    return absl::get<1>(std::move(maybeSignature));
+    return absl::get<Status>(std::move(maybeSignature));
   }
 }
 }  // namespace serving
