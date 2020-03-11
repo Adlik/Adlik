@@ -3,14 +3,15 @@
 
 #include "adlik_serving/runtime/ml/model/ml_model.h"
 
-#include <mutex>
+#include <algorithm>
 #include <string>
 
 #include "adlik_serving/apis/task.pb.h"
+#include "adlik_serving/framework/domain/model_config.h"
 #include "adlik_serving/framework/domain/model_config_helper.h"
+#include "adlik_serving/framework/domain/model_id.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_factory.h"
-#include "adlik_serving/runtime/ml/algorithm/ml_task.h"
 #include "cub/env/concurrent/notification.h"
 #include "cub/log/log.h"
 #include "cub/task/simple_executor.h"
@@ -25,29 +26,36 @@ void createAlgorithm(const std::string& name,
                      const adlik::serving::AlgorithmConfig& config,
                      std::unique_ptr<Algorithm>* algorithm) {
   AlgorithmFactory::inst().create(name, config, algorithm);
-  return;
 }
 
 }  // namespace
 
-MLModel::MLModel(const ModelConfig& config, const ModelId& model_id) : config(config), model_id(model_id) {
-}
-
-cub::Status MLModel::init() {
+cub::Status MLModel::init(const ModelConfig& config) {
   if (config.algorithm().length() == 0) {
     INFO_LOG << "Config algorithm is null, not create algorithm object!";
     return cub::Success;
   }
 
-  if (config.algorithm().length() == 0) {
-    ERR_LOG << "Algorithm is null!";
-    return cub::InvalidArgument;
+  size_t runner_count = 0;
+
+  for (const auto& group : config.instance_group()) {
+    for (int i = 0; i < group.count(); ++i) {
+      std::unique_ptr<Algorithm> runner;
+      createAlgorithm(config.algorithm(), config.algorithm_config(), &runner);
+      if (runner) {
+        runners.push_back({AVAILABLE, std::move(runner)});
+        DEBUG_LOG << "Create instance " << runner_count << " for model " << config.getModelName();
+      } else {
+        ERR_LOG << "Create ml algorithm failure";
+        return cub::Internal;
+      }
+      runner_count++;
+    }
   }
 
-  createAlgorithm(config.algorithm(), config.algorithm_config(), &algorithm);
-  if (!algorithm) {
-    ERR_LOG << "Create ml algorithm failure";
-    return cub::Internal;
+  if (runner_count == 0) {
+    ERR_LOG << "Runner count is 0 when create model " << config.getModelName();
+    return cub::InvalidArgument;
   }
 
   return cub::Success;
@@ -55,8 +63,8 @@ cub::Status MLModel::init() {
 
 cub::Status MLModel::create(const ModelConfig& config, const ModelId& model_id, std::unique_ptr<MLModel>* bundle) {
   INFO_LOG << "Prepare to create ML model, name: " << model_id.getName() << ", version: " << model_id.getVersion();
-  auto raw = std::make_unique<MLModel>(config, model_id);
-  auto status = raw->init();
+  auto raw = std::make_unique<MLModel>();
+  auto status = raw->init(config);
   if (cub::isSuccStatus(status)) {
     *bundle = std::move(raw);
   }
@@ -74,34 +82,37 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
     return cub::StatusWrapper(cub::InvalidArgument, "Now only suuport synchronous task");
   }
 
-  if (!algorithm) {
-    ERR_LOG << "Algorithm is null!";
-    return cub::StatusWrapper(cub::Internal, "Algorithm is null");
+  auto it = runners.begin();
+  {
+    cub::AutoLock lock(mutex);
+    it = std::find_if(runners.begin(), runners.end(), [](const auto& item) { return item.first == AVAILABLE; });
+    if (it == runners.end()) {
+      return cub::StatusWrapper(
+          cub::Unavailable,
+          "Can't find an available instance, should check whether number of threads match instances!");
+    } else {
+      it->first = UNAVAILABLE;
+    }
   }
-
-  DEBUG_LOG << "Prepare construct task";
 
   cub::Notification notification;
   cub::StatusWrapper status;
   auto f = [&]() {
-    status = this->algorithm->run(request.task(), *response.mutable_task());
+    status = it->second->run(request.task(), *response.mutable_task());
     notification.notify();
   };
 
   cub::SimpleExecutor executor;
   executor.schedule(f);
-
-  DEBUG_LOG << "Before wait to task";
   notification.wait();
 
-  DEBUG_LOG << "Task is over, status: " << status.error_message();
-
-  if (status.ok()) {
-    response.set_task_status("DONE");
-  } else {
-    response.set_task_status("ERROR");
+  {
+    cub::AutoLock lock(mutex);
+    it->first = AVAILABLE;
   }
 
+  DEBUG_LOG << "Task is over, status: " << status.error_message();
+  response.set_task_status(status.ok() ? "DONE" : "ERROR");
   return status;
 }
 

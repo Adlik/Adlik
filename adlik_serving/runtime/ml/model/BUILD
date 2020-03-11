@@ -18,8 +18,24 @@ serving_cc_library(
         "//adlik_serving/runtime/provider:predict_request_provider",
         "//adlik_serving/runtime/provider:predict_response_provider",
         "//cub/base:status_wrapper",
+        "//cub/env/concurrent:auto_lock",
         "//cub/env/posix",
         "//cub/log",
         "//cub/task:simple_executor",
+    ],
+)
+
+serving_cc_library(
+    name = "ml_scheduler",
+    srcs = [
+        "scheduler.cc",
+    ],
+    hdrs = [
+        "scheduler.h",
+    ],
+    deps = [
+        "//adlik_serving/runtime/batching:basic_batch_scheduler",
+        "//adlik_serving/runtime/batching:batch_scheduler",
+        "//adlik_serving/runtime/ml/algorithm:ml_task",
     ],
 )

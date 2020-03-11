@@ -6,7 +6,6 @@
 
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_register.h"
-#include "adlik_serving/runtime/ml/algorithm/ml_task.h"
 #include "adlik_serving/runtime/ml/algorithm/proto/task_config.pb.h"
 #include "csv/reader.hpp"
 #include "csv/writer.hpp"
@@ -75,7 +74,7 @@ void KMeans::create(const adlik::serving::AlgorithmConfig&, std::unique_ptr<Algo
 }
 
 // should try catch exceptions
-cub::StatusWrapper KMeans::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp& rsp) {
+cub::StatusWrapper KMeans::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp&) {
   DEBUG_LOG << "Prepare to run k-means";
 
   const auto& config = req.grid();
