@@ -3,7 +3,10 @@ load("//adlik_serving:serving.bzl", "serving_cc_library")
 serving_cc_library(
     name = "tensorflow_lite_runtime_impl",
     srcs = [
+        "input_context.cc",
         "input_context.h",
+        "output_context.cc",
+        "output_context.h",
         "tensor_shape_dims.h",
         "tensor_utilities.cc",
         "tensor_utilities.h",

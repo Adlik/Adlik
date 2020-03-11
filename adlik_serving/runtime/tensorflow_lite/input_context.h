@@ -4,18 +4,23 @@
 #ifndef ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_INPUT_CONTEXT_H
 #define ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_INPUT_CONTEXT_H
 
-#include <cstdlib>
+#include "tensorflow/core/framework/tensor.pb.h"
+#include "tensorflow/core/lib/core/status.h"
+#include "tensorflow/lite/interpreter.h"
 
 namespace adlik {
 namespace serving {
-struct InputContext {
-  int tensorIndex;
-  mutable size_t bytesWrittenCache = 0;
+class InputContext {
+  const int tensorIndex;
+  size_t bytesWrittenCache = 0;
 
-  explicit InputContext(int tensorIndex) : tensorIndex(tensorIndex) {
-  }
+public:
+  explicit InputContext(int tensorIndex);
+
+  tensorflow::Status addInputTensor(tflite::Interpreter& interpreter, const tensorflow::TensorProto& tensorProto);
+  void reset() noexcept;
 };
-}  // namespace serving
+};  // namespace serving
 }  // namespace adlik
 
 #endif  // ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_INPUT_CONTEXT_H

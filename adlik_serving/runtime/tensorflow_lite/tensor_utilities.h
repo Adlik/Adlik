@@ -4,6 +4,7 @@
 #ifndef ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSOR_UTILITIES_H
 #define ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSOR_UTILITIES_H
 
+#include "absl/types/span.h"
 #include "tensorflow/core/framework/tensor.pb.h"
 #include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/core/lib/core/status.h"
@@ -12,9 +13,7 @@
 namespace adlik {
 namespace serving {
 tensorflow::DataType tfLiteTypeToTfType(TfLiteType tfLiteType);
-
-tensorflow::Status copyTensorProtoToTfLiteTensor(const tensorflow::TensorProto& tensorProto,
-                                                 TfLiteTensor& tfLiteTensor);
+TfLiteType tfLiteTypeToTfType(tensorflow::DataType dataType);
 }  // namespace serving
 }  // namespace adlik
 

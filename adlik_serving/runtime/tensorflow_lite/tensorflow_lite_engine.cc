@@ -3,7 +3,11 @@
 
 #include "adlik_serving/runtime/tensorflow_lite/tensorflow_lite_engine.h"
 
+#include <functional>
+#include <numeric>
+
 #include "adlik_serving/runtime/provider/predict_request_provider.h"
+#include "adlik_serving/runtime/provider/predict_response_provider.h"
 #include "adlik_serving/runtime/tensorflow_lite/input_context.h"
 #include "adlik_serving/runtime/tensorflow_lite/tensor_utilities.h"
 #include "tensorflow/core/lib/core/errors.h"
@@ -16,56 +20,76 @@ using std::unordered_map;
 using std::vector;
 using tensorflow::Status;
 using tensorflow::TensorProto;
+using tensorflow::errors::Code;
 using tensorflow::gtl::MakeCleanup;
 using tflite::Interpreter;
 
 namespace adlik {
 namespace serving {
 namespace {
-Status setInputs(Interpreter& interpreter,
-                 const unordered_map<string_view, InputContext, Hash<string_view>>& inputContextMap,
-                 Batch<BatchingMessageTask>& batch) {
-  auto cleanUp = MakeCleanup([&] {
-    for (const auto& entry : inputContextMap) {
-      entry.second.bytesWrittenCache = 0;
+Status mergeInputs(Interpreter& interpreter,
+                   unordered_map<string_view, InputContext, Hash<string_view>>& inputContextMap,
+                   const Batch<BatchingMessageTask>& batch) {
+  const auto cleanUp = MakeCleanup([&] {
+    for (auto& entry : inputContextMap) {
+      entry.second.reset();
     }
   });
 
-  auto numTasks = batch.num_tasks();
+  const auto numTasks = batch.num_tasks();
 
   for (auto i = 0; i != numTasks; ++i) {
     const auto& task = batch.task(i);
 
     auto status = Status::OK();
 
-    task.request->visitInputs([&](const string& name, const TensorProto& tensor) {
-      const auto& context = inputContextMap.at(name);
-      const auto& tensorContent = tensor.tensor_content();
+    task.request->visitInputs([&](const string& name, const TensorProto& tensorProto) {
+      auto& context = inputContextMap.at(name);
 
-      status = copyTensorProtoToTfLiteTensor(tensor, *interpreter.tensor(context.tensorIndex));
+      context.addInputTensor(interpreter, tensorProto);
 
-      auto isOk = status.ok();
+      status = context.addInputTensor(interpreter, tensorProto);
 
-      if (isOk) {
-        context.bytesWrittenCache += tensorContent.length();
-      }
-
-      return isOk;
+      return status.ok();
     });
 
-    if (!status.ok()) {
-      return status;
+    TF_RETURN_IF_ERROR(status);
+  }
+}
+
+Status splitOutputs(Interpreter& interpreter,
+                    absl::Span<OutputContext>& outputContexts,
+                    Batch<BatchingMessageTask>& batch) {
+  const auto numTasks = batch.num_tasks();
+
+  for (auto i = 0; i != numTasks; ++i) {
+    const auto& task = batch.task(i);
+    const auto batchSize = task.request->batchSize();
+    auto& response = *task.response;
+
+    for (auto& context : outputContexts) {
+      const auto& tensor = *interpreter.tensor(context.tensorIndex);
+      const auto dimsList = context.getDimsList(batchSize, *tensor.dims);
+
+      throw std::logic_error("Not implemented");
     }
   }
 }
 }  // namespace
 
 Status processTensorFlowLiteTask(Interpreter& interpreter,
-                                 const unordered_map<string_view, InputContext, Hash<string_view>>& inputContextMap,
+                                 unordered_map<string_view, InputContext, Hash<string_view>>& inputContextMap,
+                                 absl::Span<OutputContext> outputContexts,
                                  Batch<BatchingMessageTask>& batch) {
-  TF_RETURN_IF_ERROR(setInputs(interpreter, inputContextMap, batch));
+  TF_RETURN_IF_ERROR(mergeInputs(interpreter, inputContextMap, batch));
 
-  throw std::logic_error("Not implemented");
+  if (interpreter.Invoke() != TfLiteStatus::kTfLiteOk) {
+    return Status{Code::INTERNAL, "Failed to invoke interpreter"};
+  }
+
+  TF_RETURN_IF_ERROR(splitOutputs(interpreter, outputContexts, batch));
+
+  return Status::OK();
 }
 }  // namespace serving
 }  // namespace adlik
