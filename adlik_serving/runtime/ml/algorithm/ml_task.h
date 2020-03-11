@@ -6,22 +6,26 @@
 
 #include <string>
 
+// #include "adlik_serving/apis/task.pb.h"
 #include "cub/base/status_wrapper.h"
+
+namespace adlik {
+namespace serving {
+struct CreateTaskRequest;
+struct CreateTaskResponse;
+}  // namespace serving
+}  // namespace adlik
 
 namespace ml_runtime {
 
-struct KMeansTaskInternal {
-  std::string input;
-  size_t n_clusters;
-  uint32_t max_iter;  // default 100
-  bool compute_labels;  // default true
-  std::string label_name;
-  std::string output;
-};
-
 struct MLTask {
   cub::StatusWrapper status;
-  KMeansTaskInternal kmeans;
+  const adlik::serving::CreateTaskRequest* request;
+  adlik::serving::CreateTaskResponse* response;
+
+  size_t size() const {
+    return 1;
+  }
 };
 
 }  // namespace ml_runtime

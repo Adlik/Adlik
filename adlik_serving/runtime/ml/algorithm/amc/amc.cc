@@ -41,7 +41,7 @@ void Amc::create(const adlik::serving::AlgorithmConfig& config, std::unique_ptr<
 }
 
 cub::StatusWrapper Amc::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp& rsp) {
-  DEBUG_LOG << "Prepare to run amc";
+  DEBUG_LOG << "Prepare to run amc, this: " << this;
 
   auto result = rsp.mutable_amc();
   auto deltas = result->mutable_deltas();
