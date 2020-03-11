@@ -60,7 +60,7 @@ class Compiler(BaseCompiler):
             raise error
 
     def _convert_model_onnx(self, model_info):
-        model_path = self.onnx_path
+        model_path = self.model_path
         for i in model_info.inputs:
             if i.data_format == 'channels_last':
                 raise Exception('The data format: {} is not support'.format(i.data_format))
