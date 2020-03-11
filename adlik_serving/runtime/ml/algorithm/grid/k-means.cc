@@ -75,7 +75,7 @@ void KMeans::create(const adlik::serving::AlgorithmConfig&, std::unique_ptr<Algo
 
 // should try catch exceptions
 cub::StatusWrapper KMeans::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp&) {
-  DEBUG_LOG << "Prepare to run k-means";
+  DEBUG_LOG << "Prepare to run k-means, this: " << this;
 
   const auto& config = req.grid();
   if (!cub::filesystem().exists(config.input())) {
