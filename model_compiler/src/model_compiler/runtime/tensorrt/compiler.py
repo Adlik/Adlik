@@ -111,7 +111,7 @@ class Compiler(BaseCompiler):
                     raise Exception('The data format: {} is not support'.format(i.data_format))
 
             _LOGGER.info('model_to_plan:: Begin to parse network!')
-            with open(self.onnx_path, 'rb') as model:
+            with open(self.model_path, 'rb') as model:
                 result = parser.parse(model.read())
             if not result:
                 raise Exception('model_to_plan:: Parse network from uff file failure!')
