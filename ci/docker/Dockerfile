@@ -54,8 +54,8 @@ RUN . /etc/os-release && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN apt-mark hold libcudnn7 libcudnn7-dev libnvinfer6 libnvinfer-dev libnvonnxparsers6 libnvonnxparsers-dev
+RUN apt-mark hold libcudnn7 libcudnn7-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
 
 RUN python3 -c 'import shutil, sys, urllib.request; shutil.copyfileobj(urllib.request.urlopen(sys.argv[1]), sys.stdout.buffer)' \
-        https://github.com/bazelbuild/buildtools/releases/download/1.0.0/buildifier > /usr/local/bin/buildifier && \
+        https://github.com/bazelbuild/buildtools/releases/download/2.2.1/buildifier > /usr/local/bin/buildifier && \
     chmod +x /usr/local/bin/buildifier
