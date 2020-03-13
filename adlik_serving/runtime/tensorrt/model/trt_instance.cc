@@ -449,11 +449,8 @@ tensorflow::Status Instance::splitOutputs(MyBatch& batch) {
       auto req = batch.task(i).request;
       const size_t expected_byte_size = req->batchSize() * batch1_byte_size;
 
-      void* content;
-      tensorflow::Status status = batch.task(i).response->addOutput(name, dtype, dims, &content, expected_byte_size);
-      if (!status.ok()) {
-        return status;
-      } else if (content == nullptr) {
+      void* content = batch.task(i).response->addOutput(name, dtype, dims, expected_byte_size);
+      if (content == nullptr) {
         // maybe not needed this output
         // payload.compute_status_ = tensorflow::errors::Internal(
         //     "no buffer to accept output values for output '", name, "'");

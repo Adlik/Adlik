@@ -210,11 +210,9 @@ tensorflow::Status PluginLoader::splitOutputs(MyBatch& batch) {
       const PredictRequestProvider* requestProvider = task.request;
       PredictResponseProvider* responseProvider = task.response;
       const size_t expectedByteSize = requestProvider->batchSize() * byteSizePerSample;
-      void* content = nullptr;
-      auto status = responseProvider->addOutput(item.first, dtype, dims, &content, expectedByteSize);
-      if (!status.ok()) {
-        return status;
-      } else if (content == nullptr) {
+      void* content = responseProvider->addOutput(item.first, dtype, dims, expectedByteSize);
+
+      if (content == nullptr) {
         // maybe not need thist output
       } else {
         if (offsetByteSize + expectedByteSize > outputPtr->byteSize()) {
