@@ -21,11 +21,12 @@ public:
                                    PredictResponse& rsp,
                                    std::unique_ptr<GRPCPredictResponseProvider>* provider);
 
-  tensorflow::Status addOutput(const std::string&,
-                               tensorflow::DataType dtype,
-                               const DimsList& dims,
-                               void** buffer,
-                               size_t buffer_byte_size);
+  virtual void* addOutput(const std::string& name,
+                          tensorflow::DataType dtype,
+                          const DimsList& dims,
+                          size_t buffer_byte_size) override;
+
+  virtual std::string* addOutput(const std::string& name, tensorflow::DataType dtype, const DimsList& dims) override;
 
 private:
   GRPCPredictResponseProvider(const std::vector<std::string>& output_names,
