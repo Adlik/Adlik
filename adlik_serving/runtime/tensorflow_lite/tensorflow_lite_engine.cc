@@ -55,6 +55,10 @@ Status mergeInputs(Interpreter& interpreter,
 
     TF_RETURN_IF_ERROR(status);
   }
+
+  for (auto& entry : inputContextMap) {
+    entry.second.commit(interpreter);
+  }
 }
 
 Status splitOutputs(Interpreter& interpreter,
