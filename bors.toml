@@ -1,4 +1,5 @@
 status = [ "Adlik.Adlik" ]
+block_labels = [ "do not merge", "work in progress" ]
 timeout_sec = 21600
 delete_merged_branches = true
 use_squash_merge = true
