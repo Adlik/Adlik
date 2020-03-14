@@ -61,6 +61,6 @@ serving_cc_library(
         ":tensorflow-lite": ["//adlik_serving/runtime/tensorflow_lite:tensorflow_lite_runtime"],
         ":tensorrt": ["//adlik_serving/runtime/tensorrt/factory:trt_runtime"],
         ":openvino": ["//adlik_serving/runtime/openvino/factory:openvino_runtime"],
-        ":ml": ["//adlik_serving/runtime/ml/factory:ml_runtime"],
+        ":ml": ["//adlik_serving/runtime/ml/model:ml_runtime"],
     }),
 )
