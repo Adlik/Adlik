@@ -55,6 +55,6 @@ serving_cc_library(
         ":tensorflow": ["//adlik_serving/runtime/tensorflow/factory:tf_runtime"],
         ":tensorrt": ["//adlik_serving/runtime/tensorrt/factory:trt_runtime"],
         ":openvino": ["//adlik_serving/runtime/openvino/factory:openvino_runtime"],
-        ":ml": ["//adlik_serving/runtime/ml/factory:ml_runtime"],
+        ":ml": ["//adlik_serving/runtime/ml/model:ml_runtime"],
     }),
 )

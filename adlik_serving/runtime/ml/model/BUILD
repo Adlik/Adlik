@@ -26,16 +26,14 @@ serving_cc_library(
 )
 
 serving_cc_library(
-    name = "ml_scheduler",
-    srcs = [
-        "scheduler.cc",
-    ],
-    hdrs = [
-        "scheduler.h",
-    ],
+    name = "ml_runtime",
+    srcs = ["ml_runtime.cc"],
     deps = [
-        "//adlik_serving/runtime/batching:basic_batch_scheduler",
-        "//adlik_serving/runtime/batching:batch_scheduler",
-        "//adlik_serving/runtime/ml/algorithm:ml_task",
+        ":ml_model",
+        "//adlik_serving/framework/domain",
+        "//adlik_serving/framework/manager",
+        "//adlik_serving/runtime/util:default_model_factory",
+        "//adlik_serving/runtime/util:default_model_wrapper",
     ],
+    alwayslink = 1,
 )
