@@ -36,6 +36,7 @@ def _create_grid_request():
 
 def _create_amc_request():
     request = _create_header()
+    request.task.amc.cell_id = 0
     max_bler_num = 180
     for i in range(random.randint(1, max_bler_num)):
         request.task.amc.blers[i] = random.random()
@@ -59,7 +60,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action="store_true", required=False, default=True,
                         help='Enable verbose output')
-    parser.add_argument('-m', '--model-name', type=str, required=False, default="grid", choices=['grid', "amc"],
+    parser.add_argument('-m', '--model-name', type=str, required=False, default="amc", choices=['grid', "amc"],
                         help='Name of model')
     parser.add_argument('-u', '--url', type=str, required=False, default='localhost:8500',
                         help='Adlik serving server URL. Default is localhost:8500.')
@@ -72,9 +73,9 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--is-sync', type=bool, required=False, default=True,
                         help='Whether run task synchronously, wait result until task is done if synchronous. '
                              'Default is True.')
-    parser.add_argument('-i', '--input', type=str, required=True,
+    parser.add_argument('-i', '--input', type=str, required=False,
                         help='File path of input csv.')
-    parser.add_argument('-o', '--output', type=str, required=True,
+    parser.add_argument('-o', '--output', type=str, required=False,
                         help='File path of output csv.')
 
     FLAGS = parser.parse_args()

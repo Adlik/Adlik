@@ -14,8 +14,8 @@ namespace ml_runtime {
 struct Amc : Algorithm {
   static void create(const adlik::serving::AlgorithmConfig&, std::unique_ptr<Algorithm>*);
 
-  Amc(const adlik::serving::AmcConfig& config)
-      : config(config), target_prime((1 - config.nbler_target()) / config.nbler_target()) {
+  Amc(const adlik::serving::AmcConfig& config) : config(config) {
+    init();
   }
 
   cub::StatusWrapper run(const adlik::serving::TaskReq&, adlik::serving::TaskRsp&) override;
@@ -25,13 +25,26 @@ struct Amc : Algorithm {
   }
 
 private:
+  struct Parameter {
+    double target_prime;
+    double lambda;
+  };
+  using CellId = unsigned int;
+
+  void init() {
+    for (const auto& it : config.cell_parameters()) {
+      cells.insert({it.first, {(1 - it.second.nbler_target()) / it.second.nbler_target(), it.second.lambda()}});
+    }
+  }
+
   adlik::serving::AmcConfig config;
-  double target_prime;
+
+  std::unordered_map<CellId, Parameter> cells;
 };
 
 void Amc::create(const adlik::serving::AlgorithmConfig& config, std::unique_ptr<Algorithm>* algorithm) {
   if (config.has_amc_config()) {
-    if (config.amc_config().nbler_target() == 0) {
+    if (config.amc_config().cell_parameters().size() == 0) {
       ERR_LOG << "nbler_target is 0!";
       return;
     }
@@ -43,14 +56,25 @@ void Amc::create(const adlik::serving::AlgorithmConfig& config, std::unique_ptr<
 cub::StatusWrapper Amc::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp& rsp) {
   DEBUG_LOG << "Prepare to run amc, this: " << this;
 
-  auto result = rsp.mutable_amc();
-  auto deltas = result->mutable_deltas();
+  if (!req.has_amc())
+    return cub::StatusWrapper(cub::InvalidArgument, "Input doesn't contain input!");
 
-  for (const auto& it : req.amc().blers()) {
-    deltas->insert({it.first, (1 - it.second - it.second * target_prime) * config.lambda()});
+  auto& input = req.amc();
+  auto output = rsp.mutable_amc();
+  output->set_cell_id(input.cell_id());
+
+  auto search = cells.find(input.cell_id());
+  if (search != cells.end()) {
+    auto deltas = output->mutable_deltas();
+    for (const auto& it : req.amc().blers()) {
+      auto delta = it.second;
+      deltas->insert({it.first, (1 - delta - delta * search->second.target_prime) * search->second.lambda});
+    }
+    return cub::StatusWrapper::OK();
+  } else {
+    ERR_LOG << "Not found input cell id: " << input.cell_id();
+    return cub::StatusWrapper(cub::InvalidArgument, "Not found input cell id:");
   }
-
-  return cub::StatusWrapper::OK();
 }
 
 REGISTER_ALGORITHM(Amc, "amc");
