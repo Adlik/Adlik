@@ -6,8 +6,11 @@ option cc_enable_arenas = true;
 message KMeansConfig {}
 
 message AmcConfig {
-  double nBler_target = 1;
-  double lambda = 2;
+  message Parameter {
+    double nBler_target = 1;
+    double lambda = 2;
+  }
+  map<uint32, Parameter> cell_parameters = 1;
 }
 
 message AlgorithmConfig {
