@@ -171,17 +171,19 @@ Assume building with CUDA version 10.0.
 ### Deploy serving service
    
 #### OpenVINO service
-   ```sh
-    source  /opt/intel/openvino_VERSION/bin/setupvars.sh
-    cd {dir_of_adlik_serving_binary}
-    ./adlik_serving --model_base_path={model_repos_dir} --grpc_port={grpc_port} --http_port={http_port}
-   ```  
-  
+
+```sh
+source /opt/intel/openvino_VERSION/bin/setupvars.sh
+cd {dir_of_adlik_serving_binary}
+./adlik_serving --model_base_path={model_repos_dir} --grpc_port={grpc_port} --http_port={http_port}
+```
+
 #### TensorFlow CPU/GPU or TensorRT service
-   ```sh
-    cd {dir_of_adlik_serving_binary}
-    ./adlik_serving --model_base_path={model_repos_dir} --grpc_port={grpc_port} --http_port={http_port}
-   ```
+
+```sh
+cd {dir_of_adlik_serving_binary}
+./adlik_serving --model_base_path={model_repos_dir} --grpc_port={grpc_port} --http_port={http_port}
+```
 
 ### Build in Docker
 
