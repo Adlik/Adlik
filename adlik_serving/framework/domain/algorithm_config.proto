@@ -3,7 +3,7 @@ syntax = "proto3";
 package adlik.serving;
 option cc_enable_arenas = true;
 
-message KMeansConfig {}
+message GridConfig {}
 
 message AmcConfig {
   message Parameter {
@@ -15,7 +15,7 @@ message AmcConfig {
 
 message AlgorithmConfig {
   oneof config {
-    KMeansConfig kmeans = 1;
+    GridConfig grid_config = 1;
     AmcConfig amc_config = 2;
   }
 }

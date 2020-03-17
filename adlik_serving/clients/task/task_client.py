@@ -36,9 +36,10 @@ def _create_grid_request():
 
 def _create_amc_request():
     request = _create_header()
-    request.task.amc.cell_id = 0
     max_bler_num = 180
-    for i in range(random.randint(1, max_bler_num)):
+    bler_num = random.randint(1, max_bler_num)
+    request.task.amc.cell_id = bler_num % 2  # just test, make cell id randomly, configured cell id is 0 or 1
+    for i in range(bler_num):
         request.task.amc.blers[i] = random.random()
     return request
 

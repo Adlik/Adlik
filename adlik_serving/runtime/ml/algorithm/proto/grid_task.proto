@@ -4,12 +4,9 @@ package adlik.serving;
 option cc_enable_arenas = true;
 
 message GridTaskReq {
-  uint32 n_clusters = 1;
-  string input = 2; // input csv path
+  string input = 1;  // input csv path
+  string output = 2; // output csv path
   uint32 max_iter = 3;
-  bool compute_labels = 4;
-  string label_name = 5;
-  string output = 6; // output csv path
 }
 
 message GridTaskRsp {
