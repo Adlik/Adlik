@@ -9,7 +9,6 @@
 #include "adlik_serving/runtime/tensorflow_lite/input_context.h"
 #include "adlik_serving/runtime/tensorflow_lite/output_context.h"
 #include "adlik_serving/runtime/tensorflow_lite/tensor_shape_dims.h"
-#include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/lite/model.h"
 
 namespace adlik {

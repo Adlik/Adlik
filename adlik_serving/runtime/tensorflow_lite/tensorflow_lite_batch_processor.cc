@@ -30,7 +30,8 @@ using std::vector;
 using tensorflow::DataType;
 using tensorflow::Status;
 using tensorflow::TensorProto;
-using tensorflow::error::Code;
+using tensorflow::errors::Internal;
+using tensorflow::errors::InvalidArgument;
 using tensorflow::gtl::MakeCleanup;
 using tflite::FlatBufferModel;
 using tflite::Interpreter;
@@ -59,7 +60,7 @@ variant<tuple<InputSignature, size_t>, Status> getSignature(const Interpreter& i
       if (batchSize == invalidBatchSize) {
         batchSize = tfLiteDims.data[0];
       } else if (tfLiteDims.data[0] != batchSize) {
-        return Status{Code::INVALID_ARGUMENT, "Inconsistent batch size"};
+        return InvalidArgument("Inconsistent batch size");
       }
 
       result.emplace(
@@ -68,7 +69,7 @@ variant<tuple<InputSignature, size_t>, Status> getSignature(const Interpreter& i
           std::forward_as_tuple(tfLiteTypeToTfType(tensor.type),
                                 TensorShapeDims::owned(tfLiteDims.data + 1, tfLiteDims.data + tfLiteDims.size)));
     } else {
-      return Status{Code::INVALID_ARGUMENT, "Scalar tensors are not supported"};
+      return InvalidArgument("Scalar tensors are not supported");
     }
   }
 
@@ -109,7 +110,7 @@ Status checkRequestArguments(InputSignature& argumentSignatureCache,
       const auto batchSize = static_cast<size_t>(dims[0].size());
 
       if (batchSize != request.batchSize()) {
-        status = Status{Code::INVALID_ARGUMENT, "Inconsistent batch size"};
+        status = InvalidArgument("Inconsistent batch size");
 
         return false;
       } else {
@@ -122,7 +123,7 @@ Status checkRequestArguments(InputSignature& argumentSignatureCache,
         return true;
       }
     } else {
-      status = Status{Code::INVALID_ARGUMENT, "Scalar tensors are not supported"};
+      status = InvalidArgument("Scalar tensors are not supported");
 
       return false;
     }
@@ -130,7 +131,7 @@ Status checkRequestArguments(InputSignature& argumentSignatureCache,
 
   if (status.ok()) {
     if (argumentSignatureCache != parameterSignature) {
-      status = Status{Code::INVALID_ARGUMENT, "Argument does not match model input signature"};
+      status = InvalidArgument("Argument does not match model input signature");
     }
   }
 
@@ -167,12 +168,12 @@ Status updateInterpreterBatchSize(Interpreter& interpreter, size_t batchSize, ve
     std::copy(dims.data + 1, dims.data + dims.size, dimsCache.begin() + 1);
 
     if (interpreter.ResizeInputTensor(i, dimsCache) != TfLiteStatus::kTfLiteOk) {
-      return Status{Code::INTERNAL, "Unable to resize input tensor"};
+      return Internal("Unable to resize input tensor");
     }
   }
 
   if (interpreter.AllocateTensors() != TfLiteStatus::kTfLiteOk) {
-    return Status{Code::INTERNAL, "Unable to allocate tensors"};
+    return Internal("Unable to allocate tensors");
   }
 
   return Status::OK();
@@ -224,17 +225,17 @@ variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchPro
   unique_ptr<Interpreter> interpreter;
 
   if (InterpreterBuilder{*model, opResolver}(&interpreter, 1) != TfLiteStatus::kTfLiteOk) {
-    return Status{Code::INTERNAL, "Unable to create interpreter"};
+    return Internal("Unable to create interpreter");
   }
 
   if (interpreter->AllocateTensors() != TfLiteStatus::kTfLiteOk) {
-    return Status{Code::INTERNAL, "Unable to allocate tensors"};
+    return Internal("Unable to allocate tensors");
   }
 
   auto maybeSignature = getSignature(*interpreter, interpreter->inputs());
 
   if (absl::holds_alternative<tuple<InputSignature, size_t>>(maybeSignature)) {
-    auto signature = absl::get<tuple<InputSignature, size_t>>(std::move(maybeSignature));
+    auto signature = std::move(absl::get<tuple<InputSignature, size_t>>(maybeSignature));
     auto inputContextMap = getInputContextMap(*interpreter);
     auto outputContexts = getOutputContexts(*interpreter);
 
@@ -246,7 +247,7 @@ variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchPro
                                                      std::move(inputContextMap),
                                                      std::move(outputContexts));
   } else {
-    return absl::get<Status>(std::move(maybeSignature));
+    return std::move(absl::get<Status>(maybeSignature));
   }
 }
 }  // namespace serving

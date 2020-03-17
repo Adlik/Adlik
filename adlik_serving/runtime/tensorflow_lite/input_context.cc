@@ -10,7 +10,6 @@
 #include "tensorflow/core/lib/core/coding.h"
 #include "tensorflow/core/lib/core/errors.h"
 
-using absl::Span;
 using absl::string_view;
 using adlik::serving::copyContainer;
 using adlik::serving::InputContext;
@@ -19,14 +18,11 @@ using adlik::serving::transformContainerWithStaticCast;
 using google::protobuf::RepeatedField;
 using google::protobuf::RepeatedPtrField;
 using std::string;
-using std::tuple;
 using std::vector;
 using tensorflow::Status;
 using tensorflow::TensorProto;
-using tensorflow::TensorShapeProto;
 using tensorflow::TensorShapeProto_Dim;
 using tensorflow::core::GetVarint32;
-using tensorflow::errors::InvalidArgument;
 using tflite::DynamicBuffer;
 using tflite::Interpreter;
 

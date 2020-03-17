@@ -5,6 +5,7 @@
 
 #include "adlik_serving/framework/domain/model_config_helper.h"
 #include "adlik_serving/runtime/tensorflow_lite/tensorflow_lite_batch_processor.h"
+#include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/lite/kernels/register.h"
 #include "tensorflow/lite/model.h"
 
@@ -18,9 +19,8 @@ using std::make_unique;
 using std::shared_ptr;
 using std::unique_ptr;
 using tensorflow::Status;
-using tensorflow::error::Code;
+using tensorflow::errors::Internal;
 using tflite::FlatBufferModel;
-using tflite::Interpreter;
 using tflite::ops::builtin::BuiltinOpResolver;
 
 variant<unique_ptr<TensorFlowLiteModel>, Status> internalCreate(const ModelConfig& modelConfig,
@@ -29,7 +29,7 @@ variant<unique_ptr<TensorFlowLiteModel>, Status> internalCreate(const ModelConfi
   const auto flatBufferModel = shared_ptr<FlatBufferModel>{FlatBufferModel::BuildFromFile(modelPath.c_str())};
 
   if (!flatBufferModel) {
-    return Status{Code::INTERNAL, "Failed to create model"};
+    return Internal("Failed to create model");
   }
 
   auto result = make_unique<TensorFlowLiteModel>();
@@ -40,9 +40,9 @@ variant<unique_ptr<TensorFlowLiteModel>, Status> internalCreate(const ModelConfi
       auto processor = TensorFlowLiteBatchProcessor::create(flatBufferModel, opResolver);
 
       if (absl::holds_alternative<unique_ptr<TensorFlowLiteBatchProcessor>>(processor)) {
-        result->add(absl::get<unique_ptr<TensorFlowLiteBatchProcessor>>(std::move(processor)));
+        result->add(std::move(absl::get<unique_ptr<TensorFlowLiteBatchProcessor>>(processor)));
       } else {
-        return absl::get<Status>(std::move(processor));
+        return std::move(absl::get<Status>(processor));
       }
     }
   }
@@ -62,7 +62,7 @@ cub::Status TensorFlowLiteModel::create(const ModelConfig& modelConfig,
     auto result = internalCreate(normalizedModelConfig, modelId);
 
     if (absl::holds_alternative<unique_ptr<TensorFlowLiteModel>>(result)) {
-      *model = absl::get<unique_ptr<TensorFlowLiteModel>>(std::move(result));
+      *model = std::move(absl::get<unique_ptr<TensorFlowLiteModel>>(result));
 
       return cub::Success;
     }

@@ -3,9 +3,7 @@
 
 #include "adlik_serving/runtime/tensorflow_lite/output_context.h"
 
-#include <functional>
 #include <numeric>
-#include <type_traits>
 
 #include "adlik_serving/runtime/tensorflow_lite/itertools.h"
 #include "adlik_serving/runtime/tensorflow_lite/tensor_utilities.h"
@@ -14,18 +12,13 @@
 #include "tensorflow/lite/string_util.h"
 
 using absl::Span;
-using adlik::serving::copyContainer;
 using adlik::serving::DimsList;
 
 using adlik::serving::OutputContext;
-using adlik::serving::transformContainer;
-using adlik::serving::transformContainerWithStaticCast;
 using google::protobuf::RepeatedFieldBackInserter;
-using std::tuple;
 using tensorflow::DataType;
 using tensorflow::Status;
 using tensorflow::core::PutVarint32;
-using tensorflow::errors::InvalidArgument;
 using tflite::Interpreter;
 
 namespace {

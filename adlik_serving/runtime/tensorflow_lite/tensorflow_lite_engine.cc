@@ -18,10 +18,9 @@ using absl::MakeSpan;
 using absl::string_view;
 using std::string;
 using std::unordered_map;
-using std::vector;
 using tensorflow::Status;
 using tensorflow::TensorProto;
-using tensorflow::errors::Code;
+using tensorflow::errors::Internal;
 using tensorflow::gtl::MakeCleanup;
 using tflite::Interpreter;
 
@@ -41,7 +40,6 @@ Status mergeInputs(Interpreter& interpreter,
 
   for (auto i = 0; i != numTasks; ++i) {
     const auto& task = batch.task(i);
-
     auto status = Status::OK();
 
     task.request->visitInputs([&](const string& name, const TensorProto& tensorProto) {
@@ -94,7 +92,7 @@ Status processTensorFlowLiteTask(Interpreter& interpreter,
   TF_RETURN_IF_ERROR(mergeInputs(interpreter, inputContextMap, batch));
 
   if (interpreter.Invoke() != TfLiteStatus::kTfLiteOk) {
-    return Status{Code::INTERNAL, "Failed to invoke interpreter"};
+    return Internal("Failed to invoke interpreter");
   }
 
   TF_RETURN_IF_ERROR(splitOutputs(interpreter, outputContexts, batch));
