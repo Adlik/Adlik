@@ -6,12 +6,16 @@
 #include <numeric>
 
 #include "absl/types/span.h"
+#include "adlik_serving/runtime/tensorflow_lite/itertools.h"
 #include "tensorflow/core/lib/core/coding.h"
 #include "tensorflow/core/lib/core/errors.h"
 
 using absl::Span;
 using absl::string_view;
+using adlik::serving::copyContainer;
 using adlik::serving::InputContext;
+using adlik::serving::transformContainer;
+using adlik::serving::transformContainerWithStaticCast;
 using google::protobuf::RepeatedField;
 using google::protobuf::RepeatedPtrField;
 using std::string;
@@ -29,24 +33,6 @@ using tflite::Interpreter;
 // TODO: Refactor this file.
 
 namespace {
-template <class T>
-struct StaticCast {
-  template <class U>
-  T operator()(U&& value) const {
-    return static_cast<T>(std::forward<U>(value));
-  }
-};
-
-template <class C, class I>
-void copyContainer(const C& container, I target) {
-  std::copy(std::cbegin(container), std::cend(container), target);
-}
-
-template <class C, class I, class F>
-void transformContainer(const C& container, I target, F&& func) {
-  std::transform(std::cbegin(container), std::cend(container), target, std::forward<F>(func));
-}
-
 auto getNumElements(const RepeatedPtrField<TensorShapeProto_Dim>& field) {
   using R = decltype(field.begin()->size());
 
@@ -114,7 +100,6 @@ bool copyStringContent(const string& content,
 }  // namespace
 
 InputContext::InputContext(int tensorIndex) : tensorIndex{tensorIndex} {
-  throw std::logic_error("Not implemented");
 }
 
 Status InputContext::addInputTensor(Interpreter& interpreter, const TensorProto& tensorProto) {
@@ -141,7 +126,7 @@ Status InputContext::addInputTensor(Interpreter& interpreter, const TensorProto&
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteUInt8:
-          transformContainer(tensorProto.int_val(), tensor.data.uint8 + this->elementsWritten, StaticCast<uint8_t>{});
+          transformContainerWithStaticCast(tensorProto.int_val(), tensor.data.uint8 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt64:
@@ -158,7 +143,7 @@ Status InputContext::addInputTensor(Interpreter& interpreter, const TensorProto&
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt16:
-          transformContainer(tensorProto.int_val(), tensor.data.i16 + this->elementsWritten, StaticCast<int16_t>{});
+          transformContainerWithStaticCast(tensorProto.int_val(), tensor.data.i16 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteComplex64:
@@ -166,12 +151,16 @@ Status InputContext::addInputTensor(Interpreter& interpreter, const TensorProto&
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt8:
-          transformContainer(tensorProto.int_val(), tensor.data.int8 + this->elementsWritten, StaticCast<int8_t>{});
+          transformContainerWithStaticCast(tensorProto.int_val(), tensor.data.int8 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteFloat16:
           transformContainer(tensorProto.int_val(), tensor.data.f16 + this->elementsWritten, [](auto value) {
-            return TfLiteFloat16{static_cast<uint16_t>(value)};
+            TfLiteFloat16 result;
+
+            result.data = static_cast<decltype(result.data)>(value);
+
+            return result;
           });
 
           this->elementsWritten += numElements;

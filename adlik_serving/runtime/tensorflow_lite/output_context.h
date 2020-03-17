@@ -4,14 +4,23 @@
 #ifndef ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_OUTPUT_CONTEXT_H
 #define ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_OUTPUT_CONTEXT_H
 
+#include "absl/types/span.h"
 #include "adlik_serving/framework/domain/dims_list.h"
 #include "tensorflow/core/framework/types.pb.h"
+#include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/lite/interpreter.h"
 
 namespace adlik {
 namespace serving {
 class OutputContext {
   std::string name;
+
+  // State.
+
+  size_t elementsRead = 0;
+
+  // Cache.
+
   DimsList dimsListCache;
 
   OutputContext(int tensorIndex, std::string name, tensorflow::DataType dataType);
@@ -21,7 +30,8 @@ public:
   const tensorflow::DataType dataType;
 
   const std::string& getName() const;
-  const DimsList& getDimsList(DimsList::value_type batchSize, const TfLiteIntArray& sourceDims);
+  const DimsList& getDimsList(absl::Span<const int> dims);
+  tensorflow::Status readBatch(const tflite::Interpreter& interpreter, size_t batchSize, std::string& target);
   void reset() noexcept;
 
   static OutputContext fromTfLiteTensor(int tensorIndex, const TfLiteTensor& tfLiteTensor);

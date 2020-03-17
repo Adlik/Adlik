@@ -14,6 +14,7 @@
 #include "tensorflow/core/lib/gtl/cleanup.h"
 
 using absl::Hash;
+using absl::MakeSpan;
 using absl::string_view;
 using std::string;
 using std::unordered_map;
@@ -61,7 +62,7 @@ Status mergeInputs(Interpreter& interpreter,
   }
 }
 
-Status splitOutputs(Interpreter& interpreter,
+Status splitOutputs(const Interpreter& interpreter,
                     absl::Span<OutputContext>& outputContexts,
                     Batch<BatchingMessageTask>& batch) {
   const auto numTasks = batch.num_tasks();
@@ -73,9 +74,14 @@ Status splitOutputs(Interpreter& interpreter,
 
     for (auto& context : outputContexts) {
       const auto& tensor = *interpreter.tensor(context.tensorIndex);
-      const auto dimsList = context.getDimsList(batchSize, *tensor.dims);
 
-      throw std::logic_error("Not implemented");
+      auto* buffer = response.addOutput(context.getName(),
+                                        context.dataType,
+                                        context.getDimsList(MakeSpan(tensor.dims->data + 1, tensor.dims->size - 1)));
+
+      if (buffer) {
+        TF_RETURN_IF_ERROR(context.readBatch(interpreter, batchSize, *buffer));
+      }
     }
   }
 }

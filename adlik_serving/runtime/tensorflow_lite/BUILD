@@ -5,6 +5,7 @@ serving_cc_library(
     srcs = [
         "input_context.cc",
         "input_context.h",
+        "itertools.h",
         "output_context.cc",
         "output_context.h",
         "tensor_shape_dims.h",
