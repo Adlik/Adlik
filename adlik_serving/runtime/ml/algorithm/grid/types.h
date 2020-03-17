@@ -6,9 +6,12 @@
 
 namespace ml_runtime {
 
+typedef unsigned long PLMN;
+typedef unsigned int NBId;
 typedef unsigned short CellId;
+
 typedef short Rsrp;
-typedef short Events;
+typedef unsigned char Event;
 
 }  // namespace ml_runtime
 
