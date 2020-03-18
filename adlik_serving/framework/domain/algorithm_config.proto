@@ -3,7 +3,12 @@ syntax = "proto3";
 package adlik.serving;
 option cc_enable_arenas = true;
 
-message GridConfig {}
+message GridConfig {
+  uint64 min_samples_per_neighbor_group = 1;
+  uint64 min_samples_per_grid = 2;
+  uint32 init_grid_size = 3;
+  uint32 kmeans_max_iter = 4;
+}
 
 message AmcConfig {
   message Parameter {

@@ -45,7 +45,7 @@ static std::vector<std::string> expected_cols = {"ServergPLMN",
 }  // namespace
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridInput>& inputs, LoadTrigger trigger) {
+cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridInput>& inputs) {
   if (!cub::filesystem().exists(file_path)) {
     return cub::StatusWrapper(cub::InvalidArgument, "Input file doesn't exist");
   }
@@ -69,28 +69,24 @@ cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridI
   auto func = [&](const CSVReader::Row& row) {
     GridInput input;
 
-    COL_TO_FIELD_PLMN("ServergPLMN", serving_plmn);
-    COL_TO_FIELD_NB("ServergNB", serving_nb);
-    COL_TO_FIELD_CELL("ServerCID", serving_cell);
     COL_TO_FIELD_RSRP("ServerRSRP", serving_rsrp);
 
-    COL_TO_FIELD_PLMN("NeighPLMN_intra1", neighPLMN_intra1);
-    COL_TO_FIELD_NB("NeighgNB_intra1", neighNB_intra1);
-    COL_TO_FIELD_CELL("NeighCID_intra1", neighCID_intra1);
+    COL_TO_FIELD_PLMN("NeighPLMN_intra1", neighbor1.plmn);
+    COL_TO_FIELD_NB("NeighgNB_intra1", neighbor1.nb);
+    COL_TO_FIELD_CELL("NeighCID_intra1", neighbor1.cell);
     COL_TO_FIELD_RSRP("NeighCellRSRP1_intra", neighRSRP_intra1);
 
-    COL_TO_FIELD_PLMN("NeighPLMN_intra2", neighPLMN_intra2);
-    COL_TO_FIELD_NB("NeighgNB_intra2", neighNB_intra2);
-    COL_TO_FIELD_CELL("NeighCID_intra2", neighCID_intra2);
+    COL_TO_FIELD_PLMN("NeighPLMN_intra2", neighbor2.plmn);
+    COL_TO_FIELD_NB("NeighgNB_intra2", neighbor2.nb);
+    COL_TO_FIELD_CELL("NeighCID_intra2", neighbor2.cell);
     COL_TO_FIELD_RSRP("NeighCellRSRP2_intra", neighRSRP_intra2);
 
-    COL_TO_FIELD_PLMN("NeighPLMN_intra3", neighPLMN_intra3);
-    COL_TO_FIELD_NB("NeighgNB_intra3", neighNB_intra3);
-    COL_TO_FIELD_CELL("NeighCID_intra3", neighCID_intra3);
+    COL_TO_FIELD_PLMN("NeighPLMN_intra3", neighbor3.plmn);
+    COL_TO_FIELD_NB("NeighgNB_intra3", neighbor3.nb);
+    COL_TO_FIELD_CELL("NeighCID_intra3", neighbor3.cell);
     COL_TO_FIELD_EVENT("Event", event);
 
     inputs.push_back(std::move(input));
-    trigger(inputs.size() - 1, inputs[inputs.size() - 1]);
     return true;
   };
 
