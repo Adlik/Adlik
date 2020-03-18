@@ -130,6 +130,12 @@ struct Dialect {
     return *this;
   }
 
+  Dialect& column_names(const std::vector<std::string>& columns) {
+    for (auto& column : columns)
+      column_names_.push_back(column);
+    return *this;
+  }
+
   Dialect& header(bool header) {
     header_ = header;
     return *this;

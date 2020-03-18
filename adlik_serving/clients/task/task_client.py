@@ -25,13 +25,12 @@ def _create_header():
 
 def _create_grid_request():
     request = _create_header()
-    request.task.grid.n_clusters = FLAGS.clusters
-    request.task.grid.input = FLAGS.input
-    request.task.grid.max_iter = FLAGS.max_iter
-    request.task.grid.compute_labels = True
-    request.task.grid.label_name = FLAGS.label_name
-    request.task.grid.output = FLAGS.output
-    return request
+    if FLAGS.input and FLAGS.output:
+        request.task.grid.input = FLAGS.input
+        request.task.grid.output = FLAGS.output
+        return request
+    else:
+        raise Exception("For grid case the following arguments are required: -i/--input and -o/--output")
 
 
 def _create_amc_request():
@@ -65,19 +64,15 @@ if __name__ == '__main__':
                         help='Name of model')
     parser.add_argument('-u', '--url', type=str, required=False, default='localhost:8500',
                         help='Adlik serving server URL. Default is localhost:8500.')
-    parser.add_argument('--max-iter', type=int, required=False, default=10,
-                        help='Maximum iterations. Default is 1.')
-    parser.add_argument('-k', '--clusters', type=int, required=False, default=3,
-                        help='n clusters. Default is 3.')
-    parser.add_argument('-l', '--label-name', type=str, required=False, default="y",
-                        help='Output label name. Default is y.')
     parser.add_argument('-s', '--is-sync', type=bool, required=False, default=True,
                         help='Whether run task synchronously, wait result until task is done if synchronous. '
                              'Default is True.')
     parser.add_argument('-i', '--input', type=str, required=False,
-                        help='File path of input csv.')
+                        default="",
+                        help='File path of input csv, required for grid algorithm.')
     parser.add_argument('-o', '--output', type=str, required=False,
-                        help='File path of output csv.')
+                        default="",
+                        help='File path of output csv, required for grid algorithm.')
 
     FLAGS = parser.parse_args()
     _main()

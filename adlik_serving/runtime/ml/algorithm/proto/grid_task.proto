@@ -6,10 +6,8 @@ option cc_enable_arenas = true;
 message GridTaskReq {
   string input = 1;  // input csv path
   string output = 2; // output csv path
-  uint32 max_iter = 3;
 }
 
 message GridTaskRsp {
-  // If task is done and compute lables, response output path
   string output = 1; // output file path
 }
