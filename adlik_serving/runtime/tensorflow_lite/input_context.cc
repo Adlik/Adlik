@@ -23,16 +23,16 @@ using tensorflow::Status;
 using tensorflow::TensorProto;
 using tensorflow::TensorShapeProto_Dim;
 using tensorflow::core::GetVarint32;
+using tensorflow::errors::InvalidArgument;
 using tflite::DynamicBuffer;
 using tflite::Interpreter;
 
 // TODO: Refactor this file.
 
 namespace {
-auto getNumElements(const RepeatedPtrField<TensorShapeProto_Dim>& field) {
-  using R = decltype(field.begin()->size());
-
-  return std::accumulate(field.begin(), field.end(), R{1}, [](auto acc, auto value) { return acc * value.size(); });
+size_t getNumElements(const RepeatedPtrField<TensorShapeProto_Dim>& field) {
+  return static_cast<size_t>(
+      std::accumulate(field.begin(), field.end(), int64_t{1}, [](auto acc, auto dim) { return acc * dim.size(); }));
 }
 
 void copyComplex64Field(const RepeatedField<float>& field, TfLiteComplex64* target) {
@@ -92,6 +92,8 @@ bool copyStringContent(const string& content,
     dynamicBuffer.AddString(reader.data(), size);
     reader.remove_prefix(size);
   }
+
+  return true;
 }
 }  // namespace
 
@@ -101,56 +103,87 @@ InputContext::InputContext(int tensorIndex) : tensorIndex{tensorIndex} {
 Status InputContext::addInputTensor(Interpreter& interpreter, const TensorProto& tensorProto) {
   const auto numElements = getNumElements(tensorProto.tensor_shape().dim());
 
-  if (numElements == 0) {
-    return Status::OK();
-  } else {
+  if (numElements > 0) {
     const auto& tensor = *interpreter.tensor(this->tensorIndex);
     const auto& tensorContent = tensorProto.tensor_content();
 
     if (tensorContent.empty()) {
       switch (tensor.type) {
         case TfLiteType::kTfLiteNoType:
+          if (static_cast<size_t>(tensorProto.float_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           copyContainer(tensorProto.float_val(), tensor.data.f + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteFloat32:
+          if (static_cast<size_t>(tensorProto.float_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           copyContainer(tensorProto.float_val(), tensor.data.f + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt32:
+          if (static_cast<size_t>(tensorProto.int_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           copyContainer(tensorProto.int_val(), tensor.data.i32 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteUInt8:
+          if (static_cast<size_t>(tensorProto.int_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           transformContainerWithStaticCast(tensorProto.int_val(), tensor.data.uint8 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt64:
+          if (static_cast<size_t>(tensorProto.int64_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           copyContainer(tensorProto.int64_val(), tensor.data.i64 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteString:
+          if (static_cast<size_t>(tensorProto.string_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           for (const auto& value : tensorProto.string_val()) {
             this->dynamicBuffer.AddString(value.data(), value.length());
           }
           break;
         case TfLiteType::kTfLiteBool:
+          if (static_cast<size_t>(tensorProto.bool_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           copyContainer(tensorProto.bool_val(), tensor.data.b + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt16:
+          if (static_cast<size_t>(tensorProto.int_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           transformContainerWithStaticCast(tensorProto.int_val(), tensor.data.i16 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteComplex64:
+          if (static_cast<size_t>(tensorProto.scomplex_val().size()) * 2 != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           copyComplex64Field(tensorProto.scomplex_val(), tensor.data.c64 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt8:
+          if (static_cast<size_t>(tensorProto.int_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           transformContainerWithStaticCast(tensorProto.int_val(), tensor.data.int8 + this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteFloat16:
+          if (static_cast<size_t>(tensorProto.int_val().size()) != numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           transformContainer(tensorProto.int_val(), tensor.data.f16 + this->elementsWritten, [](auto value) {
             TfLiteFloat16 result;
 
@@ -167,46 +200,78 @@ Status InputContext::addInputTensor(Interpreter& interpreter, const TensorProto&
     } else {
       switch (tensor.type) {
         case TfLiteType::kTfLiteNoType:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.f) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.f) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.f) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteFloat32:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.f) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.f) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.f) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt32:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.i32) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.f) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.i32) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteUInt8:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.uint8) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.uint8) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.uint8) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt64:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.i64) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.i64) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.i64) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteString:
-          copyStringContent(tensorContent, numElements, this->dynamicBuffer, this->stringSizesCache);
+          if (!copyStringContent(tensorContent, numElements, this->dynamicBuffer, this->stringSizesCache)) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           break;
         case TfLiteType::kTfLiteBool:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.b) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.b) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.b) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt16:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.i16) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.i16) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.i16) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteComplex64:
+          if (tensorContent.size() != sizeof(*tensor.data.c64) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
           copyComplex64Content(tensorContent, tensor.data.c64);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteInt8:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.int8) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.int8) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.int8) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         case TfLiteType::kTfLiteFloat16:
-          copyContainer(tensorContent, tensor.data.raw + sizeof(tensor.data.f16) * this->elementsWritten);
+          if (tensorContent.size() != sizeof(*tensor.data.f16) * numElements) {
+            return InvalidArgument("TensorProto data size does not match its shape");
+          }
+          copyContainer(tensorContent, tensor.data.raw + sizeof(*tensor.data.f16) * this->elementsWritten);
           this->elementsWritten += numElements;
           break;
         default:
@@ -214,6 +279,8 @@ Status InputContext::addInputTensor(Interpreter& interpreter, const TensorProto&
       }
     }
   }
+
+  return Status::OK();
 }
 
 void InputContext::commit(Interpreter& interpreter) noexcept {

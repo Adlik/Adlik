@@ -14,13 +14,13 @@
 #include "tensorflow/core/lib/gtl/cleanup.h"
 
 using absl::Hash;
-using absl::MakeSpan;
 using absl::string_view;
 using std::string;
 using std::unordered_map;
 using tensorflow::Status;
 using tensorflow::TensorProto;
 using tensorflow::errors::Internal;
+using tensorflow::errors::InvalidArgument;
 using tensorflow::gtl::MakeCleanup;
 using tflite::Interpreter;
 
@@ -58,30 +58,52 @@ Status mergeInputs(Interpreter& interpreter,
   for (auto& entry : inputContextMap) {
     entry.second.commit(interpreter);
   }
+
+  return Status::OK();
 }
 
 Status splitOutputs(const Interpreter& interpreter,
                     absl::Span<OutputContext>& outputContexts,
                     Batch<BatchingMessageTask>& batch) {
   const auto numTasks = batch.num_tasks();
+  const auto totalSamples = batch.size();
 
-  for (auto i = 0; i != numTasks; ++i) {
-    const auto& task = batch.task(i);
-    const auto batchSize = task.request->batchSize();
-    auto& response = *task.response;
+  for (auto& context : outputContexts) {
+    const auto& tensor = *interpreter.tensor(context.tensorIndex);
+    const auto& dims = *tensor.dims;
+    const auto& dimsList = context.calculateDimsList(dims);
 
-    for (auto& context : outputContexts) {
-      const auto& tensor = *interpreter.tensor(context.tensorIndex);
+    if (dims.size > 0) {
+      if (batch.size() == static_cast<size_t>(dims.data[0])) {
+        const auto sampleElements =
+            static_cast<size_t>(std::accumulate(dims.data + 1, dims.data + dims.size, 1, std::multiplies<int>{}));
 
-      auto* buffer = response.addOutput(context.getName(),
-                                        context.dataType,
-                                        context.getDimsList(MakeSpan(tensor.dims->data + 1, tensor.dims->size - 1)));
+        auto firstElement = size_t{0};
 
-      if (buffer) {
-        TF_RETURN_IF_ERROR(context.readBatch(interpreter, batchSize, *buffer));
+        for (auto taskIndex = 0; taskIndex != numTasks; ++taskIndex) {
+          const auto& task = batch.task(taskIndex);
+          auto* const buffer = task.response->addOutput(context.getName(), context.dataType, dimsList);
+          const auto batchElements = sampleElements * task.size();
+
+          if (buffer) {
+            context.readBatch(tensor, firstElement, batchElements, *buffer);
+          }
+
+          firstElement += batchElements;
+        }
+      } else {
+        return InvalidArgument("Output batch size does not match requested batch size");
+      }
+    } else {
+      for (auto taskIndex = 0; taskIndex != numTasks; ++taskIndex) {
+        if (batch.task(taskIndex).response->addOutput(context.getName(), context.dataType, dimsList)) {
+          return InvalidArgument("Scalar output is not supported");
+        }
       }
     }
   }
+
+  return Status::OK();
 }
 }  // namespace
 

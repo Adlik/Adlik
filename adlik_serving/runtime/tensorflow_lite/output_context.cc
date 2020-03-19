@@ -22,70 +22,68 @@ using tensorflow::core::PutVarint32;
 using tflite::Interpreter;
 
 namespace {
-auto getSampleElements(const TfLiteIntArray& dims) {
-  return std::accumulate(dims.data + 1, dims.data + dims.size, 1, std::multiplies<int>{});
+size_t getSampleElements(const TfLiteIntArray& dims) {
+  return static_cast<std::size_t>(std::accumulate(dims.data + 1, dims.data + dims.size, 1, std::multiplies<int>{}));
 }
 }  // namespace
 
 OutputContext::OutputContext(int tensorIndex, std::string name, DataType dataType)
-    : tensorIndex(tensorIndex), name(std::move(name)), dataType(dataType) {
+    : name(std::move(name)), tensorIndex(tensorIndex), dataType(dataType) {
 }
 
 const std::string& OutputContext::getName() const {
   return this->name;
 }
 
-const DimsList& OutputContext::getDimsList(Span<const int> dims) {
+const DimsList& OutputContext::calculateDimsList(const TfLiteIntArray& dims) noexcept {
   auto& result = this->dimsListCache;
 
-  result.Clear();
+  this->dimsListCache.Clear();
+  this->dimsListCache.Reserve(dims.size - 1);
 
-  std::copy(dims.begin(), dims.end(), RepeatedFieldBackInserter(&result));
+  std::copy(dims.data + 1, dims.data + dims.size, RepeatedFieldBackInserter(&this->dimsListCache));
 
-  return result;
+  return this->dimsListCache;
 }
 
-Status OutputContext::readBatch(const Interpreter& interpreter, size_t batchSize, std::string& target) {
-  const auto& tensor = *interpreter.tensor(this->tensorIndex);
-  const auto sampleElements = getSampleElements(*tensor.dims);
-
+void OutputContext::readBatch(const TfLiteTensor& tfLiteTensor,
+                              size_t firstElement,
+                              size_t numElements,
+                              std::string& target) {
   const auto copyBuffer = [&, this](size_t elementSize) {
-    const auto sampleSize = elementSize * sampleElements;
-    const auto batchByteSize = sampleSize * batchSize;
+    const auto batchByteSize = elementSize * numElements;
+    const auto first = tfLiteTensor.data.raw_const + elementSize * firstElement;
+    const auto last = first + batchByteSize;
 
     target.resize(batchByteSize);
-
-    const auto first = tensor.data.raw_const + sampleSize * this->elementsRead;
-
-    std::copy(first, first + batchByteSize, std::back_inserter(target));
+    std::copy(first, last, &target[0]);
   };
 
-  switch (tensor.type) {
+  switch (tfLiteTensor.type) {
     case TfLiteType::kTfLiteNoType:
-      copyBuffer(sizeof(*tensor.data.f));
+      copyBuffer(sizeof(*tfLiteTensor.data.f));
       break;
     case TfLiteType::kTfLiteFloat32:
-      copyBuffer(sizeof(*tensor.data.f));
+      copyBuffer(sizeof(*tfLiteTensor.data.f));
       break;
     case TfLiteType::kTfLiteInt32:
-      copyBuffer(sizeof(*tensor.data.i32));
+      copyBuffer(sizeof(*tfLiteTensor.data.i32));
       break;
     case TfLiteType::kTfLiteUInt8:
-      copyBuffer(sizeof(*tensor.data.uint8));
+      copyBuffer(sizeof(*tfLiteTensor.data.uint8));
       break;
     case TfLiteType::kTfLiteInt64:
-      copyBuffer(sizeof(*tensor.data.i64));
+      copyBuffer(sizeof(*tfLiteTensor.data.i64));
       break;
     case TfLiteType::kTfLiteString: {
-      const auto first = sampleElements * this->elementsRead;
-      const auto last = first + sampleElements * batchSize;
+      const auto lastElement = firstElement + numElements;
 
-      for (auto i = first; i != last; ++i) {
-        PutVarint32(&target, tflite::GetString(&tensor, i).len);
+      for (auto i = firstElement; i != lastElement; ++i) {
+        PutVarint32(&target, tflite::GetString(&tfLiteTensor, i).len);
       }
 
-      for (auto i = first; i != last; ++i) {
-        const auto s = tflite::GetString(&tensor, i);
+      for (auto i = firstElement; i != lastElement; ++i) {
+        const auto s = tflite::GetString(&tfLiteTensor, i);
 
         target.append(s.str, s.len);
       }
@@ -93,34 +91,28 @@ Status OutputContext::readBatch(const Interpreter& interpreter, size_t batchSize
       break;
     }
     case TfLiteType::kTfLiteBool:
-      copyBuffer(sizeof(*tensor.data.b));
+      copyBuffer(sizeof(*tfLiteTensor.data.b));
       break;
     case TfLiteType::kTfLiteInt16:
-      copyBuffer(sizeof(*tensor.data.i16));
+      copyBuffer(sizeof(*tfLiteTensor.data.i16));
       break;
     case TfLiteType::kTfLiteComplex64:
       static_assert(sizeof(TfLiteComplex64) == 8);
       static_assert(offsetof(TfLiteComplex64, re) == 0);
       static_assert(offsetof(TfLiteComplex64, im) == 4);
-      copyBuffer(sizeof(*tensor.data.c64));
+      copyBuffer(sizeof(*tfLiteTensor.data.c64));
       break;
     case TfLiteType::kTfLiteInt8:
-      copyBuffer(sizeof(*tensor.data.int8));
+      copyBuffer(sizeof(*tfLiteTensor.data.int8));
       break;
     case TfLiteType::kTfLiteFloat16:
       static_assert(sizeof(TfLiteFloat16) == 2);
       static_assert(offsetof(TfLiteFloat16, data) == 0);
-      copyBuffer(sizeof(*tensor.data.f16));
+      copyBuffer(sizeof(*tfLiteTensor.data.f16));
       break;
     default:
       throw std::logic_error("Unreachable");
   }
-
-  this->elementsRead += batchSize;
-}
-
-void OutputContext::reset() noexcept {
-  this->elementsRead = 0;
 }
 
 OutputContext OutputContext::fromTfLiteTensor(int tensorIndex, const TfLiteTensor& tfLiteTensor) {

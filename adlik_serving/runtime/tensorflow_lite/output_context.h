@@ -15,10 +15,6 @@ namespace serving {
 class OutputContext {
   std::string name;
 
-  // State.
-
-  size_t elementsRead = 0;
-
   // Cache.
 
   DimsList dimsListCache;
@@ -30,9 +26,9 @@ public:
   const tensorflow::DataType dataType;
 
   const std::string& getName() const;
-  const DimsList& getDimsList(absl::Span<const int> dims);
-  tensorflow::Status readBatch(const tflite::Interpreter& interpreter, size_t batchSize, std::string& target);
-  void reset() noexcept;
+  const DimsList& calculateDimsList(const TfLiteIntArray& dims) noexcept;
+
+  void readBatch(const TfLiteTensor& tfLiteTensor, size_t firstElement, size_t numElements, std::string& target);
 
   static OutputContext fromTfLiteTensor(int tensorIndex, const TfLiteTensor& tfLiteTensor);
 };
