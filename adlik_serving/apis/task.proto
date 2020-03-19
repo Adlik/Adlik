@@ -4,7 +4,7 @@ package adlik.serving;
 option cc_enable_arenas = true;
 
 import "adlik_serving/framework/domain/model_spec.proto";
-import "adlik_serving/runtime/ml/algorithm/proto/task_config.proto";
+import "google/protobuf/any.proto";
 
 message CreateTaskRequest {
   ModelSpec model_spec = 1;
@@ -18,17 +18,17 @@ message CreateTaskRequest {
   TaskType task_type = 2;
   bool is_sync = 3;
 
-  string algorithm = 4;
-
-  TaskReq task = 5;
+  // information for specific task, different model has own definition
+  google.protobuf.Any detail = 4;
 }
 
 message CreateTaskResponse {
-  string task_status = 1; // NEW, RUNNING, ERROR, DONE
+  string status = 1; // NEW, RUNNING, ERROR, DONE
 
-  string output = 2; // output file path
+  string task_id = 2;
 
-  TaskRsp task = 3;
+  // information for specific task, different model has own definition
+  google.protobuf.Any detail = 3;
 }
 
 message QueryTaskRequest { string task_id = 1; }

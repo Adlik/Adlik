@@ -8,9 +8,9 @@ serving_cc_library(
         "amc.cc",
     ],
     deps = [
+        "//adlik_serving/apis:amc_task_proto",
         "//adlik_serving/framework/domain:algorithm_config_proto",
         "//adlik_serving/runtime/ml/algorithm:algorithm_factory",
-        "//adlik_serving/runtime/ml/algorithm/proto:task_config_proto",
         "//cub/log",
     ],
     alwayslink = 1,

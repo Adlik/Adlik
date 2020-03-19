@@ -39,10 +39,10 @@ serving_cc_library(
     ],
     deps = [
         ":csv_reader",
+        "//adlik_serving/apis:grid_task_proto",
         "//adlik_serving/framework/domain:algorithm_config_proto",
         "//adlik_serving/framework/manager:time_stats",
         "//adlik_serving/runtime/ml/algorithm:algorithm_factory",
-        "//adlik_serving/runtime/ml/algorithm/proto:task_config_proto",
         "//csv",
         "//cub/base:status_wrapper",
         "//cub/env/fs",

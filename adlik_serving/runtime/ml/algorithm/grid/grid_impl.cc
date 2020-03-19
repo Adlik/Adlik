@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "adlik_serving/apis/grid_task.pb.h"
 #include "adlik_serving/framework/domain/algorithm_config.pb.h"
 #include "adlik_serving/framework/manager/time_stats.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
@@ -15,10 +16,10 @@
 #include "adlik_serving/runtime/ml/algorithm/grid/kmeans.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/neighbors.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/rsrp_grid.h"
-#include "adlik_serving/runtime/ml/algorithm/proto/task_config.pb.h"
 #include "cub/env/fs/file_system.h"
 #include "cub/env/fs/path.h"
 #include "cub/log/log.h"
+#include "google/protobuf/any.pb.h"
 
 namespace ml_runtime {
 
@@ -28,7 +29,7 @@ struct GridAlgorithm : Algorithm {
   GridAlgorithm(const adlik::serving::GridConfig& config) : config(config) {
   }
 
-  cub::StatusWrapper run(const adlik::serving::TaskReq&, adlik::serving::TaskRsp&) override;
+  cub::StatusWrapper run(const ::google::protobuf::Any&, ::google::protobuf::Any&) override;
 
   const std::string name() const override {
     return "grid";
@@ -146,8 +147,14 @@ std::unordered_map<Neighbors, GridAlgorithm::InputPtrs> GridAlgorithm::initialSc
   return classes;
 }
 
-cub::StatusWrapper GridAlgorithm::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp& rsp) {
-  const auto& grid = req.grid();
+cub::StatusWrapper GridAlgorithm::run(const ::google::protobuf::Any& req_detail, ::google::protobuf::Any& rsp_detail) {
+  if (!req_detail.Is<::adlik::serving::GridTaskReq>()) {
+    return cub::StatusWrapper(cub::InvalidArgument, "Input doesn't contain grid task config!");
+  }
+
+  adlik::serving::GridTaskReq grid;
+  req_detail.UnpackTo(&grid);
+
   if (!cub::filesystem().exists(grid.input())) {
     return cub::StatusWrapper(cub::InvalidArgument, "Input file doesn't exist");
   }
@@ -164,8 +171,8 @@ cub::StatusWrapper GridAlgorithm::run(const adlik::serving::TaskReq& req, adlik:
 
   GridInputs total_inputs;
   {
-    adlik::serving::TimeStats stats("Load input csv and do initial screen");
-    auto status = loadGridInput(req.grid().input(), total_inputs);
+    adlik::serving::TimeStats stats("Load input csv");
+    auto status = loadGridInput(grid.input(), total_inputs);
     if (!status.ok() || total_inputs.size() == 0) {
       ERR_LOG << "Load Grid input failure: " << status.error_message();
       return status;
@@ -180,8 +187,9 @@ cub::StatusWrapper GridAlgorithm::run(const adlik::serving::TaskReq& req, adlik:
     subdivideClass(c.first, c.second, saver);
   }
 
-  auto grid_output = rsp.mutable_grid();
-  grid_output->set_output(grid.output());
+  adlik::serving::GridTaskRsp grid_output;
+  grid_output.set_output(grid.output());
+  rsp_detail.PackFrom(grid_output);
   return cub::StatusWrapper::OK();
 }
 
