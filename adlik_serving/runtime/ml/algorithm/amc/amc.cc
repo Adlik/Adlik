@@ -3,11 +3,12 @@
 
 #include <memory>
 
+#include "adlik_serving/apis/amc_task.pb.h"
 #include "adlik_serving/framework/domain/algorithm_config.pb.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_register.h"
-#include "adlik_serving/runtime/ml/algorithm/proto/task_config.pb.h"
 #include "cub/log/log.h"
+#include "google/protobuf/any.pb.h"
 
 namespace ml_runtime {
 
@@ -18,7 +19,7 @@ struct Amc : Algorithm {
     init();
   }
 
-  cub::StatusWrapper run(const adlik::serving::TaskReq&, adlik::serving::TaskRsp&) override;
+  cub::StatusWrapper run(const ::google::protobuf::Any&, ::google::protobuf::Any&) override;
 
   const std::string name() const override {
     return "amc";
@@ -53,26 +54,30 @@ void Amc::create(const adlik::serving::AlgorithmConfig& config, std::unique_ptr<
   return;
 }
 
-cub::StatusWrapper Amc::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp& rsp) {
+cub::StatusWrapper Amc::run(const ::google::protobuf::Any& request, ::google::protobuf::Any& rsp_detail) {
   DEBUG_LOG << "Prepare to run amc, this: " << this;
 
-  if (!req.has_amc())
-    return cub::StatusWrapper(cub::InvalidArgument, "Input doesn't contain input!");
+  if (!request.Is<::adlik::serving::AmcTaskReq>()) {
+    return cub::StatusWrapper(cub::InvalidArgument, "Input doesn't contain amc task config!");
+  }
 
-  auto& input = req.amc();
-  auto output = rsp.mutable_amc();
-  output->set_cell_id(input.cell_id());
+  adlik::serving::AmcTaskReq task;
+  request.UnpackTo(&task);
 
-  auto search = cells.find(input.cell_id());
+  adlik::serving::AmcTaskRsp output;
+  output.set_cell_id(task.cell_id());
+
+  auto search = cells.find(task.cell_id());
   if (search != cells.end()) {
-    auto deltas = output->mutable_deltas();
-    for (const auto& it : req.amc().blers()) {
+    auto deltas = output.mutable_deltas();
+    for (const auto& it : task.blers()) {
       auto delta = it.second;
       deltas->insert({it.first, (1 - delta - delta * search->second.target_prime) * search->second.lambda});
     }
+    rsp_detail.PackFrom(output);
     return cub::StatusWrapper::OK();
   } else {
-    ERR_LOG << "Not found input cell id: " << input.cell_id();
+    ERR_LOG << "Not found input cell id: " << task.cell_id();
     return cub::StatusWrapper(cub::InvalidArgument, "Not found input cell id:");
   }
 }

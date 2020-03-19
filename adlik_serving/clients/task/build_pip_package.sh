@@ -23,7 +23,6 @@ function main() {
   echo $(date) : "=== Using tmpdir: ${TMPDIR}"
   mkdir -p ${TMPDIR}/adlik_serving/framework/domain
   mkdir -p ${TMPDIR}/adlik_serving/apis
-  mkdir -p ${TMPDIR}/adlik_serving/runtime/ml/algorithm/proto
 
   echo "Adding python files"
   cp bazel-bin/adlik_serving/apis/*_pb2.py \
@@ -34,8 +33,6 @@ function main() {
 
   cp bazel-bin/adlik_serving/framework/domain/*_pb2.py \
     "${TMPDIR}/adlik_serving/framework/domain"
-  cp bazel-bin/adlik_serving/runtime/ml/algorithm/proto/*_pb2.py \
-    "${TMPDIR}/adlik_serving/runtime/ml/algorithm/proto"
 
   cp adlik_serving/clients/task/__init__.py \
     "${TMPDIR}/adlik_serving/."
@@ -43,10 +40,6 @@ function main() {
   touch "${TMPDIR}/adlik_serving/apis/__init__.py"
   touch "${TMPDIR}/adlik_serving/framework/__init__.py"
   touch "${TMPDIR}/adlik_serving/framework/domain/__init__.py"
-  touch "${TMPDIR}/adlik_serving/runtime/__init__.py"
-  touch "${TMPDIR}/adlik_serving/runtime/ml/__init__.py"
-  touch "${TMPDIR}/adlik_serving/runtime/ml/algorithm/__init__.py"
-  touch "${TMPDIR}/adlik_serving/runtime/ml/algorithm/proto/__init__.py"
 
 
   echo "Adding package setup files"

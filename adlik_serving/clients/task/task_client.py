@@ -9,7 +9,7 @@ import argparse
 import random
 import time
 
-from adlik_serving.apis import task_pb2, task_service_pb2_grpc
+from adlik_serving.apis import amc_task_pb2, grid_task_pb2, task_pb2, task_service_pb2_grpc
 import grpc
 
 FLAGS = None
@@ -26,8 +26,10 @@ def _create_header():
 def _create_grid_request():
     request = _create_header()
     if FLAGS.input and FLAGS.output:
-        request.task.grid.input = FLAGS.input
-        request.task.grid.output = FLAGS.output
+        grid = grid_task_pb2.GridTaskReq()
+        grid.input = FLAGS.input
+        grid.output = FLAGS.output
+        request.detail.Pack(grid)
         return request
     else:
         raise Exception("For grid case the following arguments are required: -i/--input and -o/--output")
@@ -35,11 +37,13 @@ def _create_grid_request():
 
 def _create_amc_request():
     request = _create_header()
+    amc = amc_task_pb2.AmcTaskReq()
     max_bler_num = 180
     bler_num = random.randint(1, max_bler_num)
-    request.task.amc.cell_id = bler_num % 2  # just test, make cell id randomly, configured cell id is 0 or 1
+    amc.cell_id = bler_num % 2  # just test, make cell id randomly, configured cell id is 0 or 1
     for i in range(bler_num):
-        request.task.amc.blers[i] = random.random()
+        amc.blers[i] = random.random()
+    request.detail.Pack(amc)
     return request
 
 

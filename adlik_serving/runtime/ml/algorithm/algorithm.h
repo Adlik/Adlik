@@ -15,6 +15,12 @@ struct TaskRsp;
 }  // namespace serving
 }  // namespace adlik
 
+namespace google {
+namespace protobuf {
+struct Any;
+}
+}  // namespace google
+
 namespace ml_runtime {
 
 struct MLTask;
@@ -24,7 +30,7 @@ struct Algorithm {
   }
 
   virtual const std::string name() const = 0;
-  virtual cub::StatusWrapper run(const adlik::serving::TaskReq&, adlik::serving::TaskRsp&) = 0;
+  virtual cub::StatusWrapper run(const ::google::protobuf::Any&, ::google::protobuf::Any&) = 0;
 };
 
 }  // namespace ml_runtime

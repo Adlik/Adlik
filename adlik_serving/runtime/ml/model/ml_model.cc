@@ -98,7 +98,7 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
   cub::Notification notification;
   cub::StatusWrapper status;
   auto f = [&]() {
-    status = it->second->run(request.task(), *response.mutable_task());
+    status = it->second->run(request.detail(), *response.mutable_detail());
     notification.notify();
   };
 
@@ -112,7 +112,7 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
   }
 
   DEBUG_LOG << "Task is over, status: " << status.error_message();
-  response.set_task_status(status.ok() ? "DONE" : "ERROR");
+  response.set_status(status.ok() ? "DONE" : "ERROR");
   return status;
 }
 
