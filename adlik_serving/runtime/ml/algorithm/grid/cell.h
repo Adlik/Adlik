@@ -26,13 +26,4 @@ std::ostream& operator<<(std::ostream&, const Cell&);
 
 }  // namespace ml_runtime
 
-namespace std {
-template <>
-struct hash<ml_runtime::Cell> {
-  std::size_t operator()(ml_runtime::Cell const& s) const noexcept {
-    return std::hash<std::string>{}(s.toString());
-  }
-};
-}  // namespace std
-
 #endif

@@ -12,16 +12,12 @@ namespace {
 
 #define POSITIVE_RSRP(rsrp) (rsrp + 140)
 
-Rsrp lambda(Rsrp rsrp, Rsrp size) {
-  return (Rsrp)((POSITIVE_RSRP(rsrp)) / size);
-}
-
 }  // namespace
 
-RsrpGrid::RsrpGrid(Rsrp size, const GridInput& i) : size(size) {
-  std::vector<std::string> str = {std::to_string(lambda(i.serving_rsrp, size)),
-                                  std::to_string(lambda(i.neighRSRP_intra1, size)),
-                                  std::to_string(lambda(i.neighRSRP_intra2, size))};
+RsrpGrid::RsrpGrid(Rsrp size, const GridInput& i) {
+  auto func = [&](Rsrp rsrp) { return std::to_string((POSITIVE_RSRP(rsrp)) / size); };
+
+  std::vector<std::string> str = {func(i.serving_rsrp), func(i.neighRSRP_intra1), func(i.neighRSRP_intra2)};
   key = cub::strutils::join(str, ",");
 }
 

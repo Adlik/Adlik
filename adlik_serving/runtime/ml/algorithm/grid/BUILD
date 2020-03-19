@@ -20,6 +20,7 @@ serving_cc_library(
     name = "grid",
     srcs = [
         "cell.cc",
+        "grid_csv_saver.cc",
         "grid_impl.cc",
         "grid_input.cc",
         "grid_output.cc",
@@ -28,6 +29,7 @@ serving_cc_library(
     ],
     hdrs = [
         "cell.h",
+        "grid_csv_saver.h",
         "grid_input.h",
         "grid_output.h",
         "kmeans.h",

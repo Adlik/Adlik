@@ -3,13 +3,16 @@
 
 #include "adlik_serving/runtime/ml/algorithm/grid/grid_output.h"
 
-#include "csv/writer.hpp"
-#include "cub/env/fs/file_system.h"
-#include "cub/env/fs/path.h"
+#include <algorithm>
+
+#include "adlik_serving/runtime/ml/algorithm/grid/grid_input.h"
+#include "adlik_serving/runtime/ml/algorithm/grid/neighbors.h"
 
 namespace ml_runtime {
 
 namespace {
+
+const size_t MAX_NEIGHBOR_NUM = 10;
 
 static std::vector<std::string> HALF_HEADER = {"ServerRSRP_Core",
                                                "ServerRSRP_MAX",
@@ -38,89 +41,85 @@ static std::vector<std::string> neighbor_header = {"NeighPLMN_intra_Sta",
                                                    "Event2Num_Sta",
                                                    "Event3Num_Sta"};
 
-size_t MAX_NEIGHBOR_NUM = 10;
-
-struct Saver : GridCsvSaver {
-  Saver(const std::string& path) : writer(path) {
-    saveHeader();
-  }
-
-  ~Saver() {
-    writer.close();
-  }
-
-  Saver(Saver&&) = delete;
-  Saver(const Saver&) = delete;
-
-  bool save(const GridResult& output) {
-    std::vector<std::string> row;
-    row.push_back(std::to_string(output.serverRSRP_core));
-    row.push_back(std::to_string(output.serverRSRP_max));
-    row.push_back(std::to_string(output.serverRSRP_min));
-
-    row.push_back(std::to_string(output.neighbor1.plmn));
-    row.push_back(std::to_string(output.neighbor1.nb));
-    row.push_back(std::to_string(output.neighbor1.cell));
-    row.push_back(std::to_string(output.neighRSRP_core1));
-    row.push_back(std::to_string(output.neighRSRP_max1));
-    row.push_back(std::to_string(output.neighRSRP_min1));
-
-    row.push_back(std::to_string(output.neighbor2.plmn));
-    row.push_back(std::to_string(output.neighbor2.nb));
-    row.push_back(std::to_string(output.neighbor2.cell));
-    row.push_back(std::to_string(output.neighRSRP_core2));
-    row.push_back(std::to_string(output.neighRSRP_max2));
-    row.push_back(std::to_string(output.neighRSRP_min2));
-
-    row.push_back(std::to_string(output.neighbor_num));
-    for (size_t i = 0; i < std::min(output.neighbor_num, MAX_NEIGHBOR_NUM); ++i) {
-      row.push_back(std::to_string(output.stats[i].neighbor.plmn));
-      row.push_back(std::to_string(output.stats[i].neighbor.nb));
-      row.push_back(std::to_string(output.stats[i].neighbor.cell));
-      row.push_back(std::to_string(output.stats[i].event_1));
-      row.push_back(std::to_string(output.stats[i].event_2));
-      row.push_back(std::to_string(output.stats[i].event_3));
-    }
-
-    writer.write_row(row);
-    return true;
-  }
-
-private:
-  void saveHeader() {
-    std::vector<std::string> header(HALF_HEADER);
-    for (size_t i = 1; i < MAX_NEIGHBOR_NUM + 1; ++i) {
-      for (const auto& h : neighbor_header) {  // todo: will be optimized by std::transform in c++17 & c++20
-        header.push_back(h + std::to_string(i));
-      }
-    }
-    writer.write_row(header);
-  }
-
-  csv::Writer writer;
-};
-
 }  // namespace
 
-size_t GridResult::maxNeighborNum() {
-  return MAX_NEIGHBOR_NUM;
+GridOutput::GridOutput()
+    : serverRSRP_core(0),
+      serverRSRP_max(MIN_RSRP),
+      serverRSRP_min(MAX_RSRP),
+      neighRSRP_core1(0),
+      neighRSRP_max1(MIN_RSRP),
+      neighRSRP_min1(MAX_RSRP),
+      neighRSRP_core2(0),
+      neighRSRP_max2(MIN_RSRP),
+      neighRSRP_min2(MAX_RSRP),
+      neighbor_num(0) {
 }
 
-cub::StatusWrapper GridCsvSaver::create(const std::string& file_path, std::unique_ptr<GridCsvSaver>* saver) {
-  auto path = cub::Path(file_path);
-  auto dir = path.dirName();
-  if (!cub::filesystem().exists(dir.to_s())) {
-    return cub::StatusWrapper(cub::InvalidArgument, "Output directory doesn't exist");
-  }
-  *saver = std::make_unique<Saver>(file_path);
-  return cub::StatusWrapper::OK();
+GridOutput::GridOutput(const Neighbors& neighbors,
+                       const Rsrp serverRSRP_core,
+                       const Rsrp neighRSRP_core1,
+                       const Rsrp neighRSRP_core2)
+    : serverRSRP_core(serverRSRP_core),
+      serverRSRP_max(MIN_RSRP),
+      serverRSRP_min(MAX_RSRP),
+      neighbor1(neighbors.neighbor1),
+      neighRSRP_core1(neighRSRP_core1),
+      neighRSRP_max1(MIN_RSRP),
+      neighRSRP_min1(MAX_RSRP),
+      neighbor2(neighbors.neighbor2),
+      neighRSRP_core2(neighRSRP_core2),
+      neighRSRP_max2(MIN_RSRP),
+      neighRSRP_min2(MAX_RSRP),
+      neighbor_num(0) {
 }
 
-bool GridCsvSaver::save(const std::vector<GridResult>& outputs) {
-  for (const auto& o : outputs) {
-    save(o);
+void GridOutput::update(const GridInput& input) {
+  serverRSRP_max = std::max(serverRSRP_max, input.serving_rsrp);
+  serverRSRP_min = std::min(serverRSRP_min, input.serving_rsrp);
+  neighRSRP_max1 = std::max(neighRSRP_max1, input.neighRSRP_intra1);
+  neighRSRP_min1 = std::min(neighRSRP_min1, input.neighRSRP_intra1);
+  neighRSRP_max2 = std::max(neighRSRP_max2, input.neighRSRP_intra2);
+  neighRSRP_min2 = std::min(neighRSRP_min2, input.neighRSRP_intra2);
+
+  auto it =
+      std::find_if(stats.begin(), stats.end(), [&](const Statistics& s) { return s.neighbor == input.neighbor3; });
+  Statistics* stat = nullptr;
+  if (it != stats.end()) {
+    stat = &(*it);
+  } else {
+    GridOutput::Statistics temp_stat;
+    temp_stat.neighbor = input.neighbor3;
+    stats.push_back(std::move(temp_stat));
+    neighbor_num++;
+    stat = &stats[stats.size() - 1];
   }
-  return true;
+
+  if (input.event == 1) {
+    stat->event_1++;
+  } else if (input.event == 2) {
+    stat->event_2++;
+  } else if (input.event == 3) {
+    stat->event_3++;
+  } else {
+  }
+}
+
+void GridOutput::arrangeStats() {
+  neighbor_num = std::min(MAX_NEIGHBOR_NUM, stats.size());
+  std::sort(stats.begin(), stats.end(), [](const GridOutput::Statistics& lhs, const GridOutput::Statistics& rhs) {
+    return lhs.event_1 + lhs.event_2 + lhs.event_3 > rhs.event_1 + rhs.event_2 + rhs.event_3;
+  });
+}
+
+std::vector<std::string> GridOutput::fieldNames() {
+  std::vector<std::string> header(HALF_HEADER);
+  for (size_t i = 1; i < MAX_NEIGHBOR_NUM + 1; ++i) {
+    for (const auto& h : neighbor_header) {  // todo: will be optimized by std::transform in c++17 & c++20
+      header.push_back(h + std::to_string(i));
+    }
+  }
+  return header;
 }
 
 }  // namespace ml_runtime
