@@ -4,9 +4,8 @@
 #include "adlik_serving/runtime/ml/algorithm/grid/grid_input.h"
 
 #include "adlik_serving/runtime/ml/algorithm/grid/csv_reader.h"
-#include "cub/env/fs/file_system.h"
-#include "cub/env/fs/path.h"
 #include "cub/log/log.h"
+#include "cub/string/str_utils.h"
 
 namespace ml_runtime {
 
@@ -49,10 +48,6 @@ static std::vector<std::string> expected_cols = {"ServergPLMN",
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridInput>& inputs) {
-  if (!cub::filesystem().exists(file_path)) {
-    return cub::StatusWrapper(cub::InvalidArgument, "Input file doesn't exist");
-  }
-
   CSVReader reader(file_path);
   if (!reader.read()) {
     ERR_LOG << "Read input csv failure!";
@@ -62,9 +57,7 @@ cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridI
   auto col_names = reader.col_names();
   if (expected_cols != col_names) {
     ERR_LOG << "csv headers is not equal to expected!";
-    for (auto& n : col_names) {
-      DEBUG_LOG << '[' << n << ']';
-    }
+    DEBUG_LOG << "Expected columns is: " << cub::strutils::join(expected_cols, ",");
     return cub::StatusWrapper(cub::Internal, "csv headers is not equal to expected!");
   }
 

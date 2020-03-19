@@ -17,6 +17,7 @@ std::string Cell::toString() const {
 bool operator==(const Cell& lhs, const Cell& rhs) {
   return lhs.plmn == rhs.plmn && lhs.nb == rhs.nb && lhs.cell == rhs.cell;
 }
+
 bool operator!=(const Cell& lhs, const Cell& rhs) {
   return !(lhs == rhs);
 }

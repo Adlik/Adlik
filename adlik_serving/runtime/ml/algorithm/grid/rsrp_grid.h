@@ -19,7 +19,6 @@ struct RsrpGrid {
   friend bool operator!=(const RsrpGrid&, const RsrpGrid&);
   friend std::ostream& operator<<(std::ostream&, const RsrpGrid&);
 
-  const Rsrp size;
   std::string key;
 };
 

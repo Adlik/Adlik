@@ -9,16 +9,16 @@
 #include "adlik_serving/framework/manager/time_stats.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_register.h"
+#include "adlik_serving/runtime/ml/algorithm/grid/grid_csv_saver.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/grid_input.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/grid_output.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/kmeans.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/neighbors.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/rsrp_grid.h"
 #include "adlik_serving/runtime/ml/algorithm/proto/task_config.pb.h"
+#include "cub/env/fs/file_system.h"
+#include "cub/env/fs/path.h"
 #include "cub/log/log.h"
-#include "cub/string/str_utils.h"
-#include "dlib/clustering.h"
-#include "dlib/rand.h"
 
 namespace ml_runtime {
 
@@ -36,10 +36,17 @@ struct GridAlgorithm : Algorithm {
 
 private:
   using InputPtrs = std::vector<const GridInput*>;  // samples of a specific class
+  using SampleType = dlib::matrix<double, 3, 1>;
 
-  size_t estimateK(const InputPtrs& inputs);
-  void subdivideClass(const std::pair<Neighbors, InputPtrs>& clazz, GridCsvSaver& saver);
   std::unordered_map<Neighbors, InputPtrs> initialScreen(const GridInputs& total);
+  void subdivideClass(const Neighbors& neighbors, const InputPtrs& inputs, GridCsvSaver& saver);
+
+  std::vector<SampleType> makeKmeansInput(const InputPtrs& inputs);
+  size_t estimateK(const InputPtrs& inputs);
+  std::vector<GridOutput> makeOutput(const Neighbors& neighbors,
+                                     const InputPtrs& inputs,
+                                     const std::vector<unsigned long>& lables,
+                                     const std::vector<SampleType>& centers);
 
   adlik::serving::GridConfig config;
 };
@@ -71,23 +78,9 @@ size_t GridAlgorithm::estimateK(const InputPtrs& inputs) {
   return k;
 }
 
-void GridAlgorithm::subdivideClass(const std::pair<Neighbors, InputPtrs>& clazz, GridCsvSaver& saver) {
-  if (clazz.second.size() < config.min_samples_per_neighbor_group()) {
-    // If there is too few samples of this class, no need to do kmeans
-    return;
-  }
-
-  auto k = estimateK(clazz.second);
-  if (k <= 0)
-    return;
-
-  // do kmeans
-  DEBUG_LOG << "Begin to do kmeans for class: " << clazz.first << ", samples size: " << clazz.second.size()
-            << ", k: " << k;
-
-  using SampleType = dlib::matrix<double, 3, 1>;
+std::vector<GridAlgorithm::SampleType> GridAlgorithm::makeKmeansInput(const InputPtrs& inputs) {
   std::vector<SampleType> samples;
-  for (const auto& i : clazz.second) {
+  for (const auto& i : inputs) {
     SampleType s;
     s(0) = i->serving_rsrp;
     s(1) = i->neighRSRP_intra1;
@@ -95,72 +88,52 @@ void GridAlgorithm::subdivideClass(const std::pair<Neighbors, InputPtrs>& clazz,
     // todo: should drop some marginal samples?
     samples.push_back(s);
   }
+  return samples;
+}
+
+std::vector<GridOutput> GridAlgorithm::makeOutput(const Neighbors& neighbors,
+                                                  const GridAlgorithm::InputPtrs& inputs,
+                                                  const std::vector<unsigned long>& lables,
+                                                  const std::vector<GridAlgorithm::SampleType>& centers) {
+  std::vector<GridOutput> outputs(centers.size());
+  for (size_t i = 0; i < centers.size(); ++i) {
+    // outputs[i].grid_id = i;
+    outputs[i] = GridOutput(neighbors, (Rsrp)centers[i](0), (Rsrp)centers[i](1), (Rsrp)centers[i](2));
+  }
+
+  for (size_t i = 0; i < inputs.size(); ++i) {
+    const auto& s = *inputs[i];
+    auto lable = lables[i];
+    auto& output = outputs[lable];
+    output.update(s);
+  }
+
+  // Need ??
+  for (size_t i = 0; i < centers.size(); ++i) {
+    outputs[i].arrangeStats();
+  }
+  return outputs;
+}
+
+void GridAlgorithm::subdivideClass(const Neighbors& neighbors, const InputPtrs& inputs, GridCsvSaver& saver) {
+  if (inputs.size() < config.min_samples_per_neighbor_group()) {
+    // If there is too few samples of this class, no need to do kmeans
+    return;
+  }
+
+  auto k = estimateK(inputs);
+  if (k <= 0)
+    return;
+
+  // do kmeans
+  DEBUG_LOG << "Begin to do kmeans for class: " << neighbors << ", samples size: " << inputs.size() << ", k: " << k;
+
+  auto samples = makeKmeansInput(inputs);
   Kmeans<SampleType> kmeans(k, config.kmeans_max_iter());
-  auto y = kmeans.fit(samples);
+  auto lables = kmeans.fit(samples);
   const auto& centers = kmeans.getCenters();
 
-  std::vector<GridResult> outputs(k);
-  for (unsigned long i = 0; i < k; ++i) {
-    // outputs[i].grid_id = i;
-    outputs[i].neighbor1 = clazz.first.neighbor1;
-    outputs[i].neighbor2 = clazz.first.neighbor2;
-    outputs[i].serverRSRP_core = (Rsrp)centers[i](0);
-    outputs[i].neighRSRP_core1 = (Rsrp)centers[i](1);
-    outputs[i].neighRSRP_core2 = (Rsrp)centers[i](2);
-  }
-
-  const auto& inputs = clazz.second;
-  for (size_t i = 0; i < samples.size(); ++i) {
-    const auto& s = *inputs[i];
-    auto lable = y[i];
-    auto& output = outputs[lable];
-    output.serverRSRP_max = std::max(output.serverRSRP_max, s.serving_rsrp);
-    output.serverRSRP_min = std::min(output.serverRSRP_min, s.serving_rsrp);
-    output.neighRSRP_max1 = std::max(output.neighRSRP_max1, s.neighRSRP_intra1);
-    output.neighRSRP_min1 = std::min(output.neighRSRP_min1, s.neighRSRP_intra1);
-    output.neighRSRP_max2 = std::max(output.neighRSRP_max2, s.neighRSRP_intra2);
-    output.neighRSRP_min2 = std::min(output.neighRSRP_min2, s.neighRSRP_intra2);
-
-    bool found = false;
-    for (auto& stat : output.stats) {
-      if (stat.neighbor == s.neighbor3) {
-        if (s.event == 1) {
-          stat.event_1++;
-        } else if (s.event == 2) {
-          stat.event_2++;
-        } else if (s.event == 3) {
-          stat.event_3++;
-        } else {
-        }
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      GridResult::Statistics stats;
-      stats.neighbor = s.neighbor3;
-      if (s.event == 1) {
-        stats.event_1++;
-      } else if (s.event == 2) {
-        stats.event_2++;
-      } else if (s.event == 3) {
-        stats.event_3++;
-      } else {
-      }
-      output.stats.push_back(std::move(stats));
-    }
-  }
-
-  size_t max_neighbor = GridResult::maxNeighborNum();
-  for (unsigned long i = 0; i < k; ++i) {
-    outputs[i].neighbor_num = std::min(max_neighbor, outputs[i].stats.size());
-    std::sort(outputs[i].stats.begin(),
-              outputs[i].stats.end(),
-              [](const GridResult::Statistics& lhs, const GridResult::Statistics& rhs) {
-                return lhs.event_1 + lhs.event_2 + lhs.event_3 > rhs.event_1 + rhs.event_2 + rhs.event_3;
-              });
-  }
-
+  auto outputs = makeOutput(neighbors, inputs, lables, centers);
   saver.save(outputs);
 }
 
@@ -173,7 +146,22 @@ std::unordered_map<Neighbors, GridAlgorithm::InputPtrs> GridAlgorithm::initialSc
   return classes;
 }
 
-cub::StatusWrapper GridAlgorithm::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp&) {
+cub::StatusWrapper GridAlgorithm::run(const adlik::serving::TaskReq& req, adlik::serving::TaskRsp& rsp) {
+  const auto& grid = req.grid();
+  if (!cub::filesystem().exists(grid.input())) {
+    return cub::StatusWrapper(cub::InvalidArgument, "Input file doesn't exist");
+  }
+  auto input_path = cub::Path(grid.input());
+  if (input_path.extName() != "csv") {
+    return cub::StatusWrapper(cub::InvalidArgument, "Input file isn't csv");
+  }
+
+  auto output_path = cub::Path(grid.output());
+  auto dir = output_path.dirName();
+  if (!cub::filesystem().exists(dir.to_s())) {
+    return cub::StatusWrapper(cub::InvalidArgument, "Output directory doesn't exist");
+  }
+
   GridInputs total_inputs;
   {
     adlik::serving::TimeStats stats("Load input csv and do initial screen");
@@ -187,15 +175,13 @@ cub::StatusWrapper GridAlgorithm::run(const adlik::serving::TaskReq& req, adlik:
   auto classes = initialScreen(total_inputs);
   DEBUG_LOG << "Grid input size: " << total_inputs.size() << ", initial screening: " << classes.size();
 
-  std::unique_ptr<GridCsvSaver> saver;
-  auto status = GridCsvSaver::create(req.grid().output(), &saver);
-  if (!status.ok()) {
-    return status;
+  GridCsvSaver saver(grid.output());
+  for (const auto& c : classes) {
+    subdivideClass(c.first, c.second, saver);
   }
 
-  for (const auto& c : classes) {
-    subdivideClass(c, *saver);
-  }
+  auto grid_output = rsp.mutable_grid();
+  grid_output->set_output(grid.output());
   return cub::StatusWrapper::OK();
 }
 
