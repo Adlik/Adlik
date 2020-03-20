@@ -4,26 +4,25 @@
 #include <memory>
 
 #include "adlik_serving/apis/amc_task.pb.h"
-#include "adlik_serving/framework/domain/algorithm_config.pb.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_register.h"
+#include "adlik_serving/runtime/ml/algorithm/proto/amc.pb.h"
+#include "cub/env/fs/file_system.h"
+#include "cub/env/fs/path.h"
 #include "cub/log/log.h"
+#include "cub/protobuf/text_protobuf.h"
 #include "google/protobuf/any.pb.h"
 
 namespace ml_runtime {
 
 struct Amc : Algorithm {
-  static void create(const adlik::serving::AlgorithmConfig&, std::unique_ptr<Algorithm>*);
+  static cub::StatusWrapper create(const std::string&, std::unique_ptr<Algorithm>*);
 
   Amc(const adlik::serving::AmcConfig& config) : config(config) {
     init();
   }
 
   cub::StatusWrapper run(const ::google::protobuf::Any&, ::google::protobuf::Any&) override;
-
-  const std::string name() const override {
-    return "amc";
-  }
 
 private:
   struct Parameter {
@@ -43,15 +42,20 @@ private:
   std::unordered_map<CellId, Parameter> cells;
 };
 
-void Amc::create(const adlik::serving::AlgorithmConfig& config, std::unique_ptr<Algorithm>* algorithm) {
-  if (config.has_amc_config()) {
-    if (config.amc_config().cell_parameters().size() == 0) {
-      ERR_LOG << "nbler_target is 0!";
-      return;
-    }
-    *algorithm = std::make_unique<Amc>(config.amc_config());
+cub::StatusWrapper Amc::create(const std::string& model_dir, std::unique_ptr<Algorithm>* algorithm) {
+  auto file_path = cub::paths(model_dir, DEFAULT_MODEL);
+  if (!cub::filesystem().exists(file_path)) {
+    ERR_LOG << file_path << " not exist!";
+    return cub::StatusWrapper(cub::Internal, "model.pbtxt not exist");
   }
-  return;
+
+  auto config = cub::TextProtobuf::read<::adlik::serving::AmcConfig>(file_path);
+  if (config.cell_parameters().size() == 0) {
+    ERR_LOG << "nbler_target is 0!";
+    return cub::StatusWrapper(cub::InvalidArgument, "nbler_target is 0");
+  }
+  *algorithm = std::make_unique<Amc>(config);
+  return cub::StatusWrapper::OK();
 }
 
 cub::StatusWrapper Amc::run(const ::google::protobuf::Any& request, ::google::protobuf::Any& rsp_detail) {
