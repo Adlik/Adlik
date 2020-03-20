@@ -189,3 +189,52 @@ cd {dir_of_adlik_serving_binary}
 
 The `ci/docker/build.sh` file can be used to build a Docker images that contains all the requirements for building
 Adlik. You can build Adlik with the Docker image.
+
+## Inference performance of serving engine
+
+In order to evaluate the performance of the service engine, we performed inference tests on the same cpu or gpu using the simple cnn model (mnist model) and the resnet50 model with different runtimes. The cpu and gpu parameters used in the test are as follows:
+
+|       |                    type                   | number |
+| ------|:-----------------------------------------:|:------:|
+| CPU   | Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz |   1    |
+| GPU   | Tesla V100 SXM2 32GB                      |   1    |
+
+### The test result of the mnist model
+
+|                  | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -----------------|:------------------------------:|:--------------------------------------:|:---------------------------------:|
+| keras-tf         |        1804.976                |             1872.743                   |            2.00E-05               |
+| keras-OpenVINO   |        2637.576                |             2777.867                   |            1.90E-05               |
+| keras-TensorRT   |        37057.859               |             160927.716                 |            2.07E-05               |
+| keras-tfGPU      |        5763.204                |             7140.114                   |            3.30E-05               |
+| tensorflow-tf    |        1480.639                |             1525.122                   |            1.96E-05               |
+| tensorflow-tfGPU |      5760.852                  |             7156.269                   |            3.30E-05               |
+| pytorch-OpenVINO |       8992.844                 |             10161.757                  |            1.27E-05               |
+| pytorch-TensorRT |       45820.531                |             243994.434                 |            1.77E-05               |
+
+*[Note 1]: In the first column of the table, words before '-' represent different runtimes, and words after '-' represent different inference engines.
+
+*[Note 2]: The tf and OpenVINO serving engine are test in the CPU environment, and the TensorRT and tfGPU serving engine are test in the GPU environment.
+
+### The test result of the resnet50 model
+
+|                  | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -----------------|:------------------------------:|:--------------------------------------:|:---------------------------------:|
+| keras-tf         |        3.598                   |             3.639                      |            0.00312                |
+| keras-OpenVINO   |        9.352                   |             9.634                      |            0.00313                |
+| keras-TensorRT   |        237.085                 |             1402.387                   |            0.00350                |
+| keras-tfGPU      |        176.78                  |             416.922                    |            0.00326                |
+| tensorflow-tf    |        3.668                   |             3.71                       |            0.00305                |
+| tensorflow-tfGPU |        179.752                 |             425.842                    |            0.00321                |
+| pytorch-OpenVINO |        9.268                   |             9.546                      |            0.00313                |
+| pytorch-TensorRT |        238.096                 |             1331.132                   |            0.00344                |
+
+## Release
+
+The version of the service engine adlik supports.
+
+|            | TensorFlow 1.14 | Openvino 2019 | Tensorrt 6 | Tensorrt 7 |
+|------------|:---------------:|:-------------:|:----------:|:----------:|
+| keras      |       √         |      √        |     √      |      √     |
+| TensorFlow |       √         |      √        |     √      |      √     |
+| PyTorch    |       √         |      √        |     √      |      x     |
