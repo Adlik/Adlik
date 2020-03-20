@@ -10,6 +10,7 @@ import random
 import time
 
 from adlik_serving.apis import amc_task_pb2, grid_task_pb2, task_pb2, task_service_pb2_grpc
+from google.protobuf import json_format
 import grpc
 
 FLAGS = None
@@ -27,6 +28,9 @@ def _create_grid_request():
     request = _create_header()
     if FLAGS.input and FLAGS.output:
         grid = grid_task_pb2.GridTaskReq()
+        grid.cell.plmn = 46001
+        grid.cell.nb_id = 1
+        grid.cell.cell_id = 1
         grid.input = FLAGS.input
         grid.output = FLAGS.output
         request.detail.Pack(grid)
@@ -52,11 +56,11 @@ def _main():
     stub = task_service_pb2_grpc.TaskServiceStub(channel)
     create_funcs = {'grid': _create_grid_request, 'amc': _create_amc_request}
     task_request = create_funcs[FLAGS.model_name]()
-    print('Create task request is: \n{}\n'.format(task_request))
+    print('Create task request is: \n{}\n'.format(json_format.MessageToJson(task_request)))
     start = time.time()
     response = stub.create(task_request)
     end = time.time()
-    print('Task response is: \n{}'.format(response))
+    print('Task response is: \n{}'.format(json_format.MessageToJson(response)))
     print('Running Time: {}s'.format(end - start))
 
 

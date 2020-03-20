@@ -3,6 +3,8 @@
 
 #include "adlik_serving/runtime/ml/algorithm/grid/grid_input.h"
 
+#include <algorithm>
+
 #include "adlik_serving/runtime/ml/algorithm/grid/csv_reader.h"
 #include "cub/log/log.h"
 #include "cub/string/str_utils.h"
@@ -11,10 +13,7 @@ namespace ml_runtime {
 
 namespace {
 
-static std::vector<std::string> expected_cols = {"ServergPLMN",
-                                                 "ServergNB",
-                                                 "ServerCID",
-                                                 "ServerRSRP",
+static std::vector<std::string> expected_cols = {"ServerRSRP",
                                                  "NeighPLMN_intra1",
                                                  "NeighgNB_intra1",
                                                  "NeighCID_intra1",
@@ -55,10 +54,12 @@ cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridI
   }
 
   auto col_names = reader.col_names();
-  if (expected_cols != col_names) {
-    ERR_LOG << "csv headers is not equal to expected!";
-    DEBUG_LOG << "Expected columns is: " << cub::strutils::join(expected_cols, ",");
-    return cub::StatusWrapper(cub::Internal, "csv headers is not equal to expected!");
+  for (const auto& i : expected_cols) {
+    if (std::find(col_names.begin(), col_names.end(), i) == col_names.end()) {
+      ERR_LOG << "csv headers is not equal to expected!";
+      DEBUG_LOG << "Expected columns is: " << cub::strutils::join(expected_cols, ",");
+      return cub::StatusWrapper(cub::Internal, "csv headers is not equal to expected!");
+    }
   }
 
   inputs.clear();

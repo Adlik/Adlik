@@ -3,11 +3,19 @@ syntax = "proto3";
 package adlik.serving;
 option cc_enable_arenas = true;
 
+message Cell {
+  uint64 plmn = 1;
+  uint32 nb_id = 2;
+  uint32 cell_id = 3;
+}
+
 message GridTaskReq {
-  string input = 1;  // input csv path
-  string output = 2; // output csv path
+  Cell cell = 1;     // server
+  string input = 2;  // input csv path
+  string output = 3; // output csv path
 }
 
 message GridTaskRsp {
-  string output = 1; // output file path
+  Cell cell = 1;     // server
+  string output = 2; // output file path
 }
