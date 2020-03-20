@@ -20,29 +20,19 @@ namespace ml_runtime {
 
 using namespace adlik::serving;
 
-namespace {
-
-void createAlgorithm(const std::string& name,
-                     const adlik::serving::AlgorithmConfig& config,
-                     std::unique_ptr<Algorithm>* algorithm) {
-  AlgorithmFactory::inst().create(name, config, algorithm);
-}
-
-}  // namespace
-
-cub::Status MLModel::init(const ModelConfig& config) {
+cub::Status MLModel::init(const ModelConfig& config, const ModelId& model_id) {
   if (config.algorithm().length() == 0) {
     INFO_LOG << "Config algorithm is null, not create algorithm object!";
     return cub::Success;
   }
 
   size_t runner_count = 0;
-
+  auto model_path = config.getModelPath(model_id);
   for (const auto& group : config.instance_group()) {
     for (int i = 0; i < group.count(); ++i) {
       std::unique_ptr<Algorithm> runner;
-      createAlgorithm(config.algorithm(), config.algorithm_config(), &runner);
-      if (runner) {
+      auto status = AlgorithmFactory::inst().create(config.algorithm(), model_path, &runner);
+      if (status.ok() && runner) {
         runners.push_back({AVAILABLE, std::move(runner)});
         DEBUG_LOG << "Create instance " << runner_count << " for model " << config.getModelName();
       } else {
@@ -64,7 +54,7 @@ cub::Status MLModel::init(const ModelConfig& config) {
 cub::Status MLModel::create(const ModelConfig& config, const ModelId& model_id, std::unique_ptr<MLModel>* bundle) {
   INFO_LOG << "Prepare to create ML model, name: " << model_id.getName() << ", version: " << model_id.getVersion();
   auto raw = std::make_unique<MLModel>();
-  auto status = raw->init(config);
+  auto status = raw->init(config, model_id);
   if (cub::isSuccStatus(status)) {
     *bundle = std::move(raw);
   }

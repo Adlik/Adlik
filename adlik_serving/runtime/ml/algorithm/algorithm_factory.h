@@ -13,7 +13,7 @@
 namespace ml_runtime {
 
 DEF_SINGLETON(AlgorithmFactory) {
-  void create(const std::string& name, const adlik::serving::AlgorithmConfig&, std::unique_ptr<Algorithm>*);
+  cub::StatusWrapper create(const std::string& name, const std::string& model_dir, std::unique_ptr<Algorithm>*);
   void add(const std::string&, AlgoCreator);
 
 private:

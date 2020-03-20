@@ -37,7 +37,7 @@ struct MLModel {
   cub::StatusWrapper run(const adlik::serving::CreateTaskRequest&, adlik::serving::CreateTaskResponse&);
 
 private:
-  cub::Status init(const adlik::serving::ModelConfig& config);
+  cub::Status init(const adlik::serving::ModelConfig& config, const adlik::serving::ModelId& model_id);
 
   enum State { AVAILABLE = 0, UNAVAILABLE = 1 };
 

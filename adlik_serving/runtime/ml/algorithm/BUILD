@@ -3,16 +3,6 @@ load("//adlik_serving:serving.bzl", "serving_cc_library")
 package(default_visibility = ["//adlik_serving:internal"])
 
 serving_cc_library(
-    name = "ml_task",
-    hdrs = [
-        "ml_task.h",
-    ],
-    deps = [
-        "//cub/base:status_wrapper",
-    ],
-)
-
-serving_cc_library(
     name = "algorithm_factory",
     srcs = [
         "algorithm_factory.cc",
@@ -41,15 +31,3 @@ serving_cc_library(
     ],
     alwayslink = 1,
 )
-
-# cc_binary(
-#     name = "k-means-test",
-#     srcs = ["k-means-test.cc"],
-#     copts = ["-std=c++1z"],
-#     linkopts = ["-lpthread"],
-#     deps = [
-#         ":algorithm",
-#         "@xunit_cut//:cut",
-#         "@xunit_cut//:cut_main",
-#     ],
-# )

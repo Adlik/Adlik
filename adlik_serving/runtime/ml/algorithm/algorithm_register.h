@@ -14,11 +14,10 @@ struct AlgorithmRegister {
   AlgorithmRegister(const std::string& name, AlgoCreator);
 };
 
-#define REGISTER_ALGORITHM(AlgorithmClass, name)                                                       \
-  static AlgorithmRegister register__##cnt(                                                            \
-      name, [](const adlik::serving::AlgorithmConfig& config, std::unique_ptr<Algorithm>* algorithm) { \
-        AlgorithmClass::create(config, algorithm);                                                     \
-      })
+#define REGISTER_ALGORITHM(AlgorithmClass, name)                                                                      \
+  static AlgorithmRegister register__##cnt(name, [](const std::string& path, std::unique_ptr<Algorithm>* algorithm) { \
+    return AlgorithmClass::create(path, algorithm);                                                                   \
+  })
 
 }  // namespace ml_runtime
 

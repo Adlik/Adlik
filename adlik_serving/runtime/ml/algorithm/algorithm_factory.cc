@@ -7,14 +7,12 @@
 
 namespace ml_runtime {
 
-void AlgorithmFactory::create(const std::string& name,
-                              const adlik::serving::AlgorithmConfig& config,
-                              std::unique_ptr<Algorithm>* algo) {
+cub::StatusWrapper AlgorithmFactory::create(const std::string& name,
+                                            const std::string& model_dir,
+                                            std::unique_ptr<Algorithm>* algo) {
   auto it = creators.find(name);
-  if (it != creators.end())
-    it->second(config, algo);
-  else
-    FATAL_LOG << "Not found algorithm creator by name " << name;
+  return it != creators.end() ? it->second(model_dir, algo) :
+                                cub::StatusWrapper(cub::Internal, "Not found algorithm creator by name " + name);
 }
 
 void AlgorithmFactory::add(const std::string& name, AlgoCreator creator) {

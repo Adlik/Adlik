@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "adlik_serving/apis/grid_task.pb.h"
-#include "adlik_serving/framework/domain/algorithm_config.pb.h"
 #include "adlik_serving/framework/manager/time_stats.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_register.h"
@@ -16,24 +15,22 @@
 #include "adlik_serving/runtime/ml/algorithm/grid/kmeans.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/neighbors.h"
 #include "adlik_serving/runtime/ml/algorithm/grid/rsrp_grid.h"
+#include "adlik_serving/runtime/ml/algorithm/proto/grid.pb.h"
 #include "cub/env/fs/file_system.h"
 #include "cub/env/fs/path.h"
 #include "cub/log/log.h"
+#include "cub/protobuf/text_protobuf.h"
 #include "google/protobuf/any.pb.h"
 
 namespace ml_runtime {
 
 struct GridAlgorithm : Algorithm {
-  static void create(const adlik::serving::AlgorithmConfig& config, std::unique_ptr<Algorithm>* algorithm);
+  static cub::StatusWrapper create(const std::string& model_dir, std::unique_ptr<Algorithm>* algorithm);
 
   GridAlgorithm(const adlik::serving::GridConfig& config) : config(config) {
   }
 
   cub::StatusWrapper run(const ::google::protobuf::Any&, ::google::protobuf::Any&) override;
-
-  const std::string name() const override {
-    return "grid";
-  }
 
 private:
   using InputPtrs = std::vector<const GridInput*>;  // samples of a specific class
@@ -52,16 +49,21 @@ private:
   adlik::serving::GridConfig config;
 };
 
-void GridAlgorithm::create(const adlik::serving::AlgorithmConfig& config, std::unique_ptr<Algorithm>* algorithm) {
-  if (config.has_grid_config()) {
-    const auto& grid = config.grid_config();
-    if (grid.min_samples_per_neighbor_group() == 0 || grid.min_samples_per_grid() == 0 || grid.init_grid_size() == 0 ||
-        grid.kmeans_max_iter() == 0) {
-      ERR_LOG << "input config invalid!";
-      return;
-    }
-    *algorithm = std::make_unique<GridAlgorithm>(grid);
+cub::StatusWrapper GridAlgorithm::create(const std::string& model_dir, std::unique_ptr<Algorithm>* algorithm) {
+  auto file_path = cub::paths(model_dir, DEFAULT_MODEL);
+  if (!cub::filesystem().exists(file_path)) {
+    ERR_LOG << file_path << " not exist!";
+    return cub::StatusWrapper(cub::Internal, "model.pbtxt not exist");
   }
+
+  auto config = cub::TextProtobuf::read<::adlik::serving::GridConfig>(file_path);
+  if (config.min_samples_per_neighbor_group() == 0 || config.min_samples_per_grid() == 0 ||
+      config.init_grid_size() == 0 || config.kmeans_max_iter() == 0) {
+    ERR_LOG << "input config invalid!";
+    return cub::StatusWrapper(cub::InvalidArgument, "Input config invalid");
+  }
+  *algorithm = std::make_unique<GridAlgorithm>(config);
+  return cub::StatusWrapper::OK();
 }
 
 size_t GridAlgorithm::estimateK(const InputPtrs& inputs) {
