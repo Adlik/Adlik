@@ -46,7 +46,7 @@ private:
   size_t estimateK(const InputPtrs& inputs);
   std::vector<GridOutput> makeOutput(const Neighbors& neighbors,
                                      const InputPtrs& inputs,
-                                     const std::vector<unsigned long>& lables,
+                                     const std::vector<Label>& lables,
                                      const std::vector<SampleType>& centers);
 
   adlik::serving::GridConfig config;
@@ -94,7 +94,7 @@ std::vector<GridAlgorithm::SampleType> GridAlgorithm::makeKmeansInput(const Inpu
 
 std::vector<GridOutput> GridAlgorithm::makeOutput(const Neighbors& neighbors,
                                                   const GridAlgorithm::InputPtrs& inputs,
-                                                  const std::vector<unsigned long>& lables,
+                                                  const std::vector<Label>& lables,
                                                   const std::vector<GridAlgorithm::SampleType>& centers) {
   std::vector<GridOutput> outputs(centers.size());
   for (size_t i = 0; i < centers.size(); ++i) {
@@ -188,6 +188,7 @@ cub::StatusWrapper GridAlgorithm::run(const ::google::protobuf::Any& req_detail,
   }
 
   adlik::serving::GridTaskRsp grid_output;
+  grid_output.mutable_cell()->CopyFrom(grid.cell());
   grid_output.set_output(grid.output());
   rsp_detail.PackFrom(grid_output);
   return cub::StatusWrapper::OK();

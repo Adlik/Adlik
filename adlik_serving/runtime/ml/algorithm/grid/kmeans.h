@@ -14,6 +14,15 @@ struct Kmeans {
   }
 
   std::vector<unsigned long> fit(const std::vector<SampleType>& samples) {
+    return n_clusters == 1 ? fit_1(samples) : fit_n(samples);
+  }
+
+  const std::vector<SampleType>& getCenters() const {
+    return centers;
+  }
+
+private:
+  std::vector<unsigned long> fit_n(const std::vector<SampleType>& samples) {
     dlib::pick_initial_centers(n_clusters, centers, samples, dlib::linear_kernel<SampleType>());
     dlib::find_clusters_using_kmeans(samples, centers, max_iter);
     if (centers.size() != n_clusters) {
@@ -38,13 +47,23 @@ struct Kmeans {
     return results;
   }
 
-  const std::vector<SampleType>& getCenters() const {
-    return centers;
+  std::vector<unsigned long> fit_1(const std::vector<SampleType>& samples) {
+    centers.resize(n_clusters);
+
+    std::vector<unsigned long> results;
+    results.assign(samples.size(), 0);
+
+    SampleType sum;
+    for (size_t i = 0; i < samples.size(); ++i) {
+      sum += samples[i];
+    }
+    centers[0] = sum / samples.size();
+
+    return results;
   }
 
-private:
   unsigned long n_clusters;
-  long max_iter = 100;
+  long max_iter;
   std::vector<SampleType> centers;
 };
 

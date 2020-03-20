@@ -18,6 +18,8 @@ typedef unsigned char Event;
 const Rsrp MAX_RSRP = SHRT_MAX;
 const Rsrp MIN_RSRP = SHRT_MIN;
 
+typedef unsigned long Label;
+
 }  // namespace ml_runtime
 
 #endif
