@@ -3,20 +3,6 @@ load("//adlik_serving:serving.bzl", "serving_cc_library")
 package(default_visibility = ["//adlik_serving:internal"])
 
 serving_cc_library(
-    name = "csv_reader",
-    srcs = [
-        "csv_reader.cc",
-    ],
-    hdrs = [
-        "csv_reader.h",
-    ],
-    deps = [
-        "//cub/log",
-        "//cub/string:str_utils",
-    ],
-)
-
-serving_cc_library(
     name = "grid",
     srcs = [
         "cell.cc",
@@ -38,13 +24,13 @@ serving_cc_library(
         "types.h",
     ],
     deps = [
-        ":csv_reader",
         "//adlik_serving/apis:grid_task_proto",
         "//adlik_serving/framework/manager:time_stats",
         "//adlik_serving/runtime/ml/algorithm:algorithm_factory",
         "//adlik_serving/runtime/ml/algorithm/proto:grid_proto",
-        "//csv",
         "//cub/base:status_wrapper",
+        "//cub/csv:csv_reader",
+        "//cub/csv:csv_writer",
         "//cub/env/fs",
         "//cub/env/fs:path",
         "//cub/log",
