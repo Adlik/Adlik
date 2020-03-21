@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "csv/writer.hpp"
+#include "cub/csv/csv_writer.h"
 
 namespace ml_runtime {
 
@@ -23,7 +23,7 @@ struct GridCsvSaver {
 private:
   void saveHeader();
 
-  csv::Writer writer;
+  cub::CSVWriter writer;
 };
 
 }  // namespace ml_runtime

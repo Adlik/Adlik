@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-#include "adlik_serving/runtime/ml/algorithm/grid/csv_reader.h"
+#include "cub/csv/csv_reader.h"
 #include "cub/log/log.h"
 #include "cub/string/str_utils.h"
 
@@ -47,7 +47,7 @@ static std::vector<std::string> expected_cols = {"ServerRSRP",
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridInput>& inputs) {
-  CSVReader reader(file_path);
+  cub::CSVReader reader(file_path);
   if (!reader.read()) {
     ERR_LOG << "Read input csv failure!";
     return cub::StatusWrapper(cub::Internal, "Read input csv failure!");
@@ -63,7 +63,7 @@ cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridI
   }
 
   inputs.clear();
-  auto func = [&](const CSVReader::Row& row) {
+  auto func = [&](const cub::CSVReader::Row& row) {
     GridInput input;
 
     COL_TO_FIELD_RSRP("ServerRSRP", serving_rsrp);

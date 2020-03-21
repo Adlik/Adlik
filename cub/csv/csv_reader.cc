@@ -1,12 +1,12 @@
 // Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-#include "adlik_serving/runtime/ml/algorithm/grid/csv_reader.h"
+#include "cub/csv/csv_reader.h"
 
 #include "cub/log/log.h"
 #include "cub/string/str_utils.h"
 
-namespace ml_runtime {
+namespace cub {
 
 CSVReader::CSVReader(const std::string& filename, const std::string& delm)
     : file_name(filename), delimeter(delm), stream(file_name) {
@@ -60,4 +60,4 @@ std::vector<std::string> CSVReader::col_names() {
   return cols;
 }
 
-}  // namespace ml_runtime
+}  // namespace cub

@@ -46,13 +46,3 @@ def adlik_serving_workspace():
         strip_prefix = "dlib-19.19",
         build_file = "@//third_party/dlib:BUILD",
     )
-
-    # http_archive(
-    #     name = "csv",
-    #     urls = [
-    #         "https://github.com/p-ranav/csv/archive/v1.1.zip",
-    #     ],
-    #     sha256 = "e8214428ec7a5b4c4d2245a0824c00baec11ae3a2e9563c5d0d0d643b2b1ee60",
-    #     strip_prefix = "csv-1.1",
-    #     build_file = "@//third_party/csv:BUILD",
-    # )

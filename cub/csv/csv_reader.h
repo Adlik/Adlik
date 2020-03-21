@@ -1,8 +1,8 @@
 // Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef ADLIK_SERVING_RUNTIME_ML_ALGORITHM_GRID_CSV_READER_H
-#define ADLIK_SERVING_RUNTIME_ML_ALGORITHM_GRID_CSV_READER_H
+#ifndef ADLIK_SERVING_CUB_CSV_CSV_READER_H
+#define ADLIK_SERVING_CUB_CSV_CSV_READER_H
 
 #include <fstream>
 #include <functional>
@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace ml_runtime {
+namespace cub {
 
 struct CSVReader {
   using Row = std::unordered_map<std::string, std::string>;
@@ -31,6 +31,6 @@ private:
   std::vector<std::string> cols;
 };
 
-}  // namespace ml_runtime
+}  // namespace cub
 
 #endif

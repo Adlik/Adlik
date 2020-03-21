@@ -27,13 +27,13 @@ bool GridCsvSaver::save(const GridOutput& output) {
   auto func = [&](auto value) { row.push_back(std::to_string(value)); };
   output.accept(func);
 
-  writer.write_row(row);
+  writer.writeRow(row);
   return true;
 }
 
 void GridCsvSaver::saveHeader() {
   auto header = GridOutput::fieldNames();
-  writer.write_row(header);
+  writer.writeRow(header);
 }
 
 }  // namespace ml_runtime
