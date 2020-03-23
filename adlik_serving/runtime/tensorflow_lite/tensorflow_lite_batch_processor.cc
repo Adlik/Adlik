@@ -121,7 +121,7 @@ Status checkRequestArguments(InputSignature& argumentSignatureCache,
             std::piecewise_construct,
             std::forward_as_tuple(name),
             std::forward_as_tuple(tensor.dtype(),
-                                  TensorShapeDims::notOwned(dims.data() + 1, dims.data() + dims.size())));
+                                  TensorShapeDims::borrowed(dims.data() + 1, dims.data() + dims.size())));
 
         return true;
       }

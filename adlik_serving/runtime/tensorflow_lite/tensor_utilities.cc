@@ -3,11 +3,11 @@
 
 #include "adlik_serving/runtime/tensorflow_lite/tensor_utilities.h"
 
+using adlik::serving::tensor_tools::useTfLiteTensorTools;
 using tensorflow::DataType;
 
 DataType adlik::serving::tfLiteTypeToTfType(TfLiteType tfLiteType) {
-  return adlik::serving::tensor_tools::useTfLiteTensorTools(tfLiteType,
-                                                            [](auto tools) { return decltype(tools)::tfDataType; });
+  return useTfLiteTensorTools(tfLiteType, [](auto tools) { return decltype(tools)::tfDataType; });
 }
 
 TfLiteType adlik::serving::tfLiteTypeToTfType(DataType dataType) {

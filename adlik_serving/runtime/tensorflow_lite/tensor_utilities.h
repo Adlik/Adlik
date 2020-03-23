@@ -6,36 +6,16 @@
 
 #include <numeric>
 
-#include "absl/types/span.h"
 #include "absl/types/variant.h"
 #include "adlik_serving/runtime/tensorflow_lite/itertools.h"
 #include "tensorflow/core/framework/tensor.pb.h"
-#include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/core/lib/core/coding.h"
 #include "tensorflow/core/lib/core/errors.h"
-#include "tensorflow/core/lib/core/status.h"
-#include "tensorflow/lite/c/c_api_internal.h"
 #include "tensorflow/lite/string_util.h"
 
 namespace adlik {
 namespace serving {
 namespace tensor_tools {
-struct ElementsWrittenContext {
-  size_t elementsWritten = 0;
-
-  void reset() noexcept {
-    this->elementsWritten = 0;
-  }
-};
-
-struct DynamicBufferContext {
-  tflite::DynamicBuffer dynamicBuffer;
-
-  void reset() noexcept {
-    this->dynamicBuffer = tflite::DynamicBuffer{};
-  }
-};
-
 template <TfLiteType>
 struct TfLiteTensorTools;
 
@@ -172,25 +152,33 @@ struct TfLiteTensorTools<TfLiteType::kTfLiteString> {
     tflite::DynamicBuffer dynamicBuffer;
     std::vector<uint32_t> sizesCache;
 
+    void resetDynamicBuffer() {
+      this->dynamicBuffer = {};
+    }
+
     bool addFromTensorContent(absl::string_view reader, size_t numElements) {
       this->sizesCache.resize(numElements);
 
-      for (auto& size : this->sizesCache) {
-        if (!tensorflow::core::GetVarint32(&reader, &size)) {
-          return false;
-        }
-      }
+      size_t totalSize = 0;
 
-      for (const auto size : this->sizesCache) {
-        if (reader.length() >= size) {
-          this->dynamicBuffer.AddString(reader.data(), size);
-          reader.remove_prefix(size);
+      for (auto& size : this->sizesCache) {
+        if (tensorflow::core::GetVarint32(&reader, &size)) {
+          totalSize += static_cast<size_t>(size);
         } else {
           return false;
         }
       }
 
-      return true;
+      const bool isSizeValid = reader.size() == totalSize;
+
+      if (isSizeValid) {
+        for (const auto size : this->sizesCache) {
+          this->dynamicBuffer.AddString(reader.data(), size);
+          reader.remove_prefix(size);
+        }
+      }
+
+      return isSizeValid;
     }
 
   public:
@@ -223,7 +211,7 @@ struct TfLiteTensorTools<TfLiteType::kTfLiteString> {
     }
 
     void reset() noexcept {
-      this->dynamicBuffer = tflite::DynamicBuffer{};
+      this->resetDynamicBuffer();
     }
   };
 
@@ -283,23 +271,27 @@ class TfLiteTensorTools<TfLiteType::kTfLiteComplex64>
       const float* p;
 
     public:
-      using difference_type = std::iterator_traits<const float*>::difference_type;
+      using difference_type = ptrdiff_t;
       using value_type = TfLiteComplex64;
       using pointer = void;
       using reference = TfLiteComplex64;
-      using iterator_category = std::iterator_traits<const float*>::iterator_category;
+      using iterator_category = std::random_access_iterator_tag;
 
       explicit Iterator(const float* p) : p{p} {
-      }
-
-      bool operator!=(Iterator rhs) const {
-        return this->p != rhs.p;
       }
 
       Iterator& operator++() {
         this->p += 2;
 
         return *this;
+      }
+
+      auto operator-(Iterator rhs) const {
+        return (this->p - rhs.p) / 2;
+      }
+
+      bool operator!=(Iterator rhs) const {
+        return this->p != rhs.p;
       }
 
       TfLiteComplex64 operator*() {
@@ -309,10 +301,6 @@ class TfLiteTensorTools<TfLiteType::kTfLiteComplex64>
         result.im = this->p[1];
 
         return result;
-      }
-
-      auto operator-(Iterator rhs) const {
-        return (this->p - rhs.p) / 2;
       }
     };
 

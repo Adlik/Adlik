@@ -3,31 +3,20 @@
 
 #include "adlik_serving/runtime/tensorflow_lite/output_context.h"
 
-#include <numeric>
-
-#include "adlik_serving/runtime/tensorflow_lite/itertools.h"
-#include "adlik_serving/runtime/tensorflow_lite/tensor_utilities.h"
-#include "tensorflow/core/lib/core/coding.h"
-#include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/lite/interpreter.h"
-#include "tensorflow/lite/string_util.h"
 
-using absl::Span;
 using adlik::serving::DimsList;
-
 using adlik::serving::OutputContext;
 using adlik::serving::tensor_tools::TfLiteTensorReader;
 using google::protobuf::RepeatedFieldBackInserter;
+using std::string;
 using tensorflow::DataType;
-using tensorflow::Status;
-using tensorflow::core::PutVarint32;
-using tflite::Interpreter;
 
-OutputContext::OutputContext(int tensorIndex, std::string name, DataType dataType, TfLiteTensorReader reader)
-    : name(std::move(name)), tensorIndex(tensorIndex), dataType(dataType), reader(std::move(reader)) {
+OutputContext::OutputContext(int tensorIndex, string name, DataType dataType, TfLiteTensorReader reader)
+    : tensorIndex(tensorIndex), name(std::move(name)), dataType(dataType), reader(std::move(reader)) {
 }
 
-const std::string& OutputContext::getName() const {
+const string& OutputContext::getName() const {
   return this->name;
 }
 

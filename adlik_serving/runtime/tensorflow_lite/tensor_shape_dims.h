@@ -34,12 +34,10 @@ public:
 
   template <class Iterator>
   static TensorShapeDims owned(Iterator first, Iterator last) {
-    using tensorflow::TensorShapeProto_Dim;
-
-    std::vector<std::unique_ptr<TensorShapeProto_Dim>> dimStorage;
+    std::vector<std::unique_ptr<tensorflow::TensorShapeProto_Dim>> dimStorage;
 
     std::transform(first, last, std::back_inserter(dimStorage), [](const auto& dim) {
-      auto result = std::make_unique<TensorShapeProto_Dim>();
+      auto result = std::make_unique<tensorflow::TensorShapeProto_Dim>();
 
       result->set_size(dim);
 
@@ -47,14 +45,14 @@ public:
     });
 
     const auto size = static_cast<size_t>(std::distance(first, last));
-    auto dimsStorage = std::make_unique<const TensorShapeProto_Dim*[]>(size);
+    auto dimsStorage = std::make_unique<const tensorflow::TensorShapeProto_Dim*[]>(size);
 
     std::transform(dimStorage.begin(), dimStorage.end(), dimsStorage.get(), [](const auto& dim) { return dim.get(); });
 
     return TensorShapeDims{std::move(dimStorage), std::move(dimsStorage), dimsStorage.get(), dimsStorage.get() + size};
   }
 
-  static TensorShapeDims notOwned(const tensorflow::TensorShapeProto_Dim* const* first,
+  static TensorShapeDims borrowed(const tensorflow::TensorShapeProto_Dim* const* first,
                                   const tensorflow::TensorShapeProto_Dim* const* last) {
     return TensorShapeDims{{}, nullptr, first, last};
   }

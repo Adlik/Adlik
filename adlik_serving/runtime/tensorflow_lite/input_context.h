@@ -9,17 +9,20 @@
 namespace adlik {
 namespace serving {
 class InputContext {
-  InputContext(int tensorIndex, tensor_tools::TfLiteTensorWriter writer)
-      : tensorIndex(tensorIndex), writer(std::move(writer)) {
-  }
-
 public:
   const int tensorIndex;
+
+private:
   tensor_tools::TfLiteTensorWriter writer;
 
-  static InputContext create(int tensorIndex, TfLiteType type) {
-    return InputContext{tensorIndex, tensor_tools::TfLiteTensorWriter::create(type)};
-  }
+  InputContext(int tensorIndex, tensor_tools::TfLiteTensorWriter writer);
+
+public:
+  tensorflow::Status writeTensorProto(const tensorflow::TensorProto& tensorProto, TfLiteTensor& tfLiteTensor);
+  void commit(TfLiteTensor& tfLiteTensor) noexcept;
+  void reset() noexcept;
+
+  static InputContext create(int tensorIndex, TfLiteType type);
 };
 }  // namespace serving
 }  // namespace adlik

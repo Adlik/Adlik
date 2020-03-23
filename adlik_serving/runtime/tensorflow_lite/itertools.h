@@ -10,20 +10,19 @@ namespace adlik {
 namespace serving {
 template <class C, class I>
 void copyContainer(const C& container, I target) {
-  std::copy(std::cbegin(container), std::cend(container), target);
+  std::copy(std::begin(container), std::end(container), target);
 }
 
 template <class C, class I, class F>
 void transformContainer(const C& container, I target, F&& func) {
-  std::transform(std::cbegin(container), std::cend(container), target, std::forward<F>(func));
+  std::transform(std::begin(container), std::end(container), target, std::forward<F>(func));
 }
 
 template <class C, class I>
 void transformContainerWithStaticCast(const C& container, I target) {
   using T = std::remove_reference_t<decltype(*target)>;
 
-  std::transform(
-      std::cbegin(container), std::cend(container), target, [](auto value) { return static_cast<T>(value); });
+  std::transform(std::begin(container), std::end(container), target, [](auto value) { return static_cast<T>(value); });
 }
 
 namespace itertools {
@@ -51,30 +50,30 @@ public:
   MapIterator(I inner, F func) : inner(inner), func(func) {
   }
 
-  bool operator!=(MapIterator rhs) const {
-    return this->inner != rhs.inner;
-  }
-
   MapIterator& operator++() {
     ++this->inner;
 
     return *this;
   }
 
-  reference operator*() const {
-    return this->func(*this->inner);
-  }
-
   auto operator-(MapIterator rhs) const {
     return this->inner - rhs.inner;
   }
 
-  auto operator-> () const {
-    return pointer{&**this};
+  bool operator!=(MapIterator rhs) const {
+    return this->inner != rhs.inner;
   }
 
   reference operator[](difference_type i) const {
     return this->f(this->iter[i]);
+  }
+
+  reference operator*() const {
+    return this->func(*this->inner);
+  }
+
+  auto operator-> () const {
+    return pointer{&**this};
   }
 };
 
