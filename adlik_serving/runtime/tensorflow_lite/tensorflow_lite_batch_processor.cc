@@ -80,8 +80,11 @@ StringViewMap<InputContext> getInputContextMap(const Interpreter& interpreter) {
   StringViewMap<InputContext> result;
 
   for (const auto i : interpreter.inputs()) {
-    result.emplace(
-        std::piecewise_construct, std::forward_as_tuple(interpreter.tensor(i)->name), std::forward_as_tuple(i));
+    const auto tensor = *interpreter.tensor(i);
+
+    result.emplace(std::piecewise_construct,
+                   std::forward_as_tuple(tensor.name),
+                   std::forward_as_tuple(InputContext::create(i, tensor.type)));
   }
 
   return std::move(result);

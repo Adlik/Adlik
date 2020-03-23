@@ -6,9 +6,7 @@
 
 #include "absl/types/span.h"
 #include "adlik_serving/framework/domain/dims_list.h"
-#include "tensorflow/core/framework/types.pb.h"
-#include "tensorflow/core/lib/core/status.h"
-#include "tensorflow/lite/interpreter.h"
+#include "adlik_serving/runtime/tensorflow_lite/tensor_utilities.h"
 
 namespace adlik {
 namespace serving {
@@ -19,16 +17,18 @@ class OutputContext {
 
   DimsList dimsListCache;
 
-  OutputContext(int tensorIndex, std::string name, tensorflow::DataType dataType);
+  OutputContext(int tensorIndex,
+                std::string name,
+                tensorflow::DataType dataType,
+                tensor_tools::TfLiteTensorReader reader);
 
 public:
   const int tensorIndex;
   const tensorflow::DataType dataType;
+  tensor_tools::TfLiteTensorReader reader;
 
   const std::string& getName() const;
   const DimsList& calculateDimsList(const TfLiteIntArray& dims) noexcept;
-
-  void readBatch(const TfLiteTensor& tfLiteTensor, size_t firstElement, size_t numElements, std::string& target);
 
   static OutputContext fromTfLiteTensor(int tensorIndex, const TfLiteTensor& tfLiteTensor);
 };

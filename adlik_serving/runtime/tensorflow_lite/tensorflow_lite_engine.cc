@@ -32,7 +32,7 @@ Status mergeInputs(Interpreter& interpreter,
                    const Batch<BatchingMessageTask>& batch) {
   const auto cleanUp = MakeCleanup([&] {
     for (auto& entry : inputContextMap) {
-      entry.second.reset();
+      entry.second.writer.reset();
     }
   });
 
@@ -45,9 +45,7 @@ Status mergeInputs(Interpreter& interpreter,
     task.request->visitInputs([&](const string& name, const TensorProto& tensorProto) {
       auto& context = inputContextMap.at(name);
 
-      context.addInputTensor(interpreter, tensorProto);
-
-      status = context.addInputTensor(interpreter, tensorProto);
+      status = context.writer.writeTensorProto(tensorProto, *interpreter.tensor(context.tensorIndex));
 
       return status.ok();
     });
@@ -56,7 +54,7 @@ Status mergeInputs(Interpreter& interpreter,
   }
 
   for (auto& entry : inputContextMap) {
-    entry.second.commit(interpreter);
+    entry.second.writer.commit(*interpreter.tensor(entry.second.tensorIndex));
   }
 
   return Status::OK();
@@ -80,17 +78,19 @@ Status splitOutputs(const Interpreter& interpreter,
 
         auto firstElement = size_t{0};
 
-        for (auto taskIndex = 0; taskIndex != numTasks; ++taskIndex) {
-          const auto& task = batch.task(taskIndex);
-          auto* const buffer = task.response->addOutput(context.getName(), context.dataType, dimsList);
-          const auto batchElements = sampleElements * task.size();
+        context.reader.visit([&](auto& reader) {
+          for (auto taskIndex = 0; taskIndex != numTasks; ++taskIndex) {
+            const auto& task = batch.task(taskIndex);
+            auto* const buffer = task.response->addOutput(context.getName(), context.dataType, dimsList);
+            const auto batchElements = sampleElements * task.size();
 
-          if (buffer) {
-            context.readBatch(tensor, firstElement, batchElements, *buffer);
+            if (buffer) {
+              reader.readTensorProto(tensor, firstElement, batchElements, *buffer);
+            }
+
+            firstElement += batchElements;
           }
-
-          firstElement += batchElements;
-        }
+        });
       } else {
         return InvalidArgument("Output batch size does not match requested batch size");
       }
