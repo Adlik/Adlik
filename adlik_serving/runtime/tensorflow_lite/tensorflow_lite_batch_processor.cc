@@ -71,7 +71,7 @@ string displaySignature(const InputSignature& signature) {
     stream << ']';
   });
 
-  stream << '(';
+  stream << ')';
 
   return stream.str();
 }
@@ -170,7 +170,7 @@ Status checkRequestArguments(InputSignature& argumentSignatureCache,
                                displaySignature(parameterSignature),
                                ". Argument signature: ",
                                displaySignature(argumentSignatureCache),
-                               ".");
+                               '.');
     }
   }
 
