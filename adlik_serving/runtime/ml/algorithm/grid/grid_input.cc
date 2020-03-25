@@ -87,7 +87,9 @@ cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridI
     return true;
   };
 
-  return reader.getData(func) ? cub::StatusWrapper::OK() : cub::StatusWrapper(cub::Internal, "Read input failure!");
+  auto result = reader.getData(func);
+  reader.close();
+  return cub::StatusWrapper::OK();
 }
 
 }  // namespace ml_runtime

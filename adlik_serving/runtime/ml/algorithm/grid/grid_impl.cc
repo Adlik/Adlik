@@ -62,6 +62,10 @@ cub::StatusWrapper GridAlgorithm::create(const std::string& model_dir, std::uniq
     ERR_LOG << "input config invalid!";
     return cub::StatusWrapper(cub::InvalidArgument, "Input config invalid");
   }
+  if (config.server_rsrp_upper_limit() <= config.server_rsrp_lower_limit()) {
+    return cub::StatusWrapper(cub::InvalidArgument,
+                              "server_rsrp_upper_limit must be greater than server_rsrp_lower_limit");
+  }
   *algorithm = std::make_unique<GridAlgorithm>(config);
   return cub::StatusWrapper::OK();
 }
@@ -142,10 +146,17 @@ void GridAlgorithm::subdivideClass(const Neighbors& neighbors, const InputPtrs& 
 
 std::unordered_map<Neighbors, GridAlgorithm::InputPtrs> GridAlgorithm::initialScreen(const GridInputs& total) {
   std::unordered_map<Neighbors, InputPtrs> classes;
+  size_t count = 0;
   for (const auto& i : total) {
+    if (i.serving_rsrp < config.server_rsrp_lower_limit() || i.serving_rsrp >= config.server_rsrp_upper_limit()) {
+      count++;
+      continue;
+    }
     Neighbors key(i);
     classes[key].push_back(&i);
   }
+  DEBUG_LOG << "Filter out " << count << " samples whose server rsrp less than " << config.server_rsrp_lower_limit()
+            << " or greater than " << config.server_rsrp_upper_limit();
   return classes;
 }
 

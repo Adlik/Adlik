@@ -14,8 +14,8 @@ namespace {
 
 }  // namespace
 
-RsrpGrid::RsrpGrid(Rsrp size, const GridInput& i) {
-  auto func = [&](Rsrp rsrp) { return std::to_string((POSITIVE_RSRP(rsrp)) / size); };
+RsrpGrid::RsrpGrid(Rsrp grid_size, const GridInput& i) {
+  auto func = [&](Rsrp rsrp) { return std::to_string((POSITIVE_RSRP(rsrp)) / grid_size); };
 
   std::vector<std::string> str = {func(i.serving_rsrp), func(i.neighRSRP_intra1), func(i.neighRSRP_intra2)};
   key = cub::strutils::join(str, ",");

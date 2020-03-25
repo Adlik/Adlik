@@ -8,4 +8,6 @@ message GridConfig {
   uint64 min_samples_per_grid = 2;
   uint32 init_grid_size = 3;
   uint32 kmeans_max_iter = 4;
+  int32 server_rsrp_lower_limit = 5;
+  int32 server_rsrp_upper_limit = 6;
 }
