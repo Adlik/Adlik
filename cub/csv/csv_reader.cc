@@ -29,6 +29,10 @@ bool CSVReader::read() {
   return cols.size() != 0;
 }
 
+void CSVReader::close() {
+  stream.close();
+}
+
 bool CSVReader::getData(RowProcessor func) {
   if (cols.size() == 0) {
     ERR_LOG << "Columns' names is empty, should call read() first!";

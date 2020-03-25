@@ -20,6 +20,8 @@ struct CSVReader {
 
   bool read();
 
+  void close();
+
   bool getData(RowProcessor);
 
   std::vector<std::string> col_names();
