@@ -32,6 +32,14 @@ public:
                       });
   }
 
+  const tensorflow::TensorShapeProto_Dim* const* begin() const {
+    return this->first;
+  }
+
+  const tensorflow::TensorShapeProto_Dim* const* end() const {
+    return this->last;
+  }
+
   template <class Iterator>
   static TensorShapeDims owned(Iterator first, Iterator last) {
     std::vector<std::unique_ptr<tensorflow::TensorShapeProto_Dim>> dimStorage;
@@ -49,7 +57,10 @@ public:
 
     std::transform(dimStorage.begin(), dimStorage.end(), dimsStorage.get(), [](const auto& dim) { return dim.get(); });
 
-    return TensorShapeDims{std::move(dimStorage), std::move(dimsStorage), dimsStorage.get(), dimsStorage.get() + size};
+    const auto firstDims = dimsStorage.get();
+    const auto lastDims = dimsStorage.get() + size;
+
+    return TensorShapeDims{std::move(dimStorage), std::move(dimsStorage), firstDims, lastDims};
   }
 
   static TensorShapeDims borrowed(const tensorflow::TensorShapeProto_Dim* const* first,

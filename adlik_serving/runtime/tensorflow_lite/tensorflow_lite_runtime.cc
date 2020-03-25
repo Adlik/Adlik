@@ -7,5 +7,5 @@
 namespace {
 using adlik::serving::TensorFlowLiteModel;
 
-DEFINE_UNIQUE_BATCHER_RUNTIME(TensorFlowLite, TensorFlowLiteModel);
+DEFINE_UNIQUE_BATCHER_RUNTIME(tensorflow_lite, TensorFlowLiteModel);
 }  // namespace

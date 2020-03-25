@@ -459,7 +459,7 @@ public:
 }  // namespace tensor_tools
 
 tensorflow::DataType tfLiteTypeToTfType(TfLiteType tfLiteType);
-TfLiteType tfLiteTypeToTfType(tensorflow::DataType dataType);
+absl::string_view getTFDataTypeName(tensorflow::DataType dataType);
 }  // namespace serving
 }  // namespace adlik
 

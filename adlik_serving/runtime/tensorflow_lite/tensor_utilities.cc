@@ -3,6 +3,7 @@
 
 #include "adlik_serving/runtime/tensorflow_lite/tensor_utilities.h"
 
+using absl::string_view;
 using adlik::serving::tensor_tools::useTfLiteTensorTools;
 using tensorflow::DataType;
 
@@ -10,28 +11,28 @@ DataType adlik::serving::tfLiteTypeToTfType(TfLiteType tfLiteType) {
   return useTfLiteTensorTools(tfLiteType, [](auto tools) { return decltype(tools)::tfDataType; });
 }
 
-TfLiteType adlik::serving::tfLiteTypeToTfType(DataType dataType) {
+string_view adlik::serving::getTFDataTypeName(DataType dataType) {
   switch (dataType) {
     case DataType::DT_FLOAT:
-      return TfLiteType::kTfLiteFloat32;
+      return "float32";
     case DataType::DT_INT32:
-      return TfLiteType::kTfLiteInt32;
+      return "int32";
     case DataType::DT_UINT8:
-      return TfLiteType::kTfLiteUInt8;
+      return "uint8";
     case DataType::DT_INT64:
-      return TfLiteType::kTfLiteInt64;
+      return "int64";
     case DataType::DT_STRING:
-      return TfLiteType::kTfLiteString;
+      return "string";
     case DataType::DT_BOOL:
-      return TfLiteType::kTfLiteBool;
+      return "bool";
     case DataType::DT_INT16:
-      return TfLiteType::kTfLiteInt16;
+      return "int16";
     case DataType::DT_COMPLEX64:
-      return TfLiteType::kTfLiteComplex64;
+      return "complex64";
     case DataType::DT_INT8:
-      return TfLiteType::kTfLiteInt8;
+      return "int8";
     case DataType::DT_HALF:
-      return TfLiteType::kTfLiteFloat16;
+      return "float16";
     default:
       throw std::invalid_argument("Unsupported type");
   }

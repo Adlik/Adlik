@@ -61,7 +61,7 @@ Status mergeInputs(Interpreter& interpreter,
 }
 
 Status splitOutputs(const Interpreter& interpreter,
-                    absl::Span<OutputContext>& outputContexts,
+                    absl::Span<OutputContext> outputContexts,
                     Batch<BatchingMessageTask>& batch) {
   const auto numTasks = batch.num_tasks();
   const auto totalSamples = batch.size();

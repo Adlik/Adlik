@@ -15,6 +15,7 @@ using absl::string_view;
 using absl::variant;
 using adlik::serving::Batch;
 using adlik::serving::BatchingMessageTask;
+using adlik::serving::getTFDataTypeName;
 using adlik::serving::InputContext;
 using adlik::serving::OutputContext;
 using adlik::serving::PredictRequestProvider;
@@ -30,6 +31,7 @@ using std::vector;
 using tensorflow::DataType;
 using tensorflow::Status;
 using tensorflow::TensorProto;
+using tensorflow::TensorShapeProto_Dim;
 using tensorflow::errors::Internal;
 using tensorflow::errors::InvalidArgument;
 using tensorflow::gtl::MakeCleanup;
@@ -40,10 +42,40 @@ using tflite::OpResolver;
 
 template <class T>
 using StringViewMap = unordered_map<string_view, T, Hash<string_view>>;
-
 using InputSignature = StringViewMap<tuple<DataType, TensorShapeDims>>;
 
 namespace {
+string displaySignature(const InputSignature& signature) {
+  std::stringstream stream;
+
+  auto writeList = [&](const auto& container, const char* separator, auto itemWriter) {
+    auto it = container.begin();
+    auto last = container.end();
+
+    if (it != last) {
+      itemWriter(*it);
+
+      for (++it; it != last; ++it) {
+        stream << separator;
+
+        itemWriter(*it);
+      }
+    }
+  };
+
+  stream << '(';
+
+  writeList(signature, ", ", [&](const InputSignature::value_type& arg) {
+    stream << arg.first << ": " << getTFDataTypeName(std::get<0>(arg.second)) << '[';
+    writeList(std::get<1>(arg.second), ", ", [&](const TensorShapeProto_Dim* dim) { stream << dim->size(); });
+    stream << ']';
+  });
+
+  stream << '(';
+
+  return stream.str();
+}
+
 variant<tuple<InputSignature, size_t>, Status> getSignature(const Interpreter& interpreter,
                                                             const vector<int>& tensorIndices) {
   constexpr auto invalidBatchSize = -1;
@@ -134,7 +166,11 @@ Status checkRequestArguments(InputSignature& argumentSignatureCache,
 
   if (status.ok()) {
     if (argumentSignatureCache != parameterSignature) {
-      status = InvalidArgument("Argument does not match model input signature");
+      status = InvalidArgument("Argument does not match model input signature. Input signature: ",
+                               displaySignature(parameterSignature),
+                               ". Argument signature: ",
+                               displaySignature(argumentSignatureCache),
+                               ".");
     }
   }
 
@@ -242,7 +278,7 @@ variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchPro
     auto inputContextMap = getInputContextMap(*interpreter);
     auto outputContexts = getOutputContexts(*interpreter);
 
-    return make_unique<TensorFlowLiteBatchProcessor>(constructCredential,
+    return make_unique<TensorFlowLiteBatchProcessor>(ConstructCredential{},
                                                      std::move(model),
                                                      std::move(interpreter),
                                                      std::move(std::get<InputSignature>(signature)),

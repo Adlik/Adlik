@@ -14,8 +14,7 @@
 namespace adlik {
 namespace serving {
 class TensorFlowLiteBatchProcessor : public BatchProcessor {
-  static constexpr struct ConstructCredential {
-  } constructCredential = {};
+  struct ConstructCredential {};
 
   template <class T>
   using StringViewMap = std::unordered_map<absl::string_view, T, absl::Hash<absl::string_view>>;
