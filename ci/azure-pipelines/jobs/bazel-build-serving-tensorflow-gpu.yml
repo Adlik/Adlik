@@ -1,0 +1,30 @@
+jobs:
+  - job: BazelBuildServingTensorFlowGPU
+    displayName: Bazel build serving (TensorFlow GPU)
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - template: ci/azure-pipelines/install-bazel.yml
+      - template: ci/azure-pipelines/install-cuda.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - template: ci/azure-pipelines/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-tensorflow-gpu
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            env TF_CUDA_VERSION=10.0 \
+                ci/checks/bazel-build-serving.py \
+                    --config=tensorflow-gpu \
+                    -c opt \
+                    --disk_cache="$BAZEL_BUILD_CACHE" \
+                    --incompatible_no_support_tools_in_action_inputs=false \
+                    --incompatible_disable_nocopts=false \
+                    --incompatible_use_specific_tool_files=false
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-tensorflow-gpu
