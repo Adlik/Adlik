@@ -5,11 +5,11 @@ jobs:
         vmImage: ubuntu-latest
     timeoutInMinutes: 0
     steps:
-      - template: ci/azure-pipelines/steps/install-bazel.yml
-      - template: ci/azure-pipelines/steps/install-tensorrt.yml
+      - template: ../steps/useinstall-bazel.yml
+      - template: ../steps/useinstall-tensorrt.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - template: ci/azure-pipelines/steps/use-build-cache.yml
+      - template: ../steps/useuse-build-cache.yml
         parameters:
             key: bazel-build-serving-tensorrt
             path: $(BAZEL_BUILD_CACHE)
