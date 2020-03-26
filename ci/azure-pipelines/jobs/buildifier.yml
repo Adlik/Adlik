@@ -4,6 +4,6 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ci/azure-pipelines/install-buildifier.yml
+      - template: ci/azure-pipelines/steps/install-buildifier.yml
       - script: ci/checks/buildifier.py
         displayName: Run Buildifier

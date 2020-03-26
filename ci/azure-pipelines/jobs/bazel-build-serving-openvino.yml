@@ -5,11 +5,11 @@ jobs:
         vmImage: ubuntu-latest
     timeoutInMinutes: 0
     steps:
-      - template: ci/azure-pipelines/install-bazel.yml
-      - template: ci/azure-pipelines/install-openvino.yml
+      - template: ci/azure-pipelines/steps/install-bazel.yml
+      - template: ci/azure-pipelines/steps/install-openvino.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - template: ci/azure-pipelines/use-build-cache.yml
+      - template: ci/azure-pipelines/steps/use-build-cache.yml
         parameters:
             key: bazel-build-serving-openvino
             path: $(BAZEL_BUILD_CACHE)

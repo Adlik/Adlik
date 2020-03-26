@@ -4,7 +4,7 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ci/azure-pipelines/install-clang-format.yml
+      - template: ci/azure-pipelines/steps/install-clang-format.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
       - script: ci/checks/clang-format.py

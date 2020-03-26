@@ -9,7 +9,7 @@ jobs:
         displayName: Use latest Python
       - script: pip install -U wheel
         displayName: Install additional dependencies
-      - template: ci/azure-pipelines/use-build-cache.yml
+      - template: ci/azure-pipelines/steps/use-build-cache.yml
         parameters:
             key: bazel-build-clients
             path: $(BAZEL_BUILD_CACHE)
