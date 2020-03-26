@@ -77,8 +77,8 @@ tensorflow::Status BatchingModel::predict(const RunOptions& opts,
                                           const PredictRequestProvider* request,
                                           PredictResponseProvider* response) {
   if (!batch_scheduler) {
-    ERR_LOG << "Batch scheduler is null, can't do btach inference";
-    return tensorflow::errors::Internal("Batch scheduler is null, can't do btach inference");
+    ERR_LOG << "Batch scheduler is null, can't do batch inference";
+    return tensorflow::errors::Internal("Batch scheduler is null, can't do batch inference");
   }
 
   auto task = std::make_unique<BatchingMessageTask>();

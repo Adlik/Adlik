@@ -177,8 +177,7 @@ tensorflow::Status PluginLoader::mergeInputs(MyBatch& batch) {
           if (offsetByteSize + totalByteSize > inputPtr->byteSize()) {
             status = tensorflow::errors::InvalidArgument("unexpected size ",
                                                          offsetByteSize + totalByteSize,
-                                                         " biggger than input blob space ",
-                                                         ", expecting ",
+                                                         " biggger than input blob space, expecting ",
                                                          inputPtr->byteSize());
             return false;
           }
