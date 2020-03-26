@@ -1,0 +1,26 @@
+jobs:
+  - job: BazelBuildClients
+    displayName: Bazel build clients
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ../steps/install-bazel.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: pip install -U wheel
+        displayName: Install additional dependencies
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-clients
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            ci/checks/bazel-build-clients.py \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE" \
+                --incompatible_no_support_tools_in_action_inputs=false
+        displayName: Bazel build clients
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_clients
+            artifactName: adlik-clients

@@ -1,0 +1,10 @@
+jobs:
+  - job: CommitMessage
+    displayName: Commit message
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: ci/checks/commit-message.py
+        displayName: Check commit message
