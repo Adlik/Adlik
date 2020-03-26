@@ -1,4 +1,4 @@
-load("//adlik_serving:serving.bzl", "serving_cc_library")
+load("//adlik_serving:serving.bzl", "serving_cc_library", "serving_cc_test")
 
 serving_cc_library(
     name = "tensorflow_lite_runtime_impl",
@@ -38,4 +38,15 @@ serving_cc_library(
         ":tensorflow_lite_runtime_impl",
     ],
     alwayslink = 1,
+)
+
+serving_cc_test(
+    name = "tensorflow_lite_tests",
+    srcs = [
+        "tensor_utilities_test.cc",
+    ],
+    deps = [
+        ":tensorflow_lite_runtime_impl",
+        "@com_google_googletest//:gtest_main",
+    ],
 )

@@ -10,6 +10,7 @@
 #include "adlik_serving/runtime/provider/predict_response_provider.h"
 #include "adlik_serving/runtime/tensorflow_lite/input_context.h"
 #include "adlik_serving/runtime/tensorflow_lite/tensor_utilities.h"
+#include "cub/log/log.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/gtl/cleanup.h"
 
@@ -72,7 +73,7 @@ Status splitOutputs(const Interpreter& interpreter,
     const auto& dimsList = context.calculateDimsList(dims);
 
     if (dims.size > 0) {
-      if (batch.size() == static_cast<size_t>(dims.data[0])) {
+      if (static_cast<size_t>(dims.data[0]) == totalSamples) {
         const auto sampleElements =
             static_cast<size_t>(std::accumulate(dims.data + 1, dims.data + dims.size, 1, std::multiplies<int>{}));
 
@@ -86,6 +87,8 @@ Status splitOutputs(const Interpreter& interpreter,
 
             if (buffer) {
               reader.readTensorProto(tensor, firstElement, batchElements, *buffer);
+            } else {
+              INFO_LOG << "Output \"" << context.getName() << "\" is not requested, skip it.";
             }
 
             firstElement += batchElements;
