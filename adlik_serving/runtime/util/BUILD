@@ -133,6 +133,7 @@ serving_cc_library(
         "//adlik_serving/framework/manager",
         "//adlik_serving/runtime/batching:basic_batch_scheduler",
         "//adlik_serving/runtime/batching:batch_scheduler",
+        "//adlik_serving/runtime/batching:batching_message_task",
         "//cub/base:status",
     ],
 )
