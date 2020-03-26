@@ -4,12 +4,12 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ../steps/useinstall-bazel.yml
+      - template: ../steps/install-bazel.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
       - script: pip install -U wheel
         displayName: Install additional dependencies
-      - template: ../steps/useuse-build-cache.yml
+      - template: ../steps/use-build-cache.yml
         parameters:
             key: bazel-build-clients
             path: $(BAZEL_BUILD_CACHE)

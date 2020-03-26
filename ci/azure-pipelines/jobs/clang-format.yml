@@ -4,7 +4,7 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
-      - template: ../steps/useinstall-clang-format.yml
+      - template: ../steps/install-clang-format.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
       - script: ci/checks/clang-format.py

@@ -11,10 +11,10 @@ jobs:
         vmImage: $(vmImage)
     timeoutInMinutes: 0
     steps:
-      - template: ../steps/useinstall-bazel.yml
+      - template: ../steps/install-bazel.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - template: ../steps/useuse-build-cache.yml
+      - template: ../steps/use-build-cache.yml
         parameters:
             key: bazel-build-serving-tensorflow-cpu
             path: $(BAZEL_BUILD_CACHE)
