@@ -1,0 +1,33 @@
+jobs:
+  - job: BazelBuildServingTensorFlowCPU
+    displayName: Bazel build serving (TensorFlow CPU)
+    strategy:
+        matrix:
+            Linux:
+              vmImage: ubuntu-latest
+            macOS:
+              vmImage: macos-latest
+    pool:
+        vmImage: $(vmImage)
+    timeoutInMinutes: 0
+    steps:
+      - template: ../steps/install-bazel.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-tensorflow-cpu
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            ci/checks/bazel-build-serving.py \
+                --config=tensorflow-cpu \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE" \
+                --incompatible_no_support_tools_in_action_inputs=false \
+                --incompatible_disable_nocopts=false
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-tensorflow-cpu ($(Agent.OS))

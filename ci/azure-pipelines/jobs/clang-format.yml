@@ -1,0 +1,11 @@
+jobs:
+  - job: ClangFormat
+    displayName: Clang-Format
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ../steps/install-clang-format.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: ci/checks/clang-format.py
+        displayName: Run Clang-Format

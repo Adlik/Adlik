@@ -1,0 +1,31 @@
+jobs:
+  - job: BazelBuildServingTensorRT
+    displayName: Bazel build serving (TensorRT)
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - template: ../steps/install-bazel.yml
+      - template: ../steps/install-tensorrt.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-tensorrt
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            env TF_CUDA_VERSION=10.0 \
+                ci/checks/bazel-build-serving.py \
+                    --config=tensorrt \
+                    -c opt \
+                    --disk_cache="$BAZEL_BUILD_CACHE" \
+                    --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
+                    --incompatible_no_support_tools_in_action_inputs=false \
+                    --incompatible_disable_nocopts=false \
+                    --incompatible_use_specific_tool_files=false
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-tensorrt

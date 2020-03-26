@@ -1,0 +1,10 @@
+jobs:
+  - job: Copyright
+    displayName: Copyright
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: ci/checks/copyright.py
+        displayName: Check copyright notations
