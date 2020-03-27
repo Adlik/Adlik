@@ -103,7 +103,8 @@ class Compiler(BaseCompiler):
 
     def _parser_model_onnx(self, model_info):
         g_logger = trt.Logger(trt.Logger.WARNING)
-        with trt.Builder(g_logger) as builder, builder.create_network() as network, \
+        network_flags = 1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
+        with trt.Builder(g_logger) as builder, builder.create_network(network_flags) as network, \
                 trt.OnnxParser(network, g_logger) as parser:
 
             for i in model_info.inputs:
