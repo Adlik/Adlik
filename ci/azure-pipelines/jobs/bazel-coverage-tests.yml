@@ -1,0 +1,36 @@
+jobs:
+  - job: BazelCoverageTests
+    displayName: Bazel coverage tests
+    strategy:
+        matrix:
+            Linux:
+                vmImage: ubuntu-latest
+            macOS:
+                vmImage: macos-latest
+    pool:
+        vmImage: $(vmImage)
+    timeoutInMinutes: 0
+    steps:
+      - template: ../steps/install-bazel.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-coverage-tests
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            ci/checks/bazel-coverage-tests.py \
+                --instrument_test_targets \
+                -c dbg \
+                --disk_cache="$BAZEL_BUILD_CACHE" \
+                --incompatible_disable_nocopts=false
+        displayName: Bazel coverage tests
+      - task: PublishTestResults@2
+        displayName: Publish test results
+        inputs:
+            testResultsFiles: bazel-testlogs/**/test.xml
+            mergeTestResults: true
+      - task: PublishCodeCoverageResults@2
+        displayName: Publish coverage results
+        inputs:
+            summaryFileLocation: bazel-testlogs/**/coverage.dat
