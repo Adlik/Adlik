@@ -30,7 +30,20 @@ jobs:
         inputs:
             testResultsFiles: bazel-testlogs/**/test.xml
             mergeTestResults: true
-      - task: PublishCodeCoverageResults@2
+      - task: reportgenerator@4
+        displayName: Generate coverage report
+        inputs:
+            reports: bazel-testlogs/**/coverage.dat
+            targetdir: .
+            reporttypes: Cobertura
+        env:
+            disable.coverage.autogenerate: 'true'
+      - task: PublishCodeCoverageResults@1
         displayName: Publish coverage results
         inputs:
-            summaryFileLocation: bazel-testlogs/**/coverage.dat
+            codeCoverageTool: Cobertura
+            summaryFileLocation: cobertura.xml
+      # - task: PublishCodeCoverageResults@2
+      #   displayName: Publish coverage results
+      #   inputs:
+      #       summaryFileLocation: bazel-testlogs/**/coverage.dat
