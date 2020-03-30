@@ -11,6 +11,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "adlik_serving/server/http/internal/request_handler_options.h"
+#include "cub/base/status_wrapper.h"
 #include "re2/re2.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/platform/default/integral_types.h"
@@ -20,9 +21,10 @@ namespace serving {
 
 struct GetModelMetaImpl;
 struct PredictImpl;
+struct TaskOpImpl;
 
 struct HttpRestApiHandler {
-  HttpRestApiHandler(GetModelMetaImpl&, PredictImpl&, const RequestHandlerOptions&);
+  HttpRestApiHandler(GetModelMetaImpl&, PredictImpl&, TaskOpImpl& task_op_impl, const RequestHandlerOptions&);
 
   tensorflow::Status processRequest(const absl::string_view http_method,
                                     const absl::string_view request_path,
@@ -42,11 +44,20 @@ private:
                                                  const absl::string_view model_version_str,
                                                  std::string* output);
 
+  tensorflow::Status processMlPredictRequest(const absl::string_view model_name,
+                                             const absl::optional<tensorflow::int64>& model_version,
+                                             const std::string& request_body,
+                                             std::string* output);
+
+  tensorflow::Status toTensorflowStatus(const cub::StatusWrapper& status);
+
   GetModelMetaImpl& get_model_meta_impl;
   PredictImpl& predict_impl;
+  TaskOpImpl& task_op_impl;
   RequestHandlerOptions options;
   const RE2 prediction_api_regex;
   const RE2 modelstatus_api_regex;
+  const RE2 prediction_ml_api_regex;
 };
 
 }  // namespace serving

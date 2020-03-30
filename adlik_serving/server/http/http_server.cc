@@ -45,8 +45,11 @@ HTTPStatusCode ToHTTPStatusCode(const tensorflow::Status& status) {
 }
 
 struct Dispatcher {
-  Dispatcher(GetModelMetaImpl& meta_impl, PredictImpl& predict_impl, const RequestHandlerOptions& options)
-      : regex_(HttpRestApiHandler::kPathRegex), handler(meta_impl, predict_impl, options) {
+  Dispatcher(GetModelMetaImpl& meta_impl,
+             PredictImpl& predict_impl,
+             TaskOpImpl& task_op_impl,
+             const RequestHandlerOptions& options)
+      : regex_(HttpRestApiHandler::kPathRegex), handler(meta_impl, predict_impl, task_op_impl, options) {
   }
 
   RequestHandler dispatch(HttpRequest* req) {
@@ -125,7 +128,7 @@ void HttpServer::buildServer() {
 
   RequestHandlerOptions handler_options = buildRequestHandlerOptions();
   std::shared_ptr<Dispatcher> dispatcher =
-      std::make_shared<Dispatcher>(ROLE(GetModelMetaImpl), ROLE(PredictImpl), handler_options);
+      std::make_shared<Dispatcher>(ROLE(GetModelMetaImpl), ROLE(PredictImpl), ROLE(TaskOpImpl), handler_options);
   http_server->registerRequestDispatcher([dispatcher](HttpRequest* req) { return dispatcher->dispatch(req); },
                                          handler_options);
   server = std::move(http_server);

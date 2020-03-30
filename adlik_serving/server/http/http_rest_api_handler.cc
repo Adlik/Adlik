@@ -9,6 +9,8 @@
 #include "adlik_serving/apis/get_model_meta_impl.h"
 #include "adlik_serving/apis/predict.pb.h"
 #include "adlik_serving/apis/predict_impl.h"
+#include "adlik_serving/apis/task.pb.h"
+#include "adlik_serving/apis/task_op_impl.h"
 #include "adlik_serving/framework/domain/model_config.h"
 #include "adlik_serving/framework/manager/run_options.h"
 #include "adlik_serving/framework/manager/runtime_context.h"
@@ -70,11 +72,14 @@ const char* const HttpRestApiHandler::kPathRegex = "(?i)/v1/.*";
 
 HttpRestApiHandler::HttpRestApiHandler(GetModelMetaImpl& meta_impl,
                                        PredictImpl& predict_impl,
+                                       TaskOpImpl& task_op_impl,
                                        const RequestHandlerOptions& options)
     : get_model_meta_impl(meta_impl),
       predict_impl(predict_impl),
+      task_op_impl(task_op_impl),
       options(options),
       prediction_api_regex(R"((?i)/v1/models/([^/:]+)(?:/versions/(\d+))?:(predict))"),
+      prediction_ml_api_regex(R"((?i)/v1/models/([^/:]+)(?:/versions/(\d+))?:(ml_predict))"),
       modelstatus_api_regex(R"((?i)/v1/models(?:/([^/:]+))?(?:/versions/(\d+))?(?:\/(metadata))?)") {
 }
 
@@ -107,6 +112,18 @@ tensorflow::Status HttpRestApiHandler::processRequest(const absl::string_view ht
 
     status = processPredictRequest(model_name, model_version, request_body, output);
 
+  } else if (http_method == "POST" &&
+             RE2::FullMatch(
+                 std::string(request_path), prediction_ml_api_regex, &model_name, &model_version_str, &method)) {
+    absl::optional<tensorflow::int64> model_version;
+    if (!model_version_str.empty()) {
+      tensorflow::int64 version;
+      if (!absl::SimpleAtoi(model_version_str, &version)) {
+        return tensorflow::errors::InvalidArgument("Failed to convert version: ", model_version_str, " to numeric.");
+      }
+      model_version = version;
+    }
+    status = processMlPredictRequest(model_name, model_version, request_body, output);
   } else if (http_method == "GET" && RE2::FullMatch(std::string(request_path),
                                                     modelstatus_api_regex,
                                                     &model_name,
@@ -155,6 +172,36 @@ tensorflow::Status HttpRestApiHandler::processPredictRequest(const absl::string_
   TF_RETURN_IF_ERROR(serializeMessage(response, &response_output));
   absl::StrAppend(output, response_output);
   return tensorflow::Status::OK();
+}
+
+tensorflow::Status HttpRestApiHandler::processMlPredictRequest(const absl::string_view model_name,
+                                                               const absl::optional<tensorflow::int64>& model_version,
+                                                               const std::string& request_body,
+                                                               std::string* output) {
+  if (model_name.empty()) {
+    return tensorflow::errors::InvalidArgument("Missing model name in request.");
+  }
+
+  CreateTaskRequest request;
+  TF_RETURN_IF_ERROR(unserializeMessage(request_body, &request));
+
+  request.mutable_model_spec()->set_name(std::string(model_name));
+  if (model_version.has_value()) {
+    request.mutable_model_spec()->mutable_version()->set_value(model_version.value());
+  }
+  CreateTaskResponse response;
+  TF_RETURN_IF_ERROR(toTensorflowStatus(task_op_impl.create(runOptions(options), request, response)));
+  std::string response_output;
+  TF_RETURN_IF_ERROR(serializeMessage(response, &response_output));
+  absl::StrAppend(output, response_output);
+  return tensorflow::Status::OK();
+}
+
+tensorflow::Status HttpRestApiHandler::toTensorflowStatus(const cub::StatusWrapper& status) {
+  if (status.ok()) {
+    return tensorflow::Status::OK();
+  }
+  return tensorflow::errors::Internal(status.error_message());
 }
 
 tensorflow::Status HttpRestApiHandler::processModelMetadataRequest(const absl::string_view model_name,

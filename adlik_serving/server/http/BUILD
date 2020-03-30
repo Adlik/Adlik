@@ -27,6 +27,7 @@ serving_cc_library(
     deps = [
         "//adlik_serving/apis:get_model_meta_impl",
         "//adlik_serving/apis:predict_impl",
+        "//adlik_serving/apis:task_op_impl",
         "//adlik_serving/framework/manager",
         "//adlik_serving/server/http/internal:request_handler_options",
         "//cub/dci",

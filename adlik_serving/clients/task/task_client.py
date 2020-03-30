@@ -8,10 +8,12 @@ This is a sample of create use grpc protocol, just for test grid and amc case
 import argparse
 import random
 import time
+import requests
 
 from adlik_serving.apis import amc_task_pb2, grid_task_pb2, task_pb2, task_service_pb2_grpc
 from google.protobuf import json_format
 import grpc
+import json
 
 FLAGS = None
 
@@ -51,7 +53,7 @@ def _create_amc_request():
     return request
 
 
-def _main():
+def _grpc_visit():
     channel = grpc.insecure_channel(FLAGS.url)
     stub = task_service_pb2_grpc.TaskServiceStub(channel)
     create_funcs = {'grid': _create_grid_request, 'amc': _create_amc_request}
@@ -59,9 +61,30 @@ def _main():
     print('Create task request is: \n{}\n'.format(json_format.MessageToJson(task_request)))
     start = time.time()
     response = stub.create(task_request)
+    print(response)
     end = time.time()
     print('Task response is: \n{}'.format(json_format.MessageToJson(response)))
     print('Running Time: {}s'.format(end - start))
+
+
+def _http_visit():
+    create_funcs = {'grid': _create_grid_request, 'amc': _create_amc_request}
+    task_request = create_funcs[FLAGS.model_name]()
+    url = 'http://%s/v1/models/%s' % (FLAGS.url, FLAGS.model_name)
+    start = time.time()
+    response = requests.post(url + ":ml_predict",
+                             data=json_format.MessageToJson(task_request, preserving_proto_field_name=True))
+    end = time.time()
+    response.raise_for_status()
+    print(json.loads(response.content))
+    print('Running Time: {}s'.format(end - start))
+
+
+def _main():
+    if FLAGS.protocol == "http":
+        _http_visit()
+    else:
+        _grpc_visit()
 
 
 if __name__ == '__main__':
@@ -81,6 +104,8 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output', type=str, required=False,
                         default="",
                         help='File path of output csv, required for grid algorithm.')
-
+    parser.add_argument('-p', '--protocol', type=str, required=False, default='grpc',
+                        help='Protocol ("http"/"grpc") used to ' +
+                             'communicate with service. Default is "grpc".')
     FLAGS = parser.parse_args()
     _main()
