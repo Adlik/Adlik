@@ -42,7 +42,7 @@ jobs:
         displayName: Publish coverage results
         inputs:
             codeCoverageTool: Cobertura
-            summaryFileLocation: cobertura.xml
+            summaryFileLocation: Cobertura.xml
       # - task: PublishCodeCoverageResults@2
       #   displayName: Publish coverage results
       #   inputs:
