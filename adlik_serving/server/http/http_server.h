@@ -17,6 +17,7 @@ namespace serving {
 struct ServerInterface;
 struct GetModelMetaImpl;
 struct PredictImpl;
+struct TaskOpImpl;
 
 struct HttpServer : HttpOptions {
   cub::Status start();
@@ -29,6 +30,7 @@ private:
 private:
   USE_ROLE(GetModelMetaImpl);
   USE_ROLE(PredictImpl);
+  USE_ROLE(TaskOpImpl);
 };
 
 }  // namespace serving
