@@ -1,6 +1,8 @@
 # Adlik
 
 [![Build Status](https://dev.azure.com/Adlik/GitHub/_apis/build/status/Adlik.Adlik?branchName=master)](https://dev.azure.com/Adlik/GitHub/_build/latest?definitionId=1&branchName=master)
+[![Tests](https://img.shields.io/azure-devops/tests/Adlik/GitHub/1/master)](https://dev.azure.com/Adlik/GitHub/_build/latest?definitionId=1&branchName=master)
+[![Coverage](https://img.shields.io/azure-devops/coverage/Adlik/GitHub/1/master)](https://dev.azure.com/Adlik/GitHub/_build/latest?definitionId=1&branchName=master)
 [![Bors enabled](https://bors.tech/images/badge_small.svg)](https://app.bors.tech/repositories/20625)
 
 ***Adlik*** is an end-to-end optimizing framework for deep learning models. The goal of Adlik is to accelerate deep
@@ -169,7 +171,7 @@ Assume building with CUDA version 10.0.
    ```
 
 ### Deploy serving service
-   
+
 #### OpenVINO service
 
 ```sh
