@@ -30,8 +30,8 @@ RunOptions options(const ::grpc::ServerContext& ctxt) {
 }  // namespace
 
 ::grpc::Status TaskOpService::create(::grpc::ServerContext* ctxt,
-                                     const CreateTaskRequest* req,
-                                     CreateTaskResponse* rsp) {
+                                     const ::google::protobuf::Any* req,
+                                     ::google::protobuf::Any* rsp) {
   auto status = ROLE(TaskOpImpl).create(options(*ctxt), *req, *rsp);
   return toGrpcStatus(status);
 }

@@ -10,7 +10,7 @@ import random
 import time
 
 from adlik_serving.apis import amc_task_pb2, grid_task_pb2, task_pb2, task_service_pb2_grpc
-from google.protobuf import json_format
+from google.protobuf import any_pb2, json_format
 import grpc
 
 FLAGS = None
@@ -20,7 +20,7 @@ def _create_header():
     request = task_pb2.CreateTaskRequest()
     request.model_spec.name = FLAGS.model_name
     request.task_type = 1  # Training task
-    request.is_sync = FLAGS.is_sync
+    request.timeout_seconds = 0  # Set timeout if needed
     return request
 
 
@@ -55,13 +55,21 @@ def _main():
     channel = grpc.insecure_channel(FLAGS.url)
     stub = task_service_pb2_grpc.TaskServiceStub(channel)
     create_funcs = {'grid': _create_grid_request, 'amc': _create_amc_request}
-    task_request = create_funcs[FLAGS.model_name]()
+    origin_request = create_funcs[FLAGS.model_name]()
+    task_request = any_pb2.Any()
+    task_request.Pack(origin_request)
     print('Create task request is: \n{}\n'.format(json_format.MessageToJson(task_request)))
+
     start = time.time()
     response = stub.create(task_request)
     end = time.time()
-    print('Task response is: \n{}'.format(json_format.MessageToJson(response)))
-    print('Running Time: {}s'.format(end - start))
+
+    task_response = task_pb2.CreateTaskResponse()
+    if response.Unpack(task_response):
+        print('Task response is: \n{}'.format(json_format.MessageToJson(response)))
+        print('Running Time: {}s'.format(end - start))
+    else:
+        print('Unpack response from Any failure!')
 
 
 if __name__ == '__main__':
@@ -76,10 +84,10 @@ if __name__ == '__main__':
                         help='Whether run task synchronously, wait result until task is done if synchronous. '
                              'Default is True.')
     parser.add_argument('-i', '--input', type=str, required=False,
-                        default="",
+                        default='',
                         help='File path of input csv, required for grid algorithm.')
     parser.add_argument('-o', '--output', type=str, required=False,
-                        default="",
+                        default='',
                         help='File path of output csv, required for grid algorithm.')
 
     FLAGS = parser.parse_args()

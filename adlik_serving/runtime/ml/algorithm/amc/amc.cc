@@ -22,7 +22,9 @@ struct Amc : Algorithm {
     init();
   }
 
-  cub::StatusWrapper run(const ::google::protobuf::Any&, ::google::protobuf::Any&) override;
+  cub::StatusWrapper run(const ::google::protobuf::Any&,
+                         ::google::protobuf::Any&,
+                         std::function<bool(void)> should_terminate) override;
 
 private:
   struct Parameter {
@@ -58,7 +60,9 @@ cub::StatusWrapper Amc::create(const std::string& model_dir, std::unique_ptr<Alg
   return cub::StatusWrapper::OK();
 }
 
-cub::StatusWrapper Amc::run(const ::google::protobuf::Any& request, ::google::protobuf::Any& rsp_detail) {
+cub::StatusWrapper Amc::run(const ::google::protobuf::Any& request,
+                            ::google::protobuf::Any& rsp_detail,
+                            std::function<bool(void)>) {
   DEBUG_LOG << "Prepare to run amc, this: " << this;
 
   if (!request.Is<::adlik::serving::AmcTaskReq>()) {

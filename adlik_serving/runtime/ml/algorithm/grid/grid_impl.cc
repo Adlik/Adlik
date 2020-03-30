@@ -30,7 +30,9 @@ struct GridAlgorithm : Algorithm {
   GridAlgorithm(const adlik::serving::GridConfig& config) : config(config) {
   }
 
-  cub::StatusWrapper run(const ::google::protobuf::Any&, ::google::protobuf::Any&) override;
+  cub::StatusWrapper run(const ::google::protobuf::Any&,
+                         ::google::protobuf::Any&,
+                         std::function<bool(void)> should_terminate) override;
 
 private:
   using InputPtrs = std::vector<const GridInput*>;  // samples of a specific class
@@ -160,7 +162,9 @@ std::unordered_map<Neighbors, GridAlgorithm::InputPtrs> GridAlgorithm::initialSc
   return classes;
 }
 
-cub::StatusWrapper GridAlgorithm::run(const ::google::protobuf::Any& req_detail, ::google::protobuf::Any& rsp_detail) {
+cub::StatusWrapper GridAlgorithm::run(const ::google::protobuf::Any& req_detail,
+                                      ::google::protobuf::Any& rsp_detail,
+                                      std::function<bool(void)> should_terminate) {
   if (!req_detail.Is<::adlik::serving::GridTaskReq>()) {
     return cub::StatusWrapper(cub::InvalidArgument, "Input doesn't contain grid task config!");
   }
@@ -192,12 +196,17 @@ cub::StatusWrapper GridAlgorithm::run(const ::google::protobuf::Any& req_detail,
     }
   }
 
+  TERMINATE_IF();
+
   auto classes = initialScreen(total_inputs);
   DEBUG_LOG << "Grid input size: " << total_inputs.size() << ", initial screening: " << classes.size();
+
+  TERMINATE_IF();
 
   GridCsvSaver saver(grid.output());
   for (const auto& c : classes) {
     subdivideClass(c.first, c.second, saver);
+    TERMINATE_IF();
   }
 
   adlik::serving::GridTaskRsp grid_output;

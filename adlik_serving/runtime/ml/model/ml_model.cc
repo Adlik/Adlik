@@ -64,14 +64,6 @@ cub::Status MLModel::create(const ModelConfig& config, const ModelId& model_id, 
 }
 
 cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResponse& response) {
-  if (request.task_type() != CreateTaskRequest_TaskType::CreateTaskRequest_TaskType_TRAINING_TASK) {
-    return cub::StatusWrapper(cub::InvalidArgument, "Now only support train task");
-  }
-
-  if (!request.is_sync()) {
-    return cub::StatusWrapper(cub::InvalidArgument, "Now only suuport synchronous task");
-  }
-
   auto it = runners.begin();
   {
     cub::AutoLock lock(mutex);
@@ -85,15 +77,24 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
     }
   }
 
-  cub::Notification notification;
   cub::StatusWrapper status;
+  cub::Notification notification;
+  std::atomic<bool> is_timeout(false);
+  auto should_terminate = [&]() { return is_timeout.load(); };
+
   auto f = [&]() {
-    status = it->second->run(request.detail(), *response.mutable_detail());
+    status = it->second->run(request.detail(), *response.mutable_detail(), should_terminate);
     notification.notify();
   };
 
   cub::SimpleExecutor executor;
   executor.schedule(f);
+  auto timeout_ms = request.timeout_seconds() == 0 ? ULONG_MAX : request.timeout_seconds() * 1000;
+  auto notified = notification.wait(timeout_ms);
+  if (!notified) {
+    is_timeout = true;
+  }
+
   notification.wait();
 
   {

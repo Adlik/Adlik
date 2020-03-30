@@ -13,14 +13,26 @@ namespace adlik {
 namespace serving {
 
 cub::StatusWrapper TaskOpImpl::create(const RunOptions& options,
-                                      const CreateTaskRequest& req,
-                                      CreateTaskResponse& rsp) {
+                                      const ::google::protobuf::Any& req,
+                                      ::google::protobuf::Any& rsp) {
   DEBUG_LOG << "Receive create task request";
-  std::unique_ptr<ModelHandle> handle = ROLE(ServingStore).find(req.model_spec());
-  auto config = ROLE(ModelStore).find(req.model_spec().name());
+  if (!req.Is<::adlik::serving::CreateTaskRequest>()) {
+    return cub::StatusWrapper(cub::InvalidArgument, "Input is not CreateTaskRequest!");
+  }
+
+  adlik::serving::CreateTaskRequest task_request;
+  if (!req.UnpackTo(&task_request)) {
+    return cub::StatusWrapper(cub::InvalidArgument, "UnpackTo CreateTaskRequest failed!");
+  }
+
+  std::unique_ptr<ModelHandle> handle = ROLE(ServingStore).find(task_request.model_spec());
+  auto config = ROLE(ModelStore).find(task_request.model_spec().name());
   if (handle && config) {
     if (auto runtime = RuntimeSuite::inst().get(config->platform())) {
-      return runtime->createTask(options, handle.get(), req, rsp);
+      adlik::serving::CreateTaskResponse task_response;
+      auto status = runtime->createTask(options, handle.get(), task_request, task_response);
+      rsp.PackFrom(task_response);
+      return status;
     }
   }
   return cub::StatusWrapper(cub::InvalidArgument, "Not found model");

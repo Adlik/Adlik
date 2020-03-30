@@ -16,7 +16,9 @@ message CreateTaskRequest {
   }
 
   TaskType task_type = 2;
-  bool is_sync = 3;
+
+  // timeout (s) of the task execution, 0 is unlimit
+  uint64 timeout_seconds = 3;
 
   // information for specific task, different model has own definition
   google.protobuf.Any detail = 4;
@@ -25,12 +27,6 @@ message CreateTaskRequest {
 message CreateTaskResponse {
   string status = 1; // NEW, RUNNING, ERROR, DONE
 
-  string task_id = 2;
-
   // information for specific task, different model has own definition
-  google.protobuf.Any detail = 3;
+  google.protobuf.Any detail = 2;
 }
-
-message QueryTaskRequest { string task_id = 1; }
-
-message QueryTaskResponse { string status = 1; }
