@@ -40,12 +40,15 @@ jobs:
             reporttypes: Cobertura
         env:
             disable.coverage.autogenerate: 'true'
+      - script: ci/tools/demangle-cobertura.py Cobertura.xml Cobertura-demangled.xml
+        displayName: Demangle method names
+        condition: eq(variables['Agent.OS'], 'Linux')
       - task: PublishCodeCoverageResults@1
         displayName: Publish coverage results
         condition: eq(variables['Agent.OS'], 'Linux')
         inputs:
             codeCoverageTool: Cobertura
-            summaryFileLocation: Cobertura.xml
+            summaryFileLocation: Cobertura-demangled.xml
       # - task: PublishCodeCoverageResults@2
       #   displayName: Publish coverage results
       #   condition: eq(variables['Agent.OS'], 'Linux')
