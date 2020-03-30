@@ -27,11 +27,13 @@ jobs:
         displayName: Bazel coverage tests
       - task: PublishTestResults@2
         displayName: Publish test results
+        condition: eq(variables['Agent.OS'], 'Linux')
         inputs:
             testResultsFiles: bazel-testlogs/**/test.xml
             mergeTestResults: true
       - task: reportgenerator@4
         displayName: Generate coverage report
+        condition: eq(variables['Agent.OS'], 'Linux')
         inputs:
             reports: bazel-testlogs/**/coverage.dat
             targetdir: .
@@ -40,10 +42,12 @@ jobs:
             disable.coverage.autogenerate: 'true'
       - task: PublishCodeCoverageResults@1
         displayName: Publish coverage results
+        condition: eq(variables['Agent.OS'], 'Linux')
         inputs:
             codeCoverageTool: Cobertura
             summaryFileLocation: Cobertura.xml
       # - task: PublishCodeCoverageResults@2
       #   displayName: Publish coverage results
+      #   condition: eq(variables['Agent.OS'], 'Linux')
       #   inputs:
       #       summaryFileLocation: bazel-testlogs/**/coverage.dat
