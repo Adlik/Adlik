@@ -1,0 +1,27 @@
+jobs:
+  - job: BazelBuildServingML
+    displayName: Bazel build serving (ML)
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - template: ../steps/install-bazel.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-ml
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            ci/checks/bazel-build-serving.py \
+                --config=ml \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE" \
+                --incompatible_no_support_tools_in_action_inputs=false \
+                --incompatible_disable_nocopts=false
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-ml

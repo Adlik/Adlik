@@ -12,6 +12,7 @@ import time
 from adlik_serving.apis import amc_task_pb2, grid_task_pb2, task_pb2, task_service_pb2_grpc
 from google.protobuf import any_pb2, json_format
 import grpc
+import requests
 
 FLAGS = None
 
@@ -51,13 +52,18 @@ def _create_amc_request():
     return request
 
 
-def _main():
-    channel = grpc.insecure_channel(FLAGS.url)
-    stub = task_service_pb2_grpc.TaskServiceStub(channel)
+def _create_request():
     create_funcs = {'grid': _create_grid_request, 'amc': _create_amc_request}
     origin_request = create_funcs[FLAGS.model_name]()
     task_request = any_pb2.Any()
     task_request.Pack(origin_request)
+    return task_request
+
+
+def _grpc_visit():
+    channel = grpc.insecure_channel(FLAGS.url)
+    stub = task_service_pb2_grpc.TaskServiceStub(channel)
+    task_request = _create_request()
     print('Create task request is: \n{}\n'.format(json_format.MessageToJson(task_request)))
 
     start = time.time()
@@ -72,12 +78,34 @@ def _main():
         print('Unpack response from Any failure!')
 
 
+def _http_visit():
+    task_request = _create_request()
+    url = 'http://%s/v1/models/%s' % (FLAGS.url, FLAGS.model_name)
+    start = time.time()
+    response = requests.post(url + ":ml_predict",
+                             data=json_format.MessageToJson(task_request, preserving_proto_field_name=True))
+    end = time.time()
+    response.raise_for_status()
+    print(response.json())
+    print('Running Time: {}s'.format(end - start))
+
+
+def _main():
+    if FLAGS.protocol == "http":
+        _http_visit()
+    else:
+        _grpc_visit()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action="store_true", required=False, default=True,
                         help='Enable verbose output')
     parser.add_argument('-m', '--model-name', type=str, required=False, default="amc", choices=['grid', "amc"],
                         help='Name of model')
+    parser.add_argument('-p', '--protocol', type=str, required=False, default='grpc', choices=['grpc', "http"],
+                        help='Protocol ("http"/"grpc") used to ' +
+                             'communicate with service. Default is "grpc".')
     parser.add_argument('-u', '--url', type=str, required=False, default='localhost:8500',
                         help='Adlik serving server URL. Default is localhost:8500.')
     parser.add_argument('-s', '--is-sync', type=bool, required=False, default=True,
