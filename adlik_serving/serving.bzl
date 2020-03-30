@@ -2,7 +2,7 @@
 Helper wrapper functions
 """
 
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 load("@protobuf_archive//:protobuf.bzl", "cc_proto_library", "py_proto_library")
 
 def serving_proto_library(
@@ -77,3 +77,7 @@ def serving_cc_library(**kwargs):
 def serving_cc_binary(**kwargs):
     kwargs["copts"] = kwargs.get("copts", []) + _serving_copts()
     cc_binary(**kwargs)
+
+def serving_cc_test(**kwargs):
+    kwargs["copts"] = kwargs.get("copts", []) + _serving_copts()
+    cc_test(**kwargs)

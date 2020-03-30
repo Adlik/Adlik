@@ -4,9 +4,9 @@ jobs:
     strategy:
         matrix:
             Linux:
-              vmImage: ubuntu-latest
+                vmImage: ubuntu-latest
             macOS:
-              vmImage: macos-latest
+                vmImage: macos-latest
     pool:
         vmImage: $(vmImage)
     timeoutInMinutes: 0
