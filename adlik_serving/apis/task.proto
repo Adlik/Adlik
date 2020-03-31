@@ -10,9 +10,8 @@ message CreateTaskRequest {
   ModelSpec model_spec = 1;
 
   enum TaskType {
-    NONE_TASK = 0;
-    TRAINING_TASK = 1;
-    PREDICT_TASK = 2;
+    TRAINING_TASK = 0;
+    PREDICT_TASK = 1;
   }
 
   TaskType task_type = 2;

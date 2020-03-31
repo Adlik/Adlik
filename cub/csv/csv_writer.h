@@ -15,9 +15,9 @@ struct CSVWriter {
 
   CSVWriter(const std::string&, const std::string& delm = ",");
 
-  void writeRow(const Row&);
+  ~CSVWriter();
 
-  void close();
+  void writeRow(const Row&);
 
 private:
   const std::string file_name;

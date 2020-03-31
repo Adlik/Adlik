@@ -24,42 +24,11 @@ struct GridOutput {
   void update(const GridInput&);
   void arrangeStats();
 
-  template <typename F>
-  void accept(F&& f) const {
-    std::forward<F>(f)(this->serverRSRP_core);
-    std::forward<F>(f)(this->serverRSRP_max);
-    std::forward<F>(f)(this->serverRSRP_min);
-
-    std::forward<F>(f)(this->neighbor1.plmn);
-    std::forward<F>(f)(this->neighbor1.nb);
-    std::forward<F>(f)(this->neighbor1.cell);
-    std::forward<F>(f)(this->neighRSRP_core1);
-    std::forward<F>(f)(this->neighRSRP_max1);
-    std::forward<F>(f)(this->neighRSRP_min1);
-
-    std::forward<F>(f)(this->neighbor2.plmn);
-    std::forward<F>(f)(this->neighbor2.nb);
-    std::forward<F>(f)(this->neighbor2.cell);
-    std::forward<F>(f)(this->neighRSRP_core2);
-    std::forward<F>(f)(this->neighRSRP_max2);
-    std::forward<F>(f)(this->neighRSRP_min2);
-
-    std::forward<F>(f)(this->neighbor_num);
-    for (size_t i = 0; i < neighbor_num && i < this->stats.size(); ++i) {
-      std::forward<F>(f)(this->stats[i].neighbor.plmn);
-      std::forward<F>(f)(this->stats[i].neighbor.nb);
-      std::forward<F>(f)(this->stats[i].neighbor.cell);
-      std::forward<F>(f)(this->stats[i].event_1);
-      std::forward<F>(f)(this->stats[i].event_2);
-      std::forward<F>(f)(this->stats[i].event_3);
-    }
-  }
+  std::vector<std::string> toString() const;
 
   static std::vector<std::string> fieldNames();
 
 private:
-  // unsigned long grid_id;
-
   Rsrp serverRSRP_core;
   Rsrp serverRSRP_max;
   Rsrp serverRSRP_min;

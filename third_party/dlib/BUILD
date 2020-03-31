@@ -1067,7 +1067,6 @@ cc_library(
     srcs = lib_files,
     hdrs = include_files,
     includes = ["dlib/include"],
-    # linkopts = ["-lpthread"],
     linkstatic = 1,
 )
 

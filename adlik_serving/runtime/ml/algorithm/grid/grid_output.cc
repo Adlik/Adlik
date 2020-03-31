@@ -112,6 +112,41 @@ void GridOutput::arrangeStats() {
   });
 }
 
+std::vector<std::string> GridOutput::toString() const {
+  std::vector<std::string> vec;
+  auto f = [&](auto value) { return std::to_string(value); };
+
+  vec.push_back(f(serverRSRP_core));
+  vec.push_back(f(serverRSRP_max));
+  vec.push_back(f(serverRSRP_min));
+
+  vec.push_back(f(neighbor1.plmn));
+  vec.push_back(f(neighbor1.nb));
+  vec.push_back(f(neighbor1.cell));
+  vec.push_back(f(neighRSRP_core1));
+  vec.push_back(f(neighRSRP_max1));
+  vec.push_back(f(neighRSRP_min1));
+
+  vec.push_back(f(neighbor2.plmn));
+  vec.push_back(f(neighbor2.nb));
+  vec.push_back(f(neighbor2.cell));
+  vec.push_back(f(neighRSRP_core2));
+  vec.push_back(f(neighRSRP_max2));
+  vec.push_back(f(neighRSRP_min2));
+
+  vec.push_back(f(neighbor_num));
+  for (size_t i = 0; i < neighbor_num && i < this->stats.size(); ++i) {
+    vec.push_back(f(stats[i].neighbor.plmn));
+    vec.push_back(f(stats[i].neighbor.nb));
+    vec.push_back(f(stats[i].neighbor.cell));
+    vec.push_back(f(stats[i].event_1));
+    vec.push_back(f(stats[i].event_2));
+    vec.push_back(f(stats[i].event_3));
+  }
+
+  return vec;
+}
+
 std::vector<std::string> GridOutput::fieldNames() {
   std::vector<std::string> header(HALF_HEADER);
   for (size_t i = 1; i < MAX_NEIGHBOR_NUM + 1; ++i) {

@@ -11,13 +11,13 @@ CSVWriter::CSVWriter(const std::string& file_name, const std::string& delm) : fi
   stream.open(file_name);
 }
 
+CSVWriter::~CSVWriter() {
+  stream.close();
+}
+
 void CSVWriter::writeRow(const Row& row) {
   auto row_str = cub::strutils::join(row, delimeter);
   stream << row_str << '\n';
-}
-
-void CSVWriter::close() {
-  stream.close();
 }
 
 }  // namespace cub

@@ -1,3 +1,3 @@
-# Purpose
+# Task Client Package
 
-This is a temporary directory, just for the convenience of testing and distinguish from predict interface.
+This package is for building python pip package of task.

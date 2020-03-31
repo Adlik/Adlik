@@ -15,7 +15,6 @@ struct GridOutput;
 
 struct GridCsvSaver {
   GridCsvSaver(const std::string& path);
-  ~GridCsvSaver();
 
   bool save(const std::vector<GridOutput>&);
   bool save(const GridOutput&);

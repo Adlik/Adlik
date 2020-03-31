@@ -20,7 +20,7 @@ FLAGS = None
 def _create_header():
     request = task_pb2.CreateTaskRequest()
     request.model_spec.name = FLAGS.model_name
-    request.task_type = 1  # Training task
+    request.task_type = task_pb2.CreateTaskRequest.TaskType.TRAINING_TASK
     request.timeout_seconds = 0  # Set timeout if needed
     return request
 

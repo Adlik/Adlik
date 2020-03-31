@@ -11,10 +11,6 @@ GridCsvSaver::GridCsvSaver(const std::string& path) : writer(path) {
   saveHeader();
 }
 
-GridCsvSaver::~GridCsvSaver() {
-  writer.close();
-}
-
 bool GridCsvSaver::save(const std::vector<GridOutput>& outputs) {
   for (const auto& o : outputs) {
     save(o);
@@ -23,10 +19,7 @@ bool GridCsvSaver::save(const std::vector<GridOutput>& outputs) {
 }
 
 bool GridCsvSaver::save(const GridOutput& output) {
-  std::vector<std::string> row;
-  auto func = [&](auto value) { row.push_back(std::to_string(value)); };
-  output.accept(func);
-
+  std::vector<std::string> row = output.toString();
   writer.writeRow(row);
   return true;
 }
