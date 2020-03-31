@@ -15,8 +15,6 @@ struct CSVWriter {
 
   CSVWriter(const std::string&, const std::string& delm = ",");
 
-  ~CSVWriter();
-
   void writeRow(const Row&);
 
 private:
