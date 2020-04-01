@@ -391,7 +391,7 @@ decltype(auto) useTfLiteTensorTools(TfLiteType type, F&& f) {
 }
 
 class TfLiteTensorWriter {
-  absl::variant<TfLiteTensorTools<TfLiteType::kTfLiteNoType>::Writer,
+  absl::variant</* TfLiteTensorTools<TfLiteType::kTfLiteNoType>::Writer, */
                 TfLiteTensorTools<TfLiteType::kTfLiteFloat32>::Writer,
                 TfLiteTensorTools<TfLiteType::kTfLiteInt32>::Writer,
                 TfLiteTensorTools<TfLiteType::kTfLiteUInt8>::Writer,
@@ -428,7 +428,7 @@ public:
 };
 
 class TfLiteTensorReader {
-  absl::variant<TfLiteTensorTools<TfLiteType::kTfLiteNoType>::Reader,
+  absl::variant</* TfLiteTensorTools<TfLiteType::kTfLiteNoType>::Reader, */
                 TfLiteTensorTools<TfLiteType::kTfLiteFloat32>::Reader,
                 TfLiteTensorTools<TfLiteType::kTfLiteInt32>::Reader,
                 TfLiteTensorTools<TfLiteType::kTfLiteUInt8>::Reader,
