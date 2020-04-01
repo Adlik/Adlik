@@ -9,6 +9,8 @@ jobs:
       - template: ../steps/install-openvino.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
+      - script: pip install -U six
+        displayName: Install additional dependencies
       - template: ../steps/use-build-cache.yml
         parameters:
             key: bazel-build-serving-openvino
