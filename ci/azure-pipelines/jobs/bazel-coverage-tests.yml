@@ -22,8 +22,7 @@ jobs:
             ci/checks/bazel-coverage-tests.py \
                 --instrument_test_targets \
                 -c dbg \
-                --disk_cache="$BAZEL_BUILD_CACHE" \
-                --incompatible_disable_nocopts=false
+                --disk_cache="$BAZEL_BUILD_CACHE"
         displayName: Bazel coverage tests
       - task: PublishTestResults@2
         displayName: Publish test results

@@ -19,8 +19,6 @@ jobs:
                     --config=tensorflow-gpu \
                     -c opt \
                     --disk_cache="$BAZEL_BUILD_CACHE" \
-                    --incompatible_no_support_tools_in_action_inputs=false \
-                    --incompatible_disable_nocopts=false \
                     --incompatible_use_specific_tool_files=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1

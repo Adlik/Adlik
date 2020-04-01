@@ -16,8 +16,7 @@ jobs:
       - script: |
             ci/checks/bazel-build-clients.py \
                 -c opt \
-                --disk_cache="$BAZEL_BUILD_CACHE" \
-                --incompatible_no_support_tools_in_action_inputs=false
+                --disk_cache="$BAZEL_BUILD_CACHE"
         displayName: Bazel build clients
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
