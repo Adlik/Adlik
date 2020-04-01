@@ -21,7 +21,7 @@ jobs:
                     --config=tensorrt \
                     -c opt \
                     --disk_cache="$BAZEL_BUILD_CACHE" \
-                    --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs
+                    --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
                     --incompatible_use_specific_tool_files=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
