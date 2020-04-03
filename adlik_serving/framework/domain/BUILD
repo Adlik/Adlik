@@ -43,7 +43,7 @@ serving_proto_library_py(
     srcs = ["model_config.proto"],
     proto_library = "model_config_proto",
     deps = [
-        "version_policy_proto_py_pb2",
+        ":version_policy_proto_py_pb2",
         "@org_tensorflow//tensorflow/core:protos_all_py",
     ],
 )

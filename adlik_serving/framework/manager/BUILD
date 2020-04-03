@@ -51,6 +51,7 @@ serving_cc_library(
         "//adlik_serving/framework/domain",
         "//cub/base:fwddecl",
         "//cub/base:optional",
+        "//cub/base:status_wrapper",
         "//cub/base:symbol",
         "//cub/dci",
         "//cub/env/concurrent",

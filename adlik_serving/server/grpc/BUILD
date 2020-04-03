@@ -43,12 +43,25 @@ serving_cc_library(
 )
 
 serving_cc_library(
+    name = "task_service",
+    srcs = ["task_op_service.cc"],
+    hdrs = ["task_op_service.h"],
+    deps = [
+        "//adlik_serving/apis:task_op_impl",
+        "//adlik_serving/apis:task_service_proto",
+        "//cub/dci",
+        "@grpc//:grpc++",
+    ],
+)
+
+serving_cc_library(
     name = "grpc",
     srcs = ["grpc_server.cc"],
     hdrs = ["grpc_server.h"],
     deps = [
         ":grpc_options",
         ":grpc_service",
+        ":task_service",
         "//cub/base:assertions",
         "@grpc//:grpc++",
     ],
