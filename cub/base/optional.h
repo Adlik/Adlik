@@ -165,7 +165,7 @@ struct Optional {
   }
 
   const T&& value() const&& {
-    return reference();
+    return std::move(reference());
   }
 
   template <class U>
