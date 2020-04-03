@@ -119,7 +119,7 @@ StringViewMap<InputContext> getInputContextMap(const Interpreter& interpreter) {
                    std::forward_as_tuple(InputContext::create(i, tensor.type)));
   }
 
-  return std::move(result);
+  return result;
 }
 
 vector<OutputContext> getOutputContexts(const Interpreter& interpreter) {
@@ -129,7 +129,7 @@ vector<OutputContext> getOutputContexts(const Interpreter& interpreter) {
     result.push_back(OutputContext::fromTfLiteTensor(i, *interpreter.tensor(i)));
   }
 
-  return std::move(result);
+  return result;
 }
 
 Status checkRequestArguments(InputSignature& argumentSignatureCache,
@@ -249,7 +249,7 @@ Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& ba
     auto updateBatchSizeResult = updateInterpreterBatchSize(*this->interpreter, batchSize, this->inputTensorDimsCache);
 
     if (!updateBatchSizeResult.ok()) {
-      return std::move(updateBatchSizeResult);
+      return updateBatchSizeResult;
     }
 
     this->lastBatchSize = batchSize;
