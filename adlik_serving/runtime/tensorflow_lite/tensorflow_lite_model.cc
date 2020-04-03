@@ -55,7 +55,7 @@ variant<unique_ptr<TensorFlowLiteModel>, Status> internalCreate(const ModelConfi
     }
   }
 
-  return result;
+  return std::move(result);
 }
 }  // namespace
 
