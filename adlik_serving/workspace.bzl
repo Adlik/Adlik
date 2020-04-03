@@ -24,3 +24,14 @@ def adlik_serving_workspace():
         strip_prefix = "libevent-release-2.1.8-stable",
         build_file = "@//third_party/libevent:BUILD",
     )
+
+    # ===== dlib dependencies, for machine learning =====
+    http_archive(
+        name = "dlib_archive",
+        urls = [
+            "https://github.com/davisking/dlib/archive/v19.19.zip",
+        ],
+        sha256 = "af1773d39eef0838421c70d34057e975b6d7ac885f490b6a383eb5d6da5baa84",
+        strip_prefix = "dlib-19.19",
+        build_file = "@//third_party/dlib:BUILD",
+    )

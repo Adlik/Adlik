@@ -115,6 +115,13 @@ cc_library(
 )
 
 cc_library(
+    name = "status_wrapper",
+    srcs = ["status_wrapper.cc"],
+    hdrs = ["status_wrapper.h"],
+    deps = [":status"],
+)
+
+cc_library(
     name = "scoped_exit",
     hdrs = ["scoped_exit.h"],
     deps = [

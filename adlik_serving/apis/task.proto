@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+import "adlik_serving/framework/domain/model_spec.proto";
+import "google/protobuf/any.proto";
+
+message CreateTaskRequest {
+  ModelSpec model_spec = 1;
+
+  enum TaskType {
+    TRAINING_TASK = 0;
+    PREDICT_TASK = 1;
+  }
+
+  TaskType task_type = 2;
+
+  // timeout (s) of the task execution, 0 is unlimit
+  uint64 timeout_seconds = 3;
+
+  // information for specific task, different model has own definition
+  google.protobuf.Any detail = 4;
+}
+
+message CreateTaskResponse {
+  string status = 1; // NEW, RUNNING, ERROR, DONE
+
+  // information for specific task, different model has own definition
+  google.protobuf.Any detail = 2;
+}
