@@ -180,7 +180,7 @@ struct Optional {
   template <class U>
   T value_or(U&& val) && {
     if (*this) {
-      return reference();
+      return std::move(reference());
     } else {
       return static_cast<T>(std::forward<U>(val));
     }
