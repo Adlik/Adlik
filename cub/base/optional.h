@@ -161,11 +161,11 @@ struct Optional {
   }
 
   T&& value() && {
-    return std::move(reference());
+    return reference();
   }
 
   const T&& value() const&& {
-    return std::move(reference());
+    return reference();
   }
 
   template <class U>
@@ -180,7 +180,7 @@ struct Optional {
   template <class U>
   T value_or(U&& val) && {
     if (*this) {
-      return std::move(reference());
+      return reference();
     } else {
       return static_cast<T>(std::forward<U>(val));
     }
