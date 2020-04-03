@@ -6,38 +6,29 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 
 http_archive(
     name = "rules_python",
-    sha256 = "43c007823228f88d6afe1580d00f349564c97e103309a234fa20a5a10a9ff85b",
-    strip_prefix = "rules_python-54d1cb35cd54318d59bf38e52df3e628c07d4bbc",
-    urls = ["https://github.com/bazelbuild/rules_python/archive/54d1cb35cd54318d59bf38e52df3e628c07d4bbc.tar.gz"],
+    sha256 = "64a3c26f95db470c32ad86c924b23a821cd16c3879eed732a7841779a32a60f8",
+    strip_prefix = "rules_python-748aa53d7701e71101dfd15d800e100f6ff8e5d1",
+    urls = ["https://github.com/bazelbuild/rules_python/archive/748aa53d7701e71101dfd15d800e100f6ff8e5d1.tar.gz"],
 )
 
 # C++ rules.
 
 http_archive(
     name = "rules_cc",
-    sha256 = "7c574de35acdbfd333eb3f8eb05990b377ef8dc2303664f4ddd6cc83bbf4a30a",
-    strip_prefix = "rules_cc-42ed56d8acbd9938b4ee8b2066d2c4c898a22504",
-    urls = ["https://github.com/bazelbuild/rules_cc/archive/42ed56d8acbd9938b4ee8b2066d2c4c898a22504.tar.gz"],
+    sha256 = "e637dc045e70e43b7431fbeacb68d569a84f9fe1cb5879c432aa0855097dce57",
+    strip_prefix = "rules_cc-34ca16f4aa4bf2a5d3e4747229202d6cb630ebab",
+    urls = ["https://github.com/bazelbuild/rules_cc/archive/34ca16f4aa4bf2a5d3e4747229202d6cb630ebab.tar.gz"],
 )
 
 # TensorFlow.
 
 http_archive(
-    name = "tf_serving",
-    sha256 = "7e499926ac29491bd69d0a31ba834c12eba67e4b79576a16f34a67137a6af05b",
-    strip_prefix = "serving-d83512c6b5b2b8433df2fd61bbbfb22e0295b3d3",
-    urls = [
-        "https://github.com/tensorflow/serving/archive/d83512c6b5b2b8433df2fd61bbbfb22e0295b3d3.tar.gz",
-    ],
-)
-
-http_archive(
     name = "org_tensorflow",
-    sha256 = "1f4b09e6bff7f847bb1034699076055e50e87534d76008af8295ed71195b2b36",
-    strip_prefix = "tensorflow-e5bf8de410005de06a7ff5393fafdf832ef1d4ad",
+    sha256 = "e3d5876d1483a7a2bc734a481e253398f9a80ee922045786bda75072d05a698c",
+    strip_prefix = "tensorflow-e6e5d6df2ab26620548f35bf2e652b19f6d06652",
     urls = [
-        "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/e5bf8de410005de06a7ff5393fafdf832ef1d4ad.tar.gz",
-        "https://github.com/tensorflow/tensorflow/archive/e5bf8de410005de06a7ff5393fafdf832ef1d4ad.tar.gz",
+        "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/e6e5d6df2ab26620548f35bf2e652b19f6d06652.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/e6e5d6df2ab26620548f35bf2e652b19f6d06652.tar.gz",
     ],
 )
 
@@ -135,6 +126,14 @@ http_file(
 load("//adlik_serving:workspace.bzl", "adlik_serving_workspace")
 
 adlik_serving_workspace()
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
+
+load("@upb//bazel:repository_defs.bzl", "bazel_version_repository")
+
+bazel_version_repository(name = "bazel_version")
 
 # Specify the minimum required bazel version.
 

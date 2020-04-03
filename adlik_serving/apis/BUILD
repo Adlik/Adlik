@@ -13,7 +13,7 @@ serving_proto_library(
     cc_api_version = 2,
     deps = [
         "//adlik_serving/framework/domain:model_spec_proto",
-        "@org_tensorflow//tensorflow/core:protos_all",
+        "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
 

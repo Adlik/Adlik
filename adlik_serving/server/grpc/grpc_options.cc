@@ -9,7 +9,6 @@
 #include "cub/protobuf/text_protobuf.h"
 #include "cub/string/str_utils.h"
 #include "grpcpp/security/server_credentials.h"
-#include "grpcpp/server_builder.h"
 
 namespace adlik {
 namespace serving {

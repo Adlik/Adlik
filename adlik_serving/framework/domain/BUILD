@@ -34,7 +34,7 @@ serving_proto_library(
     cc_api_version = 2,
     deps = [
         ":version_policy_proto",
-        "@org_tensorflow//tensorflow/core:protos_all",
+        "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
 

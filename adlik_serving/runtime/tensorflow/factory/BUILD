@@ -12,7 +12,7 @@ serving_proto_library(
     cc_api_version = 2,
     deps = [
         "@com_google_protobuf//:cc_wkt_protos",
-        "@org_tensorflow//tensorflow/core:protos_all",
+        "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
 
@@ -29,7 +29,6 @@ serving_cc_library(
         "@org_tensorflow//tensorflow/cc/saved_model:tag_constants",
         "@org_tensorflow//tensorflow/core:core_cpu",
         "@org_tensorflow//tensorflow/core:lib",
-        "@tf_serving//tensorflow_serving/servables/tensorflow:saved_model_bundle_factory",
     ],
 )
 

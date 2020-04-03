@@ -8,7 +8,6 @@
 #include "tensorflow/cc/saved_model/loader.h"
 #include "tensorflow/cc/saved_model/tag_constants.h"
 #include "tensorflow/core/framework/tensor_util.h"
-#include "tensorflow_serving/session_bundle/session_bundle_util.h"
 
 namespace tensorflow {
 
@@ -36,8 +35,11 @@ inline RunOptions TfPlanModelConfig::getRunOptions() const {
 }
 
 Status TfPlanModelConfig::load(const std::string& path, SavedModelBundle& bundle) const {
-  return serving::session_bundle::LoadSessionBundleOrSavedModelBundle(
-      getSessionOptions(), getRunOptions(), path, getModelTags(), &bundle);
+  if (MaybeSavedModelDirectory(path)) {
+    return LoadSavedModel(getSessionOptions(), getRunOptions(), path, getModelTags(), &bundle);
+  } else {
+    return Status{error::Code::NOT_FOUND, "Specified file path does not appear to contain a `saved_model.pb` file"};
+  }
 }
 
 bool TfPlanModelConfig::batching() const {

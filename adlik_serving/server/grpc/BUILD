@@ -25,7 +25,7 @@ serving_cc_library(
         "//cub/cli:option_subscriber",
         "//cub/cli:program_options",
         "//cub/protobuf:text_protobuf",
-        "@grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++",
     ],
 )
 
@@ -38,7 +38,7 @@ serving_cc_library(
         "//adlik_serving/apis:predict_impl",
         "//adlik_serving/apis:predict_service_proto",
         "//cub/dci",
-        "@grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++",
     ],
 )
 
@@ -50,6 +50,6 @@ serving_cc_library(
         ":grpc_options",
         ":grpc_service",
         "//cub/base:assertions",
-        "@grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++",
     ],
 )
