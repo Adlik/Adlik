@@ -50,7 +50,7 @@ serving_cc_library(
         "//adlik_serving/apis:task_op_impl",
         "//adlik_serving/apis:task_service_proto",
         "//cub/dci",
-        "@grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++",
     ],
 )
 
