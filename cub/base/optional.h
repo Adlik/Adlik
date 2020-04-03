@@ -161,7 +161,7 @@ struct Optional {
   }
 
   T&& value() && {
-    return reference();
+    return std::move(reference());
   }
 
   const T&& value() const&& {
