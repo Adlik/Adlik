@@ -13,7 +13,6 @@ serving_cc_library(
     deps = [
         "//adlik_serving/apis:task_proto",
         "//adlik_serving/framework/domain",
-        "//adlik_serving/framework/domain:model_config_helper",
         "//adlik_serving/runtime/ml/algorithm",
         "//adlik_serving/runtime/provider:predict_request_provider",
         "//adlik_serving/runtime/provider:predict_response_provider",

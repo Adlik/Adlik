@@ -12,68 +12,31 @@
 namespace cub {
 
 struct StatusWrapper {
-  StatusWrapper() {
-  }
-
-  StatusWrapper(Status code, const std::string& msg);
-  StatusWrapper(const StatusWrapper& s);
-
-  void operator=(const StatusWrapper& s);
+  StatusWrapper();
+  StatusWrapper(Status status, const std::string& msg);
 
   static StatusWrapper OK() {
     return StatusWrapper();
   }
 
   bool ok() const {
-    return (state == nullptr);
+    return status == Success;
   }
 
   Status code() const {
-    return ok() ? Success : state->code;
+    return status;
   }
 
   const std::string& error_message() const {
-    return ok() ? empty_string() : state->msg;
+    return ok() ? empty_string : msg;
   }
-
-  bool operator==(const StatusWrapper& x) const;
-  bool operator!=(const StatusWrapper& x) const;
-
-  void update(const StatusWrapper& new_status);
-
-  std::string toString() const;
-
-  void ignoreError() const;
 
 private:
-  static const std::string& empty_string();
+  static const std::string empty_string;
 
-  struct State {
-    Status code;
-    std::string msg;
-  };
-  std::unique_ptr<State> state;
-
-  void slowCopyFrom(const State* src);
+  Status status;
+  std::string msg;
 };
-
-inline StatusWrapper::StatusWrapper(const StatusWrapper& s)
-    : state((s.state == nullptr) ? nullptr : std::make_unique<State>(*s.state)) {
-}
-
-inline void StatusWrapper::operator=(const StatusWrapper& s) {
-  if (state != s.state) {
-    slowCopyFrom(s.state.get());
-  }
-}
-
-inline bool StatusWrapper::operator==(const StatusWrapper& x) const {
-  return (this->state == x.state) || (toString() == x.toString());
-}
-
-inline bool StatusWrapper::operator!=(const StatusWrapper& x) const {
-  return !(*this == x);
-}
 
 }  // namespace cub
 

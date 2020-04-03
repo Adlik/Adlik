@@ -89,7 +89,7 @@ cub::StatusWrapper loadGridInput(const std::string& file_path, std::vector<GridI
 
   auto result = reader.getData(func);
   reader.close();
-  return cub::StatusWrapper::OK();
+  return result ? cub::StatusWrapper::OK() : cub::StatusWrapper(cub::Internal, "read csv failure");
 }
 
 }  // namespace ml_runtime

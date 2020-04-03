@@ -8,7 +8,6 @@
 
 #include "adlik_serving/apis/task.pb.h"
 #include "adlik_serving/framework/domain/model_config.h"
-#include "adlik_serving/framework/domain/model_config_helper.h"
 #include "adlik_serving/framework/domain/model_id.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm.h"
 #include "adlik_serving/runtime/ml/algorithm/algorithm_factory.h"
