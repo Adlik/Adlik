@@ -129,15 +129,15 @@ serving_proto_library(
 py_proto_library(
     name = "task_service_proto_py_pb2",
     srcs = ["task_service.proto"],
-    default_runtime = "@protobuf_archive//:protobuf_python",
-    protoc = "@protobuf_archive//:protoc",
+    default_runtime = "@com_google_protobuf//:protobuf_python",
+    protoc = "@com_google_protobuf//:protoc",
     srcs_version = "PY2AND3",
     use_grpc_plugin = True,
     deps = [
         ":amc_task_proto_py_pb2",
         ":grid_task_proto_py_pb2",
         ":task_proto_py_pb2",
-        "@protobuf_archive//:protobuf_python",
+        "@com_google_protobuf//:protobuf_python",
     ],
 )
 
