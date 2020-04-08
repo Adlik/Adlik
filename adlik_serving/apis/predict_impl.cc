@@ -101,12 +101,34 @@ tensorflow::Status postProcessOutputs(const PredictRequest& req,
   return tensorflow::Status::OK();
 }
 
+tensorflow::Status checkOutputRequest(const ModelConfig& modelConfig, const PredictRequest& request) {
+  const auto& modelOutputs = modelConfig.output();
+  const auto firstModelOutput = modelOutputs.begin();
+  const auto lastModelOutput = modelOutputs.end();
+
+  auto isInvalidOutput = [&](const std::string& name) {
+    return std::find_if(firstModelOutput, lastModelOutput, [&](const ModelOutput& output) {
+             return output.name() == name;
+           }) == lastModelOutput;
+  };
+
+  for (const auto& output : request.output_filter()) {
+    if (isInvalidOutput(output.first)) {
+      return tensorflow::errors::InvalidArgument("Output ", output.first, " does not exist");
+    }
+  }
+
+  return tensorflow::Status::OK();
+}
+
 }  // namespace
 
 tensorflow::Status PredictImpl::predict(const RunOptions& options, const PredictRequest& req, PredictResponse& rsp) {
   std::unique_ptr<ModelHandle> handle = ROLE(ServingStore).find(req.model_spec());
   auto config = ROLE(ModelStore).find(req.model_spec().name());
   if (handle && config) {
+    TF_RETURN_IF_ERROR(checkOutputRequest(*config, req));
+
     if (auto runtime = RuntimeSuite::inst().get(config->platform())) {
       tensorflow::Status status;
       {
