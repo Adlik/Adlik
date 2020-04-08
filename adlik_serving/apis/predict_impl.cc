@@ -101,19 +101,17 @@ tensorflow::Status postProcessOutputs(const PredictRequest& req,
   return tensorflow::Status::OK();
 }
 
-tensorflow::Status checkOutputRequest(const ModelConfig& modelConfig, const PredictRequest& request) {
-  const auto& modelOutputs = modelConfig.output();
-  const auto firstModelOutput = modelOutputs.begin();
-  const auto lastModelOutput = modelOutputs.end();
+tensorflow::Status checkOutputRequest(const ModelConfig& model_config, const PredictRequest& request) {
+  const auto& model_outputs = model_config.output();
+  const auto first = model_outputs.begin();
+  const auto last = model_outputs.end();
 
-  auto isInvalidOutput = [&](const std::string& name) {
-    return std::find_if(firstModelOutput, lastModelOutput, [&](const ModelOutput& output) {
-             return output.name() == name;
-           }) == lastModelOutput;
+  auto is_invalid_output = [&](const std::string& name) {
+    return std::find_if(first, last, [&](const ModelOutput& output) { return output.name() == name; }) == last;
   };
 
   for (const auto& output : request.output_filter()) {
-    if (isInvalidOutput(output.first)) {
+    if (is_invalid_output(output.first)) {
       return tensorflow::errors::InvalidArgument("Output ", output.first, " does not exist");
     }
   }
