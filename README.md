@@ -135,6 +135,18 @@ Assume builing with CUDA version 10.0.
            --incompatible_use_specific_tool_files=false
    ```
 
+#### Build serving with TensorFlow Lite CPU runtime
+
+Run the following command:
+
+```sh
+bazel build //adlik_serving \
+    --config=tensorflow-lite-cpu \
+    -c opt \
+    --incompatible_no_support_tools_in_action_inputs=false \
+    --incompatible_disable_nocopts=false
+```
+
 #### Build serving with TensorRT runtime
 
 Assume building with CUDA version 10.0.
