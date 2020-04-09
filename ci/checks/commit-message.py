@@ -8,14 +8,14 @@ import subprocess
 
 
 def main():
-    subject_regex = re.compile(r'[^a-z\s]\S*( \S+)*[^.]')
+    subject_regex = re.compile(r'[^a-z\s]\S*( \S+)*')
     has_failure = False
 
     commit_messages = subprocess.check_output(args=['git', 'log', '--format=%s', 'origin/master..'],
                                               universal_newlines=True)
 
     for subject in commit_messages.splitlines():
-        if subject_regex.fullmatch(subject):
+        if subject_regex.fullmatch(subject) and not subject.endswith('.'):
             print('Valid commit message subject:', subject)
         else:
             has_failure = True
