@@ -69,7 +69,7 @@ struct FlatTfLiteTensorTools {
       return tensorflow::Status::OK();
     }
 
-    void commit([[maybe_unused]] TfLiteTensor& tfLiteTensor) noexcept {
+    void commit(TfLiteTensor&) noexcept {
     }
 
     void reset() noexcept {
@@ -182,8 +182,7 @@ struct TfLiteTensorTools<TfLiteType::kTfLiteString> {
     }
 
   public:
-    tensorflow::Status writeTensorProto(const tensorflow::TensorProto& tensorProto,
-                                        [[maybe_unused]] TfLiteTensor& tfLiteTensor) {
+    tensorflow::Status writeTensorProto(const tensorflow::TensorProto& tensorProto, TfLiteTensor&) {
       const auto& dims = tensorProto.tensor_shape().dim();
 
       const auto numElements = static_cast<size_t>(
@@ -263,9 +262,9 @@ struct TfLiteTensorTools<TfLiteType::kTfLiteInt16>
 };
 
 template <>
-class TfLiteTensorTools<TfLiteType::kTfLiteComplex64>
-    : public FlatTfLiteTensorTools<TfLiteTensorTools<TfLiteType::kTfLiteComplex64>,
-                                   tensorflow::DataType::DT_COMPLEX64> {
+struct TfLiteTensorTools<TfLiteType::kTfLiteComplex64>
+    : FlatTfLiteTensorTools<TfLiteTensorTools<TfLiteType::kTfLiteComplex64>, tensorflow::DataType::DT_COMPLEX64> {
+private:
   class Complex64Values {
     class Iterator {
       const float* p;
@@ -391,7 +390,7 @@ decltype(auto) useTfLiteTensorTools(TfLiteType type, F&& f) {
 }
 
 class TfLiteTensorWriter {
-  absl::variant<TfLiteTensorTools<TfLiteType::kTfLiteNoType>::Writer,
+  absl::variant</* TfLiteTensorTools<TfLiteType::kTfLiteNoType>::Writer, */
                 TfLiteTensorTools<TfLiteType::kTfLiteFloat32>::Writer,
                 TfLiteTensorTools<TfLiteType::kTfLiteInt32>::Writer,
                 TfLiteTensorTools<TfLiteType::kTfLiteUInt8>::Writer,
@@ -428,7 +427,7 @@ public:
 };
 
 class TfLiteTensorReader {
-  absl::variant<TfLiteTensorTools<TfLiteType::kTfLiteNoType>::Reader,
+  absl::variant</* TfLiteTensorTools<TfLiteType::kTfLiteNoType>::Reader, */
                 TfLiteTensorTools<TfLiteType::kTfLiteFloat32>::Reader,
                 TfLiteTensorTools<TfLiteType::kTfLiteInt32>::Reader,
                 TfLiteTensorTools<TfLiteType::kTfLiteUInt8>::Reader,

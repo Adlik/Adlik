@@ -9,8 +9,7 @@
 #include "cub/base/fwddecl.h"
 #include "cub/base/keywords.h"
 #include "cub/cli/option_subscriber.h"
-
-FWD_DECL_STRUCT(grpc, ServerBuilder)
+#include "grpcpp/server_builder.h"
 
 namespace adlik {
 namespace serving {

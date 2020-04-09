@@ -29,7 +29,6 @@ serving_cc_library(
         "//cub/base:hash",
         "//cub/dci",
         "@org_tensorflow//tensorflow/cc/saved_model:tag_constants",
-        "@org_tensorflow//tensorflow/contrib/session_bundle:bundle_shim",
         "@org_tensorflow//tensorflow/core:framework",
     ],
 )

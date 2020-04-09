@@ -45,6 +45,7 @@ serving_cc_test(
     srcs = [
         "tensor_utilities_test.cc",
     ],
+    linkstatic = 1,
     deps = [
         ":tensorflow_lite_runtime_impl",
         "@com_google_googletest//:gtest_main",

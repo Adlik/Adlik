@@ -4,9 +4,9 @@
 Adlik serving dependencies
 """
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
 load("//third_party/openvino:openvino_configure.bzl", "openvino_configure")
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 def adlik_serving_workspace():
     """All Adlik serving external dependencies."""
@@ -14,17 +14,6 @@ def adlik_serving_workspace():
     openvino_configure(name = "local_config_openvino")
 
     tf_workspace(path_prefix = "", tf_repo_name = "org_tensorflow")
-
-    # ===== gRPC dependencies =====
-    native.bind(
-        name = "libssl",
-        actual = "@boringssl//:ssl",
-    )
-
-    native.bind(
-        name = "zlib",
-        actual = "@zlib_archive//:zlib",
-    )
 
     http_archive(
         name = "com_github_libevent_libevent",

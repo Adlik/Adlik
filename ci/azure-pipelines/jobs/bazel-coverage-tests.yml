@@ -14,6 +14,8 @@ jobs:
       - template: ../steps/install-bazel.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
+      - script: pip install -U six
+        displayName: Install additional dependencies
       - template: ../steps/use-build-cache.yml
         parameters:
             key: bazel-coverage-tests
@@ -22,12 +24,11 @@ jobs:
             ci/checks/bazel-coverage-tests.py \
                 --instrument_test_targets \
                 -c dbg \
-                --disk_cache="$BAZEL_BUILD_CACHE" \
-                --incompatible_disable_nocopts=false
+                --disk_cache="$BAZEL_BUILD_CACHE"
         displayName: Bazel coverage tests
+        continueOnError: true
       - task: PublishTestResults@2
         displayName: Publish test results
-        condition: eq(variables['Agent.OS'], 'Linux')
         inputs:
             testResultsFiles: bazel-testlogs/**/test.xml
             mergeTestResults: true
@@ -49,8 +50,9 @@ jobs:
         inputs:
             codeCoverageTool: Cobertura
             summaryFileLocation: Cobertura-demangled.xml
-      # - task: PublishCodeCoverageResults@2
-      #   displayName: Publish coverage results
-      #   condition: eq(variables['Agent.OS'], 'Linux')
-      #   inputs:
-      #       summaryFileLocation: bazel-testlogs/**/coverage.dat
+      - task: PublishCodeCoverageResults@2
+        displayName: Publish coverage results
+        condition: eq(variables['Agent.OS'], 'Linux')
+        enabled: false
+        inputs:
+            summaryFileLocation: bazel-testlogs/**/coverage.dat

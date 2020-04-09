@@ -12,14 +12,12 @@ from setuptools import find_packages, setup
 _VERSION = '0.0.0'
 
 _REQUIRED_PACKAGES = [
-    'keras==2.2.4',
-    'protobuf==3.6.1',
+    'keras==2.3.1',
     'onnx==1.5.0',
-    'torch==1.1.0',
-    'torchvision==0.3.0',
+    'torch==1.4.0',
     'requests',
-    'tensorflow==1.14.0',
-    'jsonschema==3.1.1',
+    'tensorflow==2.1.0',
+    'jsonschema==3.2.0',
 ]
 
 _TEST_REQUIRES = [
@@ -43,5 +41,4 @@ setup(
     package_data={
         'model_compiler': ['*.json']
     },
-
 )

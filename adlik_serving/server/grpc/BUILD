@@ -11,7 +11,7 @@ serving_proto_library(
     srcs = ["ssl_config.proto"],
     cc_api_version = 2,
     deps = [
-        "@protobuf_archive//:cc_wkt_protos",
+        "@com_google_protobuf//:cc_wkt_protos",
     ],
 )
 
@@ -25,7 +25,7 @@ serving_cc_library(
         "//cub/cli:option_subscriber",
         "//cub/cli:program_options",
         "//cub/protobuf:text_protobuf",
-        "@grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++",
     ],
 )
 
@@ -38,7 +38,7 @@ serving_cc_library(
         "//adlik_serving/apis:predict_impl",
         "//adlik_serving/apis:predict_service_proto",
         "//cub/dci",
-        "@grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++",
     ],
 )
 
@@ -50,7 +50,7 @@ serving_cc_library(
         "//adlik_serving/apis:task_op_impl",
         "//adlik_serving/apis:task_service_proto",
         "//cub/dci",
-        "@grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++",
     ],
 )
 
@@ -63,6 +63,6 @@ serving_cc_library(
         ":grpc_service",
         ":task_service",
         "//cub/base:assertions",
-        "@grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++",
     ],
 )
