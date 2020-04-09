@@ -88,12 +88,13 @@ cub::StatusWrapper MLModel::run(const CreateTaskRequest& request, CreateTaskResp
 
   cub::SimpleExecutor executor;
   executor.schedule(f);
-  auto timeout_ms = request.timeout_seconds() == 0 ? ULONG_MAX : request.timeout_seconds() * 1000;
-  auto notified = notification.wait(timeout_ms);
-  if (!notified) {
-    is_timeout = true;
-  }
 
+  if (request.timeout_seconds() != 0) {
+    auto notified = notification.wait(request.timeout_seconds() * 1000);
+    if (!notified) {
+      is_timeout = true;
+    }
+  }
   notification.wait();
 
   {
