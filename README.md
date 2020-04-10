@@ -137,9 +137,7 @@ Run the following command:
 ```sh
 bazel build //adlik_serving \
     --config=tensorflow-lite-cpu \
-    -c opt \
-    --incompatible_no_support_tools_in_action_inputs=false \
-    --incompatible_disable_nocopts=false
+    -c opt
 ```
 
 #### Build serving with TensorRT runtime
