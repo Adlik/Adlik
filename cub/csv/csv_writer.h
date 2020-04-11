@@ -8,19 +8,26 @@
 #include <string>
 #include <vector>
 
+#include "cub/csv/dialect.h"
+
 namespace cub {
 
 struct CSVWriter {
   using Row = std::vector<std::string>;
 
-  CSVWriter(const std::string&, const std::string& delm = ",");
+  CSVWriter(const std::string&);
+
+  Dialect& configureDialect();
 
   void writeRow(const Row&);
 
 private:
+  void writerHeader();
+
   const std::string file_name;
-  const std::string delimeter;
   std::ofstream stream;
+  Dialect dialect;
+  bool written_header;
 };
 
 }  // namespace cub

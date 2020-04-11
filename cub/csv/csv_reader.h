@@ -5,34 +5,50 @@
 #define ADLIK_SERVING_CUB_CSV_CSV_READER_H
 
 #include <fstream>
-#include <functional>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
+#include "cub/csv/dialect.h"
+#include "cub/string/string_view.h"
+
 namespace cub {
 
 struct CSVReader {
-  using Row = std::unordered_map<std::string, std::string>;
-  using RowProcessor = std::function<bool(const Row&)>;
+  using Row = std::unordered_map<StringView, std::string>;
 
-  CSVReader(const std::string&, const std::string& delm = ",");
+  CSVReader(const std::string&);
 
-  bool read();
+  Dialect& configureDialect();
 
-  void close();
-
-  bool getData(RowProcessor);
-
-  std::vector<std::string> col_names();
+  std::vector<std::string> cols();
+  std::vector<Row> rows();
+  bool nextRow(Row&);
 
 private:
+  void checkOpen();
+  void readHeader();
+  bool getLine(std::string&);
+  std::vector<std::string> splitLine(const std::string&) const;
+
   const std::string file_name;
-  const std::string delimeter;
   std::ifstream stream;
-  std::vector<std::string> cols;
+  std::vector<std::string> header;
+  size_t columns;
+  Dialect dialect;
+  bool read_header;
 };
 
 }  // namespace cub
+
+namespace std {
+template <>
+struct hash<cub::StringView> {
+  size_t operator()(const cub::StringView& view) const noexcept {
+    return std::_Hash_bytes(view.data(), view.size(), static_cast<size_t>(0xc70f6907UL));
+  }
+};
+
+}  // namespace std
 
 #endif

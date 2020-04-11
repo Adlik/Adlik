@@ -20,8 +20,6 @@ struct GridCsvSaver {
   bool save(const GridOutput&);
 
 private:
-  void saveHeader();
-
   cub::CSVWriter writer;
 };
 
