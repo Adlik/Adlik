@@ -22,7 +22,8 @@ struct CSVWriter {
   void writeRow(const Row&);
 
 private:
-  void writerHeader();
+  void writeHeader();
+  void writeInternal(const Row&);
 
   const std::string file_name;
   std::ofstream stream;

@@ -17,7 +17,22 @@ struct Helper {
   }
 
   std::string trim(std::string const& input) const {
-    return trimEnabled() ? ltrim(rtrim(input)) : input;
+    if (input.size() == 0) {
+      return input;
+    }
+    std::string output = input;
+    if (output.front() == dialect.quote_character_ && output.back() == dialect.quote_character_) {
+      output.erase(0, 1);
+      output.pop_back();
+      auto pos = output.find(dialect.quote_character_, 0);
+      while (pos != std::string::npos) {
+        if (pos < output.length() - 1 && output[pos + 1] == dialect.quote_character_) {
+          output.erase(pos, 1);
+        }
+        pos = output.find(dialect.quote_character_, pos + 1);
+      }
+    }
+    return trimEnabled() ? ltrim(rtrim(output)) : output;
   }
 
   bool trimEnabled() const {

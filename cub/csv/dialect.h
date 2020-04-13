@@ -29,7 +29,7 @@ struct Dialect {
         double_quote_(true),
         trim_characters_({}),
         header_(true),
-        skip_empty_rows_(false) {
+        skip_empty_rows_(true) {
   }
 
   Dialect& delimiter(const std::string& delimiter) {
