@@ -10,6 +10,8 @@ jobs:
     pool:
         vmImage: $(vmImage)
     timeoutInMinutes: 0
+    variables:
+        disable.coverage.autogenerate: 'true'
     steps:
       - template: ../steps/install-bazel.yml
       - task: UsePythonVersion@0
@@ -56,8 +58,6 @@ jobs:
             codeCoverageTool: Cobertura
             summaryFileLocation: Cobertura-demangled.xml
             reportDirectory: coverage-report
-        env:
-            disable.coverage.autogenerate: 'true'
       - task: PublishCodeCoverageResults@2
         displayName: Publish coverage results
         condition: eq(variables['Agent.OS'], 'Linux')
