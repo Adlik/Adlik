@@ -33,23 +33,31 @@ jobs:
             testResultsFiles: bazel-testlogs/**/test.xml
             mergeTestResults: true
       - task: reportgenerator@4
-        displayName: Generate coverage report
+        displayName: Generate coverage data
         condition: eq(variables['Agent.OS'], 'Linux')
         inputs:
             reports: bazel-testlogs/**/coverage.dat
             targetdir: .
             reporttypes: Cobertura
-        env:
-            disable.coverage.autogenerate: 'true'
       - script: ci/tools/demangle-cobertura.py Cobertura.xml Cobertura-demangled.xml
         displayName: Demangle method names
         condition: eq(variables['Agent.OS'], 'Linux')
+      - task: reportgenerator@4
+        displayName: Generate coverage report
+        condition: eq(variables['Agent.OS'], 'Linux')
+        inputs:
+            reports: Cobertura-demangled.xml
+            targetdir: coverage-report
+            reporttypes: HtmlInline_AzurePipelines
       - task: PublishCodeCoverageResults@1
         displayName: Publish coverage results
         condition: eq(variables['Agent.OS'], 'Linux')
         inputs:
             codeCoverageTool: Cobertura
             summaryFileLocation: Cobertura-demangled.xml
+            reportDirectory: coverage-report
+        env:
+            disable.coverage.autogenerate: 'true'
       - task: PublishCodeCoverageResults@2
         displayName: Publish coverage results
         condition: eq(variables['Agent.OS'], 'Linux')
