@@ -1,4 +1,7 @@
+common --experimental_repo_remote_exec
+
 build --cxxopt=-std=c++14
+build --host_cxxopt=-std=c++14
 
 build --define=grpc_no_ares=true
 build --action_env=PYTHON_BIN_PATH=python3
@@ -41,6 +44,6 @@ build:fpga --cpu=aarch64
 build:fpga --crosstool_top=//third_party/aarch64_compiler:toolchain
 build:fpga --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
 
-# dlib runtime.
+# ML runtime.
 
 build:ml --define=runtime=ml

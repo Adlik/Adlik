@@ -49,9 +49,7 @@ function main() {
   echo $(date) : "=== Building wheel (CPU)"
   python3 setup.py bdist_wheel --universal \
     --project_name adlik-serving-api # >/dev/null
-  # echo $(date) : "=== Building wheel (GPU)"
-  # python3 setup.py bdist_wheel --universal \
-  #   --project_name adlik-serving-api-gpu # >/dev/null
+
   mkdir -p "${DEST}"
   cp dist/* "${DEST}"
   popd

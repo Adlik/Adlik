@@ -14,6 +14,6 @@ cc_library(
         "//cub/base:assertions",
         "//cub/env",
         "//cub/env/fs",
-        "@protobuf_archive//:protobuf_headers",
+        "@com_google_protobuf//:protobuf_headers",
     ],
 )

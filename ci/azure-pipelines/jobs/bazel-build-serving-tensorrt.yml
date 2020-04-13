@@ -9,6 +9,8 @@ jobs:
       - template: ../steps/install-tensorrt.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
+      - script: pip install -U six
+        displayName: Install additional dependencies
       - template: ../steps/use-build-cache.yml
         parameters:
             key: bazel-build-serving-tensorrt
@@ -20,8 +22,6 @@ jobs:
                     -c opt \
                     --disk_cache="$BAZEL_BUILD_CACHE" \
                     --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
-                    --incompatible_no_support_tools_in_action_inputs=false \
-                    --incompatible_disable_nocopts=false \
                     --incompatible_use_specific_tool_files=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1

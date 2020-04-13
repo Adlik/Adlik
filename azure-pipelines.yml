@@ -6,6 +6,7 @@ variables:
     BAZEL_BUILD_CACHE: $(Pipeline.Workspace)/__bazel_build_cache
 jobs:
   - template: ci/azure-pipelines/jobs/bazel-build-clients.yml
+  - template: ci/azure-pipelines/jobs/bazel-build-serving-ml.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-openvino.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-cpu.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-gpu.yml
@@ -18,4 +19,3 @@ jobs:
   - template: ci/azure-pipelines/jobs/copyright.yml
   - template: ci/azure-pipelines/jobs/flake8.yml
   - template: ci/azure-pipelines/jobs/tox-model-compiler.yml
-  - template: ci/azure-pipelines/jobs/bazel-build-serving-ml.yml

@@ -14,6 +14,8 @@ jobs:
       - template: ../steps/install-bazel.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
+      - script: pip install -U six
+        displayName: Install additional dependencies
       - template: ../steps/use-build-cache.yml
         parameters:
             key: bazel-build-serving-tensorflow-lite-cpu
@@ -22,9 +24,7 @@ jobs:
             ci/checks/bazel-build-serving.py \
                 --config=tensorflow-lite-cpu \
                 -c opt \
-                --disk_cache="$BAZEL_BUILD_CACHE" \
-                --incompatible_no_support_tools_in_action_inputs=false \
-                --incompatible_disable_nocopts=false
+                --disk_cache="$BAZEL_BUILD_CACHE"
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
