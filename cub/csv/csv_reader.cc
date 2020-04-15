@@ -288,7 +288,7 @@ bool CSVReader::getLine(std::string& line) {
   if (std::getline(stream, line)) {
     if (line.size() > 0 && line[line.size() - 1] == '\r')
       line.pop_back();
-    line.push_back('\n');
+    line.push_back(dialect.line_terminator_);
     return true;
   } else {
     return false;
