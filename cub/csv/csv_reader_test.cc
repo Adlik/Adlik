@@ -401,6 +401,9 @@ TEST("read a csv which use CRLF as line terminator") {
   ASSERT_EQ(rows[0]["a"], "1");
   ASSERT_EQ(rows[0]["b"], "2");
   ASSERT_EQ(rows[0]["c"], "3");
+  ASSERT_EQ(rows[1]["a"], "4");
+  ASSERT_EQ(rows[1]["b"], "5");
+  ASSERT_EQ(rows[1]["c"], "6");
 }
 }
 ;
