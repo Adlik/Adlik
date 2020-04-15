@@ -4,9 +4,7 @@
 #include "cub/csv/csv_reader.h"
 
 #include <algorithm>
-
-#include "cub/log/log.h"
-#include "cub/string/str_utils.h"
+#include <sstream>
 
 namespace cub {
 
@@ -286,8 +284,10 @@ bool CSVReader::readInternal(std::vector<std::string>& result) {
 
 bool CSVReader::getLine(std::string& line) {
   if (std::getline(stream, line)) {
-    if (line.size() > 0 && line[line.size() - 1] == '\r')
+    if (line.size() > 0 && line[line.size() - 1] == '\r') {
       line.pop_back();
+    }
+
     line.push_back(dialect.line_terminator_);
     return true;
   } else {

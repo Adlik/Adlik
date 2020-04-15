@@ -235,6 +235,19 @@ TEST("read with double quotes which doublequote is false") {
   ASSERT_EQ(cols[2], "Special rate \"1.79\"\"\"");
 }
 
+TEST("read file which contains null field enclosed by quote") {
+  CSVReader csv(TEST_FILE("test_08.csv"));
+
+  auto rows = csv.rows();
+  ASSERT_EQ(rows.size(), 2);
+  ASSERT_EQ(rows[0]["a"], "");
+  ASSERT_EQ(rows[0]["b"], "2");
+  ASSERT_EQ(rows[0]["c"], "");
+  ASSERT_EQ(rows[1]["a"], "4");
+  ASSERT_EQ(rows[1]["b"], "");
+  ASSERT_EQ(rows[1]["c"], "6");
+}
+
 TEST("read csv with empty lines and skip empty rows") {
   CSVReader csv(TEST_FILE("empty_lines.csv"));
   csv.configureDialect().skip_empty_rows(true);
@@ -377,6 +390,15 @@ TEST("read a csv where double quotes do not match but doublequote is false") {
 
   auto rows = csv.rows();
   ASSERT_EQ(rows[0]["a"], "1\"");
+  ASSERT_EQ(rows[0]["b"], "2");
+  ASSERT_EQ(rows[0]["c"], "3");
+}
+
+TEST("read a csv which use CRLF as line terminator") {
+  CSVReader csv(TEST_FILE("contains_CRLF.csv"));
+
+  auto rows = csv.rows();
+  ASSERT_EQ(rows[0]["a"], "1");
   ASSERT_EQ(rows[0]["b"], "2");
   ASSERT_EQ(rows[0]["c"], "3");
 }

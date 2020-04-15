@@ -25,8 +25,7 @@ cc_library(
     ],
     deps = [
         ":dialect",
-        "//cub/log",
-        "//cub/string:str_utils",
+        "//cub/string:string_view",
     ],
 )
 
@@ -40,7 +39,6 @@ cc_library(
     ],
     deps = [
         ":dialect",
-        "//cub/string:str_utils",
     ],
 )
 
@@ -57,7 +55,7 @@ cc_library(
         "test_util.h",
     ],
     deps = [
-        "//cub/env/posix",
+        "//cub/env/fs:path",
     ],
 )
 
@@ -74,7 +72,6 @@ cc_test(
         ":csv_reader",
         ":csv_writer",
         ":test_util",
-        "//cub/env/posix",
         "@xunit_cut//:cut",
         "@xunit_cut//:cut_main",
     ],

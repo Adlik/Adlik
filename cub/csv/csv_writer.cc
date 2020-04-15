@@ -3,8 +3,6 @@
 
 #include "cub/csv/csv_writer.h"
 
-#include "cub/string/str_utils.h"
-
 namespace cub {
 
 CSVWriter::CSVWriter(const std::string& file_name) : file_name(file_name), written_header(false) {
