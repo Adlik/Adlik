@@ -12,58 +12,152 @@ namespace cub {
 
 namespace {
 
-struct Helper {
-  Helper(const Dialect& dialect) : dialect(dialect) {
+struct TrimHelper {
+  TrimHelper(const std::vector<char>& trim_characters) : trim_characters(trim_characters) {
   }
 
   std::string trim(std::string const& input) const {
     if (input.size() == 0) {
       return input;
     }
-    std::string output = input;
-    if (output.front() == dialect.quote_character_ && output.back() == dialect.quote_character_) {
-      output.erase(0, 1);
-      output.pop_back();
-      auto pos = output.find(dialect.quote_character_, 0);
-      while (pos != std::string::npos) {
-        if (pos < output.length() - 1 && output[pos + 1] == dialect.quote_character_) {
-          output.erase(pos, 1);
-        }
-        pos = output.find(dialect.quote_character_, pos + 1);
-      }
-    }
-    return trimEnabled() ? ltrim(rtrim(output)) : output;
+    return trim_characters.size() ? ltrim(rtrim(input)) : input;
   }
 
-  bool trimEnabled() const {
-    return dialect.trim_characters_.size() > 0;
-  }
-
-  std::string ltrim(std::string const& input) const {
+private:
+  std::string ltrim(const std::string& input) const {
     std::string result = input;
     result.erase(result.begin(), std::find_if(result.begin(), result.end(), [=](int ch) {
-                   return !(std::find(dialect.trim_characters_.begin(), dialect.trim_characters_.end(), ch) !=
-                            dialect.trim_characters_.end());
+                   return !(std::find(trim_characters.begin(), trim_characters.end(), ch) != trim_characters.end());
                  }));
     return result;
   }
 
-  std::string rtrim(std::string const& input) const {
+  std::string rtrim(const std::string& input) const {
     std::string result = input;
     result.erase(
         std::find_if(result.rbegin(),
                      result.rend(),
                      [=](int ch) {
-                       return !(std::find(dialect.trim_characters_.begin(), dialect.trim_characters_.end(), ch) !=
-                                dialect.trim_characters_.end());
+                       return !(std::find(trim_characters.begin(), trim_characters.end(), ch) != trim_characters.end());
                      })
             .base(),
         result.end());
     return result;
   }
 
+  const std::vector<char>& trim_characters;
+};
+
+struct Field {
+  Field(const Dialect& dialect) : dialect(dialect) {
+  }
+
+  enum State { INIT, COMMON_WAIT, START_WITH_QUOTE, WAIT_NEXT_QUOTE, WAIT_END_QUOTE, END };
+
+  void append(const char ch, const char next) {
+#define DO_ON_STATE(current, func) \
+  {                                \
+    case current: {                \
+      func(ch, next);              \
+      break;                       \
+    }                              \
+  }
+    switch (state) {
+      DO_ON_STATE(INIT, onInit)
+      DO_ON_STATE(COMMON_WAIT, onCommonWait)
+      DO_ON_STATE(START_WITH_QUOTE, onStartWithQuote)
+      DO_ON_STATE(WAIT_NEXT_QUOTE, onWaitNextQuote)
+      DO_ON_STATE(WAIT_END_QUOTE, onWaitEndQuote)
+      default:
+        return;
+    }
+  }
+
+  void reset() {
+    state = INIT;
+    result.clear();
+  }
+
+  bool done() const {
+    return state == END || state == INIT;
+  }
+
+  std::string toString() const {
+    return TrimHelper(dialect.trim_characters_).trim(result);
+  }
+
+private:
+  void onInit(const char ch, const char) {
+    if (isEndChar(ch)) {
+      state = END;
+    } else if (isQuote(ch)) {
+      state = START_WITH_QUOTE;
+    } else if (ch == ' ' && dialect.skip_initial_space_) {  // do nothing
+    } else {
+      result += ch;
+      state = COMMON_WAIT;
+    }
+  }
+
+  void onCommonWait(const char ch, const char) {
+    if (isEndChar(ch)) {
+      state = END;
+    } else {
+      result += ch;
+    }
+  }
+
+  void onStartWithQuote(const char ch, const char) {
+    result += ch;
+    state = isQuote(ch) ? WAIT_NEXT_QUOTE : WAIT_END_QUOTE;
+  }
+
+  void onWaitNextQuote(const char ch, const char) {
+    if (isQuote(ch)) {
+      // two consecutive quotes = one quote, don't need push
+      state = WAIT_END_QUOTE;
+    } else if (isEndChar(ch)) {
+      result.pop_back();
+      state = END;
+    } else {
+      result.pop_back();
+      result += ch;
+      state = COMMON_WAIT;
+    }
+  }
+
+  void onWaitEndQuote(const char ch, const char next) {
+    if (isQuote(ch)) {
+      if (dialect.double_quote_) {
+        if (next == 0) {
+          state = END;
+        } else if (isEndChar(next)) {
+          state = COMMON_WAIT;
+        } else {
+          result += ch;
+          state = WAIT_NEXT_QUOTE;
+        }
+      } else {
+        state = COMMON_WAIT;
+      }
+    } else {
+      result += ch;
+    }
+  }
+
+  bool isEndChar(const char ch) const {
+    return ch == dialect.delimiter_ || ch == dialect.line_terminator_;
+  }
+
+  bool isQuote(const char ch) const {
+    return ch == dialect.quote_character_;
+  }
+
+  State state = INIT;
+  std::string result;
   const Dialect& dialect;
 };
+
 }  // namespace
 
 CSVReader::CSVReader(const std::string& filename)
@@ -100,11 +194,9 @@ bool CSVReader::nextRow(Row& row) {
     read_header = true;
   }
 
-  std::string line = "";
-  if (getLine(line)) {
-    auto elements = splitLine(line);
-    for (auto key = header.begin(), value = elements.begin(); key != header.end() && value != elements.end();
-         ++key, ++value) {
+  std::vector<std::string> line;
+  if (readInternal(line)) {
+    for (auto key = header.begin(), value = line.begin(); key != header.end() && value != line.end(); ++key, ++value) {
       row.insert({*key, *value});
     }
     return true;
@@ -125,107 +217,82 @@ void CSVReader::readHeader() {
   checkOpen();
 
   if (dialect.header_) {
-    std::string line = "";
-    if (getLine(line)) {
-      header = splitLine(line);
-    }
+    readInternal(header);
   } else if (dialect.column_names_.size() > 0) {
     header = dialect.column_names_;
   } else {
-    std::string line = "";
-    getLine(line);
-    stream.seekg(0);  // skip to the beginning of file
-    auto elements = splitLine(line);  // just use the number of fields
+    std::vector<std::string> elements;
+    readInternal(elements);  // just use the number of fields to name header
     for (size_t i = 0; i < elements.size(); ++i) {
       header.push_back(std::to_string(i));
     }
+
+    stream.seekg(0);  // Note: skip to the beginning of the file because there is no header in the file
   }
   columns = header.size();
+}
+
+// return true means read a complete row, return false means no line to read and reach the file end.
+// It will throw a runtime error if reach the end but field not completed
+bool CSVReader::readInternal(std::vector<std::string>& result) {
+  result.clear();
+
+  Field current_field(dialect);
+
+  auto empty = [&](const std::string& input) {
+    return input.empty() || (input.size() == 1 && input[0] == dialect.line_terminator_);
+  };
+
+  auto func = [&](const std::string& input) {
+    for (size_t i = 0; i < input.length(); ++i) {
+      current_field.append(input[i], i == input.length() - 1 ? 0 : input[i + 1]);
+      if (current_field.done()) {
+        result.push_back(current_field.toString());
+        current_field.reset();
+      }
+    }
+    return current_field.done();
+  };
+
+  bool first_line = true;
+  std::string line;
+  while (getLine(line)) {
+    if (first_line && empty(line) && dialect.skip_empty_rows_) {
+      continue;
+    }
+    if (func(line)) {
+      // complete all columns
+      if (result.size() < columns) {
+        for (size_t i = result.size(); i < columns; i++) {
+          result.push_back("");
+        }
+      } else if (result.size() > columns && columns != 0) {
+        result.resize(columns);
+      }
+      return true;
+    }
+    first_line = false;
+  }
+
+  // reach the file end
+  if (current_field.done()) {
+    return false;
+  }
+  // reach the end but field not complete
+  std::ostringstream oss;
+  oss << "EOF inside string starting at row " << std::endl;
+  throw std::runtime_error(oss.str());
 }
 
 bool CSVReader::getLine(std::string& line) {
   if (std::getline(stream, line)) {
     if (line.size() > 0 && line[line.size() - 1] == '\r')
       line.pop_back();
-    if (line.size() == 0 && dialect.skip_empty_rows_) {
-      return getLine(line);
-    }
+    line.push_back('\n');
     return true;
   } else {
     return false;
   }
-}
-
-std::vector<std::string> CSVReader::splitLine(const std::string& line) const {
-  std::vector<std::string> result;
-
-  if (line.length() == 0) {
-    result.assign(columns, "");
-    return std::move(result);
-  }
-
-  size_t quotes_encountered = 0;
-  std::string sub_result = "";
-
-  for (size_t i = 0; i < line.length(); ++i) {
-    bool delimiter_detected = false;
-    for (size_t j = 0; j < dialect.delimiter_.size(); ++j) {
-      char ch = line[i];
-      if (ch != dialect.delimiter_[j]) {
-        delimiter_detected = false;
-        break;
-      } else {
-        // ch *might* be the start of a delimiter sequence
-        if (j + 1 == dialect.delimiter_.size()) {
-          if (quotes_encountered % 2 == 0) {
-            delimiter_detected = true;
-            result.push_back(Helper(dialect).trim(sub_result));  // maybe should trim the field
-            sub_result = "";
-
-            // If enabled, skip initial space right after delimiter
-            if (i + 1 < line.length()) {
-              if (dialect.skip_initial_space_ && line[i + 1] == ' ') {
-                i = i + 1;
-              }
-            }
-            quotes_encountered = 0;
-          } else {
-            sub_result += line[i];
-            i = i + 1;
-            if (i == line.length())
-              break;
-          }
-        } else {
-          i = i + 1;
-          if (i == line.length())
-            break;
-        }
-      }
-    }
-
-    if (!delimiter_detected)
-      sub_result += line[i];
-
-    if (line[i] == dialect.quote_character_)
-      quotes_encountered += 1;
-    if (line[i] == dialect.quote_character_ && dialect.double_quote_ && sub_result.size() >= 2 &&
-        sub_result[sub_result.size() - 2] == line[i])
-      quotes_encountered -= 1;
-  }
-
-  if (sub_result != "") {
-    result.push_back(Helper(dialect).trim(sub_result));
-  }
-
-  if (result.size() < columns) {
-    for (size_t i = result.size(); i < columns; i++) {
-      result.push_back("");
-    }
-  } else if (result.size() > columns && columns != 0) {
-    result.resize(columns);
-  }
-
-  return std::move(result);
 }
 
 }  // namespace cub

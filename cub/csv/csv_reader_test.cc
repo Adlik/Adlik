@@ -9,7 +9,7 @@
 using namespace cum;
 
 namespace cub {
-#if 0
+
 FIXTURE(CSVReaderTest){TEST("read an empty csv"){CSVReader csv(TEST_FILE("empty.csv"));
 ASSERT_EQ(0, csv.rows().size());
 ASSERT_EQ(0, csv.cols().size());
@@ -60,21 +60,6 @@ TEST("read the most basic csv file correctly with nextRow interface") {
   ASSERT_EQ(rows[1]["c"], "6");
 }
 
-TEST("read the most basic csv file with ', ' delimiter") {
-  CSVReader csv(TEST_FILE("test_02.csv"));
-  csv.configureDialect().delimiter(", ");
-
-  auto rows = csv.rows();
-  ASSERT_EQ(rows.size(), 2);
-
-  ASSERT_EQ(rows[0]["a"], "1");
-  ASSERT_EQ(rows[0]["b"], "2");
-  ASSERT_EQ(rows[0]["c"], "3");
-  ASSERT_EQ(rows[1]["a"], "4");
-  ASSERT_EQ(rows[1]["b"], "5");
-  ASSERT_EQ(rows[1]["c"], "6");
-}
-
 TEST("read the most basic csv file with ',' delimiter and not trim space") {
   CSVReader csv(TEST_FILE("test_02.csv"));
   auto rows = csv.rows();
@@ -103,9 +88,9 @@ TEST("read the most basic csv file with ',' delimiter and trim space") {
   ASSERT_EQ(rows[1]["c"], "6");
 }
 
-TEST("read the most basic csv file with '::' delimiter") {
+TEST("read the most basic csv file with ':' delimiter") {
   CSVReader csv(TEST_FILE("test_03.csv"));
-  csv.configureDialect().delimiter("::");
+  csv.configureDialect().delimiter(':');
 
   auto rows = csv.rows();
   ASSERT_EQ(rows.size(), 2);
@@ -180,7 +165,7 @@ TEST("read the csv file which has no header but custom config header") {
 
 TEST("read the csv file whose field has whitespace") {
   CSVReader csv(TEST_FILE("test_10.csv"));
-  csv.configureDialect().delimiter("::").trim_characters(' ', '[', ']');
+  csv.configureDialect().delimiter(':').trim_characters(' ', '[', ']');
 
   auto rows = csv.rows();
 
@@ -234,6 +219,20 @@ TEST("read headers with pairs of single-quotes") {
   ASSERT_EQ(cols[0], "Free trip to A,B");
   ASSERT_EQ(cols[1], "'5.89'");
   ASSERT_EQ(cols[2], "Special rate '1.79'");
+}
+
+TEST("read with double quotes which doublequote is false") {
+  CSVReader csv(TEST_FILE("test_06.csv"));
+  csv.configureDialect().double_quote(false);
+
+  auto rows = csv.rows();
+  ASSERT_EQ(rows.size(), 0);
+
+  auto cols = csv.cols();
+  ASSERT_EQ(cols.size(), 3);
+  ASSERT_EQ(cols[0], "Free trip to A,B");
+  ASSERT_EQ(cols[1], "5.89");
+  ASSERT_EQ(cols[2], "Special rate \"1.79\"\"\"");
 }
 
 TEST("read csv with empty lines and skip empty rows") {
@@ -303,7 +302,7 @@ TEST("read csv with missing columns") {
 TEST("read csv with missing columns 2") {
   CSVReader csv(TEST_FILE("missing_columns_2.csv"));
 
-  csv.configureDialect().delimiter(";");
+  csv.configureDialect().delimiter(';');
 
   auto rows = csv.rows();
   ASSERT_EQ(rows.size(), 6);
@@ -330,7 +329,7 @@ TEST("read csv with missing columns 2") {
 TEST("read csv with too many columns") {
   CSVReader csv(TEST_FILE("too_many_columns.csv"));
 
-  csv.configureDialect().delimiter(",").trim_characters(' ');
+  csv.configureDialect().delimiter(',').trim_characters(' ');
 
   auto rows = csv.rows();
   ASSERT_EQ(rows.size(), 2);
@@ -342,7 +341,7 @@ TEST("read csv with too many columns") {
   ASSERT_EQ(rows[1]["c"], "");
 }
 
-TEST("read csv whose field contains ','") {
+TEST("read csv whose field contains delimeter") {
   CSVReader csv(TEST_FILE("contains_comma.csv"));
   auto rows = csv.rows();
   ASSERT_EQ(rows.size(), 1);
@@ -351,26 +350,37 @@ TEST("read csv whose field contains ','") {
   ASSERT_EQ(rows[0]["c"], "3");
 }
 
-TEST("read a csv which allows odd double quotes") {
-  CSVReader csv(TEST_FILE("bad.csv"));
+TEST("read csv whose field contains line terminator") {
+  CSVReader csv(TEST_FILE("contains_terminator.csv"));
   auto rows = csv.rows();
   ASSERT_EQ(rows.size(), 1);
+  ASSERT_EQ(rows[0]["a"], "1");
+  ASSERT_EQ(rows[0]["b"], "2,\n4,\n5");
+  ASSERT_EQ(rows[0]["c"], "3");
+}
 
+TEST("read a csv where double quotes do not match") {
+  CSVReader csv(TEST_FILE("bad.csv"));
+
+  bool exception_thrown = false;
+  try {
+    auto rows = csv.rows();
+  } catch (std::exception&) {
+    exception_thrown = true;
+  }
+  ASSERT_TRUE(exception_thrown);
+}
+
+TEST("read a csv where double quotes do not match but doublequote is false") {
+  CSVReader csv(TEST_FILE("bad.csv"));
+  csv.configureDialect().double_quote(false);
+
+  auto rows = csv.rows();
   ASSERT_EQ(rows[0]["a"], "1\"");
   ASSERT_EQ(rows[0]["b"], "2");
   ASSERT_EQ(rows[0]["c"], "3");
 }
-
-TEST("read a csv which doesn't allow odd double quotes") {
-  CSVReader csv(TEST_FILE("bad.csv"));
-  csv.configureDialect().double_quote(false);
-  auto rows = csv.rows();
-  ASSERT_EQ(rows.size(), 1);
-  ASSERT_EQ(rows[0]["a"], "\"1\"\",2,3");
-  ASSERT_EQ(rows[0]["b"], "");
-  ASSERT_EQ(rows[0]["c"], "");
-}
 }
 ;
-#endif
+
 }  // namespace cub

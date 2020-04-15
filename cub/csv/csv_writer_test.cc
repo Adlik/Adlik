@@ -11,7 +11,9 @@ using namespace cum;
 
 namespace cub {
 
-FIXTURE(CSVWriterTest){TEST("writer csv with header"){auto file_path = TEST_FILE("output_01.csv");
+FIXTURE(CSVWriterTest){
+
+    TEST("writer csv with header"){auto file_path = TEST_FILE("output_01.csv");
 {
   CSVWriter csv(file_path);
   csv.configureDialect().column_names({"a", "b", "c"});
@@ -19,10 +21,12 @@ FIXTURE(CSVWriterTest){TEST("writer csv with header"){auto file_path = TEST_FILE
 }
 {
   CSVReader csv(file_path);
-  auto rows = csv.rows();
+
   auto cols = csv.cols();
-  ASSERT_EQ(1, rows.size());
+  auto rows = csv.rows();
+
   ASSERT_EQ(3, cols.size());
+  ASSERT_EQ(1, rows.size());
   ASSERT_EQ(rows[0]["a"], "1");
   ASSERT_EQ(rows[0]["b"], "2");
   ASSERT_EQ(rows[0]["c"], "3");
@@ -99,5 +103,5 @@ TEST("writer csv whose field contains double quote") {
   }
 }
 }
-;
+;  // namespace cub
 }  // namespace cub

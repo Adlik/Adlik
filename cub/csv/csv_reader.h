@@ -1,6 +1,8 @@
 // Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+// The csv format reference https://tools.ietf.org/html/rfc4180
+
 #ifndef ADLIK_SERVING_CUB_CSV_CSV_READER_H
 #define ADLIK_SERVING_CUB_CSV_CSV_READER_H
 
@@ -28,8 +30,8 @@ struct CSVReader {
 private:
   void checkOpen();
   void readHeader();
+  bool readInternal(std::vector<std::string>&);
   bool getLine(std::string&);
-  std::vector<std::string> splitLine(const std::string&) const;
 
   const std::string file_name;
   std::ifstream stream;

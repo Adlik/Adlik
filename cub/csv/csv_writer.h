@@ -1,6 +1,8 @@
 // Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+// The csv format reference https://tools.ietf.org/html/rfc4180
+
 #ifndef CUB_CSV_CSV_WRITER_H
 #define CUB_CSV_CSV_WRITER_H
 

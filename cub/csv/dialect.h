@@ -10,10 +10,12 @@
 namespace cub {
 
 struct Dialect {
-  std::string delimiter_;
+  char delimiter_;
   bool skip_initial_space_;
   char line_terminator_;
   char quote_character_;
+  // Indicate whether or not to interpret two consecutive quotechar elements INSIDE a field as a
+  // single quotechar element.
   bool double_quote_;
   std::vector<char> trim_characters_;
   bool header_;
@@ -22,7 +24,7 @@ struct Dialect {
   std::vector<std::string> column_names_;
 
   Dialect()
-      : delimiter_(","),
+      : delimiter_(','),
         skip_initial_space_(false),
         line_terminator_('\n'),
         quote_character_('"'),
@@ -32,7 +34,7 @@ struct Dialect {
         skip_empty_rows_(true) {
   }
 
-  Dialect& delimiter(const std::string& delimiter) {
+  Dialect& delimiter(const char delimiter) {
     delimiter_ = delimiter;
     return *this;
   }

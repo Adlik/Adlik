@@ -3,8 +3,6 @@
 
 #include "cub/csv/csv_writer.h"
 
-#include <iostream>
-
 #include "cub/string/str_utils.h"
 
 namespace cub {
@@ -27,8 +25,7 @@ void CSVWriter::writeRow(const Row& row) {
 }
 
 void CSVWriter::writeHeader() {
-  auto column_names = dialect.column_names_;
-  if (column_names.size() == 0)
+  if (dialect.column_names_.size() == 0)
     return;
 
   writeInternal(dialect.column_names_);
