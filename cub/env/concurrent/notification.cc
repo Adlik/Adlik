@@ -27,13 +27,13 @@ void Notification::wait() {
   }
 }
 
-bool Notification::wait(int64_t micros) {
+bool Notification::wait(int64_t milliseconds) {
   auto notified = wasNotified();
   if (!notified) {
     cub::AutoLock lock(mu);
     do {
       notified = wasNotified();
-    } while (!notified && !cv.wait(lock, micros));
+    } while (!notified && !cv.wait(lock, milliseconds));
   }
   return notified;
 }
