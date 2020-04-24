@@ -15,7 +15,7 @@ struct Notification {
   ~Notification();
 
   void wait();
-  bool wait(int64_t micros);
+  bool wait(int64_t milliseconds);
   void notify();
   bool wasNotified() const;
 
