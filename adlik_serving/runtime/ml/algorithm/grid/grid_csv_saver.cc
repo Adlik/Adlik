@@ -8,7 +8,7 @@
 namespace ml_runtime {
 
 GridCsvSaver::GridCsvSaver(const std::string& path) : writer(path) {
-  saveHeader();
+  writer.configureDialect().column_names(GridOutput::fieldNames());
 }
 
 bool GridCsvSaver::save(const std::vector<GridOutput>& outputs) {
@@ -22,11 +22,6 @@ bool GridCsvSaver::save(const GridOutput& output) {
   std::vector<std::string> row = output.toString();
   writer.writeRow(row);
   return true;
-}
-
-void GridCsvSaver::saveHeader() {
-  auto header = GridOutput::fieldNames();
-  writer.writeRow(header);
 }
 
 }  // namespace ml_runtime
