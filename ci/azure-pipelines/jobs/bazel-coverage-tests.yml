@@ -27,7 +27,6 @@ jobs:
                 -c dbg \
                 --disk_cache="$BAZEL_BUILD_CACHE"
         displayName: Bazel coverage tests
-        continueOnError: true
       - task: PublishTestResults@2
         displayName: Publish test results
         inputs:
