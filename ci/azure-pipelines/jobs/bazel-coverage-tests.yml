@@ -13,7 +13,6 @@ jobs:
     variables:
         disable.coverage.autogenerate: 'true'
     steps:
-      - template: ../steps/install-bazel.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
       - script: pip install -U six
