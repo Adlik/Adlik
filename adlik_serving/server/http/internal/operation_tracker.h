@@ -5,6 +5,7 @@
 #define ADLIK_SERVING_SERVER_HTTP_INTERNAL_OPERATION_TRACKER_H
 
 #include "absl/synchronization/mutex.h"
+#include "tensorflow/core/platform/thread_annotations.h"
 
 namespace adlik {
 namespace serving {
