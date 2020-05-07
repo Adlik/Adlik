@@ -18,7 +18,7 @@ struct OperationTracker {
 
 private:
   mutable absl::Mutex ops_mu;
-  int64_t num_pending_ops GUARDED_BY(ops_mu) = 0;
+  int64_t num_pending_ops TF_GUARDED_BY(ops_mu) = 0;
 };
 
 }  // namespace serving
