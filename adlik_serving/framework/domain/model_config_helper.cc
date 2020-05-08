@@ -3,6 +3,8 @@
 
 #include "adlik_serving/framework/domain/model_config_helper.h"
 
+#include <algorithm>
+
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/io/path.h"
 #include "tensorflow/core/platform/env.h"
@@ -117,6 +119,7 @@ tensorflow::Status NormalizeModelConfig(ModelConfigProto& config) {
     return tensorflow::errors::Internal(
         "unable to get number of CUDA devices for ", config.name(), ": ", cudaGetErrorString(cuerr));
   }
+
 #endif
 
   // Assign default name, kind and count to each instance group that

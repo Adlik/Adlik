@@ -5,6 +5,7 @@
 #define HCE07E176_4626_4C80_A209_B74B52220F98
 
 #include <functional>
+
 #include "cub/base/status.h"
 
 namespace cub {

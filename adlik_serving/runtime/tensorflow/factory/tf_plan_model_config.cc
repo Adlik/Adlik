@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/factory/tf_plan_model_config.h"
+
 #include "adlik_serving/runtime/tensorflow/factory/tf_plan_model_options.h"
 #include "adlik_serving/runtime/tensorflow/model/plan_model.h"
-
 #include "tensorflow/cc/saved_model/loader.h"
 #include "tensorflow/cc/saved_model/tag_constants.h"
-#include "tensorflow/contrib/session_bundle/bundle_shim.h"
 #include "tensorflow/core/framework/tensor_util.h"
 
 namespace tensorflow {
@@ -36,8 +35,11 @@ inline RunOptions TfPlanModelConfig::getRunOptions() const {
 }
 
 Status TfPlanModelConfig::load(const std::string& path, SavedModelBundle& bundle) const {
-  return serving::LoadSessionBundleOrSavedModelBundle(
-      getSessionOptions(), getRunOptions(), path, getModelTags(), &bundle);
+  if (MaybeSavedModelDirectory(path)) {
+    return LoadSavedModel(getSessionOptions(), getRunOptions(), path, getModelTags(), &bundle);
+  } else {
+    return Status{error::Code::NOT_FOUND, "Specified file path does not appear to contain a `saved_model.pb` file"};
+  }
 }
 
 bool TfPlanModelConfig::batching() const {

@@ -1,0 +1,32 @@
+jobs:
+  - job: BazelBuildServingTensorFlowLiteCPU
+    displayName: Bazel build serving (TensorFlow Lite CPU)
+    strategy:
+        matrix:
+            Linux:
+                vmImage: ubuntu-latest
+            macOS:
+                vmImage: macos-latest
+    pool:
+        vmImage: $(vmImage)
+    timeoutInMinutes: 0
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: pip install -U six
+        displayName: Install additional dependencies
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-tensorflow-lite-cpu
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            ci/checks/bazel-build-serving.py \
+                --config=tensorflow-lite-cpu \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE"
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-tensorflow-lite-cpu ($(Agent.OS))

@@ -6,6 +6,7 @@
 
 #include <map>
 #include <string>
+
 #include "adlik_serving/runtime/tensorflow/batch/tensor_dimension.h"
 
 namespace tensorflow {

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/batch/inferential_batch.h"
+
 #include "adlik_serving/runtime/tensorflow/batch/batching_parameters.h"
 #include "adlik_serving/runtime/tensorflow/batch/merged_dimensions.h"
 #include "adlik_serving/runtime/tensorflow/batch/merged_inputs.h"

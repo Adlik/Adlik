@@ -2,8 +2,8 @@
 Helper wrapper functions
 """
 
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
-load("@protobuf_archive//:protobuf.bzl", "cc_proto_library", "py_proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@com_google_protobuf//:protobuf.bzl", "cc_proto_library", "py_proto_library")
 
 def serving_proto_library(
         name,
@@ -41,9 +41,9 @@ def serving_proto_library(
         name = name,
         srcs = srcs,
         deps = deps,
-        cc_libs = ["@protobuf_archive//:protobuf"],
-        protoc = "@protobuf_archive//:protoc",
-        default_runtime = "@protobuf_archive//:protobuf",
+        cc_libs = ["@com_google_protobuf//:protobuf"],
+        protoc = "@com_google_protobuf//:protoc",
+        default_runtime = "@com_google_protobuf//:protobuf",
         use_grpc_plugin = use_grpc_plugin,
         testonly = testonly,
         visibility = visibility,
@@ -60,9 +60,9 @@ def serving_proto_library_py(
         name = name,
         srcs = srcs,
         srcs_version = "PY2AND3",
-        deps = ["@protobuf_archive//:protobuf_python"] + deps,
-        default_runtime = "@protobuf_archive//:protobuf_python",
-        protoc = "@protobuf_archive//:protoc",
+        deps = ["@com_google_protobuf//:protobuf_python"] + deps,
+        default_runtime = "@com_google_protobuf//:protobuf_python",
+        protoc = "@com_google_protobuf//:protoc",
         visibility = visibility,
         testonly = testonly,
     )
@@ -77,3 +77,7 @@ def serving_cc_library(**kwargs):
 def serving_cc_binary(**kwargs):
     kwargs["copts"] = kwargs.get("copts", []) + _serving_copts()
     cc_binary(**kwargs)
+
+def serving_cc_test(**kwargs):
+    kwargs["copts"] = kwargs.get("copts", []) + _serving_copts()
+    cc_test(**kwargs)

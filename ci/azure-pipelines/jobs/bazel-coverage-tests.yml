@@ -1,0 +1,65 @@
+jobs:
+  - job: BazelCoverageTests
+    displayName: Bazel coverage tests
+    strategy:
+        matrix:
+            Linux:
+                vmImage: ubuntu-latest
+            macOS:
+                vmImage: macos-latest
+    pool:
+        vmImage: $(vmImage)
+    timeoutInMinutes: 0
+    variables:
+        disable.coverage.autogenerate: 'true'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: pip install -U six
+        displayName: Install additional dependencies
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-coverage-tests
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            ci/checks/bazel-coverage-tests.py \
+                --instrument_test_targets \
+                -c dbg \
+                --disk_cache="$BAZEL_BUILD_CACHE"
+        displayName: Bazel coverage tests
+        continueOnError: true
+      - task: PublishTestResults@2
+        displayName: Publish test results
+        inputs:
+            testResultsFiles: bazel-testlogs/**/test.xml
+            mergeTestResults: true
+      - task: reportgenerator@4
+        displayName: Generate coverage data
+        condition: eq(variables['Agent.OS'], 'Linux')
+        inputs:
+            reports: bazel-testlogs/**/coverage.dat
+            targetdir: .
+            reporttypes: Cobertura
+      - script: ci/tools/demangle-cobertura.py Cobertura.xml Cobertura-demangled.xml
+        displayName: Demangle method names
+        condition: eq(variables['Agent.OS'], 'Linux')
+      - task: reportgenerator@4
+        displayName: Generate coverage report
+        condition: eq(variables['Agent.OS'], 'Linux')
+        inputs:
+            reports: Cobertura-demangled.xml
+            targetdir: coverage-report
+            reporttypes: HtmlInline_AzurePipelines
+      - task: PublishCodeCoverageResults@1
+        displayName: Publish coverage results
+        condition: eq(variables['Agent.OS'], 'Linux')
+        inputs:
+            codeCoverageTool: Cobertura
+            summaryFileLocation: Cobertura-demangled.xml
+            reportDirectory: coverage-report
+      - task: PublishCodeCoverageResults@2
+        displayName: Publish coverage results
+        condition: eq(variables['Agent.OS'], 'Linux')
+        enabled: false
+        inputs:
+            summaryFileLocation: bazel-testlogs/**/coverage.dat

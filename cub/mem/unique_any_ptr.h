@@ -5,6 +5,7 @@
 #define HD506C8AC_D465_411C_AF2E_C0543DBE5D22
 
 #include <memory>
+
 #include "cub/mem/any_ptr.h"
 
 namespace cub {

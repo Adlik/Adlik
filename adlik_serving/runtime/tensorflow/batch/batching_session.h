@@ -5,10 +5,17 @@
 #define HD4EA67C3_E52A_4121_8267_255FF1E93F6C
 
 #include <unordered_map>
+
 #include "adlik_serving/runtime/tensorflow/batch/atomic_batcher.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_processor.h"
 #include "adlik_serving/runtime/tensorflow/batch/serving_session.h"
 #include "adlik_serving/runtime/tensorflow/model/model_signature.h"
+
+namespace adlik {
+namespace serving {
+struct ModelConfig;
+}
+}  // namespace adlik
 
 namespace tensorflow {
 
@@ -19,7 +26,7 @@ struct BatchingParameters;
 struct BatchingSession : private BatchingProcessor, ServingSession {
   BatchingSession(Session&);
 
-  void config();
+  void config(const adlik::serving::ModelConfig&);
 
 private:
   OVERRIDE(Status Run(const RunOptions&,

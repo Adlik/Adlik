@@ -1,11 +1,11 @@
+load("//adlik_serving:serving.bzl", "serving_cc_library")
+
 package(
     default_visibility = [
         "//adlik_serving:internal",
     ],
     features = ["-layering_check"],
 )
-
-load("//adlik_serving:serving.bzl", "serving_cc_library")
 
 serving_cc_library(
     name = "model",
@@ -29,7 +29,6 @@ serving_cc_library(
         "//cub/base:hash",
         "//cub/dci",
         "@org_tensorflow//tensorflow/cc/saved_model:tag_constants",
-        "@org_tensorflow//tensorflow/contrib/session_bundle:bundle_shim",
         "@org_tensorflow//tensorflow/core:framework",
     ],
 )

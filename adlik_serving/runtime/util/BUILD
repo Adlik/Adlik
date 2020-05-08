@@ -1,3 +1,5 @@
+load("//adlik_serving:serving.bzl", "serving_cc_library")
+
 package(
     default_visibility = [
         "//adlik_serving:internal",
@@ -5,12 +7,20 @@ package(
     features = ["-layering_check"],
 )
 
-load("//adlik_serving:serving.bzl", "serving_cc_library")
-
 serving_cc_library(
     name = "name_def",
     hdrs = [
         "name_def.h",
+    ],
+)
+
+serving_cc_library(
+    name = "queue_options",
+    hdrs = [
+        "queue_options.h",
+    ],
+    deps = [
+        "//adlik_serving/framework/domain:model_config_proto",
     ],
 )
 
@@ -118,10 +128,12 @@ serving_cc_library(
         "unique_batcher_model_wrapper.h",
     ],
     deps = [
+        ":queue_options",
         "//adlik_serving/framework/domain",
         "//adlik_serving/framework/manager",
         "//adlik_serving/runtime/batching:basic_batch_scheduler",
         "//adlik_serving/runtime/batching:batch_scheduler",
+        "//adlik_serving/runtime/batching:batching_message_task",
         "//cub/base:status",
     ],
 )

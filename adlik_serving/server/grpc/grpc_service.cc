@@ -32,8 +32,8 @@ RunOptions options(const ::grpc::ServerContext& ctxt) {
 }  // namespace
 
 ::grpc::Status GrpcService::predict(::grpc::ServerContext* ctxt, const PredictRequest* req, PredictResponse* rsp) {
-  INFO_LOG << "Receive predict request, model_name: " << req->model_spec().name()
-           << ", batch size: " << req->batch_size();
+  DEBUG_LOG << "Receive predict request, model_name: " << req->model_spec().name()
+            << ", batch size: " << req->batch_size();
 
   auto status = ROLE(PredictImpl).predict(options(*ctxt), *req, *rsp);
   return toGrpcStatus(status);

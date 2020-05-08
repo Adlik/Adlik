@@ -4,11 +4,11 @@
 #ifndef H9E9DB76F_4969_47B8_969F_5DBF8FFFB313
 #define H9E9DB76F_4969_47B8_969F_5DBF8FFFB313
 
-#include "adlik_serving/framework/domain/model_config.h"
-#include "cub/env/fs/file_system.h"
-
 #include <string>
 #include <unordered_map>
+
+#include "adlik_serving/framework/domain/model_config.h"
+#include "cub/env/fs/file_system.h"
 
 namespace adlik {
 namespace serving {

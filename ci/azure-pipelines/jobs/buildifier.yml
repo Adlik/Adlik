@@ -1,0 +1,9 @@
+jobs:
+  - job: Buildifier
+    displayName: Buildifier
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ../steps/install-buildifier.yml
+      - script: ci/checks/buildifier.py
+        displayName: Run Buildifier

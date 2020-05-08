@@ -8,7 +8,6 @@
 
 namespace adlik {
 namespace serving {
-
 tensorflow::Status GRPCPredictResponseProvider::create(const std::vector<std::string>& output_names,
                                                        size_t batch_size,
                                                        PredictResponse& response,
@@ -24,29 +23,41 @@ GRPCPredictResponseProvider::GRPCPredictResponseProvider(const std::vector<std::
     : PredictResponseProvider(), output_names(output_names), rsp(response), batch_size(batch_size) {
 }
 
-tensorflow::Status GRPCPredictResponseProvider::addOutput(const std::string& name,
-                                                          tensorflow::DataType dtype,
-                                                          const DimsList& dims,
-                                                          void** buffer,
-                                                          size_t buffer_byte_size) {
-  for (auto& i : output_names) {
-    if (i == name) {
-      auto& proto = *((*rsp.mutable_outputs())[name].mutable_tensor());
-      proto.set_dtype(dtype);
-      auto shape_proto = proto.mutable_tensor_shape();
-      shape_proto->add_dim()->set_size(batch_size);
-      for (auto i = 0; i < dims.size(); ++i) {
-        shape_proto->add_dim()->set_size(dims[i]);
-      }
-      std::string* content = proto.mutable_tensor_content();
-      content->resize(buffer_byte_size);
-      *buffer = static_cast<void*>(&((*content)[0]));
-      return tensorflow::Status::OK();
-    }
+void* GRPCPredictResponseProvider::addOutput(const std::string& name,
+                                             tensorflow::DataType dtype,
+                                             const DimsList& dims,
+                                             size_t buffer_byte_size) {
+  auto* container = this->addOutput(name, dtype, dims);
+
+  if (container) {
+    container->resize(buffer_byte_size);
+
+    return &(*container)[0];
+  } else {
+    return nullptr;
   }
-  *buffer = nullptr;
-  return tensorflow::Status::OK();
 }
 
+std::string* GRPCPredictResponseProvider::addOutput(const std::string& name,
+                                                    tensorflow::DataType dtype,
+                                                    const DimsList& dims) {
+  if (std::find(this->output_names.cbegin(), this->output_names.cend(), name) != this->output_names.cend()) {
+    auto& proto = *(*rsp.mutable_outputs())[name].mutable_tensor();
+
+    proto.set_dtype(dtype);
+
+    auto& shape_proto = *proto.mutable_tensor_shape();
+
+    shape_proto.add_dim()->set_size(batch_size);
+
+    for (auto i = 0; i < dims.size(); ++i) {
+      shape_proto.add_dim()->set_size(dims[i]);
+    }
+
+    return proto.mutable_tensor_content();
+  } else {
+    return nullptr;
+  }
+}
 }  // namespace serving
 }  // namespace adlik

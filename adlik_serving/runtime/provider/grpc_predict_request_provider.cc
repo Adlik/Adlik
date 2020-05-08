@@ -1,9 +1,9 @@
 // Copyright 2019 ZTE corporation. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-#include <set>
-
 #include "adlik_serving/runtime/provider/grpc_predict_request_provider.h"
+
+#include <set>
 
 #include "adlik_serving/apis/predict.pb.h"
 #include "cub/log/log.h"
@@ -52,17 +52,16 @@ size_t GRPCPredictRequestProvider::inputSize() const {
 
 void GRPCPredictRequestProvider::visitInputs(InputVisitor visitor) const {
   for (auto& i : req.inputs()) {
-    const auto& content = i.second.tensor_content();
-    if (!visitor(i.first, content.c_str(), content.size()))
+    if (!visitor(i.first, i.second))
       break;
   }
 }
 
 void GRPCPredictRequestProvider::outputNames(OutputNames& output_names) const {
-  std::set<std::string> seens;
+  std::set<absl::string_view> seens;
+
   for (auto& it : req.output_filter()) {
-    if (seens.find(it.first) == seens.end()) {
-      seens.insert(it.first);
+    if (seens.emplace(it.first).second) {
       output_names.emplace_back(it.first);
     }
   }

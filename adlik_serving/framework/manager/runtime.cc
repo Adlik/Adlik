@@ -12,5 +12,9 @@ tensorflow::Status Runtime::predict(const RunOptions&, ModelHandle*, const Predi
   return tensorflow::errors::Internal("predict function not implemented!");
 }
 
+cub::StatusWrapper Runtime::createTask(const RunOptions&, ModelHandle*, const CreateTaskRequest&, CreateTaskResponse&) {
+  return cub::StatusWrapper(cub::Internal, "createTask function not implemented!");
+}
+
 }  // namespace serving
 }  // namespace adlik

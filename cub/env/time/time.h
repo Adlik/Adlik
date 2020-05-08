@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <time.h>
+
 #include "cub/env/env.h"
 
 namespace cub {

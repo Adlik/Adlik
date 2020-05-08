@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/framework/domain/model_id.h"
+
 #include <ostream>
+
 #include "cub/base/hash.h"
 
 namespace adlik {

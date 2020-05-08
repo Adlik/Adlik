@@ -40,12 +40,10 @@ def _get_arguments():
 
 def _get_source_files(root_path):
     file_name_regex = re.compile(r'.*\.(cc|h|py)')
-
     for path, dirs, file_names in os.walk(root_path):
-        try:
-            dirs.remove('.git')
-        except ValueError:
-            pass
+        for i in ['.git', 'third_party']:
+            if i in dirs:
+                dirs.remove(i)
 
         for file_name in file_names:
             if file_name_regex.fullmatch(file_name):

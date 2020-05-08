@@ -1,13 +1,13 @@
-package(
-    default_visibility = [
-        "//adlik_serving:internal",
-    ],
-)
-
 load("//adlik_serving:serving.bzl", "serving_cc_library", "serving_proto_library", "serving_proto_library_py")
 load(
     "@org_tensorflow//tensorflow:tensorflow.bzl",
     "tf_cuda_library",
+)
+
+package(
+    default_visibility = [
+        "//adlik_serving:internal",
+    ],
 )
 
 serving_proto_library(
@@ -15,7 +15,7 @@ serving_proto_library(
     srcs = ["version_policy.proto"],
     cc_api_version = 2,
     deps = [
-        "@protobuf_archive//:cc_wkt_protos",
+        "@com_google_protobuf//:cc_wkt_protos",
     ],
 )
 
@@ -43,7 +43,7 @@ serving_proto_library_py(
     srcs = ["model_config.proto"],
     proto_library = "model_config_proto",
     deps = [
-        "version_policy_proto_py_pb2",
+        ":version_policy_proto_py_pb2",
         "@org_tensorflow//tensorflow/core:protos_all_py",
     ],
 )
@@ -53,7 +53,7 @@ serving_proto_library(
     srcs = ["model_spec.proto"],
     cc_api_version = 2,
     deps = [
-        "@protobuf_archive//:cc_wkt_protos",
+        "@com_google_protobuf//:cc_wkt_protos",
     ],
 )
 

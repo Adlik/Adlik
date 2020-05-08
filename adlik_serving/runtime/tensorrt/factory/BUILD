@@ -1,6 +1,6 @@
-package(default_visibility = ["//adlik_serving:internal"])
-
 load("//adlik_serving:serving.bzl", "serving_cc_library")
+
+package(default_visibility = ["//adlik_serving:internal"])
 
 serving_cc_library(
     name = "trt_runtime",
@@ -9,7 +9,6 @@ serving_cc_library(
         "-pthread",
         "-lnvinfer",
         "-lnvidia-ml",
-        "-lnvonnxparser_runtime",
         "-L/usr/local/cuda/lib64/stubs",
     ],
     deps = [

@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/factory/tf_plan_model_options.h"
+
 #include "adlik_serving/runtime/tensorflow/factory/tf_plan_model_config.pb.h"
 #include "cub/protobuf/text_protobuf.h"
 
 namespace tensorflow {
-TfPlanModelOptions::TfPlanModelOptions() : enableBatching(false), enableWarmup(true), parallelism(0), fraction(0.0f) {
+TfPlanModelOptions::TfPlanModelOptions() : enableBatching(true), enableWarmup(true), parallelism(0), fraction(0.0f) {
 }
 
 void TfPlanModelOptions::subscribe(cub::ProgramOptions& prog) {

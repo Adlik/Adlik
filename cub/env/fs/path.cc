@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/env/fs/path.h"
+
 #include <iostream>
+
 #include "cub/env/fs/uri.h"
 
 namespace cub {

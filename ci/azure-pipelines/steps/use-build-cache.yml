@@ -1,0 +1,12 @@
+parameters:
+    key: ''
+    path: ''
+steps:
+  - task: Cache@2
+    displayName: Set up build cache
+    inputs:
+        key: v4 | ${{ parameters.key }} | $(Agent.OS) | $(Build.SourceVersion)
+        path: ${{ parameters.path }}
+        restoreKeys: |
+            v4 | ${{ parameters.key }} | $(Agent.OS) | $(Build.SourceVersion)
+            v4 | ${{ parameters.key }} | $(Agent.OS)

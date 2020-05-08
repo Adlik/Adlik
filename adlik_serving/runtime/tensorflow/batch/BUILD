@@ -1,11 +1,11 @@
+load("//adlik_serving:serving.bzl", "serving_cc_library")
+
 package(
     default_visibility = [
         "//adlik_serving:internal",
     ],
     features = ["-layering_check"],
 )
-
-load("//adlik_serving:serving.bzl", "serving_cc_library")
 
 serving_cc_library(
     name = "batch",
@@ -48,6 +48,7 @@ serving_cc_library(
     deps = [
         "//adlik_serving/runtime/tensorflow/factory:tf_plan_model_config",
         "//adlik_serving/runtime/tensorflow/model",
+        "//adlik_serving/runtime/util:queue_options",
         "//cub/base:static_assert",
         "//cub/base:struct_wrapper",
         "//cub/env/concurrent:notification",

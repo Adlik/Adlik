@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/log/log.h"
+
 #include <stdlib.h>
+
 #include "cub/env/time/time.h"
 #include "cub/string/str_utils.h"
 
@@ -25,7 +27,7 @@ int threshold() {
 inline void LogStream::trace() const {
   char buf[32];
   timesystem().format(buf);
-  fprintf(stderr, "%s: %c %s:%d] %s\n", buf, "IWEF"[level], file, line, str().c_str());
+  fprintf(stderr, "%s: %c %s:%d] %s\n", buf, "DIWEF"[level], file, line, str().c_str());
 }
 
 LogStream::~LogStream() {

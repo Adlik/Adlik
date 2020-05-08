@@ -1,10 +1,10 @@
+load("//adlik_serving:serving.bzl", "serving_cc_library")
+
 package(
     default_visibility = [
         "//adlik_serving:internal",
     ],
 )
-
-load("//adlik_serving:serving.bzl", "serving_cc_library")
 
 serving_cc_library(
     name = "http_options",
@@ -27,6 +27,7 @@ serving_cc_library(
     deps = [
         "//adlik_serving/apis:get_model_meta_impl",
         "//adlik_serving/apis:predict_impl",
+        "//adlik_serving/apis:task_op_impl",
         "//adlik_serving/framework/manager",
         "//adlik_serving/server/http/internal:request_handler_options",
         "//cub/dci",

@@ -7,11 +7,9 @@
 #include "adlik_serving/runtime/tensorflow/model/errors.h"
 #include "adlik_serving/runtime/tensorflow/model/model_inputs.h"
 #include "adlik_serving/runtime/tensorflow/model/model_outputs.h"
-
+#include "cub/env/concurrent/notification.h"
 #include "tensorflow/core/kernels/batching_util/batch_scheduler.h"
 #include "tensorflow/core/protobuf/config.pb.h"
-
-#include "cub/env/concurrent/notification.h"
 
 namespace tensorflow {
 

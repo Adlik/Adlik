@@ -21,11 +21,14 @@ public:
   // Get a pointer to the buffer into which output 'name' should be
   // written. The size of the buffer must be exactly
   // 'buffer_byte_size'.
-  virtual tensorflow::Status addOutput(const std::string&,
-                                       tensorflow::DataType dtype,
-                                       const adlik::serving::DimsList& dims,
-                                       void** buffer,
-                                       size_t buffer_byte_size) = 0;
+  virtual void* addOutput(const std::string& name,
+                          tensorflow::DataType dtype,
+                          const adlik::serving::DimsList& dims,
+                          size_t buffer_byte_size) = 0;
+
+  virtual std::string* addOutput(const std::string& name,
+                                 tensorflow::DataType dtype,
+                                 const adlik::serving::DimsList& dims) = 0;
 };
 
 }  // namespace serving

@@ -1,10 +1,10 @@
+load("//adlik_serving:serving.bzl", "serving_cc_library")
+
 package(
     default_visibility = [
         "//adlik_serving:internal",
     ],
 )
-
-load("//adlik_serving:serving.bzl", "serving_cc_library")
 
 serving_cc_library(
     name = "time_stats",
@@ -51,6 +51,7 @@ serving_cc_library(
         "//adlik_serving/framework/domain",
         "//cub/base:fwddecl",
         "//cub/base:optional",
+        "//cub/base:status_wrapper",
         "//cub/base:symbol",
         "//cub/dci",
         "//cub/env/concurrent",

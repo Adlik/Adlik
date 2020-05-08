@@ -6,6 +6,7 @@
 
 #include "cub/base/fwddecl.h"
 #include "cub/base/status.h"
+#include "cub/base/status_wrapper.h"
 #include "cub/cli/program_options.h"
 #include "cub/dci/role.h"
 
@@ -17,6 +18,8 @@ namespace serving {
 struct RuntimeContext;
 struct PredictRequest;
 struct PredictResponse;
+struct CreateTaskRequest;
+struct CreateTaskResponse;
 struct ModelHandle;
 struct RunOptions;
 
@@ -36,6 +39,8 @@ DEFINE_ROLE(Runtime) {
   /// adlik::serving::AutoModelHandle<CustomModel> custom_model(handle);
   /// return custom_model.predict(req, rsp);
   virtual tensorflow::Status predict(const RunOptions&, ModelHandle*, const PredictRequest&, PredictResponse&);
+
+  virtual cub::StatusWrapper createTask(const RunOptions&, ModelHandle*, const CreateTaskRequest&, CreateTaskResponse&);
 };
 
 }  // namespace serving

@@ -5,6 +5,7 @@
 #define H4A7675F9_49E0_4581_8BD3_7F97D99F6731
 
 #include <stdint.h>
+
 #include "adlik_serving/framework/domain/model_state.h"
 
 namespace adlik {

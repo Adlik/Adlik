@@ -1,0 +1,29 @@
+jobs:
+  - job: BazelBuildServingOpenVINO
+    displayName: Bazel build serving (OpenVINO)
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - template: ../steps/install-openvino.yml
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: pip install -U six
+        displayName: Install additional dependencies
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-openvino
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            export INTEL_CVSDK_DIR=/opt/intel/openvino_2019.3.344
+            export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share
+            ci/checks/bazel-build-serving.py \
+                --config=openvino \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE"
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-openvino

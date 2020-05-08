@@ -5,6 +5,7 @@
 #define HF1206F94_31DB_4B9E_8C59_74E4406FFAC4
 
 #include <map>
+
 #include "adlik_serving/framework/domain/monitored_event.h"
 
 namespace adlik {

@@ -10,6 +10,7 @@ namespace cub {
 
 struct LogStream : std::ostringstream {
   enum LogLevel {
+    LOG_DEBUG,
     LOG_INFO,
     LOG_WARN,
     LOG_ERROR,
@@ -30,6 +31,7 @@ private:
 
 #define LOG_STREAM(level) cub::LogStream(__FILE__, __LINE__, cub::LogStream::level)
 
+#define DEBUG_LOG LOG_STREAM(LOG_DEBUG)
 #define INFO_LOG LOG_STREAM(LOG_INFO)
 #define WARN_LOG LOG_STREAM(LOG_WARN)
 #define ERR_LOG LOG_STREAM(LOG_ERROR)

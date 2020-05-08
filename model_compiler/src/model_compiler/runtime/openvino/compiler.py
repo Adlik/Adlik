@@ -23,7 +23,7 @@ class Compiler(BaseCompiler):
     def __init__(self, config):
         super(Compiler, self).__init__(config)
         self.sdk_dir = os.getenv('INTEL_CVSDK_DIR', '/opt/intel/computer_vision_sdk_2018.5.455')
-        self.frozen_pb_path = os.path.join(self.target_dir, 'frozen.pb')
+        self.frozen_pb_path = os.path.join(self.model_dir, 'frozen.pb')
 
     def _after_load_model(self, session, inputs, outputs):
         return self._to_frozen_graph(session, self.frozen_pb_path, outputs)
@@ -43,7 +43,7 @@ class Compiler(BaseCompiler):
         popenargs = ['python3', convert_file_path]
         popenargs.extend(['--input_model', model_path])
         popenargs.extend(['--model_name', 'model'])
-        popenargs.extend(['--output_dir', self.version_dir])
+        popenargs.extend(['--output_dir', self.target_dir])
         popenargs.extend(['--batch', str(model_info.max_batch_size)])
         popenargs.extend(['--input', ','.join([i.name for i in model_info.inputs])])
         popenargs.extend(['--output', ','.join(o.name for o in model_info.outputs)])
@@ -60,7 +60,7 @@ class Compiler(BaseCompiler):
             raise error
 
     def _convert_model_onnx(self, model_info):
-        model_path = self.onnx_path
+        model_path = self.model_path
         for i in model_info.inputs:
             if i.data_format == 'channels_last':
                 raise Exception('The data format: {} is not support'.format(i.data_format))

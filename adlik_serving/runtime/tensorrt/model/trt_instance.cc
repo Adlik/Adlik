@@ -4,8 +4,9 @@
 #include "adlik_serving/runtime/tensorrt/model/trt_instance.h"
 
 #include <NvInfer.h>
-#include <NvOnnxParserRuntime.h>
 #include <cuda_runtime_api.h>
+
+#include <algorithm>
 
 #include "adlik_serving/framework/domain/model_config_helper.h"
 #include "adlik_serving/framework/manager/time_stats.h"
@@ -44,9 +45,27 @@ struct Logger : public nvinfer1::ILogger {
 
 Logger tensorrt_logger;
 
+struct DestroyDeleter {
+  template <typename T>
+  void operator()(T* p) const {
+    p->destroy();
+  }
+};
+
+struct StreamDeleter {
+  void operator()(CUstream_st* p) const {
+    cudaError_t err = cudaStreamDestroy(p);
+    if (err != cudaSuccess) {
+      ERR_LOG << "Failed to destroy cuda stream: " << cudaGetErrorString(err);
+    }
+  }
+};
+
+template <typename T>
+using TrtPtr = std::unique_ptr<T, DestroyDeleter>;
+
 struct Instance : BatchProcessor {
   Instance(const ModelConfigProto&, const std::string& name, const int gpu_device);
-  Instance(Instance&&);
   ~Instance();
 
   tensorflow::Status init(const std::vector<char>& model_data);
@@ -67,79 +86,38 @@ private:
 
   const ModelConfigProto& config;
 
-  // config.name() of the model instance
   const std::string name;
 
   // The GPU index active when this context was created.
   const int gpu_device;
 
-  // Maximum batch size to allow. This is the minimum of what is
-  // supported by the model and what is requested in the
-  // configuration.
   const int max_batch_size;
 
-  // TensorRT components for the model
-  nvinfer1::IRuntime* runtime;
-  nvinfer1::ICudaEngine* engine;
-  nvinfer1::IExecutionContext* context;
+  TrtPtr<nvinfer1::IRuntime> runtime;
+  TrtPtr<nvinfer1::ICudaEngine> engine;
+  TrtPtr<nvinfer1::IExecutionContext> context;
 
-  // The number of inputs required for this model.
   size_t num_inputs;
 
   // For each binding index of the TensorRT engine, the size of the
   // corresponding tensor and pointer to the CUDA buffer for the
   // tensor. These are arrays with size equal to number of bindings.
-  uint64_t* byte_sizes;
-  void** buffers;
+  std::unique_ptr<uint64_t[]> byte_sizes;
+  std::unique_ptr<void*[]> buffers;
 
   // The stream where operations are executed.
-  cudaStream_t stream;
+  std::unique_ptr<CUstream_st, StreamDeleter> stream;
 };
 ////////////////////////////////////////////////////////////////////////////////////
 
 Instance::Instance(const ModelConfigProto& config, const std::string& name, const int gpu_device)
-    : config(config),
-      name(name),
-      gpu_device(gpu_device),
-      max_batch_size(config.max_batch_size()),
-      runtime(nullptr),
-      engine(nullptr),
-      context(nullptr),
-      num_inputs(0),
-      byte_sizes(nullptr),
-      buffers(nullptr),
-      stream(nullptr) {
-}
-
-Instance::Instance(Instance&& obj)
-    : config(obj.config),
-      name(std::move(obj.name)),
-      gpu_device(obj.gpu_device),
-      max_batch_size(obj.max_batch_size),
-      runtime(obj.runtime),
-      engine(obj.engine),
-      context(obj.context),
-      num_inputs(obj.num_inputs),
-      byte_sizes(obj.byte_sizes),
-      buffers(obj.buffers),
-      stream(obj.stream) {
-  obj.runtime = nullptr;
-  obj.engine = nullptr;
-  obj.context = nullptr;
-  obj.num_inputs = 0;
-  obj.byte_sizes = nullptr;
-  obj.buffers = nullptr;
-  obj.stream = nullptr;
+    : config(config), name(name), gpu_device(gpu_device), max_batch_size(config.max_batch_size()), num_inputs(0) {
 }
 
 Instance::~Instance() {
   INFO_LOG << "~Instance::Instance ";
 
-  if (byte_sizes != nullptr) {
-    delete[] byte_sizes;
-    byte_sizes = nullptr;
-  }
-  if (buffers != nullptr) {
+  if (buffers) {
     for (int i = 0; i < engine->getNbBindings(); ++i) {
       if (buffers[i] != nullptr) {
         cudaError_t err = cudaFree(buffers[i]);
@@ -148,30 +126,6 @@ Instance::~Instance() {
         }
       }
     }
-
-    delete[] buffers;
-    buffers = nullptr;
-  }
-
-  if (stream != nullptr) {
-    cudaError_t err = cudaStreamDestroy(stream);
-    if (err != cudaSuccess) {
-      ERR_LOG << "Failed to destroy cuda stream: " << cudaGetErrorString(err);
-    }
-    stream = nullptr;
-  }
-
-  if (context != nullptr) {
-    context->destroy();
-    context = nullptr;
-  }
-  if (engine != nullptr) {
-    engine->destroy();
-    engine = nullptr;
-  }
-  if (runtime != nullptr) {
-    runtime->destroy();
-    runtime = nullptr;
   }
 }
 
@@ -183,7 +137,7 @@ tensorflow::Status Instance::init(const std::vector<char>& model_data) {
 }
 
 tensorflow::Status Instance::loadPlan(const std::vector<char>& model_data) {
-  if (runtime != nullptr || engine != nullptr) {
+  if (runtime || engine) {
     return tensorflow::errors::Internal(
         "TensorRt runtime or engine is not null, maybe should destroy before load "
         "new model.");
@@ -192,15 +146,14 @@ tensorflow::Status Instance::loadPlan(const std::vector<char>& model_data) {
   if (cuerr != cudaSuccess) {
     return tensorflow::errors::Internal("unable to set device for ", config.name(), ": ", cudaGetErrorString(cuerr));
   }
-  nvonnxparser::IPluginFactory* onnx_plugin_factory = nvonnxparser::createPluginFactory(tensorrt_logger);
 
-  runtime = nvinfer1::createInferRuntime(tensorrt_logger);
-  if (runtime == nullptr) {
+  runtime.reset(nvinfer1::createInferRuntime(tensorrt_logger));
+  if (!runtime) {
     return tensorflow::errors::Internal("Unable to create TensorRT runtime");
   }
 
-  engine = runtime->deserializeCudaEngine(&model_data[0], model_data.size(), onnx_plugin_factory);
-  if (engine == nullptr) {
+  engine.reset(runtime->deserializeCudaEngine(&model_data[0], model_data.size(), nullptr));
+  if (!engine) {
     return tensorflow::errors::Internal("Unable to create TensorRT engine");
   }
 
@@ -217,8 +170,8 @@ tensorflow::Status Instance::loadPlan(const std::vector<char>& model_data) {
 
 tensorflow::Status Instance::allocBuffer() {
   const int num_expected_bindings = engine->getNbBindings();
-  byte_sizes = new uint64_t[num_expected_bindings];
-  buffers = new void*[num_expected_bindings]();
+  byte_sizes = std::make_unique<uint64_t[]>(num_expected_bindings);
+  buffers = std::make_unique<void*[]>(num_expected_bindings);
 
   TF_RETURN_IF_ERROR(initializeInputBindings(config.input()));
   TF_RETURN_IF_ERROR(initializeOutputBindings(config.output()));
@@ -237,18 +190,20 @@ tensorflow::Status Instance::allocBuffer() {
 }
 
 tensorflow::Status Instance::createExecuteContext() {
-  context = engine->createExecutionContext();
-  if (context == nullptr) {
+  context.reset(engine->createExecutionContext());
+  if (!context) {
     return tensorflow::errors::Internal("unable to create TensorRT context");
   }
 
-  // Create CUDA stream associated with the execution context
+  // Create CUDA stream associated with the execution context, should call "cudaDeviceGetStreamPriorityRange" and
+  // get numerical values that correspond to the least and greatest stream priorities. But now we use default "0"
   int cuda_stream_priority = 0;
-  TF_RETURN_IF_ERROR(GetCudaPriority(config.optimization().priority(), &cuda_stream_priority));
-  auto cuerr = cudaStreamCreateWithPriority(&stream, cudaStreamDefault, cuda_stream_priority);
+  CUstream_st* temp_stream;
+  auto cuerr = cudaStreamCreateWithPriority(&temp_stream, cudaStreamDefault, cuda_stream_priority);
   if (cuerr != cudaSuccess) {
     return tensorflow::errors::Internal("unable to create stream for ", config.name(), ": ", cudaGetErrorString(cuerr));
   }
+  stream.reset(temp_stream);
   return tensorflow::Status::OK();
 }
 
@@ -401,13 +356,13 @@ tensorflow::Status Instance::processBatch(MyBatch& payloads) {
   adlik::serving::TimeStats stats("TrtModel::Instance::Run::TensorRT model " + name +
                                   ", run prediction on GPU batch=" + std::to_string(payloads.size()));
 
-  if (!context->enqueue(payloads.size(), buffers, stream, nullptr)) {
-    cudaStreamSynchronize(stream);
+  if (!context->enqueue(payloads.size(), buffers.get(), stream.get(), nullptr)) {
+    cudaStreamSynchronize(stream.get());
     return tensorflow::errors::Internal("unable to enqueue for inference ", name);
   }
 
   status = splitOutputs(payloads);
-  cudaStreamSynchronize(stream);
+  cudaStreamSynchronize(stream.get());
   return status;
 }
 
@@ -426,7 +381,10 @@ tensorflow::Status Instance::mergeInputs(MyBatch& batch) {
       auto* request = batch.task(i).request;
       const size_t expected_byte_size = request->batchSize() * batch1_byte_size;
 
-      auto func = [&](const std::string& cur_name, const void* content, size_t content_byte_size) {
+      auto func = [&](const std::string& cur_name, const tensorflow::TensorProto& tensor) {
+        const void* content = tensor.tensor_content().c_str();
+        size_t content_byte_size = tensor.tensor_content().size();
+
         if (cur_name == name) {
           size_t copied_byte_size = 0;
           if (content == nullptr) {
@@ -446,7 +404,7 @@ tensorflow::Status Instance::mergeInputs(MyBatch& batch) {
                               content,
                               content_byte_size,
                               cudaMemcpyHostToDevice,
-                              stream);
+                              stream.get());
           if (err != cudaSuccess) {
             status = tensorflow::errors::Internal(
                 "failed to copy input values to GPU for input '", name, "': ", cudaGetErrorString(err));
@@ -491,11 +449,8 @@ tensorflow::Status Instance::splitOutputs(MyBatch& batch) {
       auto req = batch.task(i).request;
       const size_t expected_byte_size = req->batchSize() * batch1_byte_size;
 
-      void* content;
-      tensorflow::Status status = batch.task(i).response->addOutput(name, dtype, dims, &content, expected_byte_size);
-      if (!status.ok()) {
-        return status;
-      } else if (content == nullptr) {
+      void* content = batch.task(i).response->addOutput(name, dtype, dims, expected_byte_size);
+      if (content == nullptr) {
         // maybe not needed this output
         // payload.compute_status_ = tensorflow::errors::Internal(
         //     "no buffer to accept output values for output '", name, "'");
@@ -512,7 +467,7 @@ tensorflow::Status Instance::splitOutputs(MyBatch& batch) {
                                             static_cast<char*>(buffers[bindex]) + binding_copy_offset,
                                             expected_byte_size,
                                             cudaMemcpyDeviceToHost,
-                                            stream);
+                                            stream.get());
           if (err != cudaSuccess) {
             return tensorflow::errors::Internal(
                 "failed to copy output values from GPU for output '", name, "': ", cudaGetErrorString(err));

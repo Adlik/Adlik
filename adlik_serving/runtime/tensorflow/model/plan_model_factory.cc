@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/model/plan_model_factory.h"
+
 #include <memory>
+
 #include "adlik_serving/runtime/tensorflow/batch/batching_parameters.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_scheduler.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_session.h"
@@ -31,16 +33,25 @@ private:
   IMPL_ROLE_WITH_OBJ(Session, *(bundle->session))
 };
 
-struct PlanModelFactory::BatchPlanModel : private MetaGraph, private BatchingSession, BasePlanModel {
-  BatchPlanModel(UniqueModel& bundle, BatchingScheduler& scheduler, const BatchingParameters& config)
+struct PlanModelFactory::BatchPlanModel : private MetaGraph, BatchingSession, BasePlanModel {
+  BatchPlanModel(const adlik::serving::ModelConfig& config_proto,
+                 UniqueModel& bundle,
+                 BatchingScheduler& scheduler,
+                 const BatchingParameters& config)
       : MetaGraph(bundle->meta_graph_def),
         BatchingSession(*bundle->session),
         BasePlanModel(bundle),
+        config_proto(config_proto),
         scheduler(scheduler),
         config(config) {
   }
 
+  void createSched() {
+    BatchingSession::config(config_proto);
+  }
+
 private:
+  const adlik::serving::ModelConfig& config_proto;
   BatchingScheduler& scheduler;
   const BatchingParameters& config;
 
@@ -53,7 +64,9 @@ private:
 
 PlanModel* PlanModelFactory::make(UniqueModel& bundle) {
   if (ROLE(TfPlanModelConfig).batching()) {
-    return new BatchPlanModel(bundle, ROLE(BatchingScheduler), ROLE(BatchingParameters));
+    auto model = new BatchPlanModel(ROLE(ModelConfig), bundle, ROLE(BatchingScheduler), ROLE(BatchingParameters));
+    model->createSched();
+    return model;
   } else {
     return new AtomPlanModel(bundle);
   }

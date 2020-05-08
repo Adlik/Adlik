@@ -1,5 +1,12 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
+licenses([
+    # Note: Eigen is an MPL2 library that includes GPL v3 and LGPL v2.1+ code.
+    #       We've taken special care to not reference any restricted code.
+    "reciprocal",  # MPL2
+    "notice",  # Portions BSD
+])
+
 exports_files(["LICENSE"])
 
 cc_library(

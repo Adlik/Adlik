@@ -3,12 +3,12 @@
 
 #include "adlik_serving/runtime/tensorrt/model/trt_model.h"
 
+#include <cuda_runtime_api.h>
+
 #include <mutex>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include <cuda_runtime_api.h>
 
 #include "adlik_serving/framework/domain/model_config_helper.h"
 #include "adlik_serving/runtime/batching/basic_batch_scheduler.h"
@@ -32,12 +32,8 @@ std::string nameOfPlan(const ModelConfigProto& config, const int gpu_device) {
   cudaError_t cuerr = cudaGetDeviceProperties(&cuprops, gpu_device);
   if (cuerr != cudaSuccess) {
     FATAL_LOG << "unable to get CUDA device properties for " << config.name() << ": " << cudaGetErrorString(cuerr);
-    return kTensorRTPlanFilename;
   }
-
-  const std::string cc = std::to_string(cuprops.major) + "." + std::to_string(cuprops.minor);
-  const auto cc_itr = config.cc_model_filenames().find(cc);
-  return (cc_itr == config.cc_model_filenames().end()) ? kTensorRTPlanFilename : cc_itr->second;
+  return kTensorRTPlanFilename;
 }
 
 tensorflow::Status createInstance(const ModelConfigProto& config,

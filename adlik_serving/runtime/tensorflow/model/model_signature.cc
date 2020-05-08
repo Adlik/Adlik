@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/runtime/tensorflow/model/model_signature.h"
+
 #include "cub/base/hash.h"
 
 namespace tensorflow {

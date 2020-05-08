@@ -5,6 +5,7 @@
 #define HA18C6EAA_8657_4863_8732_8C9098A438C6
 
 #include <vector>
+
 #include "tensorflow/core/framework/tensor.h"
 
 namespace tensorflow {

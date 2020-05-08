@@ -26,11 +26,11 @@ class Compiler(BaseCompiler):
 
     def __init__(self, config):
         super(Compiler, self).__init__(config)
-        self.uff_path = os.path.join(self.target_dir, 'model.uff')
-        os.makedirs(self.version_dir, exist_ok=True)
-        self.plan_path = os.path.join(self.version_dir, 'model.plan')
+        self.uff_path = os.path.join(self.model_dir, 'model.uff')
+        os.makedirs(self.target_dir, exist_ok=True)
+        self.plan_path = os.path.join(self.target_dir, 'model.plan')
         self.max_workspace_size_byte = 1 << 25
-        self.frozen_pb_path = os.path.join(self.target_dir, 'frozen.pb')
+        self.frozen_pb_path = os.path.join(self.model_dir, 'frozen.pb')
 
     def _after_load_model(self, session, inputs, outputs):
         return self._to_frozen_graph(session, self.frozen_pb_path, outputs)
@@ -103,7 +103,8 @@ class Compiler(BaseCompiler):
 
     def _parser_model_onnx(self, model_info):
         g_logger = trt.Logger(trt.Logger.WARNING)
-        with trt.Builder(g_logger) as builder, builder.create_network() as network, \
+        network_flags = 1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
+        with trt.Builder(g_logger) as builder, builder.create_network(network_flags) as network, \
                 trt.OnnxParser(network, g_logger) as parser:
 
             for i in model_info.inputs:
@@ -111,7 +112,7 @@ class Compiler(BaseCompiler):
                     raise Exception('The data format: {} is not support'.format(i.data_format))
 
             _LOGGER.info('model_to_plan:: Begin to parse network!')
-            with open(self.onnx_path, 'rb') as model:
+            with open(self.model_path, 'rb') as model:
                 result = parser.parse(model.read())
             if not result:
                 raise Exception('model_to_plan:: Parse network from uff file failure!')

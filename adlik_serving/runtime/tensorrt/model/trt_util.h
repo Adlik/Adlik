@@ -4,9 +4,9 @@
 #ifndef ADLIK_SERVING_RUNTIME_TENSORRT_MODEL_TRT_UTIL_H_
 #define ADLIK_SERVING_RUNTIME_TENSORRT_MODEL_TRT_UTIL_H_
 
-#include <string>
-
 #include <NvInfer.h>
+
+#include <string>
 
 #include "absl/strings/str_join.h"
 #include "adlik_serving/framework/domain/dims_list.h"
@@ -31,9 +31,6 @@ const std::string DimsDebugString(const T& values) {
   str.append("]");
   return str;
 }
-
-tensorflow::Status GetCudaPriority(adlik::serving::ModelOptimizationPolicy::ModelPriority priority,
-                                   int* cuda_stream_priority);
 
 tensorflow::Status GetModelVersionFromPath(const tensorflow::StringPiece& path, uint32_t* version);
 

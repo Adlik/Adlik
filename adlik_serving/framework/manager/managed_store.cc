@@ -129,8 +129,10 @@ cub::Status ManagedStore::unload(const ModelId& id) {
 
 cub::Status ManagedStore::unaspired(const ModelId& id) {
   auto unaspiring = [&id](AspiredState& state) {
-    INFO_LOG << "unaspired model" << id.to_s();
-    state.unaspired();
+    if (state.wasAspired()) {
+      INFO_LOG << "unaspired model" << id.to_s();
+      state.unaspired();
+    }
     return cub::Success;
   };
   return process(id, unaspiring);

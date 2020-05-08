@@ -27,7 +27,7 @@ void HttpOptions::subscribe(cub::ProgramOptions& prog) {
                   "set, will be auto set based on number of CPUs."),
       cub::option("http_timeout_in_ms", &timeout, "Timeout for HTTP/REST API calls."),
   }};
-  return prog.add(options);
+  prog.add(options);
 }
 
 std::unique_ptr<ServerInterface> HttpOptions::build() {
@@ -35,7 +35,7 @@ std::unique_ptr<ServerInterface> HttpOptions::build() {
     INFO_LOG << "http server port: " << port;
     std::unique_ptr<ServerInterface> raw;
     if (ServerInterface::create(port, numThreads, &raw)) {
-      return std::move(raw);
+      return raw;
     } else {
       ERR_LOG << "Create http server failed";
       return nullptr;

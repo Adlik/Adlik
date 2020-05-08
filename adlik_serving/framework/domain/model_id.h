@@ -6,6 +6,7 @@
 
 #include <iosfwd>
 #include <string>
+
 #include "cub/base/comparator.h"
 
 namespace adlik {

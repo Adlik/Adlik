@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "cub/string/char_spec.h"
+
 #include <ctype.h>
 
 namespace cub {

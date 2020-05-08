@@ -4,18 +4,13 @@
 #include "adlik_serving/server/http/internal/server_interface.h"
 
 #include <signal.h>
+
 #include <vector>
 
 #include "absl/base/call_once.h"
 #include "absl/base/internal/raw_logging.h"
 #include "absl/memory/memory.h"
 #include "absl/synchronization/notification.h"
-
-#include "libevent/include/event2/event.h"
-#include "libevent/include/event2/http.h"
-#include "libevent/include/event2/thread.h"
-#include "libevent/include/event2/util.h"
-
 #include "adlik_serving/server/http/internal/event_executor.h"
 #include "adlik_serving/server/http/internal/event_loop_scheduler.h"
 #include "adlik_serving/server/http/internal/http_request.h"
@@ -23,6 +18,10 @@
 #include "adlik_serving/server/http/internal/request_handler_options.h"
 #include "cub/base/uncloneable.h"
 #include "cub/log/log.h"
+#include "libevent/include/event2/event.h"
+#include "libevent/include/event2/http.h"
+#include "libevent/include/event2/thread.h"
+#include "libevent/include/event2/util.h"
 
 namespace adlik {
 namespace serving {

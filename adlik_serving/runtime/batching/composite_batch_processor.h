@@ -25,10 +25,9 @@ struct CompositeBatchProcessor : BatchProcessor {
 private:
   OVERRIDE(tensorflow::Status processBatch(Batch<BatchingMessageTask>&));
 
-  enum State { AVAILABLE = 0, UNAVAILABLE = 1 };
-
   tensorflow::mutex mu;
-  std::vector<std::pair<State, std::unique_ptr<BatchProcessor>>> processors GUARDED_BY(mu);
+  std::vector<std::unique_ptr<BatchProcessor>> availableProcessors GUARDED_BY(mu);
+  uint32_t numProcessors GUARDED_BY(mu);
 };
 
 }  // namespace serving

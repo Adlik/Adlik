@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/framework/domain/model_loader.h"
+
 #include "adlik_serving/framework/domain/model_state.h"
 
 namespace adlik {
