@@ -1,6 +1,16 @@
 load("//adlik_serving:serving.bzl", "serving_cc_library")
 
-package(default_visibility = ["//adlik_serving:internal"])
+package(default_visibility = ["//visibility:public"])
+
+serving_cc_library(
+    name = "kmeans",
+    hdrs = [
+        "kmeans.h",
+    ],
+    deps = [
+        "@dlib_archive//:dlib",
+    ],
+)
 
 serving_cc_library(
     name = "algorithm_factory",
@@ -26,8 +36,6 @@ serving_cc_library(
     linkstatic = 1,
     deps = [
         ":algorithm_factory",
-        "//adlik_serving/runtime/ml/algorithm/amc",
-        "//adlik_serving/runtime/ml/algorithm/grid",
     ],
     alwayslink = 1,
 )

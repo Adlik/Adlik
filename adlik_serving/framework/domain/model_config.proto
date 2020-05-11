@@ -128,6 +128,5 @@ message ModelConfigProto {
 
   repeated ModelInstanceGroup instance_group = 8;
 
-  // now only support "grid", "amc"
   string algorithm = 20;
 }
