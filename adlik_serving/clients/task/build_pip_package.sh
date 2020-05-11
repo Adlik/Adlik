@@ -9,38 +9,37 @@ function main() {
     exit 1
   fi
 
-  if [[ ! -d "bazel-bin/adlik_serving" ]]; then
-    echo "Could not find bazel-bin. Did you run from the root of the build"\
-      "tree?"
-    exit 1
-  fi
-
   local BAZEL_PROJECT_DIR="bazel-${PWD##*/}"
+  local PIP_BIN_DIR=$(dirname $0)
+  local ADLIK_BIN_ROOT_DIR=${PIP_BIN_DIR}/../../..
   DEST="$1"
   TMPDIR="$(mktemp -d)"
-  local PIP_SRC_DIR="adlik_serving/clients/task"
+  local PIP_SRC_DIR=${PIP_BIN_DIR}/build_pip_package.runfiles/Adlik/adlik_serving/clients/task
+  if [[ ! -d ${PIP_SRC_DIR} ]]; then
+    local PIP_SRC_DIR=${PIP_BIN_DIR}/build_pip_package.runfiles/adlik/adlik_serving/clients/task
+  fi
 
   echo $(date) : "=== Using tmpdir: ${TMPDIR}"
   mkdir -p ${TMPDIR}/adlik_serving/framework/domain
   mkdir -p ${TMPDIR}/adlik_serving/apis
 
   echo "Adding python files"
-  cp bazel-bin/adlik_serving/apis/*_pb2.py \
+  cp ${ADLIK_BIN_ROOT_DIR}/adlik_serving/apis/*_pb2.py \
     "${TMPDIR}/adlik_serving/apis"
 
-  cp bazel-bin/adlik_serving/apis/*_pb2_grpc.py \
+  cp ${ADLIK_BIN_ROOT_DIR}/adlik_serving/apis/*_pb2_grpc.py \
     "${TMPDIR}/adlik_serving/apis"
 
-  cp bazel-bin/adlik_serving/framework/domain/*_pb2.py \
+  cp ${ADLIK_BIN_ROOT_DIR}/adlik_serving/framework/domain/*_pb2.py \
     "${TMPDIR}/adlik_serving/framework/domain"
 
-  cp adlik_serving/clients/task/__init__.py \
-    "${TMPDIR}/adlik_serving/."
+  # cp adlik_serving/clients/task/__init__.py \
+  #   "${TMPDIR}/adlik_serving/."
 
+  touch "${TMPDIR}/adlik_serving/__init__.py"
   touch "${TMPDIR}/adlik_serving/apis/__init__.py"
   touch "${TMPDIR}/adlik_serving/framework/__init__.py"
   touch "${TMPDIR}/adlik_serving/framework/domain/__init__.py"
-
 
   echo "Adding package setup files"
   cp ${PIP_SRC_DIR}/setup.py "${TMPDIR}"
