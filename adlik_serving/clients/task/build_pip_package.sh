@@ -16,7 +16,7 @@ function main() {
   TMPDIR="$(mktemp -d)"
   local PIP_SRC_DIR=${PIP_BIN_DIR}/build_pip_package.runfiles/Adlik/adlik_serving/clients/task
   if [[ ! -d ${PIP_SRC_DIR} ]]; then
-    local PIP_SRC_DIR=${PIP_BIN_DIR}/build_pip_package.runfiles/adlik/adlik_serving/clients/task
+    PIP_SRC_DIR="adlik_serving/clients/task"
   fi
 
   echo $(date) : "=== Using tmpdir: ${TMPDIR}"
