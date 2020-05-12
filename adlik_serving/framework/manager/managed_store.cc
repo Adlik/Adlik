@@ -4,10 +4,15 @@
 #include "adlik_serving/framework/manager/managed_store.h"
 
 #include "adlik_serving/framework/domain/event_bus.h"
+#include "adlik_serving/framework/domain/model_options.h"
 #include "adlik_serving/framework/domain/model_store.h"
+#include "adlik_serving/framework/domain/state_monitor.h"
+#include "adlik_serving/framework/manager/boarding_loop.h"
 #include "adlik_serving/framework/manager/model_factory.h"
 #include "adlik_serving/framework/manager/serving_store.h"
+#include "adlik_serving/framework/manager/storage_loop.h"
 #include "cub/base/assertions.h"
+#include "cub/env/fs/path.h"
 
 namespace adlik {
 namespace serving {
@@ -92,6 +97,41 @@ inline cub::Status ManagedStore::startup(const ModelId& id) {
 cub::Status ManagedStore::start(const ModelId& id) {
   auto i = find(id);
   return i == manageds.cend() ? startup(id) : onStartFail(id, "model was existed");
+}
+
+cub::Status ManagedStore::addModel(const std::string& modelName, const std::string& path) {
+  INFO_LOG << "add model " << modelName;
+  if (ROLE(ModelStore).exist(modelName)) {
+    INFO_LOG << modelName << " model is already exist";
+    return cub::AlreadyExists;
+  }
+  std::string targetPath = cub::paths(ROLE(ModelOptions).getBasePath(), modelName);
+  cub::Status status = cub::filesystem().copyDir(path, targetPath);
+  if (cub::isFailStatus(status)) {
+    return status;
+  }
+  ROLE(ModelStore).configOneModel(modelName);
+  ROLE(StorageLoop).once();
+  ROLE(BoardingLoop).once();
+  ROLE(StateMonitor).wait();
+  return cub::Success;
+}
+
+cub::Status ManagedStore::deleteModel(const std::string& modelName) {
+  INFO_LOG << "delete model " << modelName;
+  if (!ROLE(ModelStore).exist(modelName)) {
+    INFO_LOG << modelName << " model is not exist";
+    return cub::Unavailable;
+  }
+  ROLE(ModelStore).deleteOneConfig(modelName);
+  auto range = manageds.equal_range(modelName);
+  for (auto it = range.first; it != range.second;) {
+    manageds.erase(it++);
+  }
+  ROLE(ServingStore).update(manageds);
+  ROLE(StateMonitor).deleteModel(modelName);
+  std::string targetPath = cub::paths(ROLE(ModelOptions).getBasePath(), modelName);
+  return cub::filesystem().deleteDir(targetPath);
 }
 
 cub::Status ManagedStore::stop(const ModelId& id) {

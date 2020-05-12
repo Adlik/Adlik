@@ -17,6 +17,7 @@ cub::Status GrpcServer::start() {
   if (build(builder)) {
     builder.RegisterService(static_cast<GrpcService*>(this));
     builder.RegisterService(static_cast<TaskOpService*>(this));
+    builder.RegisterService(static_cast<GrpcModelOperateService*>(this));
     server = builder.BuildAndStart();
     CUB_ASSERT_VALID_PTR(server);
     INFO_LOG << "grpc server is serving...";

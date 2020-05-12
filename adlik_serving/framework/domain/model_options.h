@@ -16,10 +16,12 @@ struct ModelOptions {
 
   int64_t getIntervalMs() const;
   const std::string& getBasePath() const;
+  const std::string& getLoadingMethod() const;
 
 private:
   std::string root;
   int intervalInSecond;  // second
+  std::string loadingMethod; // automatic, manual
 };
 
 }  // namespace serving

@@ -124,6 +124,7 @@ bool BoardingFunctor::shouldSkip(const ModelStream& stream) const {
 
 void BoardingFunctor::handle(std::vector<ModelStream>& streams) {
   for (auto i = streams.cbegin(); i != streams.cend();) {
+    INFO_LOG << i->str();
     if (shouldSkip(*i)) {
       ++i;
     } else {
@@ -285,8 +286,17 @@ struct ModelExecutor : ManagedNameVisitor {
   }
 
   void exec() {
-    if (auto action = next()) {
-      action->exec(store);
+    for (auto& name : names) {
+      actions.emplace_back(action(name));
+    }
+    while (true) {
+      auto action = next();
+      if (action) {
+        action->exec(store);
+        actions.erase(actions.begin());
+      } else {
+        break;
+      }
     }
   }
 
@@ -298,10 +308,6 @@ private:
   }
 
   cub::Optional<ModelAction> next() {
-    std::vector<ModelAction> actions;
-    for (auto& name : names) {
-      actions.emplace_back(action(name));
-    }
     return select(actions);
   }
 
@@ -322,6 +328,7 @@ private:
 private:
   ManagedStore& store;
   std::vector<std::string> names;
+  std::vector<ModelAction> actions;
 };
 }  // namespace
 

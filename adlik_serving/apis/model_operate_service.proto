@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+import "adlik_serving/apis/model_operate.proto";
+
+service ModelOperateService {
+  rpc addModel(ModelOperateRequest) returns (ModelOperateResponse);
+  rpc deleteModel(ModelOperateRequest) returns (ModelOperateResponse);
+  // todo: regress
+}

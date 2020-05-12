@@ -25,6 +25,7 @@ private:
 
 public:
   void poll();
+  void once();
 
 private:
   std::unique_ptr<cub::LoopThread> loop;
