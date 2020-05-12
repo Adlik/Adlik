@@ -27,6 +27,12 @@ void BoardingLoop::poll() {
   // f(streams);
 }
 
+void BoardingLoop::once() {
+  cub::AutoLock lock(this->mu);
+  BoardingFunctor f(this->ROLE(ManagedStore));
+  f(streams);
+}
+
 void BoardingLoop::update(ModelStream& stream) {
   cub::AutoLock lock(mu);
   streams.push_back(stream);
