@@ -5,7 +5,6 @@ jobs:
         vmImage: ubuntu-latest
     timeoutInMinutes: 0
     steps:
-      - template: ../steps/install-bazel.yml
       - template: ../steps/install-cuda.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python

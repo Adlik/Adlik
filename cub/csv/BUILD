@@ -26,6 +26,7 @@ cc_library(
     deps = [
         ":dialect",
         "//cub/string:string_view",
+        "//cub/string:string_view_hash",
     ],
 )
 
