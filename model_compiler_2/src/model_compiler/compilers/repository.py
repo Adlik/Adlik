@@ -1,3 +1,6 @@
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 from collections import deque
 from typing import Any, Callable, Deque, Dict, List, Mapping, NamedTuple, Sequence, Tuple
 

@@ -1,3 +1,6 @@
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 from typing import Mapping, NamedTuple, Optional
 
 from onnx import ModelProto
