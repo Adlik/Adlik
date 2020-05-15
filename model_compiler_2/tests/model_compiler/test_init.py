@@ -1,3 +1,6 @@
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 from os import path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest import TestCase
