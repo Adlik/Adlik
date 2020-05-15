@@ -1,0 +1,14 @@
+jobs:
+  - job: ToxModelCompiler2
+    displayName: Tox model compiler 2
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use Python 3.7
+        inputs:
+            versionSpec: '3.7'
+      - script: pip install -U tox
+        displayName: Install tox
+      - script: cd model_compiler_2 && tox
+        displayName: Run tox
