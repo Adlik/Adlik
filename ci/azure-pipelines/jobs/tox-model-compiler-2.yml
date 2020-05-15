@@ -10,5 +10,8 @@ jobs:
             versionSpec: '3.7'
       - script: pip install -U tox
         displayName: Install tox
-      - script: cd model_compiler_2 && tox
+      - script: sudo apt-get install --no-install-recommends -y protobuf-compiler
+        displayName: Install Protocol Buffers
+      - script: tox
         displayName: Run tox
+        workingDirectory: model_compiler_2
