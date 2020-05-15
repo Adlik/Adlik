@@ -1,0 +1,15 @@
+[MASTER]
+ignore = generated
+jobs = 0
+
+[MESSAGES CONTROL]
+disable = missing-class-docstring,
+          missing-function-docstring,
+          missing-module-docstring
+
+[TYPECHECK]
+contextmanager-decorators=contextlib.contextmanager,tensorflow.python.util.tf_contextlib.contextmanager
+
+
+[FORMAT]
+max-line-length = 120
