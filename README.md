@@ -195,6 +195,12 @@ cd {dir_of_adlik_serving_binary}
 The `ci/docker/build.sh` file can be used to build a Docker images that contains all the requirements for building
 Adlik. You can build Adlik with the Docker image.
 
+*[NOTE]: If you build the runtime with GPU in a Docker image, you need to add the CUDA environment variables in the Dockerfile,
+such as:
+ 
+ENV NVIDIA_VISIBLE_DEVICES all, \
+ENV NVIDIA_DRIVER_CAPABILITIES compute, utility.
+
 ## Inference performance of serving engine
 
 In order to evaluate the performance of the service engine, we performed inference tests on the same cpu or gpu using the simple cnn model (mnist model) and the resnet50 model with different runtimes. The cpu and gpu parameters used in the test are as follows:

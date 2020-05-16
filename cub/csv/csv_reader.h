@@ -13,6 +13,7 @@
 
 #include "cub/csv/dialect.h"
 #include "cub/string/string_view.h"
+#include "cub/string/string_view_hash.h"
 
 namespace cub {
 
@@ -42,15 +43,5 @@ private:
 };
 
 }  // namespace cub
-
-namespace std {
-template <>
-struct hash<cub::StringView> {
-  size_t operator()(const cub::StringView& view) const noexcept {
-    return std::_Hash_bytes(view.data(), view.size(), static_cast<size_t>(0xc70f6907UL));
-  }
-};
-
-}  // namespace std
 
 #endif

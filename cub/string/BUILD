@@ -23,6 +23,15 @@ cc_test(
 )
 
 cc_library(
+    name = "string_view_hash",
+    hdrs = ["string_view_hash.h"],
+    deps = [
+        ":string_view",
+        "//cub/base:hash",
+    ],
+)
+
+cc_library(
     name = "str_utils",
     srcs = ["str_utils.cc"],
     hdrs = ["str_utils.h"],

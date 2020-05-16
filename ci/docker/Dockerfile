@@ -37,6 +37,7 @@ RUN . /etc/os-release && \
         cuda-cusparse-dev-10-0 \
         cuda-nvml-dev-10-0 \
         cuda-nvrtc-10-0 \
+        default-jdk-headless \
         flake8 \
         git \
         "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2019.3.344" \
@@ -58,5 +59,5 @@ RUN . /etc/os-release && \
 RUN apt-mark hold libcudnn7 libcudnn7-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
 
 RUN python3 -c 'import shutil, sys, urllib.request; shutil.copyfileobj(urllib.request.urlopen(sys.argv[1]), sys.stdout.buffer)' \
-        https://github.com/bazelbuild/buildtools/releases/download/2.2.1/buildifier > /usr/local/bin/buildifier && \
+        https://github.com/bazelbuild/buildtools/releases/download/3.0.0/buildifier > /usr/local/bin/buildifier && \
     chmod +x /usr/local/bin/buildifier
