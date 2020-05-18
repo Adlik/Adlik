@@ -3,7 +3,6 @@
 
 from . import keras_model_file_to_keras_model, \
     keras_model_to_tf_model, \
-    repository, \
     tf_frozen_graph_model_to_onnx_model, \
     tf_model_to_saved_model, \
     tf_model_to_tf_frozen_graph_model
