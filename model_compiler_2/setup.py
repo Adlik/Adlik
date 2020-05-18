@@ -55,7 +55,7 @@ setuptools.setup(
         'tensorflow',
         'tf2onnx@git+https://github.com/onnx/tensorflow-onnx.git@3383ff9bfa50e49bf69863983c965e49b94c073b'
     ],
-    entry_points={'console_scripts': ['model-compiler=model_compiler.main:main'], },
+    entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={
         'test': [
             'bandit',
