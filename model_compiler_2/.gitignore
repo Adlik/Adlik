@@ -7,4 +7,4 @@ __pycache__/
 /dist/
 /htmlcov/
 /.coverage
-/src/model_compiler/protos/generated/
+/src/model_compiler/protos/generated/*_pb2.py

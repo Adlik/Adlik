@@ -8,8 +8,8 @@ disable = missing-class-docstring,
           missing-module-docstring
 
 [TYPECHECK]
-contextmanager-decorators=contextlib.contextmanager,tensorflow.python.util.tf_contextlib.contextmanager
-
+contextmanager-decorators = contextlib.contextmanager,
+                            tensorflow.python.util.tf_contextlib.contextmanager
 
 [FORMAT]
 max-line-length = 120
