@@ -22,5 +22,13 @@ def compile_source(source: TensorFlowFrozenGraphModel) -> OnnxModel:
 
     model_proto = onnx_graph.make_model("ONNX model generated from TensorFlow frozen graph model.")
 
+    input_name_to_index = {source_input.name: i for i, source_input in enumerate(source.inputs)}
+
+    sorted_graph_inputs = sorted(model_proto.graph.input,
+                                 key=lambda target_input: input_name_to_index[target_input.name])
+
+    del model_proto.graph.input[:]
+    model_proto.graph.input.extend(sorted_graph_inputs)
+
     return OnnxModel(model_proto=model_proto,
-                     input_data_formats={source_input.name: source_input.data_format for source_input in source.inputs})
+                     input_data_formats=[source_input.data_format for source_input in source.inputs])

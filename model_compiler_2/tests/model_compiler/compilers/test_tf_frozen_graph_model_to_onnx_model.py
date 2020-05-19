@@ -30,8 +30,8 @@ class CompileSourceTestCase(TestCase):
         compiled = compiler.compile_source(source=frozen_graph_model)
         compiled_graph = compiled.model_proto.graph
 
-        self.assertEqual(sorted(graph_input.name for graph_input in compiled_graph.input), ['x:0', 'y:0'])
-        self.assertEqual(compiled.input_data_formats, {'x:0': None, 'y:0': None})
+        self.assertEqual([graph_input.name for graph_input in compiled_graph.input], ['x:0', 'y:0'])
+        self.assertEqual(compiled.input_data_formats, [None, None])
 
     def test_compile_with_variables(self):
         def _make_model(input_x, input_y, session):
@@ -46,5 +46,5 @@ class CompileSourceTestCase(TestCase):
         compiled = compiler.compile_source(source=frozen_graph_model)
         compiled_graph = compiled.model_proto.graph
 
-        self.assertEqual(sorted(graph_input.name for graph_input in compiled_graph.input), ['x:0', 'y:0'])
-        self.assertEqual(compiled.input_data_formats, {'x:0': None, 'y:0': None})
+        self.assertEqual([graph_input.name for graph_input in compiled_graph.input], ['x:0', 'y:0'])
+        self.assertEqual(compiled.input_data_formats, [None, None])
