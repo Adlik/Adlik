@@ -16,6 +16,8 @@
 | Lufan Zhao     |     ZTE      |  zhao.lufan30@zte.com.cn  | EFanZh              |
 | Jie Wu         | China Mobile | wujieyjy@chinamobile.com  | wuqufuhua           |
 | Tengfei Liu    | China Unicom |  liutf24@chinaunicom.cn   | liutengfei0         |
+| Sheng Sun      |   ICT,CAS    |    sunsheng@ict.ac.cn     | EmilyLoveSun        |
+| Kang Li        |   ICT,CAS    |     likang@ict.ac.cn      | HappyKL             |
 
 ## Maintainers
 
