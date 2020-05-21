@@ -9,12 +9,6 @@
 #include "cub/base/status_wrapper.h"
 #include "cub/dci/role.h"
 
-namespace google {
-namespace protobuf {
-struct Any;
-}
-}  // namespace google
-
 namespace adlik {
 namespace serving {
 
@@ -22,11 +16,13 @@ struct ServingStore;
 struct ModelStore;
 struct ManagedStore;
 struct RunOptions;
+struct CreateTaskRequest;
+struct CreateTaskResponse;
 
 struct TaskOpImpl {
   virtual ~TaskOpImpl() = default;
 
-  cub::StatusWrapper create(const RunOptions&, const ::google::protobuf::Any&, ::google::protobuf::Any&);
+  cub::StatusWrapper create(const RunOptions&, const CreateTaskRequest&, CreateTaskResponse&);
 
 private:
   USE_ROLE(ServingStore);
