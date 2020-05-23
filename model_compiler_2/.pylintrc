@@ -1,4 +1,5 @@
 [MASTER]
+extension-pkg-whitelist = tensorrt
 ignore = generated
 jobs = 0
 

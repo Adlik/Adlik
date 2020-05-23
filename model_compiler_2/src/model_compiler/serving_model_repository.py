@@ -62,7 +62,7 @@ def _get_next_version(model_dir):
 
 
 def _make_model_package(version_dir, config_file, target_path):
-    with ZipFile(file=target_path, mode='w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z_file:
+    with ZipFile(file=target_path, mode='w', compression=zipfile.ZIP_DEFLATED) as z_file:
         model_dir_dir = path.dirname(version_dir)
 
         for root, _, files in os.walk(version_dir):

@@ -4,7 +4,7 @@
 from unittest import TestCase
 
 import tensorflow as tf
-import tensorflow.python.eager.context as eager_context  # pylint: disable=no-name-in-module
+import tensorflow.python.eager.context as eager_context
 
 import model_compiler.compilers.tf_model_to_saved_model as compiler
 from model_compiler.compilers.tf_model_to_saved_model import Config

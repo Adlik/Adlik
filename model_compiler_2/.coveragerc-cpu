@@ -1,0 +1,20 @@
+[run]
+branch = true
+
+omit = */generated/*
+       */site-packages/model_compiler/compilers/onnx_model_to_tensorrt_model.py
+       */site-packages/model_compiler/models/targets/tensorrt_model.py
+       tests/model_compiler/compilers/test_onnx_model_to_tensorrt_model.py
+       tests/model_compiler/models/targets/test_tensorrt_model.py
+
+parallel = true
+
+source = model_compiler
+         tests
+
+[paths]
+source = src
+         */site-packages
+
+[report]
+fail_under = 99
