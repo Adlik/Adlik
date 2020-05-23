@@ -16,11 +16,15 @@ std::unique_ptr<ModelHandle> ServingStore::find(const ModelSpec& spec) const {
 
 ModelHandle* ServingStore::find(const ModelRequest& req) const {
   auto handles = models.get();
-  auto found = handles->find(req);
-  if (found == handles->end()) {
+  if (handles) {
+    auto found = handles->find(req);
+    if (found == handles->end()) {
+      return nullptr;
+    }
+    return new SharedModelHandle(std::shared_ptr<ModelHandle>(handles, found->second->handle()));
+  } else {
     return nullptr;
   }
-  return new SharedModelHandle(std::shared_ptr<ModelHandle>(handles, found->second->handle()));
 }
 
 struct ServingStore::SortedModels {

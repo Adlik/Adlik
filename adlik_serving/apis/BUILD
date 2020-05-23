@@ -48,30 +48,6 @@ serving_proto_library_py(
 )
 
 serving_proto_library(
-    name = "amc_task_proto",
-    srcs = ["amc_task.proto"],
-    cc_api_version = 2,
-)
-
-serving_proto_library_py(
-    name = "amc_task_proto_py_pb2",
-    srcs = ["amc_task.proto"],
-    proto_library = "amc_task_proto",
-)
-
-serving_proto_library(
-    name = "grid_task_proto",
-    srcs = ["grid_task.proto"],
-    cc_api_version = 2,
-)
-
-serving_proto_library_py(
-    name = "grid_task_proto_py_pb2",
-    srcs = ["grid_task.proto"],
-    proto_library = "grid_task_proto",
-)
-
-serving_proto_library(
     name = "task_proto",
     srcs = ["task.proto"],
     cc_api_version = 2,
@@ -134,8 +110,6 @@ py_proto_library(
     srcs_version = "PY2AND3",
     use_grpc_plugin = True,
     deps = [
-        ":amc_task_proto_py_pb2",
-        ":grid_task_proto_py_pb2",
         ":task_proto_py_pb2",
         "@com_google_protobuf//:protobuf_python",
     ],

@@ -24,7 +24,7 @@ message CreateTaskRequest {
 }
 
 message CreateTaskResponse {
-  string status = 1; // NEW, RUNNING, ERROR, DONE
+  string status = 1; // ERROR, DONE
 
   // information for specific task, different model has own definition
   google.protobuf.Any detail = 2;
