@@ -1,0 +1,4 @@
+steps:
+  - script: brew install automake
+    displayName: Install Automake
+    condition: eq(variables['Agent.OS'], 'Darwin')

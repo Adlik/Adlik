@@ -11,6 +11,7 @@ jobs:
         vmImage: $(vmImage)
     timeoutInMinutes: 0
     steps:
+      - template: ../steps/install-automake.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
       - script: pip install -U six
