@@ -3,12 +3,12 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-import ctypes
 import glob
+import re
 import subprocess
 import sys
-from ctypes import CDLL, c_int
 from os import path
+from subprocess import Popen
 from tempfile import TemporaryDirectory
 
 _BASE_URL = 'https://developer.download.nvidia.com/compute/machine-learning/repos'
@@ -23,13 +23,16 @@ _TOOLS_DIR = path.dirname(path.abspath(__file__))
 
 
 def _get_cuda_version():
-    cuda_runtime = CDLL('libcudart.so')
-    version = c_int()
+    checker_regex = re.compile(r'\s*libcudart.so.(\d+).(\d+)\s.*', re.DOTALL)
 
-    if cuda_runtime.cudaRuntimeGetVersion(ctypes.byref(version)) == 0:
-        version_number = version.value
+    with Popen(args=['ldconfig', '-p'],
+               stdout=subprocess.PIPE,
+               universal_newlines=True) as process:
+        for line in process.stdout:
+            match = checker_regex.fullmatch(line)
 
-        return version_number // 1000, version_number % 100 // 10
+            if match:
+                return int(match[1]), int(match[2])
 
     return None
 
