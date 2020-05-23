@@ -4,10 +4,11 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
+      - template: ../steps/install-tensorrt.yml
       - task: UsePythonVersion@0
-        displayName: Use Python 3.7
+        displayName: Use Python 3.6
         inputs:
-            versionSpec: '3.7'
+            versionSpec: '3.6'
       - script: pip install -U tox
         displayName: Install tox
       - script: sudo apt-get install --no-install-recommends -y protobuf-compiler
