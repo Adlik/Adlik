@@ -13,6 +13,6 @@ jobs:
         displayName: Install tox
       - script: sudo apt-get install --no-install-recommends -y protobuf-compiler
         displayName: Install Protocol Buffers
-      - script: tox
+      - script: tox -e py36-cpu
         displayName: Run tox
         workingDirectory: model_compiler_2
