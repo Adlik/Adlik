@@ -10,7 +10,7 @@ import argparse
 import time
 
 from adlik_serving.apis import task_pb2, task_service_pb2_grpc
-from google.protobuf import any_pb2, json_format
+from google.protobuf import json_format
 import grpc
 import requests
 
@@ -33,9 +33,7 @@ def _create_request():
     # detail = _create_detail()
     # task_request.detail.Pack(detail)
 
-    packed_request = any_pb2.Any()
-    packed_request.Pack(task_request)
-    return packed_request
+    return task_request
 
 
 def _grpc_visit():
@@ -48,12 +46,8 @@ def _grpc_visit():
     response = stub.create(task_request)
     end = time.time()
 
-    task_response = task_pb2.CreateTaskResponse()
-    if response.Unpack(task_response):
-        print('Task response is: \n{}'.format(json_format.MessageToJson(response)))
-        print('Running Time: {}s'.format(end - start))
-    else:
-        print('Unpack response from Any failure!')
+    print('Task response is: \n{}'.format(json_format.MessageToJson(response)))
+    print('Running Time: {}s'.format(end - start))
 
 
 def _http_visit():

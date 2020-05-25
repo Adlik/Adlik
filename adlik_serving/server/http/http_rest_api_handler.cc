@@ -9,6 +9,7 @@
 #include "adlik_serving/apis/get_model_meta_impl.h"
 #include "adlik_serving/apis/predict.pb.h"
 #include "adlik_serving/apis/predict_impl.h"
+#include "adlik_serving/apis/task.pb.h"
 #include "adlik_serving/apis/task_op_impl.h"
 #include "adlik_serving/framework/domain/model_config.h"
 #include "adlik_serving/framework/manager/run_options.h"
@@ -181,10 +182,10 @@ tensorflow::Status HttpRestApiHandler::processMlPredictRequest(const absl::strin
     return tensorflow::errors::InvalidArgument("Missing model name in request.");
   }
 
-  ::google::protobuf::Any request;
+  CreateTaskRequest request;
   TF_RETURN_IF_ERROR(unserializeMessage(request_body, &request));
 
-  ::google::protobuf::Any response;
+  CreateTaskResponse response;
   TF_RETURN_IF_ERROR(toTensorflowStatus(task_op_impl.create(runOptions(options), request, response)));
   std::string response_output;
   TF_RETURN_IF_ERROR(serializeMessage(response, &response_output));
