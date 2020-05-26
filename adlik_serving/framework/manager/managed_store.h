@@ -25,10 +25,6 @@ struct ModelFactory;
 struct ModelStore;
 struct ModelConfig;
 struct ServingStore;
-struct ModelOptions;
-struct StateMonitor;
-struct StorageLoop;
-struct BoardingLoop;
 
 DEFINE_ROLE(ManagedStore) {
   cub::Status start(const ModelId&);
@@ -38,11 +34,11 @@ DEFINE_ROLE(ManagedStore) {
   cub::Status unload(const ModelId&);
 
   cub::Status unaspired(const ModelId&);
-
-  cub::Status addModel(const std::string& name, const std::string& path);
-
-  cub::Status deleteModel(const std::string& name);
-
+  bool exist(const std::string& modelName);
+  bool isNormal(const std::string& modelName);
+  void deleteModel(const std::string& modelName);
+  void deleteModel(const ModelId&);
+  void updateServingStore();
   void names(ManagedNameVisitor&) const;
   void models(ManagedModelVisitor&) const;
   void models(const std::string& name, ManagedModelVisitor&) const;
@@ -78,10 +74,6 @@ private:
   USE_ROLE(ModelFactory);
   USE_ROLE(ModelStore);
   USE_ROLE(ServingStore);
-  USE_ROLE(ModelOptions);
-  USE_ROLE(StateMonitor);
-  USE_ROLE(StorageLoop);
-  USE_ROLE(BoardingLoop);
 };
 
 }  // namespace serving

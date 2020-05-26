@@ -7,10 +7,12 @@ message ModelOperateRequest{
   string model_name = 1;
   string operate_name = 2;
   string path = 3;
+  string model_version = 4;
 }
 
 message ModelOperateResponse{
   string status = 1; //SUCCESS, ERROR
+  string error_message = 2;
 }
 
 

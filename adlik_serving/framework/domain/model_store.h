@@ -8,8 +8,8 @@
 #include <unordered_map>
 
 #include "adlik_serving/framework/domain/model_config.h"
-#include "cub/env/fs/file_system.h"
 #include "cub/env/concurrent/mutex.h"
+#include "cub/env/fs/file_system.h"
 
 namespace adlik {
 namespace serving {
@@ -22,8 +22,8 @@ DEFINE_ROLE(ModelConfigVisitor) {
 
 struct ModelStore : private cub::DirentVisitor {
   cub::Status config();
-  cub::Status configOneModel(const std::string& name);
-  cub::Status deleteOneConfig(const std::string& name);
+  cub::Status configModel(const std::string& name);
+  cub::Status deleteModel(const std::string& name);
   void models(ModelConfigVisitor&) const;
   const ModelConfig* find(const std::string& name) const;
   bool exist(const std::string& name) const;

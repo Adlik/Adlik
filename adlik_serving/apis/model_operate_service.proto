@@ -7,6 +7,8 @@ import "adlik_serving/apis/model_operate.proto";
 
 service ModelOperateService {
   rpc addModel(ModelOperateRequest) returns (ModelOperateResponse);
+  rpc addModelVersion(ModelOperateRequest) returns (ModelOperateResponse);
   rpc deleteModel(ModelOperateRequest) returns (ModelOperateResponse);
+  rpc deleteModelVersion(ModelOperateRequest) returns (ModelOperateResponse);
   // todo: regress
 }

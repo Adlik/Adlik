@@ -11,12 +11,19 @@ import time
 from adlik_serving.apis import model_operate_pb2, model_operate_service_pb2_grpc
 from google.protobuf import json_format
 import grpc
-import requests
 
 FLAGS = None
 
 
 def _create_add_model_request():
+    request = model_operate_pb2.ModelOperateRequest()
+    request.model_name = FLAGS.model_name
+    request.operate_name = FLAGS.operate_name
+    request.path = FLAGS.path
+    return request
+
+
+def _create_add_model_version_request():
     request = model_operate_pb2.ModelOperateRequest()
     request.model_name = FLAGS.model_name
     request.operate_name = FLAGS.operate_name
@@ -31,15 +38,35 @@ def _create_delete_model_request():
     return request
 
 
+def _create_delete_model_version_request():
+    request = model_operate_pb2.ModelOperateRequest()
+    request.model_name = FLAGS.model_name
+    request.model_version = FLAGS.model_version
+    request.operate_name = FLAGS.operate_name
+    return request
+
+
 def _grpc_add_model():
     channel = grpc.insecure_channel(FLAGS.url)
     stub = model_operate_service_pb2_grpc.ModelOperateServiceStub(channel)
     operate_request = _create_add_model_request()
-    print('model operate request is: \n{}\n'.format(json_format.MessageToJson(operate_request)))
+    print('Model operate request is: \n{}\n'.format(json_format.MessageToJson(operate_request)))
     start = time.time()
     response = stub.addModel(operate_request)
     end = time.time()
-    print('Task response is: \n{}'.format(response.status))
+    print('Add model response is: \n{}'.format(response))
+    print('Running Time: {}s'.format(end - start))
+
+
+def _grpc_add_model_version():
+    channel = grpc.insecure_channel(FLAGS.url)
+    stub = model_operate_service_pb2_grpc.ModelOperateServiceStub(channel)
+    operate_request = _create_add_model_request()
+    print('Model operate request is: \n{}\n'.format(json_format.MessageToJson(operate_request)))
+    start = time.time()
+    response = stub.addModelVersion(operate_request)
+    end = time.time()
+    print('Add model version response is: \n{}'.format(response))
     print('Running Time: {}s'.format(end - start))
 
 
@@ -47,17 +74,31 @@ def _grpc_delete_model():
     channel = grpc.insecure_channel(FLAGS.url)
     stub = model_operate_service_pb2_grpc.ModelOperateServiceStub(channel)
     operate_request = _create_delete_model_request()
-    print('model operate request is: \n{}\n'.format(json_format.MessageToJson(operate_request)))
+    print('Model operate request is: \n{}\n'.format(json_format.MessageToJson(operate_request)))
     start = time.time()
     response = stub.deleteModel(operate_request)
     end = time.time()
-    print('model operate response is: \n{}'.format(response.status))
+    print('Model operate response is: \n{}'.format(response))
+    print('Running Time: {}s'.format(end - start))
+
+
+def _grpc_delete_model_version():
+    channel = grpc.insecure_channel(FLAGS.url)
+    stub = model_operate_service_pb2_grpc.ModelOperateServiceStub(channel)
+    operate_request = _create_delete_model_version_request()
+    print('Model operate request is: \n{}\n'.format(json_format.MessageToJson(operate_request)))
+    start = time.time()
+    response = stub.deleteModelVersion(operate_request)
+    end = time.time()
+    print('Model operate response is: \n{}'.format(response.status))
     print('Running Time: {}s'.format(end - start))
 
 
 grpc_operate = {
     'add': _grpc_add_model,
-    'delete': _grpc_delete_model
+    'delete': _grpc_delete_model,
+    'add_version': _grpc_add_model_version,
+    'delete_version': _grpc_delete_model_version
 }
 
 
@@ -75,6 +116,8 @@ if __name__ == '__main__':
                         help='Enable verbose output')
     parser.add_argument('-m', '--model-name', type=str, required=False, default="mm",
                         help='Name of model')
+    parser.add_argument('-n', '--model-version', type=str, required=False, default="1",
+                        help='Version of model')
     parser.add_argument('-p', '--protocol', type=str, required=False, default='grpc', choices=['grpc', "http"],
                         help='Protocol ("http"/"grpc") used to ' +
                              'communicate with service. Default is "grpc".')

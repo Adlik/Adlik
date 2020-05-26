@@ -19,8 +19,9 @@ cc_library(
         "posix_filesystem.h",
         "posix_time.h",
     ],
-    linkopts = ["-lpthread",
-    "-lstdc++fs"],
+    linkopts = [
+        "-lpthread",
+    ],
     deps = [
         "//cub/base:assertions",
         "//cub/env/concurrent",
