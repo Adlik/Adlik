@@ -4,15 +4,10 @@
 #include "adlik_serving/framework/manager/managed_store.h"
 
 #include "adlik_serving/framework/domain/event_bus.h"
-#include "adlik_serving/framework/domain/model_options.h"
 #include "adlik_serving/framework/domain/model_store.h"
-#include "adlik_serving/framework/domain/state_monitor.h"
-#include "adlik_serving/framework/manager/boarding_loop.h"
 #include "adlik_serving/framework/manager/model_factory.h"
 #include "adlik_serving/framework/manager/serving_store.h"
-#include "adlik_serving/framework/manager/storage_loop.h"
 #include "cub/base/assertions.h"
-#include "cub/env/fs/path.h"
 
 namespace adlik {
 namespace serving {
@@ -64,6 +59,45 @@ void ManagedStore::models(const std::string& name, ManagedModelVisitor& visitor)
   select(name, [&visitor](auto i) { visitor.visit(*i->second.get()); });
 }
 
+bool ManagedStore::exist(const std::string& name) {
+  bool isExist = false;
+  auto range = manageds.equal_range(name);
+  for (auto it = range.first; it != range.second; ++it) {
+    isExist = true;
+  }
+  return isExist;
+}
+
+bool ManagedStore::isNormal(const std::string& name) {
+  bool isNormal = true;
+  auto range = manageds.equal_range(name);
+  for (auto it = range.first; it != range.second; ++it) {
+    if (it->second->str() != "READY") {
+      isNormal = false;
+    }
+  }
+  return isNormal;
+}
+
+void ManagedStore::deleteModel(const std::string& modelName) {
+  auto range = manageds.equal_range(modelName);
+  for (auto it = range.first; it != range.second;) {
+    manageds.erase(it++);
+  }
+  ROLE(ServingStore).update(manageds);
+}
+
+void ManagedStore::deleteModel(const ModelId& id) {
+  INFO_LOG << "delete model " << id.getName() << " version " << id.getVersion();
+  auto i = find(id);
+  manageds.erase(i);
+  ROLE(ServingStore).update(manageds);
+}
+
+void ManagedStore::updateServingStore() {
+  ROLE(ServingStore).update(manageds);
+}
+
 void ManagedStore::publish(const ModelId& id) const {
   auto i = find(id);
   if (i != manageds.cend()) {
@@ -97,41 +131,6 @@ inline cub::Status ManagedStore::startup(const ModelId& id) {
 cub::Status ManagedStore::start(const ModelId& id) {
   auto i = find(id);
   return i == manageds.cend() ? startup(id) : onStartFail(id, "model was existed");
-}
-
-cub::Status ManagedStore::addModel(const std::string& modelName, const std::string& path) {
-  INFO_LOG << "add model " << modelName;
-  if (ROLE(ModelStore).exist(modelName)) {
-    INFO_LOG << modelName << " model is already exist";
-    return cub::AlreadyExists;
-  }
-  std::string targetPath = cub::paths(ROLE(ModelOptions).getBasePath(), modelName);
-  cub::Status status = cub::filesystem().copyDir(path, targetPath);
-  if (cub::isFailStatus(status)) {
-    return status;
-  }
-  ROLE(ModelStore).configOneModel(modelName);
-  ROLE(StorageLoop).once();
-  ROLE(BoardingLoop).once();
-  ROLE(StateMonitor).wait();
-  return cub::Success;
-}
-
-cub::Status ManagedStore::deleteModel(const std::string& modelName) {
-  INFO_LOG << "delete model " << modelName;
-  if (!ROLE(ModelStore).exist(modelName)) {
-    INFO_LOG << modelName << " model is not exist";
-    return cub::Unavailable;
-  }
-  ROLE(ModelStore).deleteOneConfig(modelName);
-  auto range = manageds.equal_range(modelName);
-  for (auto it = range.first; it != range.second;) {
-    manageds.erase(it++);
-  }
-  ROLE(ServingStore).update(manageds);
-  ROLE(StateMonitor).deleteModel(modelName);
-  std::string targetPath = cub::paths(ROLE(ModelOptions).getBasePath(), modelName);
-  return cub::filesystem().deleteDir(targetPath);
 }
 
 cub::Status ManagedStore::stop(const ModelId& id) {

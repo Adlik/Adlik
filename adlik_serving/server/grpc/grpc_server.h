@@ -6,9 +6,9 @@
 
 #include <memory>
 
+#include "adlik_serving/server/grpc/grpc_model_operate_service.h"
 #include "adlik_serving/server/grpc/grpc_options.h"
 #include "adlik_serving/server/grpc/grpc_service.h"
-#include "adlik_serving/server/grpc/grpc_model_operate_service.h"
 #include "adlik_serving/server/grpc/task_op_service.h"
 #include "cub/base/status.h"
 #include "grpcpp/server.h"
@@ -17,7 +17,7 @@
 namespace adlik {
 namespace serving {
 
-struct GrpcServer : GrpcOptions, GrpcService, TaskOpService , GrpcModelOperateService{
+struct GrpcServer : GrpcOptions, GrpcService, TaskOpService, GrpcModelOperateService {
   cub::Status start();
   void wait();
 

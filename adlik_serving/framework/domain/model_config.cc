@@ -8,7 +8,6 @@
 #include "cub/log/log.h"
 #include "tensorflow/core/lib/core/errors.h"
 
-
 namespace adlik {
 namespace serving {
 

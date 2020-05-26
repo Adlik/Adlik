@@ -17,7 +17,7 @@ void StateMonitor::connect(EventBus& bus) {
   bus.subscribe(this);
 }
 
-void StateMonitor::deleteModel(const std::string& modelName){
+void StateMonitor::deleteModel(const std::string& modelName) {
   cub::AutoLock lock(mu);
   store.deleteModel(modelName);
 }

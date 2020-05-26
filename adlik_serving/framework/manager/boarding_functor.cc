@@ -18,26 +18,31 @@ namespace serving {
 
 namespace {
 struct ModelTerminator : ManagedModelVisitor {
+  ModelTerminator(std::vector<ModelStream>& streams) : streams(streams) {
+  }
   void stop(ManagedStore& store) {
     for (auto model : models) {
       CUB_PEEK_SUCC_CALL(store.stop(*model));
     }
+    store.updateServingStore();
   }
 
 private:
   OVERRIDE(void visit(const Model& model)) {
-    if (model.shouldStop()) {
+    auto shouldDelete = [&model](ModelStream stream) -> bool { return stream.getName() == model.getName(); };
+    if (model.shouldStop() || std::find_if(streams.begin(), streams.end(), shouldDelete) == streams.end()) {
       models.push_back(&model);
     }
   }
 
 private:
   std::vector<const Model*> models;
+  std::vector<ModelStream>& streams;
 };
 }  // namespace
 
-void BoardingFunctor::flush() {
-  ModelTerminator terminator;
+void BoardingFunctor::flush(std::vector<ModelStream>& streams) {
+  ModelTerminator terminator(streams);
   store.models(terminator);
   terminator.stop(store);
 }
@@ -215,19 +220,19 @@ class ActionMaker : public ManagedModelVisitor {
   Models models;
 
 public:
-  ModelAction getNextAction() {
-    Models unaspireds;
-    if (canUnload(unaspireds)) {
-      if (auto id = lowest(unaspireds)) {
-        return ModelAction::unload(*id);
+  std::vector<ModelAction> getActions() {
+    std::vector<ModelAction> actions;
+    Models unaspiredModels;
+    if (canUnload(unaspiredModels)) {
+      for (auto unaspired : unaspiredModels) {
+        actions.emplace_back(std::move(ModelAction::unload(*unaspired)));
       }
     }
-
-    if (auto id = highest(untouches(models))) {
-      return ModelAction::load(*id);
+    Models untouchModels = untouches(models);
+    for (auto untouch : untouchModels) {
+      actions.emplace_back(std::move(ModelAction::load(*untouch)));
     }
-
-    return ModelAction::nop();
+    return actions;
   }
 
 private:
@@ -286,38 +291,18 @@ struct ModelExecutor : ManagedNameVisitor {
   }
 
   void exec() {
-    for (auto& name : names) {
-      actions.emplace_back(action(name));
-    }
-    while (true) {
-      auto action = next();
-      if (action) {
-        action->exec(store);
-        actions.erase(actions.begin());
-      } else {
-        break;
-      }
+    makeActions();
+    for (auto action : actions) {
+      action.exec(store);
     }
   }
 
 private:
-  ModelAction action(const std::string& name) {
+  void makeActions() {
     ActionMaker maker;
-    store.models(name, maker);
-    return maker.getNextAction();
-  }
-
-  cub::Optional<ModelAction> next() {
-    return select(actions);
-  }
-
-  cub::Optional<ModelAction> select(std::vector<ModelAction>& actions) {
+    store.models(maker);
+    actions = std::move(maker.getActions());
     std::sort(actions.begin(), actions.end());
-    if (!actions.empty()) {
-      return actions.front();
-    } else {
-      return cub::nilopt;
-    }
   }
 
 private:
@@ -342,7 +327,7 @@ void BoardingFunctor::execute() {
 }
 
 void BoardingFunctor::operator()(std::vector<ModelStream>& streams) {
-  flush();
+  flush(streams);
   handle(streams);
   execute();
 }

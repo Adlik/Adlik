@@ -10,7 +10,7 @@ void MonitoredStore::update(const MonitoredEvent& event) {
   models[event.name()].update(event);
 }
 
-void MonitoredStore::deleteModel(const std::string& modelName){
+void MonitoredStore::deleteModel(const std::string& modelName) {
   auto it = models.find(modelName);
   models.erase(it);
 }

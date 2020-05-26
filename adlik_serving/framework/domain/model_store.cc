@@ -20,17 +20,20 @@ cub::Status ModelStore::config() {
   return cub::filesystem().children(root, *this);
 }
 
-cub::Status ModelStore::configOneModel(const std::string& name) {
+cub::Status ModelStore::configModel(const std::string& name) {
   cub::AutoLock lock(mu);
   auto& root = ROLE(ModelOptions).getBasePath();
-  INFO_LOG << "model root path: " << root << std::endl << "model name: " << name;
+  INFO_LOG << "model root path: " << root << ", "
+           << "model name: " << name;
   return cub::filesystem().child(root, name, *this);
 }
 
-cub::Status ModelStore::deleteOneConfig(const std::string& name) {
+cub::Status ModelStore::deleteModel(const std::string& name) {
   cub::AutoLock lock(mu);
   auto it = configs.find(name);
-  configs.erase(it);
+  if (it != configs.end()) {
+    configs.erase(it);
+  }
   return cub::Success;
 }
 
@@ -39,6 +42,8 @@ void ModelStore::visit(const std::string& base, const std::string& name) {
   if (cub::TextProtobuf(cub::paths(base, name, "config.pbtxt")).parse(proto)) {
     INFO_LOG << "found model " << name << " [" << proto.platform() << "]";
     configs.insert({name, {base, name, std::move(proto)}});
+  } else {
+    INFO_LOG << "model " << name << " config.pbtxt error";
   }
 }
 

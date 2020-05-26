@@ -21,7 +21,7 @@ struct ModelOptions {
 private:
   std::string root;
   int intervalInSecond;  // second
-  std::string loadingMethod; // automatic, manual
+  std::string loadingMethod;  // automatic, manual
 };
 
 }  // namespace serving

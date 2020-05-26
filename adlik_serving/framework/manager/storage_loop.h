@@ -19,9 +19,10 @@ struct ModelTarget;
 struct StorageLoop : ModelSource {
   void poll();
   void once();
+
 private:
   int64_t interval() const;
-  void update(ModelTarget*);
+  void update();
 
 private:
   OVERRIDE(void connect(ModelTarget&));

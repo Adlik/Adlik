@@ -18,7 +18,7 @@ struct BoardingFunctor {
   void operator()(std::vector<ModelStream>&);
 
 private:
-  void flush();
+  void flush(std::vector<ModelStream>&);
   void handle(std::vector<ModelStream>&);
   void execute();
 

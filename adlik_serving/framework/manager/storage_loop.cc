@@ -55,18 +55,18 @@ private:
 }  // namespace
 
 void StorageLoop::poll() {
-  auto action = [this] { this->update(this->modelTarget); };
+  auto action = [this] { this->once(); };
   loop.reset(new cub::LoopThread(action, interval()));
 }
 
 void StorageLoop::once() {
-  update(modelTarget);
+  update();
 }
 
-void StorageLoop::update(ModelTarget* target) {
+void StorageLoop::update() {
   ModelStreamList streams;
   ROLE(ModelStore).models(streams);
-  streams.poll(*target);
+  streams.poll(*modelTarget);
 }
 
 int64_t StorageLoop::interval() const {

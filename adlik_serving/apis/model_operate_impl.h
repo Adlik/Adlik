@@ -15,8 +15,10 @@ namespace serving {
 struct ServingStore;
 struct ModelStore;
 struct ManagedStore;
+struct ModelOptions;
+struct StorageLoop;
+struct BoardingLoop;
 struct StateMonitor;
-struct ModelConfig;
 struct ModelOperateRequest;
 struct ModelOperateResponse;
 
@@ -24,13 +26,18 @@ struct ModelOperateImpl {
   virtual ~ModelOperateImpl() = default;
 
   tensorflow::Status addModel(const ModelOperateRequest&, ModelOperateResponse&);
+  tensorflow::Status addModelVersion(const ModelOperateRequest&, ModelOperateResponse&);
   tensorflow::Status deleteModel(const ModelOperateRequest&, ModelOperateResponse&);
+  tensorflow::Status deleteModelVersion(const ModelOperateRequest&, ModelOperateResponse&);
 
 private:
   USE_ROLE(ServingStore);
   USE_ROLE(ModelStore);
   USE_ROLE(ManagedStore);
+  USE_ROLE(ModelOptions);
   USE_ROLE(StateMonitor);
+  USE_ROLE(StorageLoop);
+  USE_ROLE(BoardingLoop);
 };
 }  // namespace serving
 }  // namespace adlik

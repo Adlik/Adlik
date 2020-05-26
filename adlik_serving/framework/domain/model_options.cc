@@ -6,14 +6,16 @@
 namespace adlik {
 namespace serving {
 
-ModelOptions::ModelOptions() : intervalInSecond(10),loadingMethod("automatic") {
+ModelOptions::ModelOptions() : intervalInSecond(10), loadingMethod("automatic") {
 }
 
 void ModelOptions::subscribe(cub::ProgramOptions& prog) {
   auto options = new cub::OptionSet{{
       cub::option("model_base_path", &root, "path to export models"),
-      cub::option("loading_method", &loadingMethod, "model loading method automatic or manual, when you use automatic"
-      " pattern, can not operate model by api"),
+      cub::option("loading_method",
+                  &loadingMethod,
+                  "loading_method　value can be automatic/manual, when loading_method==manual "
+                  "you can operate model by api"),
       cub::option(
           "fs_poll_wait_seconds", &intervalInSecond, "interval in seconds between each poll for new model version"),
   }};

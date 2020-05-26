@@ -16,7 +16,9 @@ struct ModelOperateImpl;
 struct GrpcModelOperateService : ModelOperateService::Service {
 private:
   ::grpc::Status addModel(::grpc::ServerContext*, const ModelOperateRequest*, ModelOperateResponse*) override;
+  ::grpc::Status addModelVersion(::grpc::ServerContext*, const ModelOperateRequest*, ModelOperateResponse*) override;
   ::grpc::Status deleteModel(::grpc::ServerContext*, const ModelOperateRequest*, ModelOperateResponse*) override;
+  ::grpc::Status deleteModelVersion(::grpc::ServerContext*, const ModelOperateRequest*, ModelOperateResponse*) override;
 
 private:
   USE_ROLE(ModelOperateImpl);
