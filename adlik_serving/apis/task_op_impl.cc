@@ -17,6 +17,9 @@ cub::StatusWrapper TaskOpImpl::create(const RunOptions& options,
                                       CreateTaskResponse& task_response) {
   DEBUG_LOG << "Receive create task request";
 
+  task_response.mutable_model_spec()->CopyFrom(task_request.model_spec());
+  task_response.set_task_type(task_request.task_type());
+
   std::unique_ptr<ModelHandle> handle = ROLE(ServingStore).find(task_request.model_spec());
   auto config = ROLE(ModelStore).find(task_request.model_spec().name());
   if (handle && config) {
