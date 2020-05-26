@@ -165,12 +165,12 @@ Assume building with CUDA version 10.0.
 2. Run the following command:
 
    ```sh
-    env TF_CUDA_VERSION=10.0 \
-        bazel build //adlik_serving \
-            --config=tensorrt \
-            -c opt \
-            --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
-            --incompatible_use_specific_tool_files=false
+   env TF_CUDA_VERSION=10.0 \
+       bazel build //adlik_serving \
+           --config=tensorrt \
+           -c opt \
+           --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
+           --incompatible_use_specific_tool_files=false
    ```
 
 ### Deploy serving service
@@ -195,15 +195,19 @@ cd {dir_of_adlik_serving_binary}
 The `ci/docker/build.sh` file can be used to build a Docker images that contains all the requirements for building
 Adlik. You can build Adlik with the Docker image.
 
-*[NOTE]: If you build the runtime with GPU in a Docker image, you need to add the CUDA environment variables in the Dockerfile,
-such as:
- 
-ENV NVIDIA_VISIBLE_DEVICES all, \
-ENV NVIDIA_DRIVER_CAPABILITIES compute, utility.
+*[NOTE]: If you build the runtime with GPU in a Docker image, you need to add the CUDA environment variables in the
+Dockerfile, such as:
+
+```dockerfile
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute, utility
+```
 
 ## Inference performance of serving engine
 
-In order to evaluate the performance of the service engine, we performed inference tests on the same cpu or gpu using the simple cnn model (mnist model) and the resnet50 model with different runtimes. The cpu and gpu parameters used in the test are as follows:
+In order to evaluate the performance of the service engine, we performed inference tests on the same cpu or gpu using
+the simple cnn model (mnist model) and the resnet50 model with different runtimes. The cpu and gpu parameters used in
+the test are as follows:
 
 |     |                   type                    | number |
 | --- | :---------------------------------------: | :----: |
@@ -212,53 +216,57 @@ In order to evaluate the performance of the service engine, we performed inferen
 
 ### The test result of the mnist model
 
-|                  | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
-| ---------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| keras-tf1.14     |            2200.372            |                2291.584                |             1.81E-05              |
-| keras-tf2.1      |            2003.901            |                2077.644                |             1.77E-05              |
-| keras-OpenVINO   |            2647.344            |                2788.087                |             1.90E-05              |
-| keras-TensorRT   |           37342.687            |               163058.592               |             2.06E-05              |
-| keras-tfGPU1.14  |            19414.208           |                52247.525               |             3.24E-05              |
-| keras-tfGPU2.1   |            19395.129           |                53640.456               |             3.29E-05              |
-| keras-TFLiteCPU  |             778.890            |                 790.150                |             1.82E-05              |
-| tensorflow-tf1.14 |            1486.878           |                1531.337                |             1.95E-05              |
-| tensorflow-tf2.1  |            2160.331           |                2248.311                |             1.81E-05              |
-| tensorflow-tfGPU1.14 |           19043.582        |                51448.587               |             3.31E-05              |
-| tensorflow-tfGPU2.1|           19244.343          |                50705.164               |             3.22E-05              |
-| tensorflow-TFLiteCPU|            3114.246         |                3250.399                |             1.34E-05              |
-| pytorch-OpenVINO |            9053.677            |               10226.869                |             1.27E-05              |
-| pytorch-TensorRT |           46318.234            |               249302.706               |             1.76E-05              |
-*[Note 1]: In the first column of the table, words before '-' represent different runtimes, and words after '-' represent different inference engines.
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| keras-tf1.14         |            2200.372            |                2291.584                |             1.81E-05              |
+| keras-tf2.1          |            2003.901            |                2077.644                |             1.77E-05              |
+| keras-OpenVINO       |            2647.344            |                2788.087                |             1.90E-05              |
+| keras-TensorRT       |           37342.687            |               163058.592               |             2.06E-05              |
+| keras-tfGPU1.14      |           19414.208            |               52247.525                |             3.24E-05              |
+| keras-tfGPU2.1       |           19395.129            |               53640.456                |             3.29E-05              |
+| keras-TFLiteCPU      |            778.890             |                790.150                 |             1.82E-05              |
+| tensorflow-tf1.14    |            1486.878            |                1531.337                |             1.95E-05              |
+| tensorflow-tf2.1     |            2160.331            |                2248.311                |             1.81E-05              |
+| tensorflow-tfGPU1.14 |           19043.582            |               51448.587                |             3.31E-05              |
+| tensorflow-tfGPU2.1  |           19244.343            |               50705.164                |             3.22E-05              |
+| tensorflow-TFLiteCPU |            3114.246            |                3250.399                |             1.34E-05              |
+| pytorch-OpenVINO     |            9053.677            |               10226.869                |             1.27E-05              |
+| pytorch-TensorRT     |           46318.234            |               249302.706               |             1.76E-05              |
 
-*[Note 2]: The tf and OpenVINO serving engine are test in the CPU environment, and the TensorRT and tfGPU serving engine are test in the GPU environment.
+*[Note 1]: In the first column of the table, words before '-' represent different runtimes, and words after '-'
+represent different inference engines.
 
-*[Note 3]: The test model of TensorFlow Lite is an unquantified model, and the number of threads is set to 1 during testing.
+*[Note 2]: The tf and OpenVINO serving engine are test in the CPU environment, and the TensorRT and tfGPU serving engine
+are test in the GPU environment.
+
+*[Note 3]: The test model of TensorFlow Lite is an unquantified model, and the number of threads is set to 1 during
+testing.
 
 ### The test result of the resnet50 model
 
-|                  | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
-| ---------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| keras-tf1.14     |             3.599              |                 3.640                  |              0.00311              |
-| keras-tf2.1      |             6.183              |                 6.301                  |              0.00302              |
-| keras-OpenVINO   |             9.359              |                 9.642                  |              0.00313              |
-| keras-TensorRT   |            237.176             |                1402.338                |              0.00350              |
-| keras-tfGPU1.14  |             175.423            |                433.627                 |              0.00339              |
-| keras-tfGPU2.1   |             170.680            |                420.814                 |              0.00348              |
-| keras-TFLiteCPU  |            2.838               |                 2.862                  |              0.00298              |
-| tensorflow-tf1.14|             3.669              |                  3.711                 |              0.00305              |
-| tensorflow-tf2.1 |             6.554              |                  6.684                 |              0.00298              |
-| tensorflow-tfGPU1.14 |            181.118         |                454.013                 |              0.00331              |
-| tensorflow-tfGPU2.1 |            176.710          |                473.091                 |              0.00354              |
-| tensorflow-TFLiteCPU|            2.870            |                 2.895                  |              0.00296              |
-| pytorch-OpenVINO |             9.274              |                 9.552                  |              0.00313              |
-| pytorch-TensorRT |            238.244             |                1332.449                |              0.00344              |
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| keras-tf1.14         |             3.599              |                 3.640                  |              0.00311              |
+| keras-tf2.1          |             6.183              |                 6.301                  |              0.00302              |
+| keras-OpenVINO       |             9.359              |                 9.642                  |              0.00313              |
+| keras-TensorRT       |            237.176             |                1402.338                |              0.00350              |
+| keras-tfGPU1.14      |            175.423             |                433.627                 |              0.00339              |
+| keras-tfGPU2.1       |            170.680             |                420.814                 |              0.00348              |
+| keras-TFLiteCPU      |             2.838              |                 2.862                  |              0.00298              |
+| tensorflow-tf1.14    |             3.669              |                 3.711                  |              0.00305              |
+| tensorflow-tf2.1     |             6.554              |                 6.684                  |              0.00298              |
+| tensorflow-tfGPU1.14 |            181.118             |                454.013                 |              0.00331              |
+| tensorflow-tfGPU2.1  |            176.710             |                473.091                 |              0.00354              |
+| tensorflow-TFLiteCPU |             2.870              |                 2.895                  |              0.00296              |
+| pytorch-OpenVINO     |             9.274              |                 9.552                  |              0.00313              |
+| pytorch-TensorRT     |            238.244             |                1332.449                |              0.00344              |
 
 ## Release
 
 The version of the service engine adlik supports.
 
-|            | TensorFlow 1.14 | TensorFlow 2.1  | Openvino 2019 | Tensorrt 6 | Tensorrt 7 |
-| ---------- | :-------------: | :-------------: | :-----------: | :--------: | :--------: |
-| keras      |        ✓        |        ✓       |       ✓       |     ✓     |     ✓      |
-| TensorFlow |        ✓        |        ✓       |       ✓       |     ✓     |     ✓      |
-| PyTorch    |        ✗        |        ✗       |       ✓       |     ✓     |     ✗      |
+|            | TensorFlow 1.14 | TensorFlow 2.1 | Openvino 2019 | Tensorrt 6 | Tensorrt 7 |
+| ---------- | :-------------: | :------------: | :-----------: | :--------: | :--------: |
+| keras      |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
+| TensorFlow |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
+| PyTorch    |        ✗        |       ✗        |       ✓       |     ✓      |     ✗      |
