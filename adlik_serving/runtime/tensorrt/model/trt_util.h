@@ -26,7 +26,7 @@ bool CompareDims(const nvinfer1::Dims& model_dims, const adlik::serving::DimsLis
 template <typename T>
 const std::string DimsDebugString(const T& values) {
   std::string str("[");
-  auto content = absl::StrJoin(std::begin(values), std::end(values), ",");
+  auto content = absl::StrJoin(std::begin(values), std::end(values), ", ");
   str.append(content);
   str.append("]");
   return str;

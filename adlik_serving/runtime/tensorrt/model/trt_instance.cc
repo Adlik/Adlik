@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "absl/types/span.h"
 #include "adlik_serving/framework/domain/model_config_helper.h"
 #include "adlik_serving/framework/manager/time_stats.h"
 #include "adlik_serving/runtime/batching/batch_processor.h"
@@ -243,7 +244,7 @@ tensorflow::Status Instance::initializeInputBindings(const ::google::protobuf::R
       return tensorflow::errors::InvalidArgument("input '",
                                                  io.name(),
                                                  "' dims ",
-                                                 DimsDebugString(dims.d),
+                                                 DimsDebugString(absl::MakeSpan(dims.d + 1, dims.d + dims.nbDims)),
                                                  " don't match configuration dims ",
                                                  DimsDebugString(io.dims()),
                                                  " for ",
@@ -307,7 +308,7 @@ tensorflow::Status Instance::initializeOutputBindings(const ::google::protobuf::
       return tensorflow::errors::InvalidArgument("output '",
                                                  io.name(),
                                                  "' dims ",
-                                                 DimsDebugString(dims.d),
+                                                 DimsDebugString(absl::MakeSpan(dims.d + 1, dims.d + dims.nbDims)),
                                                  " don't match configuration dims ",
                                                  DimsDebugString(io.dims()),
                                                  " for ",
