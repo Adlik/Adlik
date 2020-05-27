@@ -72,7 +72,7 @@ bool ManagedStore::isNormal(const std::string& name) {
   bool isNormal = true;
   auto range = manageds.equal_range(name);
   for (auto it = range.first; it != range.second; ++it) {
-    if (it->second->str() != "READY") {
+    if (std::string("READY") != it->second->str()) {
       isNormal = false;
     }
   }

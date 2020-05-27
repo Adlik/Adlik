@@ -54,6 +54,13 @@ def _create_activate_model_request():
     return request
 
 
+def _create_query_model_request():
+    request = model_operate_pb2.ModelOperateRequest()
+    request.model_name = FLAGS.model_name
+    request.operate_name = FLAGS.operate_name
+    return request
+
+
 def _grpc_add_model():
     channel = grpc.insecure_channel(FLAGS.url)
     stub = model_operate_service_pb2_grpc.ModelOperateServiceStub(channel)
@@ -98,7 +105,19 @@ def _grpc_delete_model_version():
     start = time.time()
     response = stub.deleteModelVersion(operate_request)
     end = time.time()
-    print('Model operate response is: \n{}'.format(response.status))
+    print('Model operate response is: \n{}'.format(response))
+    print('Running Time: {}s'.format(end - start))
+
+
+def _grpc_query_model():
+    channel = grpc.insecure_channel(FLAGS.url)
+    stub = model_operate_service_pb2_grpc.ModelOperateServiceStub(channel)
+    operate_request = _create_query_model_request()
+    print('Model operate request is: \n{}\n'.format(json_format.MessageToJson(operate_request)))
+    start = time.time()
+    response = stub.queryModel(operate_request)
+    end = time.time()
+    print('Model operate response is: \n{}'.format(response))
     print('Running Time: {}s'.format(end - start))
 
 
@@ -119,7 +138,8 @@ grpc_operate = {
     'delete': _grpc_delete_model,
     'add_version': _grpc_add_model_version,
     'delete_version': _grpc_delete_model_version,
-    'activate': _grpc_activate_model
+    'activate': _grpc_activate_model,
+    'query': _grpc_query_model,
 }
 
 
@@ -135,7 +155,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action="store_true", required=False, default=True,
                         help='Enable verbose output')
-    parser.add_argument('-m', '--model-name', type=str, required=False, default="mm",
+    parser.add_argument('-m', '--model-name', type=str, required=False, default="",
                         help='Name of model')
     parser.add_argument('-n', '--model-version', type=int, required=False, default="1",
                         help='Version of model')
@@ -143,9 +163,9 @@ if __name__ == '__main__':
                         help='Protocol ("http"/"grpc") used to ' +
                              'communicate with service. Default is "grpc".')
     parser.add_argument('-u', '--url', type=str, required=False, default='localhost:9006',
-                        help='Adlik serving server URL. Default is localhost:8500.')
+                        help='Adlik serving server URL. Default is localhost:9006.')
     parser.add_argument('-e', '--operate-name', type=str, required=False,
-                        default='add', help='model operate name(add|delete|add_version|delete_version|activate)')
+                        default='add', help='model operate name(add|delete|add_version|delete_version|activate|query)')
     parser.add_argument('-a', '--path', type=str, required=False,
                         default='/home/john/mm', help='operate model path')
 

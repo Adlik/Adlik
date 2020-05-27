@@ -11,5 +11,6 @@ service ModelOperateService {
   rpc deleteModel(ModelOperateRequest) returns (ModelOperateResponse);
   rpc deleteModelVersion(ModelOperateRequest) returns (ModelOperateResponse);
   rpc activateModel(ModelOperateRequest) returns (ModelOperateResponse);
+  rpc queryModel(ModelOperateRequest) returns (ModelOperateResponse);
   // todo: regress
 }

@@ -46,6 +46,18 @@ private:
   OVERRIDE(bool exists(const std::string& fname) const) {
     return false;
   }
+
+  OVERRIDE(Status copyDir(const std::string& from, const std::string& to) const) {
+    return cub::Failure;
+  }
+
+  OVERRIDE(Status deleteDir(const std::string& path) const) {
+    return cub::Failure;
+  }
+
+  OVERRIDE(bool isDir(const std::string&) const) {
+    return false;
+  }
 };
 
 struct WindowsEnv : Env, private WindowsConcurrent, private WindowsTime, private WindowsFileSystem {

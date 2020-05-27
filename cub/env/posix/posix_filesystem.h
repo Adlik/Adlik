@@ -14,6 +14,7 @@ private:
   OVERRIDE(Status children(const std::string& dir, DirentVisitor& visitor) const);
   OVERRIDE(Status child(const std::string& dir, const std::string& childName, DirentVisitor& visitor) const);
   OVERRIDE(bool exists(const std::string& fname) const);
+  OVERRIDE(bool isDir(const std::string& path) const);
   OVERRIDE(Status copyDir(const std::string& from, const std::string& to) const);
   OVERRIDE(Status deleteDir(const std::string& path) const);
 };

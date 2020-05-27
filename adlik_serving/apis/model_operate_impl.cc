@@ -49,6 +49,61 @@ private:
 private:
   VersionList versions;
 };
+
+struct QueryModelVerison : cub::DirentVisitor {
+  QueryModelVerison(ModelOperateResponse& rsp, std::string& modelName) : rsp(rsp), modelName(modelName) {
+  }
+
+private:
+  OVERRIDE(void visit(const std::string& base, const std::string& child)) {
+    uint32_t version_no = 1;
+    std::string path = cub::paths(base, child);
+    if (cub::strutils::to_uint32(child, version_no) && cub::filesystem().isDir(path)) {
+      auto version = (*rsp.mutable_models())[modelName].add_versions();
+      version->set_version_no(version_no);
+      version->set_state("OFFLINE");
+      version->set_path(path);
+    }
+  }
+
+private:
+  ModelOperateResponse& rsp;
+  std::string& modelName;
+};
+
+struct QueryConfig : ModelConfigVisitor {
+  QueryConfig(ModelOperateResponse& rsp) : rsp(rsp) {
+  }
+
+private:
+  OVERRIDE(void visit(const ModelConfig& model)) {
+    std::string modelPath = model.getBasePath();
+    std::string modelName = model.getModelName();
+    (*rsp.mutable_models())[modelName].set_model_path(modelPath);
+    QueryModelVerison queryModelVerison(rsp, modelName);
+    cub::filesystem().children(modelPath, queryModelVerison);
+  }
+
+private:
+  ModelOperateResponse& rsp;
+};
+
+struct QueryModelState : ManagedModelVisitor {
+  QueryModelState(ModelOperateResponse& rsp) : rsp(rsp) {
+  }
+
+private:
+  void visit(const Model& model) override {
+    auto versions = (*rsp.mutable_models())[model.getName()].mutable_versions();
+    for (auto iter = versions->begin(); iter != versions->end(); iter++) {
+      if (model.getVersion() == iter->version_no()) {
+        iter->set_state(model.str());
+        break;
+      }
+    }
+  }
+  ModelOperateResponse& rsp;
+};
 }  // namespace
 
 tensorflow::Status ModelOperateImpl::addModel(const ModelOperateRequest& req, ModelOperateResponse& rsp) {
@@ -207,5 +262,29 @@ void ModelOperateImpl::update() {
   ROLE(StorageLoop).once();
   ROLE(BoardingLoop).once();
 }
+
+tensorflow::Status ModelOperateImpl::queryModel(const ModelOperateRequest& req, ModelOperateResponse& rsp) {
+  std::string modelName = req.model_name();
+  tensorflow::Status status = tensorflow::Status::OK();
+  QueryConfig queryConfig(rsp);
+  QueryModelState queryModelState(rsp);
+  if (modelName != "") {
+    INFO_LOG << "query model " << modelName << " status";
+    if (!ROLE(ModelStore).exist(modelName)) {
+      INFO_LOG << modelName << " model is not exist";
+      FailureResponse(rsp, modelName + " model is not exist");
+      return status;
+    }
+    ROLE(ModelStore).models(modelName, queryConfig);
+    ROLE(ManagedStore).models(modelName, queryModelState);
+  } else {
+    INFO_LOG << "query all model status";
+    ROLE(ModelStore).models(queryConfig);
+    ROLE(ManagedStore).models(queryModelState);
+  }
+  SuccessResponse(rsp);
+  return status;
+}
+
 }  // namespace serving
 }  // namespace adlik

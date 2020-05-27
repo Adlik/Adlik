@@ -14,6 +14,7 @@ TextProtobufSaver::TextProtobufSaver(const std::string& name) : outStream(name),
 bool TextProtobufSaver::save(google::protobuf::Message& msg) {
   if (isSaved) {
     INFO_LOG << "One file can save one message only";
+    return false;
   }
   using google::protobuf::TextFormat;
   std::string str;
