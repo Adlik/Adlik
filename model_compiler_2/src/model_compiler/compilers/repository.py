@@ -93,9 +93,18 @@ class Repository:
         config_type = _get_config_type(path)
 
         def _compiler(source, config):
+            print(f'Source type: {source_type.__name__}.')
+            print(f'Target type: {target_type.__name__}.')
+
+            print('Compile path: {}.'.format(
+                ' -> '.join([source_type.__name__] + [edge.target_type.__name__ for edge in path])
+            ))
+
             result = source
 
             for edge, inner_config in zip(path, config.configs):
+                print(f'Compiling to {edge.target_type.__name__}...')
+
                 result = edge.compiler(result, inner_config)
 
             return result

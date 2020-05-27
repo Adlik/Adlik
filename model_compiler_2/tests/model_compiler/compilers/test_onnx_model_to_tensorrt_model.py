@@ -12,9 +12,8 @@ import model_compiler.compilers.onnx_model_to_tensorrt_model as compiler
 import model_compiler.compilers.tf_frozen_graph_model_to_onnx_model as onnx_compiler
 import model_compiler.compilers.tf_model_to_tf_frozen_graph_model as frozen_graph_compiler
 from model_compiler.compilers.onnx_model_to_tensorrt_model import Config
-from model_compiler.models.data_type import DataType
 from model_compiler.models.irs.tf_model import Input as TfInput, TensorFlowModel
-from model_compiler.models.targets.tensorrt_model import Input, Output
+from model_compiler.models.targets.tensorrt_model import Input
 
 
 class ConfigTestCase(TestCase):
@@ -49,9 +48,9 @@ class CompileSourceTestCase(TestCase):
         compiled = compiler.compile_source(source=onnx_model, config=Config(max_batch_size=4))
 
         self.assertEqual(compiled.inputs,
-                         [Input(name='x:0', data_type=DataType.FLOAT, shape=[4], data_format=None),
-                          Input(name='y:0', data_type=DataType.FLOAT, shape=[4], data_format=None)])
+                         [Input(name='x:0', data_format=None),
+                          Input(name='y:0', data_format=None)])
 
-        self.assertEqual(compiled.outputs, [Output(name='z:0', data_type=DataType.FLOAT, shape=[4])])
+        self.assertEqual(compiled.outputs, ['z:0'])
 
         self.assertIsInstance(compiled.cuda_engine, ICudaEngine)

@@ -20,7 +20,7 @@ def compile_source(source: TensorFlowFrozenGraphModel) -> OnnxModel:
                                          input_names=[source_input.name for source_input in source.inputs],
                                          output_names=list(source.outputs))
 
-    model_proto = onnx_graph.make_model("ONNX model generated from TensorFlow frozen graph model.")
+    model_proto = onnx_graph.make_model('ONNX model generated from TensorFlow frozen graph model.')
 
     input_name_to_index = {source_input.name: i for i, source_input in enumerate(source.inputs)}
 

@@ -5,6 +5,7 @@ from unittest import TestCase
 
 from onnx import TensorProto as OnnxTensorProto
 from tensorflow.core.framework.types_pb2 import DataType as TfDataType
+from tensorrt import DataType as TrtDataType
 
 from model_compiler.models.data_type import DataType
 
@@ -99,3 +100,21 @@ class DataTypeTestCase(TestCase):
         self.assertEqual(DataType.COMPLEX128.to_onnx_data_type(), _ONNX_DATA_TYPE.COMPLEX128)
 
         self.assertEqual(DataType.STRING.to_onnx_data_type(), _ONNX_DATA_TYPE.STRING)
+
+    def test_from_tensorrt_data_type(self):
+        self.assertEqual(DataType.from_tensorrt_data_type(TrtDataType.BOOL), DataType.BOOL)
+
+        self.assertEqual(DataType.from_tensorrt_data_type(TrtDataType.INT8), DataType.INT8)
+        self.assertEqual(DataType.from_tensorrt_data_type(TrtDataType.INT32), DataType.INT32)
+
+        self.assertEqual(DataType.from_tensorrt_data_type(TrtDataType.HALF), DataType.FLOAT16)
+        self.assertEqual(DataType.from_tensorrt_data_type(TrtDataType.FLOAT), DataType.FLOAT)
+
+    def test_to_tensorrt_data_type(self):
+        self.assertEqual(DataType.BOOL.to_tensorrt_data_type(), TrtDataType.BOOL)
+
+        self.assertEqual(DataType.INT8.to_tensorrt_data_type(), TrtDataType.INT8)
+        self.assertEqual(DataType.INT32.to_tensorrt_data_type(), TrtDataType.INT32)
+
+        self.assertEqual(DataType.FLOAT16.to_tensorrt_data_type(), TrtDataType.HALF)
+        self.assertEqual(DataType.FLOAT.to_tensorrt_data_type(), TrtDataType.FLOAT)

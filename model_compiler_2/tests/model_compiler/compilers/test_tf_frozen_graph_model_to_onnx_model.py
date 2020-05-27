@@ -48,3 +48,14 @@ class CompileSourceTestCase(TestCase):
 
         self.assertEqual([graph_input.name for graph_input in compiled_graph.input], ['x:0', 'y:0'])
         self.assertEqual(compiled.input_data_formats, [None, None])
+
+    def test_compile_dropout(self):
+        def _make_model(input_x, input_y, _):
+            return tf.nn.dropout(x=input_x + input_y, rate=0.5, name='z')
+
+        frozen_graph_model = _make_frozen_graph_model(_make_model)
+        compiled = compiler.compile_source(source=frozen_graph_model)
+        compiled_graph = compiled.model_proto.graph
+
+        self.assertEqual([graph_input.name for graph_input in compiled_graph.input], ['x:0', 'y:0'])
+        self.assertEqual(compiled.input_data_formats, [None, None])

@@ -53,7 +53,7 @@ setuptools.setup(
     install_requires=[
         'keras',
         'tensorflow',
-        'tf2onnx@git+https://github.com/onnx/tensorflow-onnx.git@3383ff9bfa50e49bf69863983c965e49b94c073b'
+        'tf2onnx@git+https://github.com/onnx/tensorflow-onnx.git@43c01e5cab1ee789b45d1f8e6833bfdb13327942'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={

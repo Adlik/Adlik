@@ -27,5 +27,5 @@ def main():
         compiler.compile_from_env()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
