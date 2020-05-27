@@ -41,16 +41,7 @@ bool ConvertDims(const nvinfer1::Dims& model_dims, adlik::serving::DimsList& dim
 }
 
 bool CompareDims(const nvinfer1::Dims& model_dims, const adlik::serving::DimsList& dims) {
-  if (model_dims.nbDims != dims.size() + 1) {
-    return false;
-  }
-
-  for (int i = 1; i < model_dims.nbDims; ++i) {
-    if (model_dims.d[i] != dims[i - 1]) {
-      return false;
-    }
-  }
-  return true;
+  return std::equal(model_dims.d + 1, model_dims.d + model_dims.nbDims, dims.begin(), dims.end());
 }
 
 tensorflow::Status GetModelVersionFromPath(const tensorflow::StringPiece& path, uint32_t* version) {
