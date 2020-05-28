@@ -25,6 +25,8 @@ tensorflow::DataType ConvertDatatype(nvinfer1::DataType trt_type) {
       return tensorflow::DT_INT8;
     case nvinfer1::DataType::kINT32:
       return tensorflow::DT_INT32;
+    case nvinfer1::DataType::kBOOL:
+      return tensorflow::DT_BOOL;
   }
 
   return tensorflow::DT_INVALID;
