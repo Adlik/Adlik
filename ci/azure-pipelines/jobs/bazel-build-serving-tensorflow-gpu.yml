@@ -15,7 +15,7 @@ jobs:
       #       key: bazel-build-serving-tensorflow-gpu
       #       path: $(BAZEL_BUILD_CACHE)
       - script: |
-            env TF_CUDA_VERSION=10.0 \
+            env TF_CUDA_VERSION=10.2 \
                 ci/checks/bazel-build-serving.py \
                     --config=tensorflow-gpu \
                     -c opt \

@@ -106,24 +106,24 @@ bazel build //adlik_serving \
 
 #### Build serving with TensorFlow GPU runtime
 
-Assume builing with CUDA version 10.0.
+Assume builing with CUDA version 10.2.
 
 1. Install the following packages from
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
-   - `cuda-cublas-dev-10-0`
-   - `cuda-cufft-dev-10-0`
-   - `cuda-cupti-10-0`
-   - `cuda-curand-dev-10-0`
-   - `cuda-cusolver-dev-10-0`
-   - `cuda-cusparse-dev-10-0`
-   - `libcudnn7=*+cuda10.0`
-   - `libcudnn7-dev=*+cuda10.0`
+   - `cuda-cufft-dev-10-2`
+   - `cuda-cupti-10-2`
+   - `cuda-curand-dev-10-2`
+   - `cuda-cusolver-dev-10-2`
+   - `cuda-cusparse-dev-10-2`
+   - `libcublas-dev=10.2.*`
+   - `libcudnn7=*+cuda10.2`
+   - `libcudnn7-dev=*+cuda10.2`
 2. Run the following command:
 
    ```sh
-   env TF_CUDA_VERSION=10.0 \
+   env TF_CUDA_VERSION=10.2 \
        bazel build //adlik_serving \
            --config=tensorflow-gpu \
            -c opt \
@@ -142,34 +142,34 @@ bazel build //adlik_serving \
 
 #### Build serving with TensorRT runtime
 
-Assume building with CUDA version 10.0.
+Assume building with CUDA version 10.2.
 
 1. Install the following packages from
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
-   - `cuda-cublas-10-0`
-   - `cuda-cufft-10-0`
-   - `cuda-cupti-10-0`
-   - `cuda-curand-10-0`
-   - `cuda-cusolver-10-0`
-   - `cuda-cusparse-10-0`
-   - `cuda-nvml-dev-10-0`
-   - `cuda-nvrtc-10-0`
-   - `libcudnn7=*+cuda10.0`
-   - `libcudnn7-dev=*+cuda10.0`
-   - `libnvinfer7=*+cuda10.0`
-   - `libnvinfer-dev=*+cuda10.0`
-   - `libnvonnxparsers7=*+cuda10.0`
-   - `libnvonnxparsers-dev=*+cuda10.0`
+   - `cuda-cufft-10-2`
+   - `cuda-cupti-10-2`
+   - `cuda-curand-10-2`
+   - `cuda-cusolver-10-2`
+   - `cuda-cusparse-10-2`
+   - `cuda-nvml-dev-10-2`
+   - `cuda-nvrtc-10-2`
+   - `libcublas-dev=10.2.*`
+   - `libcudnn7=*+cuda10.2`
+   - `libcudnn7-dev=*+cuda10.2`
+   - `libnvinfer7=*+cuda10.2`
+   - `libnvinfer-dev=*+cuda10.2`
+   - `libnvonnxparsers7=*+cuda10.2`
+   - `libnvonnxparsers-dev=*+cuda10.2`
 2. Run the following command:
 
    ```sh
-   env TF_CUDA_VERSION=10.0 \
+   env TF_CUDA_VERSION=10.2 \
        bazel build //adlik_serving \
            --config=tensorrt \
            -c opt \
-           --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
+           --action_env=LIBRARY_PATH=/usr/local/cuda-10.2/lib64/stubs \
            --incompatible_use_specific_tool_files=false
    ```
 
