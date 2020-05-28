@@ -41,18 +41,18 @@ def add_all_deps():
     http_file(
         name = "bazel_extra_actions_base_proto",
         sha256 = "0d91fe29a80d2754f13e379713da37750c42425d92ef7de77f60acdb82479edc",
-        urls = ["https://github.com/bazelbuild/bazel/raw/2.1.0/src/main/protobuf/extra_actions_base.proto"],
+        urls = ["https://github.com/bazelbuild/bazel/raw/3.2.0/src/main/protobuf/extra_actions_base.proto"],
     )
 
     # TensorFlow
 
     http_archive(
         name = "org_tensorflow",
-        sha256 = "e3d5876d1483a7a2bc734a481e253398f9a80ee922045786bda75072d05a698c",
-        strip_prefix = "tensorflow-e6e5d6df2ab26620548f35bf2e652b19f6d06652",
+        sha256 = "b3d7829fac84e3a26264d84057367730b6b85b495a0fce15929568f4b55dc144",
+        strip_prefix = "tensorflow-2b96f3662bd776e277f86997659e61046b56c315",
         urls = [
-            "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/e6e5d6df2ab26620548f35bf2e652b19f6d06652.tar.gz",
-            "https://github.com/tensorflow/tensorflow/archive/e6e5d6df2ab26620548f35bf2e652b19f6d06652.tar.gz",
+            "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/2b96f3662bd776e277f86997659e61046b56c315.tar.gz",
+            "https://github.com/tensorflow/tensorflow/archive/2b96f3662bd776e277f86997659e61046b56c315.tar.gz",
         ],
     )
 
