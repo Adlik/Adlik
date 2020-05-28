@@ -26,7 +26,7 @@ def _create_detail():
 def _create_request():
     task_request = task_pb2.CreateTaskRequest()
     task_request.model_spec.name = FLAGS.model_name
-    task_request.task_type = task_pb2.CreateTaskRequest.TaskType.TRAINING_TASK
+    task_request.task_type = task_pb2.TaskType.TRAINING_TASK
     task_request.timeout_seconds = 0  # Set timeout if needed
 
     # todo: create task detail
