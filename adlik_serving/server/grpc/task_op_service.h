@@ -17,7 +17,7 @@ struct CreateTaskResponse;
 
 struct TaskOpService : TaskService::Service {
 private:
-  ::grpc::Status create(::grpc::ServerContext*, const ::google::protobuf::Any*, ::google::protobuf::Any*) override;
+  ::grpc::Status create(::grpc::ServerContext*, const CreateTaskRequest*, CreateTaskResponse*) override;
   USE_ROLE(TaskOpImpl);
 };
 

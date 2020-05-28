@@ -37,6 +37,7 @@ RUN . /etc/os-release && \
         cuda-cusparse-dev-10-0 \
         cuda-nvml-dev-10-0 \
         cuda-nvrtc-10-0 \
+        default-jdk-headless \
         flake8 \
         git \
         "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2019.3.344" \

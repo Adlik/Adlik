@@ -6,13 +6,13 @@ option cc_enable_arenas = true;
 import "adlik_serving/framework/domain/model_spec.proto";
 import "google/protobuf/any.proto";
 
+enum TaskType {
+  TRAINING_TASK = 0;
+  PREDICT_TASK = 1;
+}
+
 message CreateTaskRequest {
   ModelSpec model_spec = 1;
-
-  enum TaskType {
-    TRAINING_TASK = 0;
-    PREDICT_TASK = 1;
-  }
 
   TaskType task_type = 2;
 
@@ -24,8 +24,12 @@ message CreateTaskRequest {
 }
 
 message CreateTaskResponse {
-  string status = 1; // NEW, RUNNING, ERROR, DONE
+  string status = 1; // ERROR, DONE
+
+  ModelSpec model_spec = 2;
+
+  TaskType task_type = 3;
 
   // information for specific task, different model has own definition
-  google.protobuf.Any detail = 2;
+  google.protobuf.Any detail = 4;
 }

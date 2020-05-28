@@ -35,7 +35,7 @@ cub::Status MLModel::init(const ModelConfig& config, const ModelId& model_id) {
         runners.push_back({AVAILABLE, std::move(runner)});
         DEBUG_LOG << "Create instance " << runner_count << " for model " << config.getModelName();
       } else {
-        ERR_LOG << "Create ml algorithm failure";
+        ERR_LOG << "Create ml algorithm failure: " << status.error_message();
         return cub::Internal;
       }
       runner_count++;
