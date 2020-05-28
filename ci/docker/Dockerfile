@@ -48,9 +48,13 @@ RUN . /etc/os-release && \
         'libcudnn7-dev=*+cuda10.0' \
         'libnvinfer7=*+cuda10.0' \
         'libnvinfer-dev=*+cuda10.0' \
+        'libnvinfer-plugin7=*+cuda10.0' \
         'libnvonnxparsers7=*+cuda10.0' \
         'libnvonnxparsers-dev=*+cuda10.0' \
+        'libnvparsers7=*+cuda10.0' \
         libtool \
+        protobuf-compiler \
+        python3-pip \
         python3-six \
         python3-wheel && \
     apt-get clean && \

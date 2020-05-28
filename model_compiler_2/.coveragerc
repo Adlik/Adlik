@@ -1,0 +1,14 @@
+[run]
+branch = true
+omit = */generated/*
+parallel = true
+
+source = model_compiler
+         tests
+
+[paths]
+source = src
+         */site-packages
+
+[report]
+fail_under = 99
