@@ -7,7 +7,7 @@ steps:
         sudo apt-add-repository -u "deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /"
         sudo apt-get install --no-install-recommends -y \
             cuda-cufft-dev-10-2 \
-            cuda-cupti-10-2 \
+            cuda-cupti-dev-10-2 \
             cuda-curand-dev-10-2 \
             cuda-cusolver-dev-10-2 \
             cuda-cusparse-dev-10-2 \

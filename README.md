@@ -113,7 +113,7 @@ Assume builing with CUDA version 10.2.
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
    - `cuda-cufft-dev-10-2`
-   - `cuda-cupti-10-2`
+   - `cuda-cupti-dev-10-2`
    - `cuda-curand-dev-10-2`
    - `cuda-cusolver-dev-10-2`
    - `cuda-cusparse-dev-10-2`
@@ -149,7 +149,7 @@ Assume building with CUDA version 10.2.
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
    - `cuda-cufft-10-2`
-   - `cuda-cupti-10-2`
+   - `cuda-cupti-dev-10-2`
    - `cuda-curand-10-2`
    - `cuda-cusolver-10-2`
    - `cuda-cusparse-10-2`
