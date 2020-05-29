@@ -28,10 +28,6 @@ void addHeaders(std::vector<std::pair<std::string, std::string>>* headers) {
 }
 
 void fillJsonErrorMsg(const std::string& errmsg, std::string* output) {
-  // Errors are represented as following JSON object:
-  // {
-  //   "error": "<CEscaped error message string>"
-  // }
   absl::StrAppend(output, R"({ "error": ")", absl::CEscape(errmsg), R"(" })");
 }
 
@@ -161,12 +157,8 @@ tensorflow::Status HttpRestApiHandler::processPredictRequest(const absl::string_
     request.mutable_model_spec()->mutable_version()->set_value(model_version.value());
   }
 
-  //   TF_RETURN_IF_ERROR(
-  //       FillPredictRequestFromJson(request_body, *model_config, request, format));
-
   PredictResponse response;
   TF_RETURN_IF_ERROR(predict_impl.predict(runOptions(options), request, response));
-  //   TF_RETURN_IF_ERROR(MakeJsonFromOutputs(response.outputs(), format, output));
 
   std::string response_output;
   TF_RETURN_IF_ERROR(serializeMessage(response, &response_output));
