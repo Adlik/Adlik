@@ -5,6 +5,7 @@
 #define ADLIK_SERVING_SERVER_HTTP_INTERNAL_OPERATION_TRACKER_H
 
 #include "absl/synchronization/mutex.h"
+#include "tensorflow/core/platform/thread_annotations.h"
 
 namespace adlik {
 namespace serving {
@@ -18,7 +19,7 @@ struct OperationTracker {
 
 private:
   mutable absl::Mutex ops_mu;
-  int64_t num_pending_ops ABSL_GUARDED_BY(ops_mu) = 0;
+  int64_t num_pending_ops TF_GUARDED_BY(ops_mu) = 0;
 };
 
 }  // namespace serving

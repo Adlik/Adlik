@@ -47,6 +47,7 @@ serving_cc_library(
     hdrs = ["operation_tracker.h"],
     deps = [
         "@com_google_absl//absl/synchronization",
+        "@org_tensorflow//tensorflow/core:framework_lite",
     ],
 )
 

@@ -1,0 +1,10 @@
+*.egg-info/
+__pycache__/
+.mypy_cache/
+.idea/
+/.tox/
+/build/
+/dist/
+/htmlcov/
+/.coverage
+/src/model_compiler/protos/generated/*_pb2.py

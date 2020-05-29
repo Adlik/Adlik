@@ -39,6 +39,9 @@ struct Logger : public nvinfer1::ILogger {
       case Severity::kINFO:
         INFO_LOG << msg;
         break;
+      case Severity::kVERBOSE:
+        DEBUG_LOG << msg;
+        break;
     }
   }
 };

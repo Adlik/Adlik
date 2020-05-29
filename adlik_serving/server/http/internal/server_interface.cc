@@ -93,7 +93,7 @@ private:
   };
 
   mutable absl::Mutex request_mu;
-  std::vector<DispatcherInfo> dispatchers ABSL_GUARDED_BY(request_mu);
+  std::vector<DispatcherInfo> dispatchers TF_GUARDED_BY(request_mu);
 };
 
 ServerImpl::ServerImpl(int port, int num_threads) : port(port), num_threads(num_threads) {

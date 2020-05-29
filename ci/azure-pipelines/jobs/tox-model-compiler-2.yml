@@ -1,0 +1,18 @@
+jobs:
+  - job: ToxModelCompiler2
+    displayName: Tox model compiler 2
+    pool:
+        vmImage: ubuntu-latest
+    steps:
+      - template: ../steps/install-tensorrt.yml
+      - task: UsePythonVersion@0
+        displayName: Use Python 3.6
+        inputs:
+            versionSpec: '3.6'
+      - script: pip install -U tox
+        displayName: Install tox
+      - script: sudo apt-get install --no-install-recommends -y protobuf-compiler
+        displayName: Install Protocol Buffers
+      - script: tox -e py36-cpu
+        displayName: Run tox
+        workingDirectory: model_compiler_2

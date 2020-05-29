@@ -51,7 +51,7 @@ def serving_proto_library(
 
 def serving_proto_library_py(
         name,
-        proto_library,
+        proto_library = None,
         srcs = [],
         deps = [],
         visibility = None,

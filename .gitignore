@@ -4,6 +4,7 @@
 *.pyc
 .cache/
 .idea/
+.mypy_cache/
 .pytest_cache/
 .tox/
 .vscode/
