@@ -26,8 +26,8 @@ private:
   OVERRIDE(tensorflow::Status processBatch(Batch<BatchingMessageTask>&));
 
   tensorflow::mutex mu;
-  std::vector<std::unique_ptr<BatchProcessor>> availableProcessors GUARDED_BY(mu);
-  uint32_t numProcessors GUARDED_BY(mu);
+  std::vector<std::unique_ptr<BatchProcessor>> availableProcessors TF_GUARDED_BY(mu);
+  uint32_t numProcessors TF_GUARDED_BY(mu);
 };
 
 }  // namespace serving

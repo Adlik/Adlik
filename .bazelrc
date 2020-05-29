@@ -4,7 +4,7 @@ build --cxxopt=-std=c++14
 build --host_cxxopt=-std=c++14
 
 build --define=grpc_no_ares=true
-build --action_env=PYTHON_BIN_PATH=python3
+build --action_env=PYTHON_BIN_PATH=/usr/bin/python3
 
 # OpenVINO.
 
@@ -31,6 +31,11 @@ build:tensorflow-gpu --copt=-DNDEBUG # https://github.com/tensorflow/tensorflow/
 # TensorFlow Lite (CPU).
 
 build:tensorflow-lite-cpu --define=runtime=tensorflow-lite
+
+build:tensorflow-lite-cpu-arm --define=runtime=tensorflow-lite
+build:tensorflow-lite-cpu-arm --crosstool_top=@local_config_embedded_arm//:toolchain
+build:tensorflow-lite-cpu-arm --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+build:tensorflow-lite-cpu-arm --cpu=armhf
 
 # TensorRT.
 
