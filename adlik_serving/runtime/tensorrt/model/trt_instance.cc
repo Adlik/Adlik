@@ -226,7 +226,7 @@ tensorflow::Status Instance::initializeInputBindings(const ::google::protobuf::R
 
     if (!engine->bindingIsInput(index)) {
       return tensorflow::errors::InvalidArgument(
-          "input '", io.name(), "' is expected to be an output in model for ", name);
+          "input '", io.name(), "' is expected to be an input in model for ", name);
     }
 
     tensorflow::DataType dt = ConvertDatatype(engine->getBindingDataType(index));
