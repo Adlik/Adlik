@@ -19,6 +19,7 @@ struct ModelStore;
 
 struct StateMonitor : private EventHandler {
   void connect(EventBus&);
+  void deleteModel(const std::string& modelName);
   void wait();
 
 private:

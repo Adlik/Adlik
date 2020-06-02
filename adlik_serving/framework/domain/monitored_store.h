@@ -15,6 +15,7 @@ namespace serving {
 
 struct MonitoredStore {
   void update(const MonitoredEvent&);
+  void deleteModel(const std::string& modelName);
   bool ready(const std::string&, const MonitoredPredicate&) const;
 
 private:
