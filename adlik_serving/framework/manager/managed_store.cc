@@ -59,45 +59,6 @@ void ManagedStore::models(const std::string& name, ManagedModelVisitor& visitor)
   select(name, [&visitor](auto i) { visitor.visit(*i->second.get()); });
 }
 
-bool ManagedStore::exist(const std::string& name) {
-  bool isExist = false;
-  auto range = manageds.equal_range(name);
-  for (auto it = range.first; it != range.second; ++it) {
-    isExist = true;
-  }
-  return isExist;
-}
-
-bool ManagedStore::isNormal(const std::string& name) {
-  bool isNormal = true;
-  auto range = manageds.equal_range(name);
-  for (auto it = range.first; it != range.second; ++it) {
-    if (it->second->str() != "READY") {
-      isNormal = false;
-    }
-  }
-  return isNormal;
-}
-
-void ManagedStore::deleteModel(const std::string& modelName) {
-  auto range = manageds.equal_range(modelName);
-  for (auto it = range.first; it != range.second;) {
-    manageds.erase(it++);
-  }
-  ROLE(ServingStore).update(manageds);
-}
-
-void ManagedStore::deleteModel(const ModelId& id) {
-  INFO_LOG << "delete model " << id.getName() << " version " << id.getVersion();
-  auto i = find(id);
-  manageds.erase(i);
-  ROLE(ServingStore).update(manageds);
-}
-
-void ManagedStore::updateServingStore() {
-  ROLE(ServingStore).update(manageds);
-}
-
 void ManagedStore::publish(const ModelId& id) const {
   auto i = find(id);
   if (i != manageds.cend()) {

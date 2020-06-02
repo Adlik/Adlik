@@ -14,22 +14,17 @@ namespace serving {
 
 struct ModelStore;
 struct ModelOptions;
-struct ModelTarget;
 
 struct StorageLoop : ModelSource {
-  void poll();
-  void once();
-
 private:
+  void poll(ModelTarget&);
   int64_t interval() const;
-  void update();
 
 private:
   OVERRIDE(void connect(ModelTarget&));
 
 private:
   std::unique_ptr<cub::LoopThread> loop;
-  ModelTarget* modelTarget;
 
 private:
   USE_ROLE(ModelOptions);

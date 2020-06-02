@@ -34,11 +34,7 @@ DEFINE_ROLE(ManagedStore) {
   cub::Status unload(const ModelId&);
 
   cub::Status unaspired(const ModelId&);
-  bool exist(const std::string& modelName);
-  bool isNormal(const std::string& modelName);
-  void deleteModel(const std::string& modelName);
-  void deleteModel(const ModelId&);
-  void updateServingStore();
+
   void names(ManagedNameVisitor&) const;
   void models(ManagedModelVisitor&) const;
   void models(const std::string& name, ManagedModelVisitor&) const;

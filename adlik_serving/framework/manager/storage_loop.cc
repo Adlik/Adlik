@@ -54,19 +54,10 @@ private:
 };
 }  // namespace
 
-void StorageLoop::poll() {
-  auto action = [this] { this->once(); };
-  loop.reset(new cub::LoopThread(action, interval()));
-}
-
-void StorageLoop::once() {
-  update();
-}
-
-void StorageLoop::update() {
+void StorageLoop::poll(ModelTarget& target) {
   ModelStreamList streams;
   ROLE(ModelStore).models(streams);
-  streams.poll(*modelTarget);
+  streams.poll(target);
 }
 
 int64_t StorageLoop::interval() const {
@@ -74,7 +65,8 @@ int64_t StorageLoop::interval() const {
 }
 
 void StorageLoop::connect(ModelTarget& target) {
-  modelTarget = &target;
+  auto action = [this, &target] { this->poll(target); };
+  loop.reset(new cub::LoopThread(action, interval()));
 }
 
 }  // namespace serving
