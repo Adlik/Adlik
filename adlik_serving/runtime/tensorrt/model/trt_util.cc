@@ -40,17 +40,13 @@ bool ConvertDims(const nvinfer1::Dims& model_dims, adlik::serving::DimsList& dim
   return true;
 }
 
-bool CompareDims(const nvinfer1::Dims& model_dims, const adlik::serving::DimsList& dims) {
-  if (model_dims.nbDims != dims.size()) {
-    return false;
-  }
-
-  for (int i = 0; i < model_dims.nbDims; ++i) {
-    if (model_dims.d[i] != dims[i]) {
-      return false;
-    }
-  }
-  return true;
+bool CompareDims(const nvinfer1::Dims& model_dims,
+                 const adlik::serving::DimsList& dims,
+                 bool has_implicit_batch_dimension) {
+  return std::equal(has_implicit_batch_dimension ? model_dims.d : model_dims.d + 1,
+                    model_dims.d + model_dims.nbDims,
+                    dims.begin(),
+                    dims.end());
 }
 
 tensorflow::Status GetModelVersionFromPath(const tensorflow::StringPiece& path, uint32_t* version) {
