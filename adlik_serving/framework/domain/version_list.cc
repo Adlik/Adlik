@@ -63,6 +63,8 @@ void VersionList::select(const VersionPolicyProto& policy, VersionList& result) 
     case VersionPolicyProto::kSpecific:
       specific(set(policy), result);
       break;
+    case VersionPolicyProto::kNone:
+      break;
     default:
       break;
   }

@@ -42,5 +42,12 @@ namespace serving {
   return toGrpcStatus(status);
 }
 
+::grpc::Status GrpcModelOperateService::activateModel(::grpc::ServerContext* ctxt,
+                                                      const ModelOperateRequest* req,
+                                                      ModelOperateResponse* rsp) {
+  auto status = ROLE(ModelOperateImpl).activateModel(*req, *rsp);
+  return toGrpcStatus(status);
+}
+
 }  // namespace serving
 }  // namespace adlik

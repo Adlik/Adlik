@@ -244,7 +244,7 @@ private:
         unaspireds.push_back(model);
       }
     };
-    return !hasAspired || hasServing || unaspireds.size() > 1;
+    return !hasAspired || hasServing || unaspireds.size() > 0;
   }
 
   template <typename F>

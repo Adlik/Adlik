@@ -9,6 +9,7 @@
 #include "cub/env/fs/path.h"
 #include "cub/log/log.h"
 #include "cub/protobuf/text_protobuf.h"
+#include "cub/protobuf/text_protobuf_saver.h"
 
 namespace adlik {
 namespace serving {
@@ -66,5 +67,18 @@ bool ModelStore::exist(const std::string& name) const {
   return it != configs.end() ? true : false;
 }
 
+cub::Status ModelStore::updatePolicy(const std::string& name, const VersionPolicyProto& policy) {
+  cub::AutoLock lock(mu);
+  auto it = configs.find(name);
+  (it->second.mutable_version_policy())->CopyFrom(policy);
+  ModelConfigProto proto;
+  proto.CopyFrom(it->second);
+  if (cub::TextProtobufSaver(cub::paths(it->second.getBasePath(), "config.pbtxt")).save(proto)) {
+    INFO_LOG << "update model " << name << " policy success";
+    return cub::Success;
+  } else {
+    return cub::Failure;
+  }
+}
 }  // namespace serving
 }  // namespace adlik

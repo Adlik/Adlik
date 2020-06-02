@@ -46,6 +46,14 @@ def _create_delete_model_version_request():
     return request
 
 
+def _create_activate_model_request():
+    request = model_operate_pb2.ModelOperateRequest()
+    request.model_name = FLAGS.model_name
+    request.model_version = FLAGS.model_version
+    request.operate_name = FLAGS.operate_name
+    return request
+
+
 def _grpc_add_model():
     channel = grpc.insecure_channel(FLAGS.url)
     stub = model_operate_service_pb2_grpc.ModelOperateServiceStub(channel)
@@ -94,11 +102,24 @@ def _grpc_delete_model_version():
     print('Running Time: {}s'.format(end - start))
 
 
+def _grpc_activate_model():
+    channel = grpc.insecure_channel(FLAGS.url)
+    stub = model_operate_service_pb2_grpc.ModelOperateServiceStub(channel)
+    operate_request = _create_activate_model_request()
+    print('Model operate request is: \n{}\n'.format(json_format.MessageToJson(operate_request)))
+    start = time.time()
+    response = stub.activateModel(operate_request)
+    end = time.time()
+    print('Model operate response is: \n{}'.format(response))
+    print('Running Time: {}s'.format(end - start))
+
+
 grpc_operate = {
     'add': _grpc_add_model,
     'delete': _grpc_delete_model,
     'add_version': _grpc_add_model_version,
-    'delete_version': _grpc_delete_model_version
+    'delete_version': _grpc_delete_model_version,
+    'activate': _grpc_activate_model
 }
 
 
@@ -116,7 +137,7 @@ if __name__ == '__main__':
                         help='Enable verbose output')
     parser.add_argument('-m', '--model-name', type=str, required=False, default="mm",
                         help='Name of model')
-    parser.add_argument('-n', '--model-version', type=str, required=False, default="1",
+    parser.add_argument('-n', '--model-version', type=int, required=False, default="1",
                         help='Version of model')
     parser.add_argument('-p', '--protocol', type=str, required=False, default='grpc', choices=['grpc', "http"],
                         help='Protocol ("http"/"grpc") used to ' +
@@ -124,10 +145,9 @@ if __name__ == '__main__':
     parser.add_argument('-u', '--url', type=str, required=False, default='localhost:9006',
                         help='Adlik serving server URL. Default is localhost:8500.')
     parser.add_argument('-e', '--operate-name', type=str, required=False,
-                        default='add', help='model operate name')
+                        default='add', help='model operate name(add|delete|add_version|delete_version|activate)')
     parser.add_argument('-a', '--path', type=str, required=False,
-                        default='/home/john/mm',
-                        help='operate model path')
+                        default='/home/john/mm', help='operate model path')
 
     FLAGS = parser.parse_args()
     _main()
