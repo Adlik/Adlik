@@ -23,7 +23,6 @@ struct VersionList {
 
   void select(const VersionPolicyProto&, VersionList&) const;
   bool contains(int version) const;
-  int max() const;
 
   template <typename F>
   void list(F f) const {
