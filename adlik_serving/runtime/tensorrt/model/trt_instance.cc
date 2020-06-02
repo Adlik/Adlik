@@ -263,7 +263,7 @@ tensorflow::Status Instance::initializeInputBindings(const ::google::protobuf::R
     cudaError_t err = cudaMalloc(&buffer, byte_size);
     if (err != cudaSuccess) {
       return tensorflow::errors::Internal(
-          "unable to allocate memory for input '", io.name(), " for ", name, ": ", cudaGetErrorString(err));
+          "unable to allocate memory for input '", io.name(), "' for ", name, ": ", cudaGetErrorString(err));
     }
 
     byte_sizes[index] = byte_size;
@@ -319,7 +319,7 @@ tensorflow::Status Instance::initializeOutputBindings(const ::google::protobuf::
 
     const uint64_t byte_size = adlik::serving::GetSize(max_batch_size, dt, io.dims());
     if (byte_size == 0) {
-      return tensorflow::errors::Internal("unable to calculate size for output '", io.name(), " for ", name);
+      return tensorflow::errors::Internal("unable to calculate size for output '", io.name(), "' for ", name);
     }
 
     // Allocate CUDA memory
@@ -327,7 +327,7 @@ tensorflow::Status Instance::initializeOutputBindings(const ::google::protobuf::
     cudaError_t err = cudaMalloc(&buffer, byte_size);
     if (err != cudaSuccess) {
       return tensorflow::errors::Internal(
-          "unable to allocate memory for input '", io.name(), " for ", name, ": ", cudaGetErrorString(err));
+          "unable to allocate memory for input '", io.name(), "' for ", name, ": ", cudaGetErrorString(err));
     }
 
     byte_sizes[index] = byte_size;
