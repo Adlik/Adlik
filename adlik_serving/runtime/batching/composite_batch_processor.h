@@ -27,7 +27,7 @@ private:
 
   tensorflow::mutex mu;
   std::vector<std::unique_ptr<BatchProcessor>> availableProcessors TF_GUARDED_BY(mu);
-  uint32_t numProcessors TF_GUARDED_BY(mu);
+  uint32_t numProcessors TF_GUARDED_BY(mu) = 0;
 };
 
 }  // namespace serving
