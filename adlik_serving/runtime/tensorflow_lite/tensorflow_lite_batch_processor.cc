@@ -17,10 +17,14 @@ using adlik::serving::Batch;
 using adlik::serving::BatchingMessageTask;
 using adlik::serving::getTFDataTypeName;
 using adlik::serving::InputContext;
+using adlik::serving::ModelConfigProto;
+using adlik::serving::ModelInput;
+using adlik::serving::ModelOutput;
 using adlik::serving::OutputContext;
 using adlik::serving::PredictRequestProvider;
 using adlik::serving::TensorShapeDims;
 using adlik::serving::tfLiteTypeToTfType;
+using google::protobuf::RepeatedPtrField;
 using std::make_unique;
 using std::shared_ptr;
 using std::string;
@@ -106,6 +110,28 @@ variant<tuple<InputSignature, size_t>, Status> getSignature(const Interpreter& i
   }
 
   return make_tuple(std::move(result), batchSize);
+}
+
+template <class T>
+Status checkSignature(const InputSignature& modelSignature, const RepeatedPtrField<T>& declaredSignature) {
+  InputSignature signature2;
+
+  for (const auto& item : declaredSignature) {
+    signature2.emplace(
+        std::piecewise_construct,
+        std::forward_as_tuple(item.name()),
+        std::forward_as_tuple(item.data_type(), TensorShapeDims::owned(item.dims().begin(), item.dims().end())));
+  }
+
+  if (modelSignature == signature2) {
+    return Status::OK();
+  } else {
+    return Internal("Model signature does not match declared one. Model signature: ",
+                    displaySignature(modelSignature),
+                    ". Declared signature: ",
+                    displaySignature(modelSignature),
+                    ".");
+  }
 }
 
 StringViewMap<InputContext> getInputContextMap(const Interpreter& interpreter) {
@@ -260,7 +286,8 @@ Status TensorFlowLiteBatchProcessor::processBatch(Batch<BatchingMessageTask>& ba
 
 variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchProcessor::create(
     shared_ptr<FlatBufferModel> model,
-    const OpResolver& opResolver) {
+    const OpResolver& opResolver,
+    const ModelConfigProto& modelConfigProto) {
   unique_ptr<Interpreter> interpreter;
 
   if (InterpreterBuilder{*model, opResolver}(&interpreter, 1) != TfLiteStatus::kTfLiteOk) {
@@ -271,23 +298,42 @@ variant<unique_ptr<TensorFlowLiteBatchProcessor>, Status> TensorFlowLiteBatchPro
     return Internal("Unable to allocate tensors");
   }
 
-  auto maybeSignature = getSignature(*interpreter, interpreter->inputs());
+  // Check input signature.
 
-  if (absl::holds_alternative<tuple<InputSignature, size_t>>(maybeSignature)) {
-    auto signature = std::move(absl::get<tuple<InputSignature, size_t>>(maybeSignature));
-    auto inputContextMap = getInputContextMap(*interpreter);
-    auto outputContexts = getOutputContexts(*interpreter);
+  auto maybeInputSignature = getSignature(*interpreter, interpreter->inputs());
 
-    return make_unique<TensorFlowLiteBatchProcessor>(ConstructCredential{},
-                                                     std::move(model),
-                                                     std::move(interpreter),
-                                                     std::move(std::get<InputSignature>(signature)),
-                                                     std::move(std::get<size_t>(signature)),
-                                                     std::move(inputContextMap),
-                                                     std::move(outputContexts));
-  } else {
-    return std::move(absl::get<Status>(maybeSignature));
+  if (!absl::holds_alternative<tuple<InputSignature, size_t>>(maybeInputSignature)) {
+    return std::move(absl::get<Status>(maybeInputSignature));
   }
+
+  auto inputSignature = std::move(absl::get<tuple<InputSignature, size_t>>(maybeInputSignature));
+
+  TF_RETURN_IF_ERROR(checkSignature(std::get<InputSignature>(inputSignature), modelConfigProto.input()));
+
+  // Check output signature.
+
+  auto maybeOutputSignature = getSignature(*interpreter, interpreter->outputs());
+
+  if (!absl::holds_alternative<tuple<InputSignature, size_t>>(maybeOutputSignature)) {
+    return std::move(absl::get<Status>(maybeOutputSignature));
+  }
+
+  TF_RETURN_IF_ERROR(
+      checkSignature(std::get<InputSignature>(absl::get<tuple<InputSignature, size_t>>(maybeOutputSignature)),
+                     modelConfigProto.output()));
+
+  // Get IO contexts.
+
+  auto inputContextMap = getInputContextMap(*interpreter);
+  auto outputContexts = getOutputContexts(*interpreter);
+
+  return make_unique<TensorFlowLiteBatchProcessor>(ConstructCredential{},
+                                                   std::move(model),
+                                                   std::move(interpreter),
+                                                   std::move(std::get<InputSignature>(inputSignature)),
+                                                   std::move(std::get<size_t>(inputSignature)),
+                                                   std::move(inputContextMap),
+                                                   std::move(outputContexts));
 }
 }  // namespace serving
 }  // namespace adlik

@@ -45,7 +45,7 @@ variant<unique_ptr<TensorFlowLiteModel>, Status> internalCreate(const ModelConfi
 
   for (const auto& instanceGroup : normalizedModelConfig.instance_group()) {
     for (int i = 0; i != instanceGroup.count(); ++i) {
-      auto processor = TensorFlowLiteBatchProcessor::create(flatBufferModel, opResolver);
+      auto processor = TensorFlowLiteBatchProcessor::create(flatBufferModel, opResolver, modelConfig);
 
       if (absl::holds_alternative<unique_ptr<TensorFlowLiteBatchProcessor>>(processor)) {
         result->add(std::move(absl::get<unique_ptr<TensorFlowLiteBatchProcessor>>(processor)));
