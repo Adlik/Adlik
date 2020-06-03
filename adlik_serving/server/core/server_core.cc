@@ -47,11 +47,11 @@ struct ServerCoreImpl : private ModelOptions,
                         ServerCore {
 private:
   OVERRIDE(cub::Status start(int argc, const char** argv)) {
-    INFO_LOG << "Adlik serving is initializing..." << std::endl;
+    INFO_LOG << "Adlik serving is initializing...";
     CUB_ASSERT_SUCC_CALL(init(argc, argv));
     CUB_ASSERT_SUCC_CALL(config());
 
-    INFO_LOG << "Adlik serving is running..." << std::endl;
+    INFO_LOG << "Adlik serving is running...";
     CUB_ASSERT_SUCC_CALL(start());
 
     wait();

@@ -18,31 +18,28 @@ namespace serving {
 
 namespace {
 struct ModelTerminator : ManagedModelVisitor {
-  ModelTerminator(std::vector<ModelStream>& streams) : streams(streams) {
+  ModelTerminator() {
   }
   void stop(ManagedStore& store) {
     for (auto model : models) {
       CUB_PEEK_SUCC_CALL(store.stop(*model));
     }
-    store.updateServingStore();
   }
 
 private:
   OVERRIDE(void visit(const Model& model)) {
-    auto shouldDelete = [&model](ModelStream stream) -> bool { return stream.getName() == model.getName(); };
-    if (model.shouldStop() || std::find_if(streams.begin(), streams.end(), shouldDelete) == streams.end()) {
+    if (model.shouldStop()) {
       models.push_back(&model);
     }
   }
 
 private:
   std::vector<const Model*> models;
-  std::vector<ModelStream>& streams;
 };
 }  // namespace
 
-void BoardingFunctor::flush(std::vector<ModelStream>& streams) {
-  ModelTerminator terminator(streams);
+void BoardingFunctor::flush() {
+  ModelTerminator terminator;
   store.models(terminator);
   terminator.stop(store);
 }
@@ -129,7 +126,6 @@ bool BoardingFunctor::shouldSkip(const ModelStream& stream) const {
 
 void BoardingFunctor::handle(std::vector<ModelStream>& streams) {
   for (auto i = streams.cbegin(); i != streams.cend();) {
-    INFO_LOG << i->str();
     if (shouldSkip(*i)) {
       ++i;
     } else {
@@ -327,9 +323,9 @@ void BoardingFunctor::execute() {
 }
 
 void BoardingFunctor::operator()(std::vector<ModelStream>& streams) {
-  flush(streams);
   handle(streams);
   execute();
+  flush();
 }
 
 }  // namespace serving

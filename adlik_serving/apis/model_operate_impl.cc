@@ -81,6 +81,7 @@ tensorflow::Status ModelOperateImpl::addModel(const ModelOperateRequest& req, Mo
   if (!ROLE(ManagedStore).exist(modelName) || !ROLE(ManagedStore).isNormal(modelName)) {
     operateFailure("start up model error");
   }
+  return status;
   SuccessResponse(rsp);
   return status;
 }
@@ -97,8 +98,7 @@ tensorflow::Status ModelOperateImpl::deleteModel(const ModelOperateRequest& req,
   }
   std::string targetPath = config->getBasePath();
   ROLE(ModelStore).deleteModel(modelName);
-  ROLE(StorageLoop).once();
-  ROLE(BoardingLoop).once();
+  ROLE(ManagedStore).deleteModel(modelName);
   if (cub::isFailStatus(cub::filesystem().deleteDir(targetPath))) {
     FailureResponse(rsp, modelName + " model delete failure");
     return status;
