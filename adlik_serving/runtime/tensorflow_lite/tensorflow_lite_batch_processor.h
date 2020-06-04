@@ -5,6 +5,7 @@
 #define ADLIK_SERVING_RUNTIME_TENSORFLOW_LITE_TENSORFLOW_LITE_BATCH_PROCESSOR_H
 
 #include "absl/hash/hash.h"
+#include "adlik_serving/framework/domain/model_config.pb.h"
 #include "adlik_serving/runtime/batching/batch_processor.h"
 #include "adlik_serving/runtime/tensorflow_lite/input_context.h"
 #include "adlik_serving/runtime/tensorflow_lite/output_context.h"
@@ -44,7 +45,8 @@ public:
 
   static absl::variant<std::unique_ptr<TensorFlowLiteBatchProcessor>, tensorflow::Status> create(
       std::shared_ptr<tflite::FlatBufferModel> model,
-      const tflite::OpResolver& opResolver);
+      const tflite::OpResolver& opResolver,
+      const ModelConfigProto& modelConfigProto);
 };
 }  // namespace serving
 }  // namespace adlik
