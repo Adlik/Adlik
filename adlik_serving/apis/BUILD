@@ -115,6 +115,42 @@ py_proto_library(
     ],
 )
 
+serving_proto_library(
+    name = "model_operate_proto",
+    srcs = ["model_operate.proto"],
+    cc_api_version = 2,
+)
+
+serving_proto_library_py(
+    name = "model_operate_proto_py_pb2",
+    srcs = ["model_operate.proto"],
+    proto_library = "model_operate_proto",
+)
+
+serving_proto_library(
+    name = "model_operate_service_proto",
+    srcs = ["model_operate_service.proto"],
+    has_services = 1,
+    cc_api_version = 2,
+    cc_grpc_version = 1,
+    deps = [
+        ":model_operate_proto",
+    ],
+)
+
+py_proto_library(
+    name = "model_operate_service_proto_py_pb2",
+    srcs = ["model_operate_service.proto"],
+    default_runtime = "@com_google_protobuf//:protobuf_python",
+    protoc = "@com_google_protobuf//:protoc",
+    srcs_version = "PY2AND3",
+    use_grpc_plugin = True,
+    deps = [
+        ":model_operate_proto_py_pb2",
+        "@com_google_protobuf//:protobuf_python",
+    ],
+)
+
 serving_cc_library(
     name = "predict_impl",
     srcs = ["predict_impl.cc"],
@@ -144,6 +180,18 @@ serving_cc_library(
     hdrs = ["task_op_impl.h"],
     deps = [
         ":task_proto",
+        "//adlik_serving/framework/manager",
+        "//cub/dci",
+        "//cub/log",
+    ],
+)
+
+serving_cc_library(
+    name = "model_operate_impl",
+    srcs = ["model_operate_impl.cc"],
+    hdrs = ["model_operate_impl.h"],
+    deps = [
+        ":model_operate_proto",
         "//adlik_serving/framework/manager",
         "//cub/dci",
         "//cub/log",
