@@ -148,14 +148,5 @@ ServerCore& ServerCore::inst() {
   return inst;
 }
 
-cub::Status start(int argc, const char** argv) {
-  return ServerCore::inst().start(argc, argv);
-}
-
-cub::Status spredict(const PredictRequest& req, PredictResponse& rsp) {
-  ServerCoreImpl& core = static_cast<ServerCoreImpl&>(ServerCore::inst());
-  return core.spredict(req, rsp);
-}
-
 }  // namespace serving
 }  // namespace adlik
