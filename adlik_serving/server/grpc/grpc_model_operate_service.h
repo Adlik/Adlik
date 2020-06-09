@@ -19,6 +19,7 @@ private:
   ::grpc::Status addModelVersion(::grpc::ServerContext*, const ModelOperateRequest*, ModelOperateResponse*) override;
   ::grpc::Status deleteModel(::grpc::ServerContext*, const ModelOperateRequest*, ModelOperateResponse*) override;
   ::grpc::Status deleteModelVersion(::grpc::ServerContext*, const ModelOperateRequest*, ModelOperateResponse*) override;
+  ::grpc::Status activateModel(::grpc::ServerContext*, const ModelOperateRequest*, ModelOperateResponse*) override;
 
 private:
   USE_ROLE(ModelOperateImpl);

@@ -29,8 +29,10 @@ struct ModelOperateImpl {
   tensorflow::Status addModelVersion(const ModelOperateRequest&, ModelOperateResponse&);
   tensorflow::Status deleteModel(const ModelOperateRequest&, ModelOperateResponse&);
   tensorflow::Status deleteModelVersion(const ModelOperateRequest&, ModelOperateResponse&);
+  tensorflow::Status activateModel(const ModelOperateRequest&, ModelOperateResponse&);
 
 private:
+  void update();
   USE_ROLE(ServingStore);
   USE_ROLE(ModelStore);
   USE_ROLE(ManagedStore);

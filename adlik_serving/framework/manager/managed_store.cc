@@ -94,8 +94,11 @@ void ManagedStore::deleteModel(const ModelId& id) {
   ROLE(ServingStore).update(manageds);
 }
 
-void ManagedStore::updateServingStore() {
-  ROLE(ServingStore).update(manageds);
+void ManagedStore::getModelVersions(const std::string& modelName, std::vector<int>& versions) {
+  auto range = manageds.equal_range(modelName);
+  for (auto it = range.first; it != range.second; ++it) {
+    versions.push_back(it->second->getVersion());
+  }
 }
 
 void ManagedStore::publish(const ModelId& id) const {

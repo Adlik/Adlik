@@ -27,6 +27,7 @@ struct ModelStore : private cub::DirentVisitor {
   void models(ModelConfigVisitor&) const;
   const ModelConfig* find(const std::string& name) const;
   bool exist(const std::string& name) const;
+  cub::Status updatePolicy(const std::string& name, const VersionPolicyProto& policy);
 
 private:
   OVERRIDE(void visit(const std::string&, const std::string&));

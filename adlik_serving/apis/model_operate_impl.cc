@@ -29,9 +29,13 @@ void FailureResponse(ModelOperateResponse& rsp, std::string error_message) {
   rsp.set_error_message(error_message);
 }
 
-struct MaxVersionSelector : cub::DirentVisitor {
+struct VersionDirectoryState : cub::DirentVisitor {
   int maxVersion() const {
     return versions.max();
+  }
+
+  bool contains(int version) {
+    return versions.contains(version);
   }
 
 private:
@@ -76,12 +80,10 @@ tensorflow::Status ModelOperateImpl::addModel(const ModelOperateRequest& req, Mo
   if (!RuntimeSuite::inst().get(config->platform())) {
     return operateFailure("config runtime error");
   }
-  ROLE(StorageLoop).once();
-  ROLE(BoardingLoop).once();
+  update();
   if (!ROLE(ManagedStore).exist(modelName) || !ROLE(ManagedStore).isNormal(modelName)) {
-    operateFailure("start up model error");
+    return operateFailure("start up model error");
   }
-  return status;
   SuccessResponse(rsp);
   return status;
 }
@@ -119,20 +121,19 @@ tensorflow::Status ModelOperateImpl::addModelVersion(const ModelOperateRequest& 
     return status;
   }
   std::string modelPath = config->getBasePath();
-  MaxVersionSelector maxVersionSelector;
-  cub::filesystem().children(modelPath, maxVersionSelector);
-  std::string targetPath = cub::paths(modelPath, std::to_string(maxVersionSelector.maxVersion() + 1));
+  VersionDirectoryState versionDirectoryState;
+  cub::filesystem().children(modelPath, versionDirectoryState);
+  std::string targetPath = cub::paths(modelPath, std::to_string(versionDirectoryState.maxVersion() + 1));
   if (cub::isFailStatus(cub::filesystem().copyDir(sourcePath, targetPath))) {
     FailureResponse(rsp, modelName + " copy model version path error");
     return status;
   }
-  ROLE(StorageLoop).once();
-  ROLE(BoardingLoop).once();
+  update();
   if (!ROLE(ManagedStore).exist(modelName) || !ROLE(ManagedStore).isNormal(modelName)) {
     cub::filesystem().deleteDir(targetPath);
-    ROLE(StorageLoop).once();
-    ROLE(BoardingLoop).once();
+    update();
     FailureResponse(rsp, modelName + " model version start up error");
+    return status;
   }
   SuccessResponse(rsp);
   return status;
@@ -140,7 +141,7 @@ tensorflow::Status ModelOperateImpl::addModelVersion(const ModelOperateRequest& 
 
 tensorflow::Status ModelOperateImpl::deleteModelVersion(const ModelOperateRequest& req, ModelOperateResponse& rsp) {
   std::string modelName = req.model_name();
-  std::string modelVersion = req.model_version();
+  int modelVersion = req.model_version();
   INFO_LOG << "delete model " << modelName << " version " << modelVersion;
   tensorflow::Status status = tensorflow::Status::OK();
   auto config = ROLE(ModelStore).find(modelName);
@@ -149,16 +150,62 @@ tensorflow::Status ModelOperateImpl::deleteModelVersion(const ModelOperateReques
     FailureResponse(rsp, modelName + " model is not exist");
     return status;
   }
-  ModelId id(modelName, cub::strutils::to_int32(modelVersion));
+  ModelId id(modelName, modelVersion);
   std::string targetPath = config->getModelPath(id);
   if (cub::isFailStatus(cub::filesystem().deleteDir(targetPath))) {
     FailureResponse(rsp, modelName + " model version delete failure");
     return status;
   }
-  ROLE(StorageLoop).once();
-  ROLE(BoardingLoop).once();
+  update();
   SuccessResponse(rsp);
   return status;
+}
+
+tensorflow::Status ModelOperateImpl::activateModel(const ModelOperateRequest& req, ModelOperateResponse& rsp) {
+  std::string modelName = req.model_name();
+  int modelVersion = req.model_version();
+  INFO_LOG << "activate model " << modelName << ", version " << std::to_string(modelVersion);
+  tensorflow::Status status = tensorflow::Status::OK();
+  auto config = ROLE(ModelStore).find(modelName);
+  if (!config) {
+    INFO_LOG << modelName << " model is not exist";
+    FailureResponse(rsp, modelName + " model is not exist");
+    return status;
+  }
+  std::string modelPath = config->getBasePath();
+  VersionDirectoryState versionDirectoryState;
+  cub::filesystem().children(modelPath, versionDirectoryState);
+  if (!versionDirectoryState.contains(modelVersion)) {
+    FailureResponse(rsp, modelName + " model version " + std::to_string(modelVersion) + " is not exist");
+    return status;
+  }
+  VersionPolicyProto originVersionPolicy(config->version_policy());
+  VersionPolicyProto tempVersionPolicy;
+  std::vector<int> originVersions;
+  ROLE(ManagedStore).getModelVersions(modelName, originVersions);
+  for (auto version : originVersions) {
+    tempVersionPolicy.mutable_specific()->add_versions(version);
+  }
+  tempVersionPolicy.mutable_specific()->add_versions(modelVersion);
+  ROLE(ModelStore).updatePolicy(modelName, tempVersionPolicy);
+  update();
+  if (!ROLE(ManagedStore).exist(modelName) || !ROLE(ManagedStore).isNormal(modelName)) {
+    ROLE(ModelStore).updatePolicy(modelName, originVersionPolicy);
+    update();
+    FailureResponse(rsp, modelName + " model activate version start up error");
+    return status;
+  }
+  VersionPolicyProto lastVersionPolicy;
+  lastVersionPolicy.mutable_specific()->add_versions(modelVersion);
+  ROLE(ModelStore).updatePolicy(modelName, lastVersionPolicy);
+  update();
+  SuccessResponse(rsp);
+  return status;
+}
+
+void ModelOperateImpl::update() {
+  ROLE(StorageLoop).once();
+  ROLE(BoardingLoop).once();
 }
 }  // namespace serving
 }  // namespace adlik

@@ -56,7 +56,20 @@ private:
 
 private:
   OVERRIDE(void visit(const ModelConfig& model)) {
-    names.push_back(model.getModelName());
+    if (needWait(model.version_policy())) {
+      names.push_back(model.getModelName());
+    }
+  }
+
+  bool needWait(const VersionPolicyProto& versionPolicy) {
+    if (versionPolicy.policy_choice_case() == VersionPolicyProto::kNone) {
+      return false;
+    }
+    if (versionPolicy.policy_choice_case() == VersionPolicyProto::kSpecific &&
+        versionPolicy.specific().versions().empty()) {
+      return false;
+    }
+    return true;
   }
 
 private:
