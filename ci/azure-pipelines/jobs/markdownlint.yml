@@ -4,7 +4,7 @@ jobs:
     pool:
         vmImage: ubuntu-latest
     steps:
-      - script: npm install -g markdownlint-cli
+      - script: sudo npm install -g markdownlint-cli
         displayName: Install markdownlint-cli
       - script: markdownlint '**/*.md'
         displayName: Run markdownlint
