@@ -1,0 +1,27 @@
+jobs:
+  - job: BazelBuildServingDemo
+    displayName: Bazel build serving demo
+    strategy:
+        matrix:
+            Linux:
+                vmImage: ubuntu-latest
+            macOS:
+                vmImage: macos-latest
+    pool:
+        vmImage: $(vmImage)
+    timeoutInMinutes: 0
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: pip install -U six
+        displayName: Install additional dependencies
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-demo
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            bazel build //adlik_serving/demo \
+                --config=tensorflow-lite-cpu \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE"
+        displayName: Bazel build serving demo
