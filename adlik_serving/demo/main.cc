@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <numeric>
+
 #include "adlik_serving/apis/predict.pb.h"
 #include "adlik_serving/demo/decode_png.h"
 #include "adlik_serving/demo/predict_service.h"

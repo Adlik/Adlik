@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/demo/decode_png.h"
+
 #include <algorithm>
 #include <stdexcept>
+
 #include "absl/types/optional.h"
 #include "png.h"
 

@@ -2,12 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "adlik_serving/demo/predict_service.h"
+
 #include <array>
+
 #include "adlik_serving/framework/manager/runtime_suite.h"
 
 using adlik::serving::RuntimeSuite;
 using adlik::serving::demo::PredictService;
 using cub::ProgramOptions;
+using std::logic_error;
+using std::runtime_error;
 using std::string;
 
 PredictService::PredictService(const char* model_repository) {
@@ -23,7 +27,7 @@ PredictService::PredictService(const char* model_repository) {
   const auto argc = static_cast<int>(std::end(arguments) - std::begin(arguments)) - 1;
 
   if (!program_options.parse(argc, arguments)) {
-    throw std::logic_error("Invalid arguments.");
+    throw logic_error{"Invalid arguments."};
   }
 }
 
@@ -31,11 +35,11 @@ void PredictService::start() {
   // Configure.
 
   if (cub::isFailStatus(static_cast<Runtime&>(RuntimeSuite::inst()).config(*this))) {
-    throw std::runtime_error("Failed to configure runtime suite.");
+    throw runtime_error{"Failed to configure runtime suite."};
   }
 
   if (cub::isFailStatus(ModelStore::config())) {
-    throw std::runtime_error("Failed to configure model store.");
+    throw runtime_error{"Failed to configure model store."};
   }
 
   StateMonitor::connect(*this);
