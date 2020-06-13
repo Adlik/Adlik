@@ -20,5 +20,6 @@ jobs:
   - template: ci/azure-pipelines/jobs/copyright.yml
   - template: ci/azure-pipelines/jobs/flake8.yml
   - template: ci/azure-pipelines/jobs/markdownlint.yml
+  - template: ci/azure-pipelines/jobs/tox-benchmark.yml
   - template: ci/azure-pipelines/jobs/tox-model-compiler.yml
   - template: ci/azure-pipelines/jobs/tox-model-compiler-2.yml

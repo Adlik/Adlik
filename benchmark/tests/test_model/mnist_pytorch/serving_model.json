@@ -1,0 +1,24 @@
+{
+  "serving_type": "openvino",
+  "input_model": "model/mnist.onnx",
+  "export_path":  "model_repos",
+  "input_names": [
+    "input.1"
+  ],
+  "input_formats": [
+    "channels_first"
+  ],
+  "output_names": [
+    "20"
+  ],
+  "input_signatures": [
+    "image"
+  ],
+  "output_signatures": [
+    "label"
+  ],
+  "model_name": "mnist",
+  "job_id": "mnist_pytorch",
+  "callback": "",
+  "max_batch_size": 128
+}
