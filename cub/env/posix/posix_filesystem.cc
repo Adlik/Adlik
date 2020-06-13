@@ -32,6 +32,17 @@ struct OperateDir {
     return status;
   }
 
+  bool static isDir(const std::string& path) {
+    if (path.empty()) {
+      return false;
+    }
+    struct stat st;
+    if (0 != stat(path.c_str(), &st)) {
+      return false;
+    }
+    return S_ISDIR(st.st_mode) ? true : false;
+  }
+
   int static deleteDir(const std::string& name) {
     return nftw(name.c_str(), rmFile, 10, FTW_DEPTH | FTW_MOUNT | FTW_PHYS);
   }
@@ -205,5 +216,7 @@ Status PosixFileSystem::deleteDir(const std::string& name) const {
   }
   return cub::Success;
 }
-
+bool PosixFileSystem::isDir(const std::string& name) const {
+  return OperateDir::isDir(name);
+}
 }  // namespace cub

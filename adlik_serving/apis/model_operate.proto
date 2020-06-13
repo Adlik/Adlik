@@ -13,6 +13,17 @@ message ModelOperateRequest{
 message ModelOperateResponse{
   string status = 1; //SUCCESS, ERROR
   string error_message = 2;
+  map<string, ModelInfo> models = 3;
 }
 
 
+
+message ModelInfo{
+  message Version{
+     int64 version_no = 1;
+     string state = 2;
+     string path = 3;
+  }
+  string model_path = 1;
+  repeated Version versions = 2;
+}

@@ -39,6 +39,7 @@ DEFINE_ROLE(FileSystem) {
   ABSTRACT(Status copyDir(const std::string& from, const std::string& to) const);
   ABSTRACT(Status deleteDir(const std::string& path) const);
   ABSTRACT(bool exists(const std::string&) const);
+  ABSTRACT(bool isDir(const std::string&) const);
 };
 
 inline FileSystem& filesystem() {

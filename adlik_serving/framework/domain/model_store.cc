@@ -55,6 +55,14 @@ void ModelStore::models(ModelConfigVisitor& visitor) const {
   }
 }
 
+void ModelStore::models(const std::string& name, ModelConfigVisitor& visitor) const {
+  auto it = configs.find(name);
+  cub::AutoLock lock(mu);
+  if (it != configs.end()) {
+    visitor.visit(it->second);
+  }
+}
+
 const ModelConfig* ModelStore::find(const std::string& name) const {
   cub::AutoLock lock(mu);
   auto it = configs.find(name);
