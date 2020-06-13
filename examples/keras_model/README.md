@@ -39,9 +39,8 @@ This sample demonstrates how to use Adlik to compile serving model and deploy se
     │   └── mnist.h5
     ```
 
-2. Convert the .h5 file to TensorFlow serving model (see [compile_model.py](./compile_model.py) and
-[config_schema.json](../../model_compiler/src/model_compiler/config_schema.json) which shows how to build a request
-about compiling models):
+2. Convert the .h5 file to TensorFlow serving model (see [compile_model.py](./compile_model.py) and [config_schema.json](../../model_compiler/src/model_compiler/config_schema.json)
+which show how to build a request about compiling models):
 
     ```sh
     python3 compile_model.py
@@ -62,6 +61,13 @@ about compiling models):
     |   `-- mnist.zip
     ```
 
+    >Note:
+    >
+    >1. You also can modify the `serving_type` in [compile_model](compile_model.py) to compile the model to other types,
+    such as `openvino`, `tensorrt`.
+    >
+    >2. Before you compile the model you need to build the corresponding type of serving binary.
+
 3. Deploy a serving service:
 
     ```sh
@@ -69,7 +75,8 @@ about compiling models):
     ./adlik_serving --model_base_path={model_repos_dir} --grpc_port={grpc_port} --http_port={http_port}
     ```
 
-    In this sample, we run service like this:
+    In this sample, we run service like this, and the `grpc_port=8500` mean use grpc protocol and the port is 8500, the
+    `http_port=8501` mean use http protocol and the port is 8501. And set up a protocol port is ok.
 
     ```sh
     ./adlik_serving --model_base_path=/Adlik/samples/simpleMNIST/model_repos --grpc_port=8500 --http_port=8501
