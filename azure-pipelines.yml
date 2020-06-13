@@ -6,6 +6,7 @@ variables:
     BAZEL_BUILD_CACHE: $(Pipeline.Workspace)/__bazel_build_cache
 jobs:
   - template: ci/azure-pipelines/jobs/bazel-build-clients.yml
+  - template: ci/azure-pipelines/jobs/bazel-build-serving-demo.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-ml.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-openvino.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-cpu.yml
