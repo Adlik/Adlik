@@ -17,4 +17,4 @@ ubuntu system on your environment, but you still want to use Adlik, you can inst
 
 **Second**, use [Git](https://git-scm.com/download) clone the Adlik code or download zip.
 
-**Thrid**, follw the [build step](README.md#build) build the Adlik.
+**Thrid**, follw the [build step](../README.md#build) build the Adlik.

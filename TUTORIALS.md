@@ -11,11 +11,11 @@ Fllow the [Usage](adlik_serving/README.md#Usage) compile your model.
 
 ## Optimize model
 
-Fllow the [Usage](https://github.com/Adlik/model_optimizer/README.md#Usage) optimize your model.
+Fllow the [Usage](https://github.com/Adlik/model_optimizer/blob/master/README.md#usage) optimize your model.
 
 ## Compile model
 
-Fllow the [Usage](model_compiler/README.md#Usage) compile your model.
+Fllow the [Usage](model_compiler/README.md#usage) compile your model.
 
 >Note:
 >

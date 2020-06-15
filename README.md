@@ -74,7 +74,7 @@ the test are as follows:
 
 ## Contents
 
-### [Model Optimizer](https://github.com/Adlik/model_optimizer/README.md)
+### [Model Optimizer](https://github.com/Adlik/model_optimizer/blob/master/README.md)
 
 ***Model optimizer*** focuses on specific hardware and runs on it to achieve acceleration.  The proposed
 framework mainly consists of two categories of algorithm components, i.e. pruner and quantizer.
