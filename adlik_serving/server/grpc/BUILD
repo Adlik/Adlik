@@ -67,12 +67,23 @@ serving_cc_library(
 )
 
 serving_cc_library(
+    name = "grpc_server_status_service",
+    srcs = ["grpc_server_status_service.cc"],
+    hdrs = ["grpc_server_status_service.h"],
+    deps = [
+        "//adlik_serving/apis:server_status_service_proto",
+        "@com_github_grpc_grpc//:grpc++",
+    ],
+)
+
+serving_cc_library(
     name = "grpc",
     srcs = ["grpc_server.cc"],
     hdrs = ["grpc_server.h"],
     deps = [
         ":grpc_model_operate_service",
         ":grpc_options",
+        ":grpc_server_status_service",
         ":grpc_service",
         ":task_service",
         "//cub/base:assertions",

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+import "adlik_serving/apis/server_status.proto";
+
+service ServerStatusService {
+  rpc serverStatus(ServerStatusRequest) returns (ServerStatusResponse);
+}
