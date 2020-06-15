@@ -7,7 +7,7 @@
 eg. CPU/GPU/FPGA.
 3. Simplified interfaces for the workflow.
 
-## Usages
+## Usage
 
 1. Create a compilation environment based on the compilation type.
 
@@ -15,8 +15,8 @@ eg. CPU/GPU/FPGA.
 
 3. Create a json file which must match [config_schema.json](../model_compiler/src/model_compiler/config_schema.json).
 
-4. Install model_compiler and compile the model, you can refer to [this](benchmark/src/compile_model.py) or
-[this](examples/simpleMNIST/compile_model.py):
+4. Install model_compiler and compile the model, you can refer to [this](../benchmark/src/compile_model.py) or
+[this](../examples/keras_model/compile_model.py):
 
 ```sh
 cd {Adlik_root_dir}/model_compiler
