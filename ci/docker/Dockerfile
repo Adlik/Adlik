@@ -29,14 +29,13 @@ RUN . /etc/os-release && \
         bazel \
         clang-format \
         clang-tidy \
-        cuda-cublas-dev-10-0 \
-        cuda-cufft-dev-10-0 \
-        cuda-cupti-10-0 \
-        cuda-curand-dev-10-0 \
-        cuda-cusolver-dev-10-0 \
-        cuda-cusparse-dev-10-0 \
-        cuda-nvml-dev-10-0 \
-        cuda-nvrtc-10-0 \
+        cuda-cufft-dev-10-2 \
+        cuda-cupti-dev-10-2 \
+        cuda-curand-dev-10-2 \
+        cuda-cusolver-dev-10-2 \
+        cuda-cusparse-dev-10-2 \
+        cuda-nvml-dev-10-2 \
+        cuda-nvrtc-10-2 \
         default-jdk-headless \
         flake8 \
         git \
@@ -44,14 +43,15 @@ RUN . /etc/os-release && \
         iwyu \
         libclang-common-5.0-dev \
         libclang-common-6.0-dev \
-        'libcudnn7=*+cuda10.0' \
-        'libcudnn7-dev=*+cuda10.0' \
-        'libnvinfer7=*+cuda10.0' \
-        'libnvinfer-dev=*+cuda10.0' \
-        'libnvinfer-plugin7=*+cuda10.0' \
-        'libnvonnxparsers7=*+cuda10.0' \
-        'libnvonnxparsers-dev=*+cuda10.0' \
-        'libnvparsers7=*+cuda10.0' \
+        'libcublas-dev=10.2.*' \
+        'libcudnn7=*+cuda10.2' \
+        'libcudnn7-dev=*+cuda10.2' \
+        'libnvinfer7=*+cuda10.2' \
+        'libnvinfer-dev=*+cuda10.2' \
+        'libnvinfer-plugin7=*+cuda10.2' \
+        'libnvonnxparsers7=*+cuda10.2' \
+        'libnvonnxparsers-dev=*+cuda10.2' \
+        'libnvparsers7=*+cuda10.2' \
         libtool \
         protobuf-compiler \
         python3-pip \
@@ -60,7 +60,7 @@ RUN . /etc/os-release && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN apt-mark hold libcudnn7 libcudnn7-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
+RUN apt-mark hold libcublas10 libcublas-dev libcudnn7 libcudnn7-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
 
 RUN python3 -c 'import shutil, sys, urllib.request; shutil.copyfileobj(urllib.request.urlopen(sys.argv[1]), sys.stdout.buffer)' \
         https://github.com/bazelbuild/buildtools/releases/download/3.0.0/buildifier > /usr/local/bin/buildifier && \
