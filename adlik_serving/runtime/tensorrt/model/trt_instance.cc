@@ -39,6 +39,9 @@ struct Logger : public nvinfer1::ILogger {
       case Severity::kINFO:
         INFO_LOG << msg;
         break;
+      case Severity::kVERBOSE:
+        DEBUG_LOG << msg;
+        break;
     }
   }
 };
@@ -208,6 +211,8 @@ tensorflow::Status Instance::createExecuteContext() {
 }
 
 tensorflow::Status Instance::initializeInputBindings(const ::google::protobuf::RepeatedPtrField<ModelInput>& ios) {
+  const auto has_implicit_batch_dimension = engine->hasImplicitBatchDimension();
+
   for (const auto& io : ios) {
     TF_RETURN_IF_ERROR(ValidateModelInput(io));
 
@@ -223,7 +228,7 @@ tensorflow::Status Instance::initializeInputBindings(const ::google::protobuf::R
 
     if (!engine->bindingIsInput(index)) {
       return tensorflow::errors::InvalidArgument(
-          "input '", io.name(), "' is expected to be an output in model for ", name);
+          "input '", io.name(), "' is expected to be an input in model for ", name);
     }
 
     tensorflow::DataType dt = ConvertDatatype(engine->getBindingDataType(index));
@@ -239,7 +244,7 @@ tensorflow::Status Instance::initializeInputBindings(const ::google::protobuf::R
     }
 
     nvinfer1::Dims dims = engine->getBindingDimensions(index);
-    if (!CompareDims(dims, io.dims())) {
+    if (!CompareDims(dims, io.dims(), has_implicit_batch_dimension)) {
       return tensorflow::errors::InvalidArgument("input '",
                                                  io.name(),
                                                  "' dims ",
@@ -260,7 +265,7 @@ tensorflow::Status Instance::initializeInputBindings(const ::google::protobuf::R
     cudaError_t err = cudaMalloc(&buffer, byte_size);
     if (err != cudaSuccess) {
       return tensorflow::errors::Internal(
-          "unable to allocate memory for input '", io.name(), " for ", name, ": ", cudaGetErrorString(err));
+          "unable to allocate memory for input '", io.name(), "' for ", name, ": ", cudaGetErrorString(err));
     }
 
     byte_sizes[index] = byte_size;
@@ -272,6 +277,8 @@ tensorflow::Status Instance::initializeInputBindings(const ::google::protobuf::R
 }
 
 tensorflow::Status Instance::initializeOutputBindings(const ::google::protobuf::RepeatedPtrField<ModelOutput>& ios) {
+  const auto has_implicit_batch_dimension = engine->hasImplicitBatchDimension();
+
   for (const auto& io : ios) {
     TF_RETURN_IF_ERROR(ValidateModelOutput(io));
 
@@ -303,7 +310,7 @@ tensorflow::Status Instance::initializeOutputBindings(const ::google::protobuf::
     }
 
     nvinfer1::Dims dims = engine->getBindingDimensions(index);
-    if (!CompareDims(dims, io.dims())) {
+    if (!CompareDims(dims, io.dims(), has_implicit_batch_dimension)) {
       return tensorflow::errors::InvalidArgument("output '",
                                                  io.name(),
                                                  "' dims ",
@@ -316,7 +323,7 @@ tensorflow::Status Instance::initializeOutputBindings(const ::google::protobuf::
 
     const uint64_t byte_size = adlik::serving::GetSize(max_batch_size, dt, io.dims());
     if (byte_size == 0) {
-      return tensorflow::errors::Internal("unable to calculate size for output '", io.name(), " for ", name);
+      return tensorflow::errors::Internal("unable to calculate size for output '", io.name(), "' for ", name);
     }
 
     // Allocate CUDA memory
@@ -324,7 +331,7 @@ tensorflow::Status Instance::initializeOutputBindings(const ::google::protobuf::
     cudaError_t err = cudaMalloc(&buffer, byte_size);
     if (err != cudaSuccess) {
       return tensorflow::errors::Internal(
-          "unable to allocate memory for input '", io.name(), " for ", name, ": ", cudaGetErrorString(err));
+          "unable to allocate memory for input '", io.name(), "' for ", name, ": ", cudaGetErrorString(err));
     }
 
     byte_sizes[index] = byte_size;
@@ -356,9 +363,26 @@ tensorflow::Status Instance::processBatch(MyBatch& payloads) {
   adlik::serving::TimeStats stats("TrtModel::Instance::Run::TensorRT model " + name +
                                   ", run prediction on GPU batch=" + std::to_string(payloads.size()));
 
-  if (!context->enqueue(payloads.size(), buffers.get(), stream.get(), nullptr)) {
-    cudaStreamSynchronize(stream.get());
-    return tensorflow::errors::Internal("unable to enqueue for inference ", name);
+  if (engine->hasImplicitBatchDimension()) {
+    if (!context->enqueue(payloads.size(), buffers.get(), stream.get(), nullptr)) {
+      cudaStreamSynchronize(stream.get());
+      return tensorflow::errors::Internal("unable to enqueue for inference ", name);
+    }
+  } else {
+    for (int i = 0; i != engine->getNbBindings(); ++i) {
+      if (engine->bindingIsInput(i)) {
+        auto dims = context->getBindingDimensions(i);
+
+        dims.d[0] = static_cast<int>(payloads.size());
+
+        context->setBindingDimensions(i, dims);
+      }
+    }
+
+    if (!context->enqueueV2(buffers.get(), stream.get(), nullptr)) {
+      cudaStreamSynchronize(stream.get());
+      return tensorflow::errors::Internal("unable to enqueue for inference ", name);
+    }
   }
 
   status = splitOutputs(payloads);

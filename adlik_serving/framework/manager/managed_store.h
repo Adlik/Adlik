@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 #include "adlik_serving/framework/domain/shared_model.h"
 
@@ -34,7 +35,11 @@ DEFINE_ROLE(ManagedStore) {
   cub::Status unload(const ModelId&);
 
   cub::Status unaspired(const ModelId&);
-
+  bool exist(const std::string& modelName);
+  bool isNormal(const std::string& modelName);
+  void getModelVersions(const std::string& modelName, std::vector<int>& versions);
+  void deleteModel(const std::string& modelName);
+  void deleteModel(const ModelId&);
   void names(ManagedNameVisitor&) const;
   void models(ManagedModelVisitor&) const;
   void models(const std::string& name, ManagedModelVisitor&) const;

@@ -17,6 +17,10 @@ void VersionList::add(int version) {
   std::sort(versions.begin(), versions.end());
 }
 
+int VersionList::max() const {
+  return versions.empty() ? -1 : *versions.rbegin();
+}
+
 inline void VersionList::latest(int max, VersionList& result) const {
   auto num = 0;
   for (auto i = versions.rbegin(); i != versions.rend() && num != max; ++i, ++num) {
@@ -58,6 +62,8 @@ void VersionList::select(const VersionPolicyProto& policy, VersionList& result) 
       break;
     case VersionPolicyProto::kSpecific:
       specific(set(policy), result);
+      break;
+    case VersionPolicyProto::kNone:
       break;
     default:
       break;

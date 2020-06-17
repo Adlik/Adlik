@@ -10,21 +10,17 @@ namespace adlik {
 namespace serving {
 
 BoardingLoop::BoardingLoop() {
-  // auto action = [this] { this->poll(); };
-  // loop.reset(new cub::LoopThread(action, 10 * 1000 /* ms */));
 }
 
 void BoardingLoop::poll() {
-  auto action = [this] {
-    cub::AutoLock lock(this->mu);
-    BoardingFunctor f(this->ROLE(ManagedStore));
-    f(streams);
-  };
+  auto action = [this] { this->once(); };
   loop.reset(new cub::LoopThread(action, 10 * 1000 /* ms */));
+}
 
-  // cub::AutoLock lock(mu);
-  // BoardingFunctor f(ROLE(ManagedStore));
-  // f(streams);
+void BoardingLoop::once() {
+  cub::AutoLock lock(this->mu);
+  BoardingFunctor f(this->ROLE(ManagedStore));
+  f(streams);
 }
 
 void BoardingLoop::update(ModelStream& stream) {

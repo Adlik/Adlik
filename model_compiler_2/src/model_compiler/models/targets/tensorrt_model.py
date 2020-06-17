@@ -28,17 +28,29 @@ class TensorRTModel(NamedTuple):
     outputs: Sequence[str]
     cuda_engine: ICudaEngine
 
+    def _get_binding_shape_getter(self):
+        cuda_engine = self.cuda_engine
+
+        if self.cuda_engine.has_implicit_batch_dimension:
+            return cuda_engine.get_binding_shape
+
+        return lambda name: cuda_engine.get_binding_shape(name)[1:]
+
     def get_inputs(self) -> Sequence[ModelInput]:
+        get_shape = self._get_binding_shape_getter()
+
         return [ModelInput(name=item.name,
                            data_type=_trt_dtype_to_tf_dtype(self.cuda_engine.get_binding_dtype(item.name)),
                            format=data_format.as_model_config_data_format(item.data_format),
-                           dims=self.cuda_engine.get_binding_shape(item.name)[1:])
+                           dims=get_shape(item.name))
                 for item in self.inputs]
 
     def get_outputs(self) -> Sequence[ModelOutput]:
+        get_shape = self._get_binding_shape_getter()
+
         return [ModelOutput(name=output_name,
                             data_type=_trt_dtype_to_tf_dtype(self.cuda_engine.get_binding_dtype(output_name)),
-                            dims=self.cuda_engine.get_binding_shape(output_name)[1:])
+                            dims=get_shape(output_name))
                 for output_name in self.outputs]
 
     def save(self, path: str) -> None:

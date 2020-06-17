@@ -35,7 +35,11 @@ DEFINE_ROLE(DirentVisitor) {
 DEFINE_ROLE(FileSystem) {
   ABSTRACT(ReadOnlyRegion * mmap(const std::string&) const);
   ABSTRACT(Status children(const std::string&, DirentVisitor&) const);
+  ABSTRACT(Status child(const std::string& dir, const std::string& childName, DirentVisitor& visitor) const);
+  ABSTRACT(Status copyDir(const std::string& from, const std::string& to) const);
+  ABSTRACT(Status deleteDir(const std::string& path) const);
   ABSTRACT(bool exists(const std::string&) const);
+  ABSTRACT(bool isDir(const std::string&) const);
 };
 
 inline FileSystem& filesystem() {

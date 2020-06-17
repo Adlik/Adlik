@@ -10,7 +10,11 @@ message VersionPolicyProto {
 
   message All {
   }
+  
+  message None{
 
+  }
+  
   message Specific {
     repeated int64 versions = 1;
   }
@@ -19,5 +23,6 @@ message VersionPolicyProto {
     Latest latest = 1;
     All all = 2;
     Specific specific = 3;
+    None none = 4;
   }
 }

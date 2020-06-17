@@ -4,6 +4,7 @@
 #include "adlik_serving/server/core/server_core.h"
 
 #include "adlik_serving/apis/get_model_meta_impl.h"
+#include "adlik_serving/apis/model_operate_impl.h"
 #include "adlik_serving/apis/predict_impl.h"
 #include "adlik_serving/apis/task_op_impl.h"
 #include "adlik_serving/framework/domain/event_bus.h"
@@ -40,16 +41,17 @@ struct ServerCoreImpl : private ModelOptions,
                         private PredictImpl,
                         private GetModelMetaImpl,
                         private TaskOpImpl,
+                        private ModelOperateImpl,
                         private GrpcServer,
                         private HttpServer,
                         ServerCore {
 private:
   OVERRIDE(cub::Status start(int argc, const char** argv)) {
-    INFO_LOG << "Adlik serving is initializing..." << std::endl;
+    INFO_LOG << "Adlik serving is initializing...";
     CUB_ASSERT_SUCC_CALL(init(argc, argv));
     CUB_ASSERT_SUCC_CALL(config());
 
-    INFO_LOG << "Adlik serving is running..." << std::endl;
+    INFO_LOG << "Adlik serving is running...";
     CUB_ASSERT_SUCC_CALL(start());
 
     wait();
@@ -87,16 +89,22 @@ private:
     // configure model store.
     CUB_ASSERT_SUCC_CALL(SELF(ModelStore).config());
     INFO_LOG << "Config ModelStore success";
-
     // connect roles.
-    SELF(BoardingLoop).poll();
     SELF(StateMonitor).connect(SELF(EventBus));
     connect(SELF(StorageLoop), SELF(BoardingLoop));
+    if (SELF(ModelOptions).getLoadingMethod() == "automatic") {
+      SELF(StorageLoop).poll();
+      SELF(BoardingLoop).poll();
+    } else {
+      SELF(StorageLoop).once();
+      SELF(BoardingLoop).once();
+    }
 
     INFO_LOG << "Connect Model success";
 
     // waiting all models loaded.
     SELF(StateMonitor).wait();
+    INFO_LOG << "complete monitor";
     return cub::Success;
   }
 
@@ -129,20 +137,15 @@ private:
   IMPL_ROLE(PredictImpl)
   IMPL_ROLE(GetModelMetaImpl)
   IMPL_ROLE(TaskOpImpl)
+  IMPL_ROLE(ModelOperateImpl)
+  IMPL_ROLE(StateMonitor)
+  IMPL_ROLE(StorageLoop)
+  IMPL_ROLE(BoardingLoop)
 };
 
 ServerCore& ServerCore::inst() {
   static ServerCoreImpl inst;
   return inst;
-}
-
-cub::Status start(int argc, const char** argv) {
-  return ServerCore::inst().start(argc, argv);
-}
-
-cub::Status spredict(const PredictRequest& req, PredictResponse& rsp) {
-  ServerCoreImpl& core = static_cast<ServerCoreImpl&>(ServerCore::inst());
-  return core.spredict(req, rsp);
 }
 
 }  // namespace serving

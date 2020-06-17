@@ -8,37 +8,87 @@
 ***Adlik*** is an end-to-end optimizing framework for deep learning models. The goal of Adlik is to accelerate deep
 learning inference process both on cloud and embedded environment.
 
-***Adlik*** consists of two sub projects: Model compiler and Serving platform.
-
-***Model compiler*** supports several optimizing technologies like pruning, quantization and structural compression,
-which can be easily used for models developed with TensorFlow, Keras, PyTorch, etc.
-
-***Serving platform*** provides deep learning models with optimized runtime based on the deployment environment. Put
-simply, based on a deep learning model, the users of Adlik can optimize it with model compiler and then deploy it to a
-certain platform with Adlik serving platform.
-
 ![Adlik schematic diagram](resources/adlik.png)
 
 With Adlik framework, different deep learning models can be deployed to different platforms with high performance in a
 much flexible and easy way.
 
-## Adlik: Model Compiler
+## Inference performance of Adlik
 
-![Model Compiler schematic diagram](resources/model-compiler.png)
+We test the inference performance of Adlik on the same CPU or GPU using
+the simple cnn model (mnist model) and the resnet50 model with different runtimes. The CPU and GPU parameters used in
+the test are as follows:
 
-1. Support optimization for models from different kinds of deep learning architecture, eg. TensorFlow/Caffe/PyTorch.
-2. Support compiling models as different formats, OpenVINO IR/ONNX/TensorRT for different runtime, eg. CPU/GPU/FPGA.
-3. Simplified interfaces for the workflow.
+|     |                   type                    | number |
+| --- | :---------------------------------------: | :----: |
+| CPU | Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz |   1    |
+| GPU |           Tesla V100 SXM2 32GB            |   1    |
 
-## Adlik: Serving Engine
+### The test result of the mnist model
 
-![Serving Engine schematic diagram](resources/serving-engine.png)
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| keras-tf1.14         |            2200.372            |                2291.584                |             1.81E-05              |
+| keras-tf2.1          |            2003.901            |                2077.644                |             1.77E-05              |
+| keras-OpenVINO       |            2647.344            |                2788.087                |             1.90E-05              |
+| keras-TensorRT       |           37342.687            |               163058.592               |             2.06E-05              |
+| keras-tfGPU1.14      |           19414.208            |               52247.525                |             3.24E-05              |
+| keras-tfGPU2.1       |           19395.129            |               53640.456                |             3.29E-05              |
+| keras-TFLiteCPU      |            778.890             |                790.150                 |             1.82E-05              |
+| tensorflow-tf1.14    |            1486.878            |                1531.337                |             1.95E-05              |
+| tensorflow-tf2.1     |            2160.331            |                2248.311                |             1.81E-05              |
+| tensorflow-tfGPU1.14 |           19043.582            |               51448.587                |             3.31E-05              |
+| tensorflow-tfGPU2.1  |           19244.343            |               50705.164                |             3.22E-05              |
+| tensorflow-TFLiteCPU |            3114.246            |                3250.399                |             1.34E-05              |
+| pytorch-OpenVINO     |            9053.677            |               10226.869                |             1.27E-05              |
+| pytorch-TensorRT     |           46318.234            |               249302.706               |             1.76E-05              |
 
-1. Model uploading & upgrading, model inference & monitoring.
-2. Unified inference interfaces for different models.
-3. Management and scheduling for a solution with multiple models in various runtime.
-4. Automatic selection of inference runtime.
-5. Ability to add customized runtime.
+>Note
+>
+>>i. In the first column of the table, words before '-' represent different runtimes, and words after '-' represent
+>different inference engines.
+>>
+>>ii. The tf and OpenVINO serving engine are test in the CPU environment, and the TensorRT and tfGPU serving engine are
+>test in the GPU environment.
+>>
+>>iii. The test model of TensorFlow Lite is an unquantified model, and the number of threads is set to 1 during testing.
+
+### The test result of the resnet50 model
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| keras-tf1.14         |             3.599              |                 3.640                  |              0.00311              |
+| keras-tf2.1          |             6.183              |                 6.301                  |              0.00302              |
+| keras-OpenVINO       |             9.359              |                 9.642                  |              0.00313              |
+| keras-TensorRT       |            237.176             |                1402.338                |              0.00350              |
+| keras-tfGPU1.14      |            175.423             |                433.627                 |              0.00339              |
+| keras-tfGPU2.1       |            170.680             |                420.814                 |              0.00348              |
+| keras-TFLiteCPU      |             2.838              |                 2.862                  |              0.00298              |
+| tensorflow-tf1.14    |             3.669              |                 3.711                  |              0.00305              |
+| tensorflow-tf2.1     |             6.554              |                 6.684                  |              0.00298              |
+| tensorflow-tfGPU1.14 |            181.118             |                454.013                 |              0.00331              |
+| tensorflow-tfGPU2.1  |            176.710             |                473.091                 |              0.00354              |
+| tensorflow-TFLiteCPU |             2.870              |                 2.895                  |              0.00296              |
+| pytorch-OpenVINO     |             9.274              |                 9.552                  |              0.00313              |
+| pytorch-TensorRT     |            238.244             |                1332.449                |              0.00344              |
+
+## Contents
+
+### [Model Optimizer](https://github.com/Adlik/model_optimizer/blob/master/README.md)
+
+***Model optimizer*** focuses on specific hardware and runs on it to achieve acceleration.  The proposed
+framework mainly consists of two categories of algorithm components, i.e. pruner and quantizer.
+
+### [Model compiler](model_compiler/README.md)
+
+***Model compiler*** supports several optimizing technologies like pruning, quantization and structural compression,
+which can be easily used for models developed with TensorFlow, Keras, PyTorch, etc.
+
+### [Serving Engine](adlik_serving/README.md)
+
+***Serving Engine*** provides deep learning models with optimized runtime based on the deployment environment. Put
+simply, based on a deep learning model, the users of Adlik can optimize it with model compiler and then deploy it to a
+certain platform with Adlik serving platform.
 
 ## Build
 
@@ -173,95 +223,26 @@ Assume building with CUDA version 10.2.
            --incompatible_use_specific_tool_files=false
    ```
 
-### Deploy serving service
-
-#### OpenVINO service
-
-```sh
-source /opt/intel/openvino_VERSION/bin/setupvars.sh
-cd {dir_of_adlik_serving_binary}
-./adlik_serving --model_base_path={model_repos_dir} --grpc_port={grpc_port} --http_port={http_port}
-```
-
-#### TensorFlow CPU/GPU or TensorRT service
-
-```sh
-cd {dir_of_adlik_serving_binary}
-./adlik_serving --model_base_path={model_repos_dir} --grpc_port={grpc_port} --http_port={http_port}
-```
-
 ### Build in Docker
 
 The `ci/docker/build.sh` file can be used to build a Docker images that contains all the requirements for building
 Adlik. You can build Adlik with the Docker image.
 
-*[NOTE]: If you build the runtime with GPU in a Docker image, you need to add the CUDA environment variables in the
-Dockerfile, such as:
+>Note: If you build the runtime with GPU in a Docker image, you need to add the CUDA environment variables in the
+>Dockerfile, such as:
+>
+>```dockerfile
+>ENV NVIDIA_VISIBLE_DEVICES all
+>ENV NVIDIA_DRIVER_CAPABILITIES compute, utility
+>```
 
-```dockerfile
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute, utility
-```
+## Getting Started
 
-## Inference performance of serving engine
+- [Tutorials](TUTORIALS.md)
 
-In order to evaluate the performance of the service engine, we performed inference tests on the same CPU or GPU using
-the simple cnn model (mnist model) and the resnet50 model with different runtimes. The CPU and GPU parameters used in
-the test are as follows:
+- [Samples](examples)
 
-|     |                   type                    | number |
-| --- | :---------------------------------------: | :----: |
-| CPU | Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz |   1    |
-| GPU |           Tesla V100 SXM2 32GB            |   1    |
-
-### The test result of the mnist model
-
-|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
-| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| keras-tf1.14         |            2200.372            |                2291.584                |             1.81E-05              |
-| keras-tf2.1          |            2003.901            |                2077.644                |             1.77E-05              |
-| keras-OpenVINO       |            2647.344            |                2788.087                |             1.90E-05              |
-| keras-TensorRT       |           37342.687            |               163058.592               |             2.06E-05              |
-| keras-tfGPU1.14      |           19414.208            |               52247.525                |             3.24E-05              |
-| keras-tfGPU2.1       |           19395.129            |               53640.456                |             3.29E-05              |
-| keras-TFLiteCPU      |            778.890             |                790.150                 |             1.82E-05              |
-| tensorflow-tf1.14    |            1486.878            |                1531.337                |             1.95E-05              |
-| tensorflow-tf2.1     |            2160.331            |                2248.311                |             1.81E-05              |
-| tensorflow-tfGPU1.14 |           19043.582            |               51448.587                |             3.31E-05              |
-| tensorflow-tfGPU2.1  |           19244.343            |               50705.164                |             3.22E-05              |
-| tensorflow-TFLiteCPU |            3114.246            |                3250.399                |             1.34E-05              |
-| pytorch-OpenVINO     |            9053.677            |               10226.869                |             1.27E-05              |
-| pytorch-TensorRT     |           46318.234            |               249302.706               |             1.76E-05              |
-
-*[Note 1]: In the first column of the table, words before '-' represent different runtimes, and words after '-'
-represent different inference engines.
-
-*[Note 2]: The tf and OpenVINO serving engine are test in the CPU environment, and the TensorRT and tfGPU serving engine
-are test in the GPU environment.
-
-*[Note 3]: The test model of TensorFlow Lite is an unquantified model, and the number of threads is set to 1 during
-testing.
-
-### The test result of the resnet50 model
-
-|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
-| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| keras-tf1.14         |             3.599              |                 3.640                  |              0.00311              |
-| keras-tf2.1          |             6.183              |                 6.301                  |              0.00302              |
-| keras-OpenVINO       |             9.359              |                 9.642                  |              0.00313              |
-| keras-TensorRT       |            237.176             |                1402.338                |              0.00350              |
-| keras-tfGPU1.14      |            175.423             |                433.627                 |              0.00339              |
-| keras-tfGPU2.1       |            170.680             |                420.814                 |              0.00348              |
-| keras-TFLiteCPU      |             2.838              |                 2.862                  |              0.00298              |
-| tensorflow-tf1.14    |             3.669              |                 3.711                  |              0.00305              |
-| tensorflow-tf2.1     |             6.554              |                 6.684                  |              0.00298              |
-| tensorflow-tfGPU1.14 |            181.118             |                454.013                 |              0.00331              |
-| tensorflow-tfGPU2.1  |            176.710             |                473.091                 |              0.00354              |
-| tensorflow-TFLiteCPU |             2.870              |                 2.895                  |              0.00296              |
-| pytorch-OpenVINO     |             9.274              |                 9.552                  |              0.00313              |
-| pytorch-TensorRT     |            238.244             |                1332.449                |              0.00344              |
-
-## Release
+### Release
 
 The version of the service engine adlik supports.
 
@@ -270,3 +251,7 @@ The version of the service engine adlik supports.
 | keras      |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
 | TensorFlow |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
 | PyTorch    |        ✗        |       ✗        |       ✓       |     ✓      |     ✗      |
+
+## License
+
+Apache License 2.0

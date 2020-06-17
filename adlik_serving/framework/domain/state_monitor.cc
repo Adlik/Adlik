@@ -17,6 +17,11 @@ void StateMonitor::connect(EventBus& bus) {
   bus.subscribe(this);
 }
 
+void StateMonitor::deleteModel(const std::string& modelName) {
+  cub::AutoLock lock(mu);
+  store.deleteModel(modelName);
+}
+
 template <typename Iterator>
 inline void StateMonitor::tryNotify(Iterator& i) {
   if (i->tryNotify(store)) {
@@ -51,7 +56,20 @@ private:
 
 private:
   OVERRIDE(void visit(const ModelConfig& model)) {
-    names.push_back(model.getModelName());
+    if (needWait(model.version_policy())) {
+      names.push_back(model.getModelName());
+    }
+  }
+
+  bool needWait(const VersionPolicyProto& versionPolicy) {
+    if (versionPolicy.policy_choice_case() == VersionPolicyProto::kNone) {
+      return false;
+    }
+    if (versionPolicy.policy_choice_case() == VersionPolicyProto::kSpecific &&
+        versionPolicy.specific().versions().empty()) {
+      return false;
+    }
+    return true;
   }
 
 private:
