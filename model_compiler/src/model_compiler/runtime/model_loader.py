@@ -323,7 +323,7 @@ class CheckpointLoader(_Loader):
             if not self.input_formats:
                 self.input_formats = [None for _ in self.input_names]
             if len(self.input_formats) < len(self.input_names):
-                self.input_formats.extend([None for _ in range(len(self.input_formats), len(self.input_formats))])
+                self.input_formats.extend([None for _ in range(len(self.input_names), len(self.input_formats))])
             graph = session.graph
             return [_Input(_get_tensor_by_fuzzy_name(graph, name), data_format) for name, data_format in
                     zip(self.input_names, self.input_formats)]
