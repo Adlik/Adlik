@@ -81,7 +81,8 @@ def main(args):
 
     docker_build_command = _docker_build_command(args)
 
-    if not args.gpu_label:
+    env = os.environ.copy()
+    if args.gpu_label is None:
         docker_run_command = ['docker', 'run', '--rm',
                               '-v', f'{args.log_path}:/home/john/log',
                               f'adlik-test:{args.serving_type}']
@@ -89,8 +90,8 @@ def main(args):
         docker_run_command = ['nvidia-docker', 'run', '--rm',
                               '-v', f'{args.log_path}:/home/john/log',
                               f'adlik-test:{args.serving_type}']
-    env = os.environ.copy()
-    env['NV_GPU'] = args.gpu_label
+
+        env['NV_GPU'] = args.gpu_label
     subprocess.run(docker_build_command, check=True)
     subprocess.run(docker_run_command, check=True, env=env)
     _get_result(args.log_path, args.model_name)

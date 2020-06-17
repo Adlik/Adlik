@@ -46,10 +46,10 @@ test under the Adlik/benchmark/test directory
 
 ```sh
 
-python3 benchmark/src/automatic_test.py -d benchmark/test/docker_test/openvino.Dockerfile -s openvino -b . -a . -m mnist
--c benchmark/test/client_script/client_script.sh -ss benchmark/test/serving_script/openvino_serving_script.sh -l
-abspath(log) -tm benchmark/test/test_model/mnist_keras -cis mnist_client.py -i mnist.png -cs
-benchmark/test/compile_script/compile_script.sh
+python3 benchmark/src/automatic_test.py -d benchmark/tests/docker_test/openvino.Dockerfile -s openvino -b . -a . -m
+mnist -c benchmark/tests/client_script/client_script.sh -ss benchmark/tests/serving_script/openvino_serving_script.sh -l
+abspath(log) -tm benchmark/tests/test_model/mnist_keras -cis mnist_client.py -i mnist.png -cs
+benchmark/tests/compile_script/compile_script.sh
 ```
 
 ## NOTE

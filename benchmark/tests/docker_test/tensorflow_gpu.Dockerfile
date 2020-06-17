@@ -95,4 +95,4 @@ RUN chmod +x /home/john/client_script.sh
 COPY ${COMPILE_SCRIPT} /home/john/compile_script.sh
 RUN chmod +x /home/john/compile_script.sh
 
-CMD python3 Adlik/benchmark/src/cmd_script.py -s /home/john/serving_script.sh -c /home/john/serving_script.sh -cs /home/john/compile_script.sh
+CMD python3 Adlik/benchmark/src/cmd_script.py -s /home/john/serving_script.sh -c /home/john/client_script.sh -cs /home/john/compile_script.sh
