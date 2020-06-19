@@ -4,26 +4,11 @@
 from unittest import TestCase
 
 import keras
-import keras.backend.tensorflow_backend as keras_tf_backend
 import tensorflow as tf
 
 import model_compiler.compilers.keras_model_to_tf_model as compiler
 from model_compiler.compilers.keras_model_to_tf_model import Config, KerasModel, NodeSpec
 from model_compiler.models.irs.tf_model import DataFormat
-
-
-# https://github.com/keras-team/keras/issues/13684.
-
-def _get_available_gpus():
-    if getattr(keras_tf_backend, '_LOCAL_DEVICES') is None:
-        setattr(keras_tf_backend, '_LOCAL_DEVICES', [device.name for device in tf.config.list_logical_devices()])
-
-    local_devices = getattr(keras_tf_backend, '_LOCAL_DEVICES')
-
-    return [device for device in local_devices if 'device:gpu' in device.lower()]  # pylint: disable=not-an-iterable
-
-
-setattr(keras_tf_backend, '_get_available_gpus', _get_available_gpus)
 
 
 class NodeSpecTestCase(TestCase):
