@@ -129,7 +129,7 @@ Status checkSignature(const InputSignature& modelSignature, const RepeatedPtrFie
     return Internal("Model signature does not match declared one. Model signature: ",
                     displaySignature(modelSignature),
                     ". Declared signature: ",
-                    displaySignature(modelSignature),
+                    displaySignature(signature2),
                     ".");
   }
 }
