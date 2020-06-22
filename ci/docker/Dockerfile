@@ -46,12 +46,12 @@ RUN . /etc/os-release && \
         'libcublas-dev=10.2.*' \
         'libcudnn7=*+cuda10.2' \
         'libcudnn7-dev=*+cuda10.2' \
-        'libnvinfer7=*+cuda10.2' \
-        'libnvinfer-dev=*+cuda10.2' \
-        'libnvinfer-plugin7=*+cuda10.2' \
-        'libnvonnxparsers7=*+cuda10.2' \
-        'libnvonnxparsers-dev=*+cuda10.2' \
-        'libnvparsers7=*+cuda10.2' \
+        'libnvinfer7=7.0.*+cuda10.2' \
+        'libnvinfer-dev=7.0.*+cuda10.2' \
+        'libnvinfer-plugin7=7.0.*+cuda10.2' \
+        'libnvonnxparsers7=7.0.*+cuda10.2' \
+        'libnvonnxparsers-dev=7.0.*+cuda10.2' \
+        'libnvparsers7=7.0.*+cuda10.2' \
         libtool \
         protobuf-compiler \
         python3-pip \
