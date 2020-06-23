@@ -9,7 +9,7 @@ RUN . /etc/os-release && \
     apt-get update && \
     apt-get install --no-install-recommends -y gnupg && \
     apt-key adv --fetch-keys \
-        https://apt.repos.intel.com/openvino/2019/GPG-PUB-KEY-INTEL-OPENVINO-2019 \
+        https://apt.repos.intel.com/openvino/2020/GPG-PUB-KEY-INTEL-OPENVINO-2020 \
         "https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/7fa2af80.pub" \
         https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg && \
     apt-get autoremove --purge -y gnupg && \
@@ -17,7 +17,7 @@ RUN . /etc/os-release && \
     find /var/lib/apt/lists -delete
 
 RUN . /etc/os-release && \
-    echo "deb https://apt.repos.intel.com/openvino/2019 all main\n\
+    echo "deb https://apt.repos.intel.com/openvino/2020 all main\n\
 deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
 deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
 deb https://storage.googleapis.com/bazel-apt stable jdk1.8" >> /etc/apt/sources.list
@@ -39,7 +39,7 @@ RUN . /etc/os-release && \
         default-jdk-headless \
         flake8 \
         git \
-        "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2019.3.344" \
+        "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2020.3.194" \
         iwyu \
         libclang-common-5.0-dev \
         libclang-common-6.0-dev \

@@ -27,17 +27,17 @@
 | ------------------ | ----------------------- | -------------------- |
 | Keras              | TensorFlow Serving-1.14 | CPU/GPU              |
 |                    | TensorFlow Serving-2.2  | CPU/GPU              |
-|                    | OpenVINO-2019           | CPU                  |
+|                    | OpenVINO-2020           | CPU                  |
 |                    | TensorRT-6              | GPU                  |
 |                    | TensorRT-7              | GPU                  |
 |                    | TF Lite-2.1             | CPU(X86/ARM)         |
 | TensorFlow         | TensorFlow Serving-1.14 | CPU/GPU              |
 |                    | TensorFlow Serving-2.2  | CPU/GPU              |
-|                    | OpenVINO-2019           | CPU                  |
+|                    | OpenVINO-2020           | CPU                  |
 |                    | TensorRT-6              | GPU                  |
 |                    | TensorRT-7              | GPU                  |
 |                    | TF Lite-2.1             | CPU(X86/ARM)         |
-| PyTorch            | OpenVINO-2019           | CPU                  |
+| PyTorch            | OpenVINO-2020           | CPU                  |
 |                    | TensorRT-6              | GPU                  |
 
 ### Model Optimizer
@@ -56,7 +56,7 @@
    | ----------------------- | -------------------: |
    | TensorFlow Serving-1.14 |              CPU/GPU |
    | TensorFlow Serving-2.2  |              CPU/GPU |
-   | OpenVINO-2019           |                  CPU |
+   | OpenVINO-2020           |                  CPU |
    | TensorRT-6              |                  GPU |
    | TensorRT-7              |                  GPU |
    | TF Lite-2.1             |         CPU(X86/ARM) |

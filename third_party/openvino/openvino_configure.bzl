@@ -59,10 +59,6 @@ def _find_ie_lib_dir(repository_ctx, ie_path):
             )
     return path
 
-def _find_ie_extension_dir(repository_ctx, ie_path):
-    path = str(repository_ctx.path("%s/src/extension" % ie_path).realpath)
-    return path
-
 def _tpl(repository_ctx, tpl, substitutions):
     repository_ctx.template(
         tpl,
@@ -110,8 +106,7 @@ def _openvino_configure_impl(repository_ctx):
     repository_ctx.symlink(ie_header_dir, "include")
     ie_lib_dir = _find_ie_lib_dir(repository_ctx, ie_dir)
     repository_ctx.symlink(ie_lib_dir, "lib")
-    ie_extension_dir = _find_ie_extension_dir(repository_ctx, ie_dir)
-    repository_ctx.symlink(ie_extension_dir, "extension")
+
     repository_ctx.template(
         "LICENSE",
         Label("//third_party/openvino:LICENSE"),
@@ -132,24 +127,21 @@ cc_library(
 )
 
 cc_library(
-    name = "extension",
-    deps = [
-        ":ie_headers"
-    ],
-    hdrs = glob(["extension/**/*.h*"]),
-    srcs = ["extension/ext_list.cpp"],
+    name = "libinference_engine",
+    srcs = ["lib/libinference_engine.so"],
+    data = ["lib/libinference_engine.so"],
     includes = [
         "include",
-        "extension",
+        "lib",
     ],
     linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 
 cc_library(
-    name = "libinference_engine",
-    srcs = ["lib/libinference_engine.so"],
-    data = ["lib/libinference_engine.so"],
+    name = "libinference_engine_legacy",
+    srcs = ["lib/libinference_engine_legacy.so"],
+    data = ["lib/libinference_engine_legacy.so"],
     includes = [
         "include",
         "lib",

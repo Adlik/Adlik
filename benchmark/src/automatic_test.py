@@ -24,7 +24,7 @@ def _parse_arguments():
                              help="The script used to infer")
     args_parser.add_argument("-ss", "--serving-script", type=str, default="serving_script.sh",
                              help="The serving script")
-    args_parser.add_argument("-ov", "--openvino-version", type=str, default="2019.3.344",
+    args_parser.add_argument("-ov", "--openvino-version", type=str, default="2020.3.194",
                              help="The version of the OpenVINO")
     args_parser.add_argument("-tt", "--tensorrt-tar", type=str,
                              default="TensorRT-7.0.0.11.Ubuntu-18.04.x86_64-gnu.cuda-10.0.cudnn7.6.tar.gz",
