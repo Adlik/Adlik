@@ -5,5 +5,5 @@ jobs:
         vmImage: ubuntu-latest
     steps:
       - template: ../steps/install-buildifier.yml
-      - script: ci/checks/buildifier.py
+      - script: buildifier -lint warn -mode check -r .
         displayName: Run Buildifier
