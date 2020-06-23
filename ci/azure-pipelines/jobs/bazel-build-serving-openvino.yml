@@ -15,7 +15,7 @@ jobs:
             key: bazel-build-serving-openvino
             path: $(BAZEL_BUILD_CACHE)
       - script: |
-            export INTEL_CVSDK_DIR=/opt/intel/openvino_2019.3.344
+            export INTEL_CVSDK_DIR=/opt/intel/openvino_2020.3.194
             export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share
             ci/checks/bazel-build-serving.py \
                 --config=openvino \

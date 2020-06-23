@@ -30,7 +30,6 @@ serving_cc_library(
         "//adlik_serving/runtime/provider:predict_request_provider",
         "//adlik_serving/runtime/provider:predict_response_provider",
         "//cub/log",
-        "@local_config_openvino//:extension",
         "@local_config_openvino//:ie_headers",
         "@org_tensorflow//tensorflow/core:lib",
     ],

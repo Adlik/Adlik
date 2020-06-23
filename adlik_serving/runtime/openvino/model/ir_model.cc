@@ -5,7 +5,6 @@
 
 #include <stdlib.h>
 
-#include <ext_list.hpp>
 #include <inference_engine.hpp>
 
 #include "adlik_serving/framework/domain/model_config.h"
