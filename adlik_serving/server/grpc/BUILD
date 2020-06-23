@@ -71,10 +71,10 @@ serving_cc_library(
     srcs = ["grpc_server.cc"],
     hdrs = ["grpc_server.h"],
     deps = [
+        ":grpc_model_operate_service",
         ":grpc_options",
         ":grpc_service",
         ":task_service",
-        ":grpc_model_operate_service",
         "//cub/base:assertions",
         "@com_github_grpc_grpc//:grpc++",
     ],

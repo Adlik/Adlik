@@ -11,11 +11,11 @@ cc_library(
     srcs = [
         "text_protobuf.cc",
         "text_protobuf_saver.cc",
-        ],
+    ],
     hdrs = [
         "text_protobuf.h",
-        "text_protobuf_saver.h"
-        ],
+        "text_protobuf_saver.h",
+    ],
     deps = [
         "//cub/base:assertions",
         "//cub/env",

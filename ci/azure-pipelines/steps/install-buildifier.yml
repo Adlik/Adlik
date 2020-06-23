@@ -1,6 +1,6 @@
 steps:
   - script: |
         set -e
-        sudo wget -O /usr/local/bin/buildifier https://github.com/bazelbuild/buildtools/releases/download/1.0.0/buildifier
+        sudo wget -O /usr/local/bin/buildifier https://github.com/bazelbuild/buildtools/releases/download/3.2.1/buildifier
         sudo chmod +x /usr/local/bin/buildifier
     displayName: Install Buildifier
