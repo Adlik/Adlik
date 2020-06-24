@@ -29,13 +29,9 @@ RUN . /etc/os-release && \
         bazel \
         clang-format \
         clang-tidy \
-        cuda-cufft-dev-10-2 \
-        cuda-cupti-dev-10-2 \
-        cuda-curand-dev-10-2 \
-        cuda-cusolver-dev-10-2 \
-        cuda-cusparse-dev-10-2 \
-        cuda-nvml-dev-10-2 \
-        cuda-nvrtc-10-2 \
+        cuda-cupti-dev-11-0 \
+        cuda-nvml-dev-11-0 \
+        cuda-nvrtc-11-0 \
         default-jdk-headless \
         flake8 \
         git \
@@ -43,15 +39,19 @@ RUN . /etc/os-release && \
         iwyu \
         libclang-common-5.0-dev \
         libclang-common-6.0-dev \
-        'libcublas-dev=10.2.*' \
-        'libcudnn7=*+cuda10.2' \
-        'libcudnn7-dev=*+cuda10.2' \
-        'libnvinfer7=7.0.*+cuda10.2' \
-        'libnvinfer-dev=7.0.*+cuda10.2' \
-        'libnvinfer-plugin7=7.0.*+cuda10.2' \
-        'libnvonnxparsers7=7.0.*+cuda10.2' \
-        'libnvonnxparsers-dev=7.0.*+cuda10.2' \
-        'libnvparsers7=7.0.*+cuda10.2' \
+        libcublas-dev-11-0 \
+        'libcudnn8=*+cuda11.0' \
+        'libcudnn8-dev=*+cuda11.0' \
+        libcufft-dev-11-0 \
+        libcurand-dev-11-0 \
+        libcusolver-dev-11-0 \
+        libcusparse-dev-11-0 \
+        'libnvinfer7=7.1.*+cuda11.0' \
+        'libnvinfer-dev=7.1.*+cuda11.0' \
+        'libnvinfer-plugin7=7.1.*+cuda11.0' \
+        'libnvonnxparsers7=7.1.*+cuda11.0' \
+        'libnvonnxparsers-dev=7.1.*+cuda11.0' \
+        'libnvparsers7=7.1.*+cuda11.0' \
         libtool \
         protobuf-compiler \
         python3-pip \
@@ -60,7 +60,7 @@ RUN . /etc/os-release && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN apt-mark hold libcublas10 libcublas-dev libcudnn7 libcudnn7-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
+RUN apt-mark hold libcudnn8 libcudnn8-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
 
 RUN python3 -c 'import shutil, sys, urllib.request; shutil.copyfileobj(urllib.request.urlopen(sys.argv[1]), sys.stdout.buffer)' \
         https://github.com/bazelbuild/buildtools/releases/download/3.3.0/buildifier > /usr/local/bin/buildifier && \
