@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+message ServerStatusRequest {
+}
+
+message ServerStatusResponse {
+  string status = 1; // running
+}
+
+

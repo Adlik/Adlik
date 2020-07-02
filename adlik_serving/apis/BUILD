@@ -197,3 +197,39 @@ serving_cc_library(
         "//cub/log",
     ],
 )
+
+serving_proto_library(
+    name = "server_status_proto",
+    srcs = ["server_status.proto"],
+    cc_api_version = 2,
+)
+
+serving_proto_library_py(
+    name = "server_status_py_pb2",
+    srcs = ["server_status.proto"],
+    proto_library = "server_status_proto",
+)
+
+serving_proto_library(
+    name = "server_status_service_proto",
+    srcs = ["server_status_service.proto"],
+    has_services = 1,
+    cc_api_version = 2,
+    cc_grpc_version = 1,
+    deps = [
+        ":server_status_proto",
+    ],
+)
+
+py_proto_library(
+    name = "server_status_service_proto_py_pb2",
+    srcs = ["server_status_service.proto"],
+    default_runtime = "@com_google_protobuf//:protobuf_python",
+    protoc = "@com_google_protobuf//:protoc",
+    srcs_version = "PY2AND3",
+    use_grpc_plugin = True,
+    deps = [
+        ":server_status_py_pb2",
+        "@com_google_protobuf//:protobuf_python",
+    ],
+)
