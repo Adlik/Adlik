@@ -9,12 +9,11 @@ from abc import abstractmethod
 import os
 import sys
 
-import keras
-import keras.backend as K
-from keras.layers import Layer
 import onnx
 import onnx.utils
 import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.layers import Layer
 
 from .importer import import_file
 from ..log_util import get_logger
@@ -94,12 +93,12 @@ class _Loader:
         :param callback: callback after load model to graph
         :return:
         """
-        _LOGGER.info('Begin to load model, data format: %s', K.image_data_format())
+        _LOGGER.info('Begin to load model, data format: %s', tf.compat.v1.keras.backend.image_data_format())
         config = tf.compat.v1.ConfigProto(
             gpu_options=tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.1, allow_growth=True),
             allow_soft_placement=True)
         with tf.compat.v1.Session(graph=tf.Graph(), config=config) as session:
-            K.set_learning_phase(0)
+            tf.compat.v1.keras.backend.set_learning_phase(0)
             self.custom_object = self._parse_custom_objects(script_path)
             inputs, outputs = self._do_load(session, model_path, script_path)
             callback(session, inputs, outputs)
@@ -116,7 +115,7 @@ class _Loader:
         :param script_path:
         :return:
         """
-        _LOGGER.info('Begin to parse custom object, data format: %s', K.image_data_format())
+        _LOGGER.info('Begin to parse custom object, data format: %s', tf.compat.v1.keras.backend.image_data_format())
 
         if not script_path:
             _LOGGER.info('Script path is null')
@@ -158,7 +157,8 @@ class KerasModelLoader(_Loader):
         self.config = config
 
     def _do_load(self, session, model_path, _):
-        _LOGGER.info('Begin to load h5 model, data format: %s, model_path: %s', K.image_data_format(), model_path)
+        _LOGGER.info('Begin to load h5 model, data format: %s, model_path: %s',
+                     tf.compat.v1.keras.backend.image_data_format(), model_path)
         model = keras.models.load_model(str(model_path), custom_objects=self.custom_object, compile=False)
         _LOGGER.info('After load h5 model, model: %s', model)
         return self._update_tensors(model)
@@ -208,7 +208,7 @@ class KerasModelLoader(_Loader):
                     [None for _ in range(len(self.config.input_names) - len(self.config.input_formats))])
         else:
             self.config.input_formats = [None for _ in self.config.input_names]
-        graph = K.get_session().graph
+        graph = tf.compat.v1.keras.backend.get_session().graph
         return [_Input(_get_tensor_by_fuzzy_name(graph, name), data_format) for name, data_format in
                 zip(self.config.input_names, self.config.input_formats)]
 
@@ -237,7 +237,7 @@ class KerasModelLoader(_Loader):
         return outputs
 
     def _update_outputs_by_name(self, _):
-        graph = K.get_session().graph
+        graph = tf.compat.v1.keras.backend.get_session().graph
         return [_Output(_get_tensor_by_fuzzy_name(graph, name)) for name in self.config.output_names]
 
     @staticmethod
@@ -278,7 +278,8 @@ class CheckpointLoader(_Loader):
         self.input_formats = input_formats
 
     def _do_load(self, session, model_path, script_path):
-        _LOGGER.info('Begin to load checkpoint, data format: %s, checkpoint path: %s', K.image_data_format(),
+        _LOGGER.info('Begin to load checkpoint, data format: %s, checkpoint path: %s',
+                     tf.compat.v1.keras.backend.image_data_format(),
                      model_path)
 
         meta_path = model_path + '.meta'
@@ -293,7 +294,7 @@ class CheckpointLoader(_Loader):
                 module.model_meta()
             else:
                 raise Exception('function "model_meta" does not exist')
-            tf_saver = tf.train.Saver()
+            tf_saver = tf.compat.v1.train.Saver()
         else:
             _LOGGER.error("Neither .meta nor model.py exist, can't import meta")
             raise Exception("Neither .meta nor model.py exist, can't import meta")
@@ -348,7 +349,8 @@ class FrozenGraphLoader(CheckpointLoader):
         super(FrozenGraphLoader, self).__init__(input_names, output_names, input_formats)
 
     def _do_load(self, session, model_path, script_path):
-        _LOGGER.info('Begin to load frozen graph, data format: %s, frozen graph path: %s', K.image_data_format(),
+        _LOGGER.info('Begin to load frozen graph, data format: %s, frozen graph path: %s',
+                     tf.compat.v1.keras.backend.image_data_format(),
                      model_path)
         with tf.io.gfile.GFile(model_path, "rb") as graph_file:
             graph_def = tf.compat.v1.GraphDef()
@@ -460,7 +462,8 @@ class OnnxLoader:
         :return: None, inputs and outputs
         """
 
-        _LOGGER.info('Begin to load ONNX, data format: %s, ONNX path: %s, script path: %s', K.image_data_format(),
+        _LOGGER.info('Begin to load ONNX, data format: %s, ONNX path: %s, script path: %s',
+                     tf.compat.v1.keras.backend.image_data_format(),
                      onnx_path, script_path)
         model = onnx.load(onnx_path)
         model = onnx.utils.polish_model(model)
