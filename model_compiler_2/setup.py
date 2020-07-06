@@ -51,9 +51,8 @@ setuptools.setup(
     package_dir={'': 'src'},
     package_data={'model_compiler': ['protos/src/*.proto']},
     install_requires=[
-        'keras',
         'tensorflow',
-        'tf2onnx@git+https://github.com/onnx/tensorflow-onnx.git@43c01e5cab1ee789b45d1f8e6833bfdb13327942'
+        'tf2onnx'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={

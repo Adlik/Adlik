@@ -4,6 +4,7 @@
 import importlib.util
 
 import tensorflow as tf
+from tensorflow import keras
 
 from . import repository
 from ..models.irs.keras_model import KerasModel
@@ -27,7 +28,7 @@ def _get_custom_objects(file_path):
 
     for name, value in vars(module).items():
         if isinstance(value, type) and value.__module__ == script_module_name:
-            if issubclass(value, tf.keras.layers.Layer):
+            if issubclass(value, keras.layers.Layer):
                 custom_objects[name] = value
 
     return custom_objects
@@ -41,9 +42,9 @@ def compile_source(source: KerasModelFile) -> KerasModel:
                 custom_objects = _get_custom_objects(source.script_path)
 
             with tf.compat.v1.Session().as_default() as session:
-                model = tf.keras.models.load_model(source.model_path, custom_objects=custom_objects, compile=False)
+                model = keras.models.load_model(source.model_path, custom_objects=custom_objects, compile=False)
         else:
             with tf.compat.v1.Session().as_default() as session:
-                model = tf.keras.models.load_model(source.model_path, custom_objects=None, compile=False)
+                model = keras.models.load_model(source.model_path, custom_objects=None, compile=False)
 
     return KerasModel(model=model, session=session)

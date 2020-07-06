@@ -3,8 +3,8 @@
 
 from typing import Any, Iterable, Mapping, NamedTuple, Optional, Sequence, Union
 
-import keras
 import tensorflow as tf
+from tensorflow import keras
 
 from . import repository
 from .. import utilities

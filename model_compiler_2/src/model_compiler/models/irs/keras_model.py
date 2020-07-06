@@ -3,10 +3,10 @@
 
 from typing import NamedTuple, Union
 
-import keras
 import tensorflow as tf
+from tensorflow import keras
 
 
 class KerasModel(NamedTuple):
-    model: Union[keras.Model, tf.keras.Model]
+    model: keras.Model
     session: tf.compat.v1.Session

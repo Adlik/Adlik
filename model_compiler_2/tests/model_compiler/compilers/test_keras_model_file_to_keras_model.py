@@ -6,8 +6,8 @@ import sys
 from tempfile import NamedTemporaryFile
 from unittest import TestCase
 
-import keras
 import tensorflow as tf
+from tensorflow import keras
 
 import model_compiler.compilers.keras_model_file_to_keras_model as compiler
 from model_compiler.models.sources.keras_model_file import KerasModelFile
@@ -68,22 +68,20 @@ if __name__ == '__main__':
 
 class CompileSourceTestCase(TestCase):
     def test_compile_simple(self):
-        for k in [keras, tf.keras]:
-            with self.subTest(k=k), NamedTemporaryFile(suffix='.h5') as model_file:
-                with tf.compat.v1.Session(graph=tf.Graph()):
-                    k.Sequential([k.layers.Dense(units=4, input_shape=[8])]).save(model_file.name)
+        with NamedTemporaryFile(suffix='.h5') as model_file:
+            with tf.compat.v1.Session(graph=tf.Graph()):
+                keras.Sequential([keras.layers.Dense(units=4, input_shape=[8])]).save(model_file.name)
 
-                compiled = compiler.compile_source(KerasModelFile(model_path=model_file.name))
+            compiled = compiler.compile_source(KerasModelFile(model_path=model_file.name))
 
-                self.assertIsInstance(compiled.model, k.Model)
-                self.assertEqual(len(compiled.model.layers), 1)
+            self.assertIsInstance(compiled.model, keras.Model)
+            self.assertEqual(len(compiled.model.layers), 1)
 
-                self.assertIsInstance(compiled.session, tf.compat.v1.Session)
+            self.assertIsInstance(compiled.session, tf.compat.v1.Session)
 
     def test_compile_with_custom_objects(self):
-        for k, import_keras in [(keras, 'import keras'), (tf.keras, 'from tensorflow import keras')]:
-            with self.subTest(k=k), NamedTemporaryFile(suffix='.py') as script_file, \
-                    NamedTemporaryFile(suffix='.h5') as model_file:
+        for import_keras in ['from tensorflow import keras']:
+            with NamedTemporaryFile(suffix='.py') as script_file, NamedTemporaryFile(suffix='.h5') as model_file:
                 script_file.file.write(_get_custom_objects_script(import_keras))
                 script_file.file.flush()
 
@@ -92,7 +90,7 @@ class CompileSourceTestCase(TestCase):
                 compiled = compiler.compile_source(KerasModelFile(model_path=model_file.name,
                                                                   script_path=script_file.name))
 
-                self.assertIsInstance(compiled.model, k.Model)
+                self.assertIsInstance(compiled.model, keras.Model)
                 self.assertEqual(len(compiled.model.layers), 2)
 
                 self.assertIsInstance(compiled.session, tf.compat.v1.Session)
