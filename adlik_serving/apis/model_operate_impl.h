@@ -21,6 +21,7 @@ struct BoardingLoop;
 struct StateMonitor;
 struct ModelOperateRequest;
 struct ModelOperateResponse;
+struct VersionPolicyProto;
 
 struct ModelOperateImpl {
   virtual ~ModelOperateImpl() = default;
@@ -34,6 +35,8 @@ struct ModelOperateImpl {
 
 private:
   void update();
+  bool versionLoad(const VersionPolicyProto& originPolicy, const std::string& modelName, const int version);
+  void oldVersionUnload(const std::string& modelName, const int version);
   USE_ROLE(ServingStore);
   USE_ROLE(ModelStore);
   USE_ROLE(ManagedStore);
