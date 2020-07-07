@@ -11,8 +11,6 @@ from .. import utilities
 from ..models.irs.keras_model import KerasModel
 from ..models.irs.tf_model import DataFormat, Input, TensorFlowModel
 
-_SCRIPT_MODULE_NAME = ''
-
 
 class NodeSpec(NamedTuple):
     layer_name: str
