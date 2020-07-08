@@ -8,7 +8,6 @@ from unittest import TestCase
 import numpy
 import pytest
 import tensorflow as tf
-import tensorflow.python.eager.context as eager_context
 import tensorrt
 from tensorrt import Builder, DataType, ElementWiseOperation, Logger, Weights
 
@@ -19,7 +18,7 @@ from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOu
 
 
 def _make_tensorrt_model() -> TensorRTModel:
-    with eager_context.graph_mode(), tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+    with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
         input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 4], name='x')
         input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 4], name='y')
         weight = tf.Variable(initial_value=[2.0, 3.0, 4.0, 5.0], dtype=tf.float32)
