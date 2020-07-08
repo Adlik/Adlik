@@ -5,7 +5,6 @@ from unittest import TestCase
 
 import pytest
 import tensorflow as tf
-import tensorflow.python.eager.context as eager_context
 from tensorrt import ICudaEngine
 
 import model_compiler.compilers.onnx_model_to_tensorrt_model as compiler
@@ -27,7 +26,7 @@ class ConfigTestCase(TestCase):
 
 
 def _make_onnx_model(func):
-    with eager_context.graph_mode(), tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+    with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
         input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 4], name='x')
         input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 4], name='y')
         output_z = func(input_x, input_y, session)

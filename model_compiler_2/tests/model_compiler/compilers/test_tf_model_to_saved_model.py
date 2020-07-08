@@ -4,7 +4,6 @@
 from unittest import TestCase
 
 import tensorflow as tf
-import tensorflow.python.eager.context as eager_context
 
 import model_compiler.compilers.tf_model_to_saved_model as compiler
 from model_compiler.compilers.tf_model_to_saved_model import Config
@@ -36,7 +35,7 @@ class ConfigTestCase(TestCase):
 
 class CompileSourceTestCase(TestCase):
     def test_compile_simple(self):
-        with eager_context.graph_mode(), tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+        with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
             input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[3, 4], name='x')
             input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[3, 4], name='y')
             output_z = tf.add(input_x, input_y, name='z')
@@ -61,7 +60,7 @@ class CompileSourceTestCase(TestCase):
         self.assertIs(compiled.session, session)
 
     def test_compile_with_explicit_signature(self):
-        with eager_context.graph_mode(), tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+        with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
             input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[3, 4], name='x')
             input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[3, 4], name='y')
             input_z = tf.add(input_x, input_y, name='z')

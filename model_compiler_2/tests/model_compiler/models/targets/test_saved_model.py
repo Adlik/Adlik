@@ -6,14 +6,13 @@ from tempfile import TemporaryDirectory
 from unittest import TestCase
 
 import tensorflow as tf
-import tensorflow.python.eager.context as eager_context
 
 from model_compiler.models.targets.saved_model import Input, Output, SavedModel
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
 def _make_saved_model() -> SavedModel:
-    with eager_context.graph_mode(), tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+    with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
         input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 4])
         input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 4])
         weight = tf.Variable(initial_value=[2.0, 3.0, 4.0, 5.0], dtype=tf.float32)

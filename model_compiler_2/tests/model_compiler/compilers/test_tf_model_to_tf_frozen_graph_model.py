@@ -4,7 +4,6 @@
 from unittest import TestCase
 
 import tensorflow as tf
-import tensorflow.python.eager.context as eager_context
 
 import model_compiler.compilers.tf_model_to_tf_frozen_graph_model as compiler
 from model_compiler.models.irs import tf_model
@@ -12,7 +11,7 @@ from model_compiler.models.irs.tf_frozen_graph_model import Input
 
 
 def _make_tensorflow_model(func):
-    with eager_context.graph_mode(), tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+    with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
         input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[3, 4], name='x')
         input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[3, 4], name='y')
         output_z = func(input_x, input_y, session)
