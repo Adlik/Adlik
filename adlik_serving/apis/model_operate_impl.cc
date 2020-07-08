@@ -104,6 +104,13 @@ private:
   }
   ModelOperateResponse& rsp;
 };
+
+bool versionExistInPath(const std::string& path, const int version) {
+  VersionDirectoryState versionDirectoryState;
+  cub::filesystem().children(path, versionDirectoryState);
+  return versionDirectoryState.contains(version);
+}
+
 }  // namespace
 
 tensorflow::Status ModelOperateImpl::addModel(const ModelOperateRequest& req, ModelOperateResponse& rsp) {
@@ -227,35 +234,45 @@ tensorflow::Status ModelOperateImpl::activateModel(const ModelOperateRequest& re
     FailureResponse(rsp, modelName + " model is not exist");
     return status;
   }
-  std::string modelPath = config->getBasePath();
-  VersionDirectoryState versionDirectoryState;
-  cub::filesystem().children(modelPath, versionDirectoryState);
-  if (!versionDirectoryState.contains(modelVersion)) {
+  if (!versionExistInPath(config->getBasePath(), modelVersion)) {
     FailureResponse(rsp, modelName + " model version " + std::to_string(modelVersion) + " is not exist");
     return status;
   }
-  VersionPolicyProto originVersionPolicy(config->version_policy());
-  VersionPolicyProto tempVersionPolicy;
-  std::vector<int> originVersions;
-  ROLE(ManagedStore).getModelVersions(modelName, originVersions);
-  for (auto version : originVersions) {
-    tempVersionPolicy.mutable_specific()->add_versions(version);
-  }
-  tempVersionPolicy.mutable_specific()->add_versions(modelVersion);
-  ROLE(ModelStore).updatePolicy(modelName, tempVersionPolicy);
-  update();
-  if (!ROLE(ManagedStore).exist(modelName) || !ROLE(ManagedStore).isNormal(modelName)) {
-    ROLE(ModelStore).updatePolicy(modelName, originVersionPolicy);
-    update();
+  VersionPolicyProto originPolicy(config->version_policy());
+  if (!versionLoad(originPolicy, modelName, modelVersion)) {
     FailureResponse(rsp, modelName + " model activate version start up error");
     return status;
   }
-  VersionPolicyProto lastVersionPolicy;
-  lastVersionPolicy.mutable_specific()->add_versions(modelVersion);
-  ROLE(ModelStore).updatePolicy(modelName, lastVersionPolicy);
-  update();
+  oldVersionUnload(modelName, modelVersion);
   SuccessResponse(rsp);
   return status;
+}
+
+bool ModelOperateImpl::versionLoad(const VersionPolicyProto& originPolicy,
+                                   const std::string& modelName,
+                                   const int version) {
+  VersionPolicyProto tempPolicy;
+  std::vector<int> originVersions;
+  ROLE(ManagedStore).getModelVersions(modelName, originVersions);
+  for (auto originVersion : originVersions) {
+    tempPolicy.mutable_specific()->add_versions(originVersion);
+  }
+  tempPolicy.mutable_specific()->add_versions(version);
+  ROLE(ModelStore).updatePolicy(modelName, tempPolicy);
+  update();
+  if (!ROLE(ManagedStore).exist(modelName) || !ROLE(ManagedStore).isNormal(modelName)) {
+    ROLE(ModelStore).updatePolicy(modelName, originPolicy);
+    update();
+    return false;
+  }
+  return true;
+}
+
+void ModelOperateImpl::oldVersionUnload(const std::string& modelName, const int resverdVersion) {
+  VersionPolicyProto versionPolicy;
+  versionPolicy.mutable_specific()->add_versions(resverdVersion);
+  ROLE(ModelStore).updatePolicy(modelName, versionPolicy);
+  update();
 }
 
 void ModelOperateImpl::update() {
