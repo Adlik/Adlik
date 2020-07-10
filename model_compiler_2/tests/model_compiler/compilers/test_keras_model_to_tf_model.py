@@ -58,22 +58,22 @@ class ConfigTestCase(TestCase):
         self.assertEqual(config, Config(input_nodes=None, output_nodes=None))
 
     def test_from_env_input_names_only(self):
-        config = Config.from_env({'input_layer_names': 'abc,def:3'})
+        config = Config.from_env({'INPUT_LAYER_NAMES': 'abc,def:3'})
 
         self.assertEqual(config, Config(input_nodes=[NodeSpec(layer_name='abc'),
                                                      NodeSpec(layer_name='def', node_index=3)],
                                         output_nodes=None))
 
     def test_from_env_output_names_only(self):
-        config = Config.from_env({'output_layer_names': 'abc,def:3'})
+        config = Config.from_env({'OUTPUT_LAYER_NAMES': 'abc,def:3'})
 
         self.assertEqual(config, Config(input_nodes=None,
                                         output_nodes=[NodeSpec(layer_name='abc'),
                                                       NodeSpec(layer_name='def', node_index=3)]))
 
     def test_from_env_full(self):
-        config = Config.from_env({'input_layer_names': 'abc,def:3',
-                                  'output_layer_names': 'ghi:2,jkl'})
+        config = Config.from_env({'INPUT_LAYER_NAMES': 'abc,def:3',
+                                  'OUTPUT_LAYER_NAMES': 'ghi:2,jkl'})
 
         self.assertEqual(config, Config(input_nodes=[NodeSpec(layer_name='abc'),
                                                      NodeSpec(layer_name='def', node_index=3)],

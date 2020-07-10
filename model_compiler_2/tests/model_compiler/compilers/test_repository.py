@@ -66,7 +66,7 @@ class RepositoryTestCase(TestCase):
 
             @staticmethod
             def from_env(env) -> '_Config':
-                return _Config(env['x'])
+                return _Config(env['X'])
 
         def _int_to_float(source: int, config: _Config) -> float:
             return float(source * config.x)
@@ -79,7 +79,7 @@ class RepositoryTestCase(TestCase):
         self.assertIsInstance(result, float)
         self.assertEqual(result, 56.0)
 
-        result = compiler(7, config_type.from_env({'x': 8}))
+        result = compiler(7, config_type.from_env({'X': 8}))
 
         self.assertIsInstance(result, float)
         self.assertEqual(result, 56.0)
@@ -96,7 +96,7 @@ class RepositoryTestCase(TestCase):
 
             @staticmethod
             def from_env(env):
-                return _Config1(x=env['x'])
+                return _Config1(x=env['X'])
 
         class _Config2(NamedTuple):
             y: int
@@ -107,7 +107,7 @@ class RepositoryTestCase(TestCase):
 
             @staticmethod
             def from_env(env):
-                return _Config2(y=env['y'])
+                return _Config2(y=env['Y'])
 
         def _int_to_float(source: int, config: _Config1) -> float:
             return float(source * config.x)
@@ -123,6 +123,6 @@ class RepositoryTestCase(TestCase):
 
         self.assertEqual(result, [56.0, 3])
 
-        result = compiler(7, config_type.from_env({'x': 8, 'y': 3}))
+        result = compiler(7, config_type.from_env({'X': 8, 'Y': 3}))
 
         self.assertEqual(result, [56.0, 3])

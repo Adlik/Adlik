@@ -20,7 +20,7 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        return Config(int(env['max_batch_size']))
+        return Config(int(env['MAX_BATCH_SIZE']))
 
 
 def _extract_shape(type_proto: TypeProto):

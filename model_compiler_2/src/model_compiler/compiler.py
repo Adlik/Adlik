@@ -31,7 +31,7 @@ def compile_from_env():
     except StopIteration:
         raise ValueError('Unable to determine the source model type.')
 
-    target_type = MODEL_REPOSITORY.get_target_model(env['serving_type'])
+    target_type = MODEL_REPOSITORY.get_target_model(env['SERVING_TYPE'])
     compiler, compiler_config_type = COMPILER_REPOSITORY.get(source_type=source_type, target_type=target_type)
     target_model = compiler(source=source_type.from_env(env), config=compiler_config_type.from_env(env))
 

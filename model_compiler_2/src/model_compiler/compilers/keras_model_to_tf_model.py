@@ -49,8 +49,8 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        return Config(input_nodes=_split_by_comma(env.get('input_layer_names')),
-                      output_nodes=_split_by_comma(env.get('output_layer_names')))
+        return Config(input_nodes=_split_by_comma(env.get('INPUT_LAYER_NAMES')),
+                      output_nodes=_split_by_comma(env.get('OUTPUT_LAYER_NAMES')))
 
 
 def _iterate_tensors(tensors: Union[tf.Tensor, Iterable[tf.Tensor]]):
