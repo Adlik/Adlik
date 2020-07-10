@@ -56,7 +56,7 @@ class MainTestCase(TestCase):
                         'model_name': 'foobar2000',
                         'version': '4',
                         'max_batch_size': '7',
-                        'h5_path': model_file.name,
+                        'H5_PATH': model_file.name,
                         'input_signatures': 'x_2000',
                         'output_signatures': 'y_2000',
                         'export_path': target_dir})
