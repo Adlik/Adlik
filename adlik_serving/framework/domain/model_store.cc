@@ -39,12 +39,15 @@ cub::Status ModelStore::deleteModel(const std::string& name) {
 }
 
 void ModelStore::visit(const std::string& base, const std::string& name) {
-  ModelConfigProto proto;
-  if (cub::TextProtobuf(cub::paths(base, name, "config.pbtxt")).parse(proto)) {
-    INFO_LOG << "found model " << name << " [" << proto.platform() << "]";
-    configs.insert({name, {base, name, std::move(proto)}});
-  } else {
-    INFO_LOG << "model " << name << " config.pbtxt error";
+  auto config_path = cub::paths(base, name, "config.pbtxt");
+  if (cub::filesystem().exists(config_path)) {
+    ModelConfigProto proto;
+    if (cub::TextProtobuf(config_path).parse(proto)) {
+      INFO_LOG << "found model " << name << " [" << proto.platform() << "]";
+      configs.insert({name, {base, name, std::move(proto)}});
+    } else {
+      ERR_LOG << "model " << name << " config.pbtxt error";
+    }
   }
 }
 

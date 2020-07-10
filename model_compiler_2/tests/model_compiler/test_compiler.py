@@ -106,7 +106,7 @@ class CompileFromEnvTestCase(TestCase):
                            'model_name': 'foobar',
                            'version': '4',
                            'max_batch_size': '7',
-                           'h5_path': model_file.name,
+                           'H5_PATH': model_file.name,
                            'input_signatures': 'x',
                            'output_signatures': 'y',
                            'export_path': target_dir}):
