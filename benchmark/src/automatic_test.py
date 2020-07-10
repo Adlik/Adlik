@@ -91,7 +91,7 @@ def main(args):
                               '-v', f'{args.log_path}:/home/john/log',
                               f'adlik-test:{args.serving_type}']
 
-        env['NV_GPU'] = args.gpu_label
+        env['NV_GPU'] = str(args.gpu_label)
     subprocess.run(docker_build_command, check=True)
     subprocess.run(docker_run_command, check=True, env=env)
     _get_result(args.log_path, args.model_name)
