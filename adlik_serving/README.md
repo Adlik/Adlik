@@ -1,9 +1,9 @@
 # Adlik: Serving Engine
 
-![Serving Engine schematic diagram](serving-engine.png)
+![Serving Engine schematic diagram](../resources/serving-engine-new.png)
 
 1. Model uploading & upgrading, model inference & monitoring.
-2. Unified inference interfaces for different models.
+2. Unified inference interfaces for different runtimes.
 3. Management and scheduling for a solution with multiple models in various runtime.
 4. Automatic selection of inference runtime.
 5. Ability to add customized runtime.
