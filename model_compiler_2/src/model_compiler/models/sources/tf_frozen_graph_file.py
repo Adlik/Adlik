@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from os import path
-from typing import Any, Mapping, NamedTuple, Optional
+from typing import Any, Mapping, NamedTuple
 
 from .. import repository
 
@@ -10,7 +10,6 @@ from .. import repository
 @repository.REPOSITORY.register_source_model
 class FrozenGraphFile(NamedTuple):
     model_path: str
-    script_path: Optional[str] = None
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'FrozenGraphFile':
