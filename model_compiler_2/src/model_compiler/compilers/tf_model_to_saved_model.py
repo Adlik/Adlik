@@ -23,8 +23,8 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        return Config(input_signature=_split_by_comma(env.get('input_signatures')),
-                      output_signature=_split_by_comma(env.get('output_signatures')))
+        return Config(input_signature=_split_by_comma(env.get('INPUT_SIGNATURES')),
+                      output_signature=_split_by_comma(env.get('OUTPUT_SIGNATURES')))
 
 
 @repository.REPOSITORY.register(source_type=TensorFlowModel, target_type=SavedModel, config_type=Config)

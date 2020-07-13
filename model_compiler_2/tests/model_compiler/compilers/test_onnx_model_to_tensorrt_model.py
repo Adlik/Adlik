@@ -21,7 +21,7 @@ class ConfigTestCase(TestCase):
                          Config(max_batch_size=7))
 
     def test_from_env(self):
-        self.assertEqual(Config.from_env({'max_batch_size': '7'}),
+        self.assertEqual(Config.from_env({'MAX_BATCH_SIZE': '7'}),
                          Config(max_batch_size=7))
 
 

@@ -52,14 +52,14 @@ class MainTestCase(TestCase):
 
             env = os.environ.copy()
 
-            env.update({'serving_type': 'tf',
-                        'model_name': 'foobar2000',
-                        'version': '4',
-                        'max_batch_size': '7',
+            env.update({'SERVING_TYPE': 'tf',
+                        'MODEL_NAME': 'foobar2000',
+                        'VERSION': '4',
+                        'MAX_BATCH_SIZE': '7',
                         'H5_PATH': model_file.name,
-                        'input_signatures': 'x_2000',
-                        'output_signatures': 'y_2000',
-                        'export_path': target_dir})
+                        'INPUT_SIGNATURES': 'x_2000',
+                        'OUTPUT_SIGNATURES': 'y_2000',
+                        'EXPORT_PATH': target_dir})
 
             subprocess.run(args=['model-compiler'], env=env, check=True)  # nosec
 
