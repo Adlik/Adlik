@@ -8,10 +8,22 @@
 ***Adlik*** is an end-to-end optimizing framework for deep learning models. The goal of Adlik is to accelerate deep
 learning inference process both on cloud and embedded environment.
 
-![Adlik schematic diagram](resources/adlik.png)
+![Adlik schematic diagram](resources/arch.PNG)
 
 With Adlik framework, different deep learning models can be deployed to different platforms with high performance in a
 much flexible and easy way.
+
+![Using Adlik to Deploy Models in Cloud/Edge/Device](resources/deployment.PNG)
+
+1. In cloud environment, the compiled model and Adlik Inference Engine should be built as a docker image, and deployed
+as a container.
+
+2. In edge environment, Adlik Inference Engine should be deployed as a container. The compiled model should be transferred
+to edge environment, and the Adlik Inference Engine should automatically update and load model.
+
+3. In device environment, Adlik Inference Engine and the compiled model should be compiled into a binary file (***so***
+or ***lib***). Users who want to run model inference on device should link user defined AI function and Adlik binary
+file to the execution file, and run directly.
 
 ## Inference performance of Adlik
 

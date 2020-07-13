@@ -110,6 +110,7 @@ class CompileFromEnvTestCase(TestCase):
                            'INPUT_SIGNATURES': 'x',
                            'OUTPUT_SIGNATURES': 'y',
                            'EXPORT_PATH': target_dir}):
+
                 compiler.compile_from_env()
 
             self.assertEqual(sorted(os.listdir(target_dir)), ['foobar', 'foobar_4.zip'])
