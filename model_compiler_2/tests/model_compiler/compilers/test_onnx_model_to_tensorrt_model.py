@@ -26,10 +26,10 @@ class ConfigTestCase(TestCase):
                          Config(max_batch_size=7))
 
 
-def _make_onnx_model(func, batch_size):
+def _make_onnx_model(func, batch_size_1, batch_size_2):
     with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-        input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[batch_size, 4], name='x')
-        input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[batch_size, 4], name='y')
+        input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[batch_size_1, 4], name='x')
+        input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[batch_size_2, 4], name='y')
         output_z = func(input_x, input_y, session)
 
     frozen_graph_model = frozen_graph_compiler.compile_source(
@@ -46,7 +46,8 @@ class CompileSourceTestCase(TestCase):
     def test_compile_simple(self):
         for batch_size in [3, None]:
             onnx_model = _make_onnx_model(func=lambda input_x, input_y, _: tf.add(input_x, input_y, name='z'),
-                                          batch_size=batch_size)
+                                          batch_size_1=batch_size,
+                                          batch_size_2=batch_size)
 
             compiled = compiler.compile_source(source=onnx_model, config=Config(max_batch_size=4))
 
@@ -57,3 +58,13 @@ class CompileSourceTestCase(TestCase):
             self.assertEqual(compiled.input_data_formats, [None, None])
             self.assertEqual(compiled.get_outputs(), [ModelOutput(name='z:0', data_type=TfDataType.DT_FLOAT, dims=[4])])
             self.assertIsInstance(compiled.cuda_engine, ICudaEngine)
+
+    def test_compile_inconsistent_batch_size(self):
+        onnx_model = _make_onnx_model(func=lambda input_x, input_y, _: tf.add(input_x, input_y, name='z'),
+                                      batch_size_1=3,
+                                      batch_size_2=None)
+
+        with self.assertRaises(ValueError) as error:
+            compiler.compile_source(source=onnx_model, config=Config(max_batch_size=4))
+
+        self.assertEqual(error.exception.args, ('Inconsistent batch size specification.',))
