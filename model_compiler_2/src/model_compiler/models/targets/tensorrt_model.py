@@ -13,45 +13,38 @@ from ..data_type import DataType
 from ...protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
-class Input(NamedTuple):
-    name: str
-    data_format: Optional[DataFormat] = None
-
-
 def _trt_dtype_to_tf_dtype(trt_dtype):
     return DataType.from_tensorrt_data_type(trt_dtype).to_tf_data_type()
 
 
 @repository.REPOSITORY.register_target_model('tensorrt')
 class TensorRTModel(NamedTuple):
-    inputs: Sequence[Input]
-    outputs: Sequence[str]
     cuda_engine: ICudaEngine
+    input_data_formats: Sequence[Optional[DataFormat]]
 
-    def _get_binding_shape_getter(self):
+    def _get_binding_shape(self, i):
         cuda_engine = self.cuda_engine
 
-        if self.cuda_engine.has_implicit_batch_dimension:
-            return cuda_engine.get_binding_shape
+        if cuda_engine.has_implicit_batch_dimension:
+            return cuda_engine.get_binding_shape(i)
 
-        return lambda name: cuda_engine.get_binding_shape(name)[1:]
+        return cuda_engine.get_binding_shape(i)[1:]
 
     def get_inputs(self) -> Sequence[ModelInput]:
-        get_shape = self._get_binding_shape_getter()
+        input_binding_indices = filter(self.cuda_engine.binding_is_input, range(self.cuda_engine.num_bindings))
 
-        return [ModelInput(name=item.name,
-                           data_type=_trt_dtype_to_tf_dtype(self.cuda_engine.get_binding_dtype(item.name)),
-                           format=data_format.as_model_config_data_format(item.data_format),
-                           dims=get_shape(item.name))
-                for item in self.inputs]
+        return [ModelInput(name=self.cuda_engine.get_binding_name(i),
+                           data_type=_trt_dtype_to_tf_dtype(self.cuda_engine.get_binding_dtype(i)),
+                           format=data_format.as_model_config_data_format(input_format),
+                           dims=self._get_binding_shape(i))
+                for i, input_format in zip(input_binding_indices, self.input_data_formats)]
 
     def get_outputs(self) -> Sequence[ModelOutput]:
-        get_shape = self._get_binding_shape_getter()
-
-        return [ModelOutput(name=output_name,
-                            data_type=_trt_dtype_to_tf_dtype(self.cuda_engine.get_binding_dtype(output_name)),
-                            dims=get_shape(output_name))
-                for output_name in self.outputs]
+        return [ModelOutput(name=self.cuda_engine.get_binding_name(i),
+                            data_type=_trt_dtype_to_tf_dtype(self.cuda_engine.get_binding_dtype(i)),
+                            dims=self._get_binding_shape(i))
+                for i in range(self.cuda_engine.num_bindings)
+                if not self.cuda_engine.binding_is_input(i)]
 
     def save(self, path: str) -> None:
         os.makedirs(path, exist_ok=True)
