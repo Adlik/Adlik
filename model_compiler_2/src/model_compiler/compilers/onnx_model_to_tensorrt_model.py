@@ -3,7 +3,6 @@
 
 from typing import Any, Mapping, NamedTuple
 
-from onnx import TensorShapeProto, TypeProto
 from tensorrt import Builder, Logger, NetworkDefinitionCreationFlag, OnnxParser
 
 from . import repository
@@ -23,17 +22,6 @@ class Config(NamedTuple):
         return Config(int(env['MAX_BATCH_SIZE']))
 
 
-def _extract_dimension(dim: TensorShapeProto.Dimension):
-    return dim.dim_value if dim.WhichOneof('value') == 'dim_value' else None
-
-
-def _extract_shape(type_proto: TypeProto):
-    if type_proto.WhichOneof('value') == 'tensor_type':
-        return list(map(_extract_dimension, type_proto.tensor_type.shape.dim))
-
-    raise ValueError
-
-
 @repository.REPOSITORY.register(source_type=OnnxModel, target_type=TensorRTModel, config_type=Config)
 def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
     with Logger() as logger, \
@@ -47,14 +35,7 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
 
         # Extract batch sizes.
 
-        batch_sizes = set()
-        name_and_shapes = []
-
-        for model_input in source.get_inputs():
-            batch_size, *shape = _extract_shape(model_input.type)
-
-            batch_sizes.add(batch_size)
-            name_and_shapes.append((model_input.name, shape))
+        batch_sizes = {network.get_input(i).shape[0] for i in range(network.num_inputs)}
 
         if len(batch_sizes) > 1:
             raise ValueError('Inconsistent batch size specification.')
@@ -63,11 +44,14 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
 
         builder_config = builder.create_builder_config()
 
-        if None in batch_sizes:
+        if -1 in batch_sizes:
             optimization_profile = builder.create_optimization_profile()
 
-            for (name, shape) in name_and_shapes:
-                optimization_profile.set_shape(input=name,
+            for i in range(network.num_inputs):
+                input_tensor = network.get_input(i)
+                shape = input_tensor.shape[1:]
+
+                optimization_profile.set_shape(input=input_tensor.name,
                                                min=[1, *shape],
                                                opt=[(1 + config.max_batch_size) // 2, *shape],
                                                max=[config.max_batch_size, *shape])
