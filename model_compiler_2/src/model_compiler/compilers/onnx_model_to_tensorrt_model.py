@@ -3,8 +3,6 @@
 
 from typing import Any, Mapping, NamedTuple
 
-from tensorrt import Builder, BuilderFlag, Logger, NetworkDefinitionCreationFlag, OnnxParser
-
 from . import repository
 from ..models.irs.onnx_model import OnnxModel
 from ..models.targets.tensorrt_model import TensorRTModel
@@ -30,10 +28,12 @@ class Config(NamedTuple):
 
 @repository.REPOSITORY.register(source_type=OnnxModel, target_type=TensorRTModel, config_type=Config)
 def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
-    with Logger() as logger, \
-            Builder(logger) as builder, \
-            builder.create_network(1 << int(NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) as network, \
-            OnnxParser(network, logger) as onnx_parser:
+    import tensorrt  # pylint: disable=import-outside-toplevel
+
+    with tensorrt.Logger() as logger, \
+            tensorrt.Builder(logger) as builder, \
+            builder.create_network(1 << int(tensorrt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) as network, \
+            tensorrt.OnnxParser(network, logger) as onnx_parser:
         if not onnx_parser.parse(source.model_proto.SerializeToString()):
             raise ValueError('\n'.join(map(str, (onnx_parser.get_error(i) for i in range(onnx_parser.num_errors)))))
 
@@ -65,10 +65,10 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
             builder_config.add_optimization_profile(optimization_profile)
 
         if config.enable_fp16:
-            builder_config.set_flag(BuilderFlag.FP16)
+            builder_config.set_flag(tensorrt.BuilderFlag.FP16)
 
         if config.enable_strict_types:
-            builder_config.set_flag(BuilderFlag.STRICT_TYPES)
+            builder_config.set_flag(tensorrt.BuilderFlag.STRICT_TYPES)
 
         cuda_engine = builder.build_engine(network, builder_config)
 

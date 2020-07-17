@@ -2,10 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-from typing import NamedTuple, Optional, Sequence, Tuple
-
-import tensorrt
-from tensorrt import ICudaEngine
+from typing import Any, NamedTuple, Optional, Sequence, Tuple
 
 from .. import data_format, repository
 from ..data_format import DataFormat
@@ -19,7 +16,7 @@ def _trt_dtype_to_tf_dtype(trt_dtype):
 
 @repository.REPOSITORY.register_target_model('tensorrt')
 class TensorRTModel(NamedTuple):
-    cuda_engine: ICudaEngine
+    cuda_engine: Any  # ICudaEngine
     input_data_formats: Sequence[Optional[DataFormat]]
 
     def _get_binding_shape(self, i):
@@ -55,4 +52,6 @@ class TensorRTModel(NamedTuple):
 
     @staticmethod
     def get_platform() -> Tuple[str, str]:
+        import tensorrt  # pylint: disable=import-outside-toplevel
+
         return 'tensorrt_plan', tensorrt.__version__

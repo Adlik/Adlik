@@ -6,7 +6,6 @@ from enum import Enum
 
 from onnx import TensorProto as OnnxTensorProto
 from tensorflow.core.framework.types_pb2 import DataType as TfDataType
-from tensorrt import DataType as TrtDataType
 
 _ONNX_DATA_TYPE = OnnxTensorProto.DataType  # pylint: disable=no-member
 
@@ -64,14 +63,18 @@ class DataType(Enum):
         return _ONNX_DATA_TYPE.Value(self.name)
 
     @staticmethod
-    def from_tensorrt_data_type(data_type: TrtDataType):
-        if data_type == TrtDataType.HALF:
+    def from_tensorrt_data_type(data_type):
+        import tensorrt  # pylint: disable=import-outside-toplevel
+
+        if data_type == tensorrt.DataType.HALF:
             return DataType.FLOAT16
 
         return DataType[data_type.name]
 
-    def to_tensorrt_data_type(self) -> TrtDataType:
-        if self == DataType.FLOAT16:
-            return TrtDataType.HALF
+    def to_tensorrt_data_type(self):
+        import tensorrt  # pylint: disable=import-outside-toplevel
 
-        return getattr(TrtDataType, self.name)
+        if self == DataType.FLOAT16:
+            return tensorrt.DataType.HALF
+
+        return getattr(tensorrt.DataType, self.name)
