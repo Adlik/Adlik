@@ -18,12 +18,33 @@ from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOu
 
 class ConfigTestCase(TestCase):
     def test_from_json(self):
-        self.assertEqual(Config.from_json({'max_batch_size': 7}),
-                         Config(max_batch_size=7))
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=False, enable_strict_types=False),
+                         Config.from_json({'max_batch_size': 7}))
+
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=False, enable_strict_types=False),
+                         Config.from_json({'max_batch_size': 7, 'enable_fp16': False}))
+
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=True, enable_strict_types=False),
+                         Config.from_json({'max_batch_size': 7, 'enable_fp16': True}))
+
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=False, enable_strict_types=True),
+                         Config.from_json({'max_batch_size': 7, 'enable_strict_types': True}))
 
     def test_from_env(self):
-        self.assertEqual(Config.from_env({'MAX_BATCH_SIZE': '7'}),
-                         Config(max_batch_size=7))
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=False, enable_strict_types=False),
+                         Config.from_env({'MAX_BATCH_SIZE': '7'}))
+
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=False, enable_strict_types=False),
+                         Config.from_env({'MAX_BATCH_SIZE': '7', 'ENABLE_FP16': '0'}))
+
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=True, enable_strict_types=False),
+                         Config.from_env({'MAX_BATCH_SIZE': '7', 'ENABLE_FP16': '1'}))
+
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=False, enable_strict_types=False),
+                         Config.from_env({'MAX_BATCH_SIZE': '7', 'ENABLE_STRICT_TYPES': '0'}))
+
+        self.assertEqual(Config(max_batch_size=7, enable_fp16=False, enable_strict_types=True),
+                         Config.from_env({'MAX_BATCH_SIZE': '7', 'ENABLE_STRICT_TYPES': '1'}))
 
 
 def _make_onnx_model(func, batch_size_1, batch_size_2):
@@ -68,3 +89,27 @@ class CompileSourceTestCase(TestCase):
             compiler.compile_source(source=onnx_model, config=Config(max_batch_size=4))
 
         self.assertEqual(error.exception.args, ('Inconsistent batch size specification.',))
+
+    def test_compile_fp16(self):
+        def _build_model(input_x, input_y, session):
+            weight = tf.Variable(initial_value=0.0, dtype=tf.float32, name='w')
+
+            session.run(weight.initializer)
+
+            return tf.multiply(weight, input_x + input_y, name='z')
+
+        for batch_size in [3, None]:
+            onnx_model = _make_onnx_model(func=_build_model, batch_size_1=batch_size, batch_size_2=batch_size)
+
+            compiled = compiler.compile_source(source=onnx_model,
+                                               config=Config(max_batch_size=4,
+                                                             enable_fp16=True,
+                                                             enable_strict_types=True))
+
+            self.assertEqual(compiled.get_inputs(),
+                             [ModelInput(name='x:0', data_type=TfDataType.DT_FLOAT, format=None, dims=[4]),
+                              ModelInput(name='y:0', data_type=TfDataType.DT_FLOAT, format=None, dims=[4])])
+
+            self.assertEqual(compiled.input_data_formats, [None, None])
+            self.assertEqual(compiled.get_outputs(), [ModelOutput(name='z:0', data_type=TfDataType.DT_FLOAT, dims=[4])])
+            self.assertIsInstance(compiled.cuda_engine, ICudaEngine)

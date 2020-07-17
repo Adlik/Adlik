@@ -3,7 +3,7 @@
 
 from typing import Any, Mapping, NamedTuple
 
-from tensorrt import Builder, Logger, NetworkDefinitionCreationFlag, OnnxParser
+from tensorrt import Builder, BuilderFlag, Logger, NetworkDefinitionCreationFlag, OnnxParser
 
 from . import repository
 from ..models.irs.onnx_model import OnnxModel
@@ -12,14 +12,20 @@ from ..models.targets.tensorrt_model import TensorRTModel
 
 class Config(NamedTuple):
     max_batch_size: int
+    enable_fp16: bool = False
+    enable_strict_types: bool = False
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
-        return Config(value['max_batch_size'])
+        return Config(max_batch_size=value['max_batch_size'],
+                      enable_fp16=value.get('enable_fp16', False),
+                      enable_strict_types=value.get('enable_strict_types', False))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        return Config(int(env['MAX_BATCH_SIZE']))
+        return Config(max_batch_size=int(env['MAX_BATCH_SIZE']),
+                      enable_fp16=bool(int(env.get('ENABLE_FP16', '0'))),
+                      enable_strict_types=bool(int(env.get('ENABLE_STRICT_TYPES', '0'))))
 
 
 @repository.REPOSITORY.register(source_type=OnnxModel, target_type=TensorRTModel, config_type=Config)
@@ -57,6 +63,12 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
                                                max=[config.max_batch_size, *shape])
 
             builder_config.add_optimization_profile(optimization_profile)
+
+        if config.enable_fp16:
+            builder_config.set_flag(BuilderFlag.FP16)
+
+        if config.enable_strict_types:
+            builder_config.set_flag(BuilderFlag.STRICT_TYPES)
 
         cuda_engine = builder.build_engine(network, builder_config)
 
