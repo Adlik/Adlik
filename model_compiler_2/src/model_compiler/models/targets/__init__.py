@@ -3,7 +3,7 @@
 
 from types import ModuleType
 
-from . import saved_model
+from . import saved_model, tflite_model
 
 try:
     from . import tensorrt_model
@@ -12,5 +12,6 @@ except ImportError:  # pragma: no cover
 
 __all__ = [
     'saved_model',
-    'tensorrt_model'
+    'tensorrt_model',
+    'tflite_model'
 ]
