@@ -13,9 +13,10 @@ from ..models.targets.tflite_model import TfLiteModel
 def compile_source(source: SavedModel) -> TfLiteModel:
     with TemporaryDirectory() as directory:
         source.save(directory)
-        with source.session.as_default():
-            converter = tf.lite.TFLiteConverter.from_saved_model(directory)
-    tflite_model = converter.convert()
 
+        converter = tf.lite.TFLiteConverter.from_saved_model(directory)
+
+    tflite_model = converter.convert()
     input_formats = [model_input.data_format for model_input in source.inputs]
+
     return TfLiteModel(tflite_model, input_formats)

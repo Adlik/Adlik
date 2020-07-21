@@ -21,5 +21,4 @@ __all__ = [
     'tf_model_file_to_tf_model',
     'tf_model_to_saved_model',
     'tf_model_to_tf_frozen_graph_model',
-
 ]
