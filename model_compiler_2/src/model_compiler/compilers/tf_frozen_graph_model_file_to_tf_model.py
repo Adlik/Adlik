@@ -9,18 +9,6 @@ from ..models.irs.tf_model import TensorFlowModel, Input, DataFormat
 from ..models.sources.tf_frozen_graph_file import FrozenGraphFile
 
 
-def _get_data_format_type(model_input_format):
-    return DataFormat.CHANNELS_FIRST if model_input_format == 'channels_first' else DataFormat.CHANNELS_LAST
-
-
-def _get_data_formats(input_formats):
-    if input_formats:
-        data_formats = [utilities.map_optional(input_format, _get_data_format_type) for input_format in input_formats]
-    else:
-        data_formats = []
-    return data_formats
-
-
 class Config(NamedTuple):
     input_names: Optional[Sequence[str]]
     data_formats: Sequence[Optional[DataFormat]]
@@ -29,7 +17,7 @@ class Config(NamedTuple):
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
         return Config(input_names=value.get('input_names'),
-                      data_formats=_get_data_formats(value.get('input_formats')),
+                      data_formats=utilities.get_data_formats(value.get('input_formats')),
                       output_names=value.get('output_names'))
 
     @staticmethod
@@ -38,7 +26,7 @@ class Config(NamedTuple):
             return utilities.map_optional(env.get(value), lambda val: val.split(','))
 
         return Config(input_names=_get_information('INPUT_NAMES'),
-                      data_formats=_get_data_formats(_get_information('INPUT_FORMATS')),
+                      data_formats=utilities.get_data_formats(_get_information('INPUT_FORMATS')),
                       output_names=_get_information('OUTPUT_NAMES'))
 
     def get_input_tensors_from_graph(self, graph):

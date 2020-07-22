@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Callable, Optional, TypeVar
+from .models.data_format import DataFormat
 
 _Type1 = TypeVar('_Type1')
 _Type2 = TypeVar('_Type2')
@@ -21,3 +22,14 @@ def get_tensor_by_fuzzy_name(graph, name):
         tensor = graph.get_operation_by_name(name).outputs[0]
 
     return tensor
+
+
+def get_data_formats(input_formats):
+    def _get_data_format_type(model_input_format):
+        return DataFormat.CHANNELS_FIRST if model_input_format == 'channels_first' else DataFormat.CHANNELS_LAST
+
+    if input_formats:
+        data_formats = [map_optional(input_format, _get_data_format_type) for input_format in input_formats]
+    else:
+        data_formats = []
+    return data_formats
