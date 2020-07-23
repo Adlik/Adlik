@@ -49,7 +49,7 @@ class CompileSourceTestCase(TestCase):
 
             config = Config.from_json({'input_names': ['x:0', 'y:0'],
                                        'output_names': ['z:0'],
-                                       'input_formats': ['channels_first']})
+                                       'input_formats': ['channels_first', '']})
 
             compiled = compiler.compile_source(TfModelFile(model_path=model_path), config)
 
@@ -69,7 +69,7 @@ class CompileSourceTestCase(TestCase):
 
             config = Config.from_json({'input_names': ['x:0', 'y:0'],
                                        'output_names': ['z:0'],
-                                       'input_formats': ['']})
+                                       'input_formats': []})
 
             compiled = compiler.compile_source(TfModelFile(model_path=model_path), config)
 

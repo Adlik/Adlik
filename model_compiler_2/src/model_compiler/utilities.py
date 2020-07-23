@@ -12,3 +12,12 @@ def map_optional(value: Optional[_Type1], func: Callable[[_Type1], _Type2]) -> O
         return None
 
     return func(value)
+
+
+def get_tensor_by_fuzzy_name(graph, name):
+    if ':' in name:
+        tensor = graph.get_tensor_by_name(name)
+    else:
+        tensor = graph.get_operation_by_name(name).outputs[0]
+
+    return tensor
