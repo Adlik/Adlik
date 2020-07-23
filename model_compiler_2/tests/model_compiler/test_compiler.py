@@ -102,14 +102,14 @@ class CompileFromEnvTestCase(TestCase):
         with NamedTemporaryFile(suffix='.h5') as model_file, TemporaryDirectory() as target_dir:
             _save_model(path=model_file.name)
 
-            with _use_env({'serving_type': 'tf',
-                           'model_name': 'foobar',
-                           'version': '4',
-                           'max_batch_size': '7',
-                           'h5_path': model_file.name,
-                           'input_signatures': 'x',
-                           'output_signatures': 'y',
-                           'export_path': target_dir}):
+            with _use_env({'SERVING_TYPE': 'tf',
+                           'MODEL_NAME': 'foobar',
+                           'VERSION': '4',
+                           'MAX_BATCH_SIZE': '7',
+                           'H5_PATH': model_file.name,
+                           'INPUT_SIGNATURES': 'x',
+                           'OUTPUT_SIGNATURES': 'y',
+                           'EXPORT_PATH': target_dir}):
                 compiler.compile_from_env()
 
             self.assertEqual(sorted(os.listdir(target_dir)), ['foobar', 'foobar_4.zip'])

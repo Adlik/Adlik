@@ -35,7 +35,7 @@ def _parse_arguments():
     args_parser.add_argument("-sj", "--serving-json", type=str, default="serving_model.json", help="The json of model")
     args_parser.add_argument("-cis", "--client-inference-script", type=str, required=True, help="The inference script")
     args_parser.add_argument("-i", "--image-filename", type=str, required=True, nargs="?", help="Input image.")
-    args_parser.add_argument("-gl", "--gpu-label", type=int, default=None, help="The GPU label")
+    args_parser.add_argument("-gl", "--gpu-label", type=str, default=None, help="The GPU label")
     args_parser.add_argument("-cs", "--compile-script", type=str, default="compile_script.sh",
                              help="Compile the model script")
     return args_parser.parse_args()
@@ -51,7 +51,8 @@ def _get_result(log_path, model_name):
 
 
 def _docker_build_command(args):
-    build_arg = ['--build-arg', f'SERVING_SCRIPT={args.serving_script}',
+    build_arg = ['--build-arg', f'MODEL_NAME={args.model_name}',
+                 '--build-arg', f'SERVING_SCRIPT={args.serving_script}',
                  '--build-arg', f'CLIENT_SCRIPT={args.client_script}',
                  '--build-arg', f'TEST_MODEL_PATH={args.test_model_path}',
                  '--build-arg', f'SERVING_JSON={args.serving_json}',

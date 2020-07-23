@@ -13,7 +13,7 @@ from tensorrt import Builder, DataType, ElementWiseOperation, Logger, Weights
 
 import model_compiler.compilers.repository as compiler_repository
 from model_compiler.models.irs.tf_model import Input as TfInput, TensorFlowModel
-from model_compiler.models.targets.tensorrt_model import Input, TensorRTModel
+from model_compiler.models.targets.tensorrt_model import TensorRTModel
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
@@ -54,9 +54,7 @@ def _make_implicit_batch_size_tensorrt_model() -> TensorRTModel:
 
         network.mark_output(tensor=output_z)
 
-        return TensorRTModel(inputs=[Input(name='x'), Input(name='y')],
-                             outputs='z',
-                             cuda_engine=builder.build_cuda_engine(network))
+        return TensorRTModel(cuda_engine=builder.build_cuda_engine(network), input_data_formats=[None, None])
 
 
 @pytest.mark.gpu_test

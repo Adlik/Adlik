@@ -28,7 +28,7 @@ void transformContainerWithStaticCast(const C& container, I target) {
 namespace itertools {
 template <class I, class F>
 class MapIterator {
-  static_assert(std::is_lvalue_reference<F>::value);
+  static_assert(std::is_lvalue_reference<F>::value, "");
 
   using MappedType = decltype(std::declval<F>()(*std::declval<I>()));
   using BaseCategory = typename std::iterator_traits<I>::iterator_category;

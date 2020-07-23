@@ -18,7 +18,7 @@ class KerasModelFile(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'KerasModelFile':
-        return KerasModelFile(model_path=env['h5_path'], script_path=env.get('script_path'))
+        return KerasModelFile(model_path=env['H5_PATH'], script_path=env.get('SCRIPT_PATH'))
 
     @staticmethod
     def accepts_json(value: Mapping[str, Any]) -> bool:
@@ -28,6 +28,6 @@ class KerasModelFile(NamedTuple):
 
     @staticmethod
     def accepts_env(env: Mapping[str, str]) -> bool:
-        input_model = env.get('h5_path')
+        input_model = env.get('H5_PATH')
 
         return isinstance(input_model, str) and path.isfile(input_model)

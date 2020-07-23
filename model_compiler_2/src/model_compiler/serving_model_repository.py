@@ -38,14 +38,14 @@ class Config(NamedTuple):
         platform, platform_version = target_model.get_platform()
 
         return Config(model=target_model,
-                      model_config=ModelConfigProto(name=env['model_name'],
+                      model_config=ModelConfigProto(name=env['MODEL_NAME'],
                                                     platform=platform,
                                                     platform_version=platform_version,
-                                                    max_batch_size=int(env['max_batch_size']),
+                                                    max_batch_size=int(env['MAX_BATCH_SIZE']),
                                                     input=target_model.get_inputs(),
                                                     output=target_model.get_outputs()),
-                      path=env['export_path'],
-                      version=utilities.map_optional(env.get('version'), int))
+                      path=env['EXPORT_PATH'],
+                      version=utilities.map_optional(env.get('VERSION'), int))
 
 
 def _get_next_version(model_dir):
