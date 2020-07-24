@@ -22,3 +22,11 @@ def as_model_config_data_format(data_format: Optional[DataFormat]):
         result = ModelInput.FORMAT_NHWC  # pylint: disable=no-member
 
     return result
+
+
+def str_to_data_format(input_str: Optional[str]) -> Optional[DataFormat]:
+    if input_str == 'channels_first':
+        return DataFormat.CHANNELS_FIRST
+    if input_str == 'channels_last':
+        return DataFormat.CHANNELS_LAST
+    return None

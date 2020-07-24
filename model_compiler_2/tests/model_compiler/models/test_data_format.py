@@ -20,3 +20,15 @@ class AsModelConfigDataFormatTestCase(TestCase):
     def test_channels_last(self):
         self.assertEqual(data_format.as_model_config_data_format(DataFormat.CHANNELS_LAST),
                          ModelInput.FORMAT_NHWC)  # pylint: disable=no-member
+
+    def test_channels_first_str(self):
+        self.assertEqual(data_format.str_to_data_format('channels_first'),
+                         DataFormat.CHANNELS_FIRST)
+
+    def test_channels_last_str(self):
+        self.assertEqual(data_format.str_to_data_format('channels_last'),
+                         DataFormat.CHANNELS_LAST)
+
+    def test_channels_none_str(self):
+        self.assertEqual(data_format.str_to_data_format(None),
+                         None)
