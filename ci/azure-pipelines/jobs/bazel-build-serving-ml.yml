@@ -7,6 +7,8 @@ jobs:
     steps:
       - task: UsePythonVersion@0
         displayName: Use latest Python
+      - script: pip install -U numpy
+        displayName: Install additional dependencies
       - template: ../steps/use-build-cache.yml
         parameters:
             key: bazel-build-serving-ml
