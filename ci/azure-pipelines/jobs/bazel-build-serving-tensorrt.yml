@@ -15,12 +15,12 @@ jobs:
             key: bazel-build-serving-tensorrt
             path: $(BAZEL_BUILD_CACHE)
       - script: |
-            env TF_CUDA_VERSION=10.2 \
+            env TF_CUDA_VERSION=11.0 \
                 ci/checks/bazel-build-serving.py \
                     --config=tensorrt \
                     -c opt \
                     --disk_cache="$BAZEL_BUILD_CACHE" \
-                    --action_env=LIBRARY_PATH=/usr/local/cuda-10.2/lib64/stubs \
+                    --action_env=LIBRARY_PATH=/usr/local/cuda-11.0/lib64/stubs \
                     --incompatible_use_specific_tool_files=false
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
