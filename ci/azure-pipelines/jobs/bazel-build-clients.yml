@@ -6,7 +6,7 @@ jobs:
     steps:
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: pip install -U wheel
+      - script: pip install -U numpy wheel
         displayName: Install additional dependencies
       - template: ../steps/use-build-cache.yml
         parameters:

@@ -4,7 +4,6 @@ build --cxxopt=-std=c++14
 build --host_cxxopt=-std=c++14
 
 build --define=grpc_no_ares=true
-build --action_env=PYTHON_BIN_PATH=python3
 
 # OpenVINO.
 

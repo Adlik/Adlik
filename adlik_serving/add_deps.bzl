@@ -26,6 +26,26 @@ def add_all_deps():
         urls = ["https://github.com/bazelbuild/rules_cc/archive/34ca16f4aa4bf2a5d3e4747229202d6cb630ebab.tar.gz"],
     )
 
+    # Bazel extra actions proto file.
+
+    http_file(
+        name = "bazel_extra_actions_base_proto",
+        sha256 = "0d91fe29a80d2754f13e379713da37750c42425d92ef7de77f60acdb82479edc",
+        urls = ["https://github.com/bazelbuild/bazel/raw/3.4.1/src/main/protobuf/extra_actions_base.proto"],
+    )
+
+    # TensorFlow
+
+    http_archive(
+        name = "org_tensorflow",
+        sha256 = "a474d4328524de1951655cd6afb4888d256c37a0b4a47e6c623b353ab382b39f",
+        strip_prefix = "tensorflow-b36436b087bd8e8701ef51718179037cccdfc26e",
+        urls = [
+            "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/b36436b087bd8e8701ef51718179037cccdfc26e.tar.gz",
+            "https://github.com/tensorflow/tensorflow/archive/b36436b087bd8e8701ef51718179037cccdfc26e.tar.gz",
+        ],
+    )
+
     http_archive(
         name = "io_bazel_rules_closure",
         sha256 = "5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
@@ -33,26 +53,6 @@ def add_all_deps():
         urls = [
             "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
             "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
-        ],
-    )
-
-    # Bazel extra actions proto file.
-
-    http_file(
-        name = "bazel_extra_actions_base_proto",
-        sha256 = "0d91fe29a80d2754f13e379713da37750c42425d92ef7de77f60acdb82479edc",
-        urls = ["https://github.com/bazelbuild/bazel/raw/3.2.0/src/main/protobuf/extra_actions_base.proto"],
-    )
-
-    # TensorFlow
-
-    http_archive(
-        name = "org_tensorflow",
-        sha256 = "b3d7829fac84e3a26264d84057367730b6b85b495a0fce15929568f4b55dc144",
-        strip_prefix = "tensorflow-2b96f3662bd776e277f86997659e61046b56c315",
-        urls = [
-            "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/2b96f3662bd776e277f86997659e61046b56c315.tar.gz",
-            "https://github.com/tensorflow/tensorflow/archive/2b96f3662bd776e277f86997659e61046b56c315.tar.gz",
         ],
     )
 

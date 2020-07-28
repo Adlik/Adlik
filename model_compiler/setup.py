@@ -12,11 +12,11 @@ from setuptools import find_packages, setup
 _VERSION = '0.0.0'
 
 _REQUIRED_PACKAGES = [
-    'keras==2.3.1',
+    'keras==2.4.0',
     'onnx==1.5.0',
     'torch==1.4.0',
     'requests',
-    'tensorflow==2.2.0',
+    'tensorflow==2.3.0',
     'jsonschema==3.2.0',
 ]
 

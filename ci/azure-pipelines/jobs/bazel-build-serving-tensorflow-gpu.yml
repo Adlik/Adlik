@@ -8,14 +8,14 @@ jobs:
       - template: ../steps/install-cuda.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: pip install -U six
+      - script: pip install -U numpy six
         displayName: Install additional dependencies
       # - template: ../steps/use-build-cache.yml
       #   parameters:
       #       key: bazel-build-serving-tensorflow-gpu
       #       path: $(BAZEL_BUILD_CACHE)
       - script: |
-            env TF_CUDA_VERSION=10.2 \
+            env TF_CUDA_VERSION=11.0 \
                 ci/checks/bazel-build-serving.py \
                     --config=tensorflow-gpu \
                     -c opt \

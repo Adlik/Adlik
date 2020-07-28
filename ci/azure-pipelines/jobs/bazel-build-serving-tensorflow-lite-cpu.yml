@@ -14,7 +14,7 @@ jobs:
       - template: ../steps/install-automake.yml
       - task: UsePythonVersion@0
         displayName: Use latest Python
-      - script: pip install -U six
+      - script: pip install -U numpy six
         displayName: Install additional dependencies
       - template: ../steps/use-build-cache.yml
         parameters:
