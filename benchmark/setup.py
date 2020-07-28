@@ -16,7 +16,7 @@ _REQUIRED_PACKAGES = [
     'onnx==1.5.0',
     'torch==1.4.0',
     'requests',
-    'tensorflow==2.2.0',
+    'tensorflow==2.3.0',
     'jsonschema==3.2.0'
 ]
 
