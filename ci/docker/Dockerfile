@@ -63,5 +63,5 @@ RUN . /etc/os-release && \
 RUN apt-mark hold libcudnn8 libcudnn8-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
 
 RUN python3 -c 'import shutil, sys, urllib.request; shutil.copyfileobj(urllib.request.urlopen(sys.argv[1]), sys.stdout.buffer)' \
-        https://github.com/bazelbuild/buildtools/releases/download/3.3.0/buildifier > /usr/local/bin/buildifier && \
+        https://github.com/bazelbuild/buildtools/releases/download/3.4.0/buildifier > /usr/local/bin/buildifier && \
     chmod +x /usr/local/bin/buildifier
