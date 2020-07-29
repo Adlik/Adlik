@@ -9,6 +9,7 @@ import tensorflow as tf
 
 from model_compiler.models.targets.openvino_model import OpenvinoModel
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
+from model_compiler.openvino_util import convert, OptParams
 
 
 def _save_frozen_graph_model(model_file):
@@ -17,20 +18,27 @@ def _save_frozen_graph_model(model_file):
         input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 3, 4], name='y')
         weight = tf.Variable(initial_value=4.2, dtype=tf.float32)
         tf.multiply(input_x + input_y, weight, name='z')
-
         session.run(weight.initializer)
-
         constant_graph = tf.compat.v1.graph_util.convert_variables_to_constants(session, session.graph_def, ['z'])
+        print(constant_graph)
 
     with open(model_file.name, mode='wb') as graph_file:
         graph_file.write(constant_graph.SerializeToString())
 
 
 def _make_openvino_model(pb_model_file):
+    temp_path = TemporaryDirectory()
+    convert(OptParams(source_path=pb_model_file.name,
+                      target_path=temp_path.name,
+                      max_batch_size=1,
+                      inputs=[ModelInput(name='x', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4]),
+                              ModelInput(name='y', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4])],
+                      outputs=[ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[3, 4])]),
+            'mo_tf.py')
     return OpenvinoModel([ModelInput(name='x', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4]),
                           ModelInput(name='y', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4])],
                          [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[3, 4])],
-                         pb_model_file.name, 1)
+                         temp_path)
 
 
 class FrozenGraphFileTestCase(TestCase):
@@ -57,4 +65,5 @@ class FrozenGraphFileTestCase(TestCase):
             self.assertEqual(sorted(os.listdir(save_path)), ['model.bin', 'model.mapping', 'model.xml'])
 
     def test_get_platform(self):
-        self.assertEqual(OpenvinoModel.get_platform(), ('openvino', '2020.4.0-359-21e092122f4-releases/2020/4'))
+        self.assertEqual(OpenvinoModel.get_platform()[0], 'openvino')
+        self.assertNotEqual(OpenvinoModel.get_platform()[1], '')

@@ -1,7 +1,8 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Callable, Optional, TypeVar, List
+from typing import Callable, List, Optional, TypeVar
+
 from .models.data_format import DataFormat
 
 _Type1 = TypeVar('_Type1')
@@ -34,6 +35,6 @@ def get_data_formats(input_formats):
         data_formats = []
     return data_formats
 
+
 def split_by_comma(value: Optional[str]) -> Optional[List[str]]:
     return map_optional(value, lambda val: val.split(','))
-
