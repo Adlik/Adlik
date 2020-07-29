@@ -29,19 +29,19 @@ The parameters of the automatic test framework are as follows:
 If you want to use the automatic_test.py test the runtime, you need to follow the steps below:
 
 1. Download Adlik code.
-2. Install docker.
-3. Prepare the serving_model.json (required for compile model) trained model, the format of the model file can be: .pb,
+2. Prepare the serving_model.json (required for compiling model) trained model, the format of the model file can be: .pb,
 .h5, .ckpt, .onnx, savedModel, and it is recommended to put the model and serving_model.json under the
-Adlik/benchmark/test/test_model directory.
-4. The writing of serving_model.json can refer to the serving_model.json of each model in
-Adlki/benchmark/tests/test_model and Adlik/model_compiler/src/model_compiler/config_schema.json.
-5. If there is no required inference code in the Adlik/benchmark/test/client directory of the benchmark, you need to
-write the inference code
+Adlik/benchmark/tests/test_model directory.
+3. The writing of serving_model.json can refer to the serving_model.json of each model in
+Adlik/benchmark/tests/test_model and Adlik/model_compiler/src/model_compiler/config_schema.json.
+4. The absolute paths of "export_path" in serving_model.json and "--model_base_path" in serving_script.sh need to be consistent.
+5. If there is no required inference code in the Adlik/benchmark/tests/client directory of the benchmark, you need to
+write the inference code.
 6. Specify the type of test runtime and version number (if needed, eg: OpenVINO and TensorRT).
 7. Explicitly test whether a GPU is required.
 8. The environment running the code has python3.7 or above installed.
 9. According to the runtime type of the test, select the dockerfile, serving script and compile script required by the
-test under the Adlik/benchmark/test directory
+test under the Adlik/benchmark/tests directory.
 10. Configure parameters for testing, for example, run the follow command in the Adlik directory:
 
 ```sh
