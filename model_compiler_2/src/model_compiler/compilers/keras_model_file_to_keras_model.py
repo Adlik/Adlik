@@ -42,6 +42,7 @@ def compile_source(source: KerasModelFile) -> KerasModel:
             custom_objects = None
 
         with tf.compat.v1.Session().as_default() as session:
+            keras.backend.set_learning_phase(0)
             model = keras.models.load_model(source.model_path, custom_objects=custom_objects, compile=False)
 
     return KerasModel(model=model, session=session)

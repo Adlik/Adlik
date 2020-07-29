@@ -23,8 +23,7 @@ class TfLiteModel(NamedTuple):
                            data_type=tf.as_dtype(model_input['dtype']).as_datatype_enum,
                            format=data_format.as_model_config_data_format(input_format),
                            dims=[-1 if dim is None else dim for dim in model_input['shape'][1:]])
-                for input_format in self.input_formats
-                for model_input in self._get_interpreter().get_input_details()]
+                for model_input, input_format in zip(self._get_interpreter().get_input_details(), self.input_formats)]
 
     def get_outputs(self) -> Sequence[ModelOutput]:
         return [ModelOutput(name=model_output['name'],
