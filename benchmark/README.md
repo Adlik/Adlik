@@ -1,6 +1,6 @@
 # About the benchmark
 
-The benchmark is used to test the adlik serving performance of different models.
+The benchmark is used to test the Adlik serving performance of different models.
 
 ## Test the runtime performance
 
@@ -63,3 +63,95 @@ source that can be used, and add the configuration command to the Dockerfile.
 --distdir command.
 4. To prevent the computer from occupying too many cores when bazel build, causing jams. During bazel build, you can
 also use --jobs to set concurrent jobs.
+
+## Inference performance of Adlik
+
+At present, the inference performance test results of Adlik serving engine on different models include: the test result
+of the MNIST model, the test result of the ResNet50 model, and the test result of the InceptionV3 model.The CPU and GPU
+parameters used in the test are as follows:
+
+|     |                   type                    | number |
+| --- | :---------------------------------------: | :----: |
+| CPU | Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz |   1    |
+| GPU |           Tesla V100 SXM2 32GB            |   1    |
+
+### The test result of the MNIST model
+
+#### The test result of MNIST model in Keras format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| TF Serving1.14 `CPU` |            2200.372            |                2291.584                |             1.81E-05              |
+| TF Serving2.1  `CPU` |            2003.901            |                2077.644                |             1.77E-05              |
+| OpenVINO       `CPU` |            2647.344            |                2788.087                |             1.90E-05              |
+| TFLite         `CPU` |            778.890             |                790.150                 |             1.82E-05              |
+| TF Serving1.14 `GPU` |           19414.208            |               52247.525                |             3.24E-05              |
+| TF Serving2.1  `GPU` |           19395.129            |               53640.456                |             3.29E-05              |
+| TensorRT       `GPU` |           37342.687            |               163058.592               |             2.06E-05              |
+
+#### The test result of MNIST model in Tensorflow format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| TF Serving1.14 `CPU` |            1486.878            |                1531.337                |             1.95E-05              |
+| TF Serving2.1  `CPU` |            2160.331            |                2248.311                |             1.81E-05              |
+| TFLite         `CPU` |            3114.246            |                3250.399                |             1.34E-05              |
+| TF Serving1.14 `GPU` |           19043.582            |               51448.587                |             3.31E-05              |
+| TF Serving2.1  `GPU` |           19244.343            |               50705.164                |             3.22E-05              |
+
+#### The test result of MNIST model in Pytorch format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| OpenVINO       `CPU` |            9053.677            |               10226.869                |             1.27E-05              |
+| TensorRT       `GPU` |           46318.234            |               249302.706               |             1.76E-05              |
+
+>Note
+>
+>>i. The "CPU" or "GPU" listed in the first column of the table represents the different runtime environments used in
+>the service engine test.
+>>
+>>ii. The test result is taken from the batch inference calculation result with the batch size of 128.
+>>
+>>iii. The test model of TensorFlow Lite is an unquantified model, and the number of threads is set to 1 during testing.
+
+### The test result of the ResNet50 model
+
+#### The test result of ResNet50 model in Keras format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| TF Serving1.14 `CPU` |             3.599              |                 3.640                  |              0.00311              |
+| TF Serving2.1  `CPU` |             6.183              |                 6.301                  |              0.00302              |
+| OpenVINO       `CPU` |             9.359              |                 9.642                  |              0.00313              |
+| TFLite         `CPU` |             2.838              |                 2.862                  |              0.00298              |
+| TF Serving1.14 `GPU` |            175.423             |                433.627                 |              0.00339              |
+| TF Serving2.1  `GPU` |            170.680             |                420.814                 |              0.00348              |
+| TensorRT       `GPU` |            237.176             |                1402.338                |              0.00350              |
+
+#### The test result of ResNet50 model in Tensorflow format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| TF Serving1.14 `CPU` |             3.669              |                 3.711                  |              0.00305              |
+| TF Serving2.1  `CPU` |             6.554              |                 6.684                  |              0.00298              |
+| TFLite         `CPU` |             2.870              |                 2.895                  |              0.00296              |
+| TF Serving1.14 `GPU` |            181.118             |                454.013                 |              0.00331              |
+| TF Serving2.1  `GPU` |            176.710             |                473.091                 |              0.00354              |
+
+#### The test result of ResNet50 model in Pytorch format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| OpenVINO       `CPU` |             9.274              |                 9.552                  |              0.00313              |
+| TensorRT       `GPU` |            238.244             |                1332.449                |              0.00344              |
+
+### The test result of the InceptionV3 model
+
+#### The test result of InceptionV3 model in Keras format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| TF Serving2.1  `CPU` |             4.622              |                 4.752                  |              0.00589              |
+| TF Serving2.2  `CPU` |             3.752              |                 3.854                  |              0.00704              |
+| TF Serving2.1  `GPU` |            107.667             |                291.931                 |              0.00586              |
