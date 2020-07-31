@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Any, Mapping, NamedTuple, Optional, Sequence
+
 import tensorflow as tf
+
 from . import repository
 from .. import utilities
-from ..models.irs.tf_model import TensorFlowModel, Input, DataFormat
+from ..models.irs.tf_model import DataFormat, Input, TensorFlowModel
 from ..models.sources.tf_frozen_graph_file import FrozenGraphFile
 
 

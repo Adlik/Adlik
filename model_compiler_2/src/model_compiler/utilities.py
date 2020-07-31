@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Callable, Optional, TypeVar
+
 from .models.data_format import DataFormat
 
 _Type1 = TypeVar('_Type1')

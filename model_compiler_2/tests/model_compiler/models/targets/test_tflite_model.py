@@ -4,8 +4,10 @@
 import os
 from tempfile import TemporaryDirectory
 from unittest import TestCase
+
 import tensorflow as tf
-from model_compiler.models.targets.tflite_model import TfLiteModel, DataFormat
+
+from model_compiler.models.targets.tflite_model import DataFormat, TfLiteModel
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 

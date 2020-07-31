@@ -1,14 +1,16 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Any, Mapping, NamedTuple, Sequence, Optional
+from typing import Any, Mapping, NamedTuple, Optional, Sequence
+
 import onnx
 import onnx.utils
+
 from . import repository
 from .. import utilities
-from ..models.sources.onnx_model_file import ONNXModelFile
-from ..models.irs.onnx_model import OnnxModel
 from ..models.data_format import DataFormat
+from ..models.irs.onnx_model import OnnxModel
+from ..models.sources.onnx_model_file import ONNXModelFile
 
 
 class Config(NamedTuple):
