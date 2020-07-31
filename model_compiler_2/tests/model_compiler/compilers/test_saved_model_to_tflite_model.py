@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from unittest import TestCase
+
 import tensorflow as tf
 
-from model_compiler.models.targets.saved_model import Input, Output, SavedModel, DataFormat
 import model_compiler.compilers.saved_model_to_tflite_model as compiler
+from model_compiler.models.targets.saved_model import DataFormat, Input, Output, SavedModel
 
 
 def _make_saved_model() -> SavedModel:

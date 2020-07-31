@@ -1,10 +1,11 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+import os
 from typing import NamedTuple, Optional, Sequence, Tuple
 
-import os
 import tensorflow as tf
+
 from .. import data_format, repository
 from ..data_format import DataFormat
 from ...protos.generated.model_config_pb2 import ModelInput, ModelOutput
