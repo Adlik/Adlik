@@ -1,16 +1,12 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Any, List, Mapping, NamedTuple, Optional, Sequence
+from typing import Any, Mapping, NamedTuple, Optional, Sequence
 
 from . import repository
 from .. import utilities
 from ..models.irs.tf_model import TensorFlowModel
 from ..models.targets.saved_model import Input, Output, SavedModel
-
-
-def _split_by_comma(value: Optional[str]) -> Optional[List[str]]:
-    return utilities.map_optional(value, lambda val: val.split(','))
 
 
 class Config(NamedTuple):
@@ -23,8 +19,8 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        return Config(input_signature=_split_by_comma(env.get('INPUT_SIGNATURES')),
-                      output_signature=_split_by_comma(env.get('OUTPUT_SIGNATURES')))
+        return Config(input_signature=utilities.split_by(env.get('INPUT_SIGNATURES'), ','),
+                      output_signature=utilities.split_by(env.get('OUTPUT_SIGNATURES'), ','))
 
 
 @repository.REPOSITORY.register(source_type=TensorFlowModel, target_type=SavedModel, config_type=Config)

@@ -34,10 +34,6 @@ def _get_node_specs(values: Optional[Iterable[str]]):
     return utilities.map_optional(values, lambda value: list(map(NodeSpec.from_str, value)))
 
 
-def _split_by_comma(value: Optional[str]):
-    return utilities.map_optional(value, lambda val: list(map(NodeSpec.from_str, val.split(','))))
-
-
 class Config(NamedTuple):
     input_nodes: Optional[Sequence[NodeSpec]] = None
     output_nodes: Optional[Sequence[NodeSpec]] = None
@@ -49,8 +45,8 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        return Config(input_nodes=_split_by_comma(env.get('INPUT_LAYER_NAMES')),
-                      output_nodes=_split_by_comma(env.get('OUTPUT_LAYER_NAMES')))
+        return Config(input_nodes=_get_node_specs(utilities.split_by(env.get('INPUT_LAYER_NAMES'), ',')),
+                      output_nodes=_get_node_specs(utilities.split_by(env.get('OUTPUT_LAYER_NAMES'), ',')))
 
 
 def _iterate_tensors(tensors: Union[tf.Tensor, Iterable[tf.Tensor]]):
