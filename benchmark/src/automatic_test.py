@@ -15,7 +15,7 @@ def _parse_arguments():
     args_parser.add_argument("-d", "--docker-file-path", type=str, required=True,
                              help="The docker file path of the test serving type")
     args_parser.add_argument("-s", "--serving-type", type=str, required=True, help="The test serving type",
-                             choices=("openvino", "tensorrt", "tensorflow", "tensorflow_gpu"))
+                             choices=("openvino", "tensorrt", "tensorflow", "tensorflow_gpu", "tensorflow_lite"))
     args_parser.add_argument("-b", "--build-directory", type=str, required=True,
                              help="The directory which to build the docker")
     args_parser.add_argument("-a", "--adlik-directory", type=str, default="Adlik", help="The adlik directory")

@@ -46,15 +46,22 @@ RUN . /etc/os-release && \
         python \
         python3-setuptools \
         python3-wheel \
-        python3.7-dev \
+        python3.6-dev \
         python3-six \
-        python3-pip && \
+        python3-pip \
+        protobuf-compiler && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
 WORKDIR /home/john
 
 RUN bazel version
+
+RUN pip3 install numpy
+
+RUN cd /usr/bin &&\
+    rm python &&\
+    ln -s python3.6 python
 
 RUN cd /home/john/Adlik &&\
     bazel build //adlik_serving/clients/python:build_pip_package -c opt &&\
@@ -64,7 +71,7 @@ RUN cd /home/john/Adlik &&\
         -c opt &&\
     pip3 install --upgrade pip &&\
     pip3 install /tmp/pip-packages/adlik_serving_api-0.0.0-py2.py3-none-any.whl &&\
-    cd /home/john/Adlik/model_compiler &&\
+    cd /home/john/Adlik/model_compiler_2 &&\
     pip3 install . &&\
     pip3 install -U pillow
 
