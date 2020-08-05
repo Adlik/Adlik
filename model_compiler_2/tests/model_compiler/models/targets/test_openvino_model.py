@@ -8,7 +8,7 @@ from unittest import TestCase
 import tensorflow as tf
 
 from model_compiler.models.targets.openvino_model import OpenvinoModel
-from model_compiler.openvino_util import OptParams, convert
+from model_compiler.openvino_util import execute_optimize_action
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
@@ -26,15 +26,25 @@ def _save_frozen_graph_model(model_file):
         graph_file.write(constant_graph.SerializeToString())
 
 
+def _get_optimize_params(input_model, output_dir, max_batch_size, inputs, outputs):
+    params = {'script_name': 'mo_tf.py',
+              'model_name': 'model',
+              'input_model': input_model,
+              'output_dir': output_dir,
+              'batch': max_batch_size,
+              'input': ','.join(i.name for i in inputs),
+              'output': ','.join(i.name for i in outputs)
+              }
+    return params
+
+
 def _make_openvino_model(pb_model_file):
     temp_path = TemporaryDirectory()
-    convert(OptParams(source_path=pb_model_file.name,
-                      target_path=temp_path.name,
-                      max_batch_size=1,
-                      inputs=[ModelInput(name='x', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4]),
-                              ModelInput(name='y', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4])],
-                      outputs=[ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[3, 4])]),
-            'mo_tf.py')
+    inputs = [ModelInput(name='x', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4]),
+              ModelInput(name='y', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4])]
+    outputs = [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[3, 4])]
+    optimize_params = _get_optimize_params(pb_model_file.name, temp_path.name, '1', inputs, outputs)
+    execute_optimize_action(optimize_params)
     return OpenvinoModel([ModelInput(name='x', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4]),
                           ModelInput(name='y', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4])],
                          [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[3, 4])],

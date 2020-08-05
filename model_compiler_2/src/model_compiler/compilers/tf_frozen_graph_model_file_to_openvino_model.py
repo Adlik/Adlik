@@ -10,7 +10,7 @@ from . import repository
 from ..models.data_format import DataFormat, as_model_config_data_format, str_to_data_format
 from ..models.sources.tf_frozen_graph_file import FrozenGraphFile
 from ..models.targets.openvino_model import OpenvinoModel
-from ..openvino_util import OptParams, convert
+from ..openvino_util import execute_optimize_action
 from ..protos.generated.model_config_pb2 import ModelInput, ModelOutput
 from ..utilities import get_tensor_by_fuzzy_name, split_by_comma
 
@@ -82,6 +82,20 @@ def _get_outputs(graph, config):
     return outputs
 
 
+def _get_optimize_params(input_model, output_dir, max_batch_size, inputs, outputs):
+    params = {'script_name': 'mo_tf.py',
+              'model_name': 'model',
+              'input_model': input_model,
+              'output_dir': output_dir,
+              'batch': max_batch_size
+              }
+    if inputs is not None:
+        params['input'] = ','.join(i.name for i in inputs)
+    if outputs is not None:
+        params['output'] = ','.join(i.name for i in outputs)
+    return params
+
+
 @repository.REPOSITORY.register(source_type=FrozenGraphFile, target_type=OpenvinoModel, config_type=Config)
 def compile_source(source: FrozenGraphFile, config: Config) -> OpenvinoModel:
     graph_def = tf.compat.v1.GraphDef()
@@ -94,10 +108,7 @@ def compile_source(source: FrozenGraphFile, config: Config) -> OpenvinoModel:
         outputs = _get_outputs(graph, config)
 
     temp_path = TemporaryDirectory()
-    convert(OptParams(source_path=source.model_path,
-                      target_path=temp_path.name,
-                      max_batch_size=config.max_batch_size,
-                      inputs=inputs,
-                      outputs=outputs),
-            'mo_tf.py')
+    optimize_params = _get_optimize_params(source.model_path, temp_path.name,
+                                           str(config.max_batch_size), inputs, outputs)
+    execute_optimize_action(optimize_params)
     return OpenvinoModel(inputs, outputs, temp_path)

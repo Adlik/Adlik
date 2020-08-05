@@ -35,7 +35,7 @@ class ConfigTestCase(TestCase):
         self.assertEqual(Config.from_env({'INPUT_NAMES': 'input1,input2:0',
                                           'OUTPUT_NAMES': 'output',
                                           'INPUT_FORMATS': 'channels_first,channels_first',
-                                          'MAX_BATCH_SIZE': 1}),
+                                          'MAX_BATCH_SIZE': '1'}),
                          Config(input_info=[('input1', DataFormat.CHANNELS_FIRST),
                                             ('input2:0', DataFormat.CHANNELS_FIRST)],
                                 output_names=['output'],
@@ -43,7 +43,7 @@ class ConfigTestCase(TestCase):
 
     def test_from_env_no_names(self):
         self.assertEqual(Config.from_env({'OUTPUT_NAMES': 'output',
-                                          'MAX_BATCH_SIZE': 1}),
+                                          'MAX_BATCH_SIZE': '1'}),
                          Config(input_info=None,
                                 output_names=['output'],
                                 max_batch_size=1))
