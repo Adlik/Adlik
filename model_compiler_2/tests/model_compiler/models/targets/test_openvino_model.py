@@ -2,14 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest import TestCase
 
 import tensorflow as tf
 
 from model_compiler.models.targets.openvino_model import OpenvinoModel
+from model_compiler.openvino_util import OptParams, convert
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
-from model_compiler.openvino_util import convert, OptParams
 
 
 def _save_frozen_graph_model(model_file):

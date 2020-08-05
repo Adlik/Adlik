@@ -3,7 +3,8 @@
 
 import os
 import subprocess  # nosec
-from typing import NamedTuple, Sequence, Optional
+from typing import NamedTuple, Optional, Sequence
+
 from .protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 

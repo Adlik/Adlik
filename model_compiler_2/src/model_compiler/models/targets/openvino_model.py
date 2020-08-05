@@ -4,9 +4,10 @@
 from distutils.dir_util import copy_tree
 from tempfile import TemporaryDirectory
 from typing import NamedTuple, Sequence, Tuple
+
 from .. import repository
-from ...protos.generated.model_config_pb2 import ModelInput, ModelOutput
 from ...openvino_util import get_version
+from ...protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
 @repository.REPOSITORY.register_target_model('openvino')

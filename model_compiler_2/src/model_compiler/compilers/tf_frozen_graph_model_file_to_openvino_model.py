@@ -1,16 +1,18 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Any, Mapping, NamedTuple, Optional, Sequence, Tuple
 from tempfile import TemporaryDirectory
+from typing import Any, Mapping, NamedTuple, Optional, Sequence, Tuple
+
 import tensorflow as tf
+
 from . import repository
-from ..utilities import split_by_comma, get_tensor_by_fuzzy_name
+from ..models.data_format import DataFormat, as_model_config_data_format, str_to_data_format
 from ..models.sources.tf_frozen_graph_file import FrozenGraphFile
 from ..models.targets.openvino_model import OpenvinoModel
-from ..models.data_format import DataFormat, str_to_data_format, as_model_config_data_format
+from ..openvino_util import OptParams, convert
 from ..protos.generated.model_config_pb2 import ModelInput, ModelOutput
-from ..openvino_util import convert, OptParams
+from ..utilities import get_tensor_by_fuzzy_name, split_by_comma
 
 
 def _get_input_info(input_names, str_formats):
@@ -24,7 +26,7 @@ def _get_input_info(input_names, str_formats):
 
 
 class Config(NamedTuple):
-    input_info: Optional[Sequence[Tuple[Optional[str], Optional[DataFormat]]]]
+    input_info: Optional[Sequence[Tuple[str, Optional[DataFormat]]]]
     output_names: Optional[Sequence[str]]
     max_batch_size: int
 

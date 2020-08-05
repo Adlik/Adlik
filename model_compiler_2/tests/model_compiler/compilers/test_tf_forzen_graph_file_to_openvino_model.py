@@ -1,8 +1,9 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from unittest import TestCase
 from tempfile import NamedTemporaryFile
+from unittest import TestCase
+
 import tensorflow as tf
 
 import model_compiler.compilers.tf_frozen_graph_model_file_to_openvino_model as compiler
