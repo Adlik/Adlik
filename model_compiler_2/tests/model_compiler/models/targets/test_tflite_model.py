@@ -45,7 +45,7 @@ class TfLiteModelFileTestCase(TestCase):
             self.assertEqual(os.listdir(save_path), ['model.tflite'])
 
     def test_get_platform(self):
-        self.assertEqual(TfLiteModel.get_platform(), ('tflite', tf.__version__))
+        self.assertEqual(TfLiteModel.get_platform(), ('tensorflow_lite', tf.__version__))
 
     def test_get_multiple_inputs(self):
         input_1 = tf.keras.layers.Input(shape=(100,), name='input_1')

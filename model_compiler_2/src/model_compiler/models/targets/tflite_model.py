@@ -40,4 +40,4 @@ class TfLiteModel(NamedTuple):
 
     @staticmethod
     def get_platform() -> Tuple[str, str]:
-        return 'tflite', tf.version.VERSION
+        return 'tensorflow_lite', tf.version.VERSION
