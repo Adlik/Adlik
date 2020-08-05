@@ -32,9 +32,9 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
-        input_names = value.get('input_names', None)
-        input_formats = value.get('input_formats', None)
-        output_names = value.get('output_names', None)
+        input_names = value.get('input_names')
+        input_formats = value.get('input_formats')
+        output_names = value.get('output_names')
         max_batch_size = value.get('max_batch_size', 1)
         input_info = _get_input_info(input_names, input_formats)
         return Config(input_info=input_info,
@@ -43,9 +43,9 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        input_names = split_by_comma(env.get('INPUT_NAMES', None))
-        input_formats = split_by_comma(env.get('INPUT_FORMATS', None))
-        output_names = split_by_comma(env.get('OUTPUT_NAMES', None))
+        input_names = split_by_comma(env.get('INPUT_NAMES'))
+        input_formats = split_by_comma(env.get('INPUT_FORMATS'))
+        output_names = split_by_comma(env.get('OUTPUT_NAMES'))
         max_batch_size = env.get('MAX_BATCH_SIZE', 1)
         input_info = _get_input_info(input_names, input_formats)
         return Config(input_info=input_info,

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import sys
 import subprocess  # nosec
 from typing import NamedTuple, Optional, Sequence
 
@@ -26,7 +27,7 @@ def get_version():
 def convert(params: OptParams, optimizer_script_name='mo.py'):
     optimizer_path = os.path.join(_acquire_optimizer_dir(),
                                   'deployment_tools/model_optimizer/{}'.format(optimizer_script_name))
-    popen_args = ['python3', optimizer_path,
+    popen_args = [sys.executable, optimizer_path,
                   '--input_model', params.source_path,
                   '--model_name', 'model',
                   '--output_dir', params.target_path,
