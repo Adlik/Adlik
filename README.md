@@ -31,9 +31,9 @@ We test the inference performance of Adlik on the same CPU or GPU using the simp
 the ResNet50 model, and InceptionV3 with different serving engines. The test performance data of Adlik
 on different models are as follows:
 
-* [The test result of the MNIST model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-mnist-model-in-tensorflow-format)
-* [The test result of the ResNet50 model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-the-resnet50-model)
-* [The test result of the InceptionV3 model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-the-inceptionv3-model)
+- [The test result of the MNIST model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-mnist-model-in-tensorflow-format)
+- [The test result of the ResNet50 model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-the-resnet50-model)
+- [The test result of the InceptionV3 model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-the-inceptionv3-model)
 
 ## Contents
 
@@ -69,8 +69,8 @@ cd Adlik
 ### Build clients
 
 1. Install the following packages:
-   * `python3-setuptools`
-   * `python3-wheel`
+   - `python3-setuptools`
+   - `python3-wheel`
 2. Build clients:
 
    ```sh
@@ -87,11 +87,11 @@ cd Adlik
 
 First, install the following packages:
 
-* `automake`
-* `libtbb2`
-* `libtool`
-* `make`
-* `python3-six`
+- `automake`
+- `libtbb2`
+- `libtool`
+- `make`
+- `python3-six`
 
 #### Build serving with OpenVINO runtime
 
@@ -125,14 +125,14 @@ Assume builing with CUDA version 11.0.
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
-   * `cuda-cupti-dev-11-0`
-   * `libcublas-dev-11-0`
-   * `libcudnn8=*+cuda11.0`
-   * `libcudnn8-dev=*+cuda11.0`
-   * `libcufft-dev-11-0`
-   * `libcurand-dev-11-0`
-   * `libcusolver-dev-11-0`
-   * `libcusparse-dev-11-0`
+   - `cuda-cupti-dev-11-0`
+   - `libcublas-dev-11-0`
+   - `libcudnn8=*+cuda11.0`
+   - `libcudnn8-dev=*+cuda11.0`
+   - `libcufft-dev-11-0`
+   - `libcurand-dev-11-0`
+   - `libcusolver-dev-11-0`
+   - `libcusparse-dev-11-0`
 2. Run the following command:
 
    ```sh
@@ -161,20 +161,20 @@ Assume building with CUDA version 11.0.
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
-   * `cuda-cupti-dev-11-0`
-   * `cuda-nvml-dev-11-0`
-   * `cuda-nvrtc-11-0`
-   * `libcublas-dev-11-0`
-   * `libcudnn8=*+cuda11.0`
-   * `libcudnn8-dev=*+cuda11.0`
-   * `libcufft-dev-11-0`
-   * `libcurand-dev-11-0`
-   * `libcusolver-dev-11-0`
-   * `libcusparse-dev-11-0`
-   * `libnvinfer7=7.1.*+cuda11.0`
-   * `libnvinfer-dev=7.1.*+cuda11.0`
-   * `libnvonnxparsers7=7.1.*+cuda11.0`
-   * `libnvonnxparsers-dev=7.1.*+cuda11.0`
+   - `cuda-cupti-dev-11-0`
+   - `cuda-nvml-dev-11-0`
+   - `cuda-nvrtc-11-0`
+   - `libcublas-dev-11-0`
+   - `libcudnn8=*+cuda11.0`
+   - `libcudnn8-dev=*+cuda11.0`
+   - `libcufft-dev-11-0`
+   - `libcurand-dev-11-0`
+   - `libcusolver-dev-11-0`
+   - `libcusparse-dev-11-0`
+   - `libnvinfer7=7.1.*+cuda11.0`
+   - `libnvinfer-dev=7.1.*+cuda11.0`
+   - `libnvonnxparsers7=7.1.*+cuda11.0`
+   - `libnvonnxparsers-dev=7.1.*+cuda11.0`
 2. Run the following command:
 
    ```sh
@@ -201,9 +201,9 @@ Adlik. You can build Adlik with the Docker image.
 
 ## Getting Started
 
-* [Tutorials](TUTORIALS.md)
+- [Tutorials](TUTORIALS.md)
 
-* [Samples](examples)
+- [Samples](examples)
 
 ### Release
 
