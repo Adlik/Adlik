@@ -33,8 +33,7 @@ def _get_optimize_params(input_model, output_dir, max_batch_size, inputs, output
               'output_dir': output_dir,
               'batch': max_batch_size,
               'input': ','.join(i.name for i in inputs),
-              'output': ','.join(i.name for i in outputs)
-              }
+              'output': ','.join(i.name for i in outputs)}
     return params
 
 
@@ -71,8 +70,9 @@ class FrozenGraphFileTestCase(TestCase):
         with TemporaryDirectory() as save_path, NamedTemporaryFile(suffix='.pb') as pb_model_file:
             _save_frozen_graph_model(pb_model_file)
             openvino_model = _make_openvino_model(pb_model_file)
-            openvino_model.save(save_path)
-            self.assertEqual(sorted(os.listdir(save_path)), ['model.bin', 'model.mapping', 'model.xml'])
+            test_save_model_path = os.path.join(save_path, 'test')
+            openvino_model.save(test_save_model_path)
+            self.assertEqual(sorted(os.listdir(test_save_model_path)), ['model.bin', 'model.mapping', 'model.xml'])
 
     def test_get_platform(self):
         self.assertEqual(OpenvinoModel.get_platform()[0], 'openvino')

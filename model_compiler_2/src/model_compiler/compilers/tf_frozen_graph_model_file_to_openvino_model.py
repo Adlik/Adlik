@@ -12,7 +12,7 @@ from ..models.sources.tf_frozen_graph_file import FrozenGraphFile
 from ..models.targets.openvino_model import OpenvinoModel
 from ..openvino_util import execute_optimize_action
 from ..protos.generated.model_config_pb2 import ModelInput, ModelOutput
-from ..utilities import get_tensor_by_fuzzy_name, split_by_comma
+from ..utilities import get_tensor_by_fuzzy_name, split_by
 
 
 def _get_input_info(input_names, str_formats):
@@ -43,9 +43,9 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        input_names = split_by_comma(env.get('INPUT_NAMES'))
-        input_formats = split_by_comma(env.get('INPUT_FORMATS'))
-        output_names = split_by_comma(env.get('OUTPUT_NAMES'))
+        input_names = split_by(env.get('INPUT_NAMES'), ',')
+        input_formats = split_by(env.get('INPUT_FORMATS'), ',')
+        output_names = split_by(env.get('OUTPUT_NAMES'), ',')
         max_batch_size = env.get('MAX_BATCH_SIZE', 1)
         input_info = _get_input_info(input_names, input_formats)
         return Config(input_info=input_info,
@@ -87,8 +87,7 @@ def _get_optimize_params(input_model, output_dir, max_batch_size, inputs, output
               'model_name': 'model',
               'input_model': input_model,
               'output_dir': output_dir,
-              'batch': max_batch_size
-              }
+              'batch': str(max_batch_size)}
     if inputs is not None:
         params['input'] = ','.join(i.name for i in inputs)
     if outputs is not None:
@@ -109,6 +108,6 @@ def compile_source(source: FrozenGraphFile, config: Config) -> OpenvinoModel:
 
     temp_path = TemporaryDirectory()
     optimize_params = _get_optimize_params(source.model_path, temp_path.name,
-                                           str(config.max_batch_size), inputs, outputs)
+                                           config.max_batch_size, inputs, outputs)
     execute_optimize_action(optimize_params)
     return OpenvinoModel(inputs, outputs, temp_path)

@@ -36,9 +36,5 @@ def get_data_formats(input_formats):
     return data_formats
 
 
-def split_by_comma(value: Optional[str]) -> Optional[List[str]]:
-    return map_optional(value, lambda val: val.split(','))
-
-
 def split_by(value: Optional[str], separator: str) -> Optional[List[str]]:
     return map_optional(value, lambda val: val.split(separator))

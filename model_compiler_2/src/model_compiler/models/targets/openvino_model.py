@@ -1,7 +1,7 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from distutils.dir_util import copy_tree
+from shutil import copytree
 from tempfile import TemporaryDirectory
 from typing import NamedTuple, Sequence, Tuple
 
@@ -23,7 +23,7 @@ class OpenvinoModel(NamedTuple):
         return self.outputs
 
     def save(self, path: str) -> None:
-        copy_tree(self.temp_path.name, path)
+        copytree(src=self.temp_path.name, dst=path)
 
     @staticmethod
     def get_platform() -> Tuple[str, str]:

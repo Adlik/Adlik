@@ -21,8 +21,7 @@ def execute_optimize_action(params: Dict[str, str]):
 def _args_dict_to_list(params: Dict[str, str]) -> List[str]:
     args = [sys.executable, _acquire_optimizer_script_dir(params.pop('script_name'))]
     for key, value in params.items():
-        args.extend(['--'+key, value])
-    print(args)
+        args.extend(['--' + key, value])
     return args
 
 
