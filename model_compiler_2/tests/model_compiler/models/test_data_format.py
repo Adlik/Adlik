@@ -32,5 +32,4 @@ class StrToDataFormatTestCase(TestCase):
                          DataFormat.CHANNELS_LAST)
 
     def test_channels_none_str(self):
-        self.assertEqual(data_format.str_to_data_format(None),
-                         None)
+        self.assertIsNone(data_format.str_to_data_format(None))

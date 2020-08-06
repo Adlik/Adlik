@@ -20,7 +20,6 @@ def _save_frozen_graph_model(model_file):
         tf.multiply(input_x + input_y, weight, name='z')
         session.run(weight.initializer)
         constant_graph = tf.compat.v1.graph_util.convert_variables_to_constants(session, session.graph_def, ['z'])
-        print(constant_graph)
 
     with open(model_file.name, mode='wb') as graph_file:
         graph_file.write(constant_graph.SerializeToString())
@@ -31,7 +30,7 @@ def _get_optimize_params(input_model, output_dir, max_batch_size, inputs, output
               'model_name': 'model',
               'input_model': input_model,
               'output_dir': output_dir,
-              'batch': max_batch_size,
+              'batch': str(max_batch_size),
               'input': ','.join(i.name for i in inputs),
               'output': ','.join(i.name for i in outputs)}
     return params
@@ -42,7 +41,7 @@ def _make_openvino_model(pb_model_file):
     inputs = [ModelInput(name='x', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4]),
               ModelInput(name='y', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4])]
     outputs = [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[3, 4])]
-    optimize_params = _get_optimize_params(pb_model_file.name, temp_path.name, '1', inputs, outputs)
+    optimize_params = _get_optimize_params(pb_model_file.name, temp_path.name, 1, inputs, outputs)
     execute_optimize_action(optimize_params)
     return OpenvinoModel([ModelInput(name='x', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4]),
                           ModelInput(name='y', data_type=tf.float32.as_datatype_enum, format=None, dims=[3, 4])],
@@ -75,5 +74,7 @@ class FrozenGraphFileTestCase(TestCase):
             self.assertEqual(sorted(os.listdir(test_save_model_path)), ['model.bin', 'model.mapping', 'model.xml'])
 
     def test_get_platform(self):
-        self.assertEqual(OpenvinoModel.get_platform()[0], 'openvino')
+        platform, version = OpenvinoModel.get_platform()
+        self.assertEqual(platform, 'openvino')
         self.assertNotEqual(OpenvinoModel.get_platform()[1], '')
+        self.assertNotEqual(version, '')
