@@ -76,5 +76,4 @@ class FrozenGraphFileTestCase(TestCase):
     def test_get_platform(self):
         platform, version = OpenvinoModel.get_platform()
         self.assertEqual(platform, 'openvino')
-        self.assertNotEqual(OpenvinoModel.get_platform()[1], '')
         self.assertNotEqual(version, '')
