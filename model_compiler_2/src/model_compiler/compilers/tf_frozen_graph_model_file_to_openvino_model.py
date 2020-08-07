@@ -22,7 +22,7 @@ def _get_input_info(input_names, str_formats):
         return [(input_name, None) for input_name in input_names]
     if len(input_names) == len(str_formats):
         return list(zip(input_names, map(str_to_data_format, str_formats)))
-    raise ValueError('Input names and formats should be have the same length or have no formats')
+    raise ValueError('Input names and formats should have the same length or have no formats')
 
 
 class Config(NamedTuple):
