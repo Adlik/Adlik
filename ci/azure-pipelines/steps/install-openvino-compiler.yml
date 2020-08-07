@@ -4,5 +4,5 @@ steps:
         . /etc/os-release
         curl https://apt.repos.intel.com/openvino/2020/GPG-PUB-KEY-INTEL-OPENVINO-2020 | sudo apt-key add -
         sudo apt-add-repository -u 'deb https://apt.repos.intel.com/openvino/2020 all main'
-        sudo apt-get install --no-install-recommends -y "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2020.4.287"
-    displayName: Install OpenVINO libraries
+        sudo apt-get install -y "intel-openvino-model-optimizer-2020.4.287"
+    displayName: Install OpenVINO model optimizer

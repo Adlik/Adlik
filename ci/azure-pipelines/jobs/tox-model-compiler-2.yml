@@ -5,6 +5,7 @@ jobs:
         vmImage: ubuntu-latest
     steps:
       - template: ../steps/install-tensorrt.yml
+      - template: ../steps/install-openvino-compiler.yml
       - task: UsePythonVersion@0
         displayName: Use Python 3.6
         inputs:

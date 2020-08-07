@@ -51,7 +51,10 @@ setuptools.setup(
     package_dir={'': 'src'},
     package_data={'model_compiler': ['protos/src/*.proto']},
     install_requires=[
+        'defusedxml',
+        'networkx',
         'tensorflow',
+        'test-generator==0.1.1',
         'tf2onnx'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
