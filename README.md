@@ -25,64 +25,15 @@ to edge environment, and the Adlik Inference Engine should automatically update 
 or ***lib***). Users who want to run model inference on device should link user defined AI function and Adlik binary
 file to the execution file, and run directly.
 
-## Inference performance of Adlik
+## [Inference performance of Adlik](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#inference-performance-of-adlik)
 
-We test the inference performance of Adlik on the same CPU or GPU using
-the simple cnn model (mnist model) and the resnet50 model with different runtimes. The CPU and GPU parameters used in
-the test are as follows:
+We test the inference performance of Adlik on the same CPU or GPU using the simple CNN model (MNIST model),
+the ResNet50 model, and InceptionV3 with different serving engines. The test performance data of Adlik
+on different models are as follows:
 
-|     |                   type                    | number |
-| --- | :---------------------------------------: | :----: |
-| CPU | Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz |   1    |
-| GPU |           Tesla V100 SXM2 32GB            |   1    |
-
-### The test result of the mnist model
-
-|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
-| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| keras-tf1.14         |            2200.372            |                2291.584                |             1.81E-05              |
-| keras-tf2.1          |            2003.901            |                2077.644                |             1.77E-05              |
-| keras-OpenVINO       |            2647.344            |                2788.087                |             1.90E-05              |
-| keras-TensorRT       |           37342.687            |               163058.592               |             2.06E-05              |
-| keras-tfGPU1.14      |           19414.208            |               52247.525                |             3.24E-05              |
-| keras-tfGPU2.1       |           19395.129            |               53640.456                |             3.29E-05              |
-| keras-TFLiteCPU      |            778.890             |                790.150                 |             1.82E-05              |
-| tensorflow-tf1.14    |            1486.878            |                1531.337                |             1.95E-05              |
-| tensorflow-tf2.1     |            2160.331            |                2248.311                |             1.81E-05              |
-| tensorflow-tfGPU1.14 |           19043.582            |               51448.587                |             3.31E-05              |
-| tensorflow-tfGPU2.1  |           19244.343            |               50705.164                |             3.22E-05              |
-| tensorflow-TFLiteCPU |            3114.246            |                3250.399                |             1.34E-05              |
-| pytorch-OpenVINO     |            9053.677            |               10226.869                |             1.27E-05              |
-| pytorch-TensorRT     |           46318.234            |               249302.706               |             1.76E-05              |
-
->Note
->
->>i. In the first column of the table, words before '-' represent different runtimes, and words after '-' represent
->different inference engines.
->>
->>ii. The tf and OpenVINO serving engine are test in the CPU environment, and the TensorRT and tfGPU serving engine are
->test in the GPU environment.
->>
->>iii. The test model of TensorFlow Lite is an unquantified model, and the number of threads is set to 1 during testing.
-
-### The test result of the resnet50 model
-
-|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
-| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| keras-tf1.14         |             3.599              |                 3.640                  |              0.00311              |
-| keras-tf2.1          |             6.183              |                 6.301                  |              0.00302              |
-| keras-OpenVINO       |             9.359              |                 9.642                  |              0.00313              |
-| keras-TensorRT       |            237.176             |                1402.338                |              0.00350              |
-| keras-tfGPU1.14      |            175.423             |                433.627                 |              0.00339              |
-| keras-tfGPU2.1       |            170.680             |                420.814                 |              0.00348              |
-| keras-TFLiteCPU      |             2.838              |                 2.862                  |              0.00298              |
-| tensorflow-tf1.14    |             3.669              |                 3.711                  |              0.00305              |
-| tensorflow-tf2.1     |             6.554              |                 6.684                  |              0.00298              |
-| tensorflow-tfGPU1.14 |            181.118             |                454.013                 |              0.00331              |
-| tensorflow-tfGPU2.1  |            176.710             |                473.091                 |              0.00354              |
-| tensorflow-TFLiteCPU |             2.870              |                 2.895                  |              0.00296              |
-| pytorch-OpenVINO     |             9.274              |                 9.552                  |              0.00313              |
-| pytorch-TensorRT     |            238.244             |                1332.449                |              0.00344              |
+- [The test result of the MNIST model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-mnist-model-in-tensorflow-format)
+- [The test result of the ResNet50 model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-the-resnet50-model)
+- [The test result of the InceptionV3 model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-the-inceptionv3-model)
 
 ## Contents
 
@@ -256,13 +207,13 @@ Adlik. You can build Adlik with the Docker image.
 
 ### Release
 
-The version of the service engine adlik supports.
+The version of the service engine Adlik supports.
 
-|            | TensorFlow 1.14 | TensorFlow 2.1 | OpenVINO 2020 | Tensorrt 6 | Tensorrt 7 |
-| ---------- | :-------------: | :------------: | :-----------: | :--------: | :--------: |
-| keras      |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
-| TensorFlow |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
-| PyTorch    |        ✗        |       ✗        |       ✓       |     ✓      |     ✗      |
+|            | TensorFlow 1.14 | TensorFlow 2.1 | Tensorflow 2.2 | OpenVINO 2020 | Tensorrt 6 | Tensorrt 7 |
+| ---------- | :-------------: | :------------: | :------------: | :-----------: | :--------: | :--------: |
+| Keras      |        ✓        |       ✓        |        ✓       |       ✓       |     ✓      |     ✓      |
+| TensorFlow |        ✓        |       ✓        |        ✓       |       ✓       |     ✓      |     ✓      |
+| PyTorch    |        ✗        |       ✗        |        ✗       |       ✓       |     ✓      |     ✗      |
 
 ## License
 
