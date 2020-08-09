@@ -81,6 +81,12 @@ WORKDIR /home/john
 
 RUN bazel version
 
+RUN pip3 install numpy
+
+RUN cd /usr/bin &&\
+    rm python &&\
+    ln -s python3.6 python
+
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
@@ -98,7 +104,7 @@ ENV LD_LIBRARY_PATH=/home/john/tensorrt/TensorRT-${TENSORRT_VERSION}/lib
 RUN cd /home/john/Adlik &&\
     bazel build //adlik_serving/clients/python:build_pip_package -c opt &&\
     mkdir /tmp/pip-packages && bazel-bin/adlik_serving/clients/python/build_pip_package /tmp/pip-packages &&\
-    env TF_CUDA_VERSION=10.0 \
+    env TF_CUDA_VERSION=10.2 \
      bazel build //adlik_serving \
          --config=tensorrt \
          -c opt \
@@ -106,7 +112,7 @@ RUN cd /home/john/Adlik &&\
          --incompatible_use_specific_tool_files=false &&\
     pip3 install --upgrade pip &&\
     pip3 install /tmp/pip-packages/adlik_serving_api-0.0.0-py2.py3-none-any.whl &&\
-    cd /home/john/Adlik/model_compiler &&\
+    cd /home/john/Adlik/model_compiler_2 &&\
     pip3 install . &&\
     pip3 install -U tensorflow==1.14 pillow
 
