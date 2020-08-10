@@ -52,7 +52,8 @@ RUN . /etc/os-release && \
         python3-wheel \
         python3.6-dev \
         python3-six \
-        python3-pip && \
+        python3-pip \
+        protobuf-compiler && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
@@ -74,11 +75,11 @@ RUN cd /home/john/Adlik &&\
     bazel build //adlik_serving \
         --config=openvino \
         -c opt &&\
-    pip3 install --upgrade pip &&\
+    pip3 install --upgrade pip setuptools &&\
     pip3 install /tmp/pip-packages/adlik_serving_api-0.0.0-py2.py3-none-any.whl &&\
     cd /home/john/Adlik/model_compiler_2 &&\
     pip3 install . &&\
-    pip3 install -U tensorflow==1.14 defusedxml==0.5.0 networkx==2.3.0 pillow
+    pip3 install -U defusedxml==0.5.0 networkx==2.3.0 pillow
 
 COPY ${SERVING_SCRIPT} /home/john/serving_script.sh
 RUN chmod +x /home/john/serving_script.sh

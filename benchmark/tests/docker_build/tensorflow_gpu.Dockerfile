@@ -26,27 +26,26 @@ RUN . /etc/os-release && \
         bazel \
         make \
         patch \
-        cuda-cublas-dev-10-0 \
-        cuda-cufft-dev-10-0 \
-        cuda-cupti-10-0 \
-        cuda-curand-dev-10-0 \
-        cuda-cusolver-dev-10-0 \
-        cuda-cusparse-dev-10-0 \
-        cuda-nvml-dev-10-0 \
-        cuda-nvrtc-10-0 \
+        cuda-cublas-dev-10-2 \
+        cuda-cufft-dev-10-2 \
+        cuda-cupti-10-2 \
+        cuda-curand-dev-10-2 \
+        cuda-cusolver-dev-10-2 \
+        cuda-cusparse-dev-10-2 \
+        cuda-nvml-dev-10-2 \
+        cuda-nvrtc-10-2 \
         git \
         libtbb2 \
-        'libcudnn7=*+cuda10.0' \
-        'libcudnn7-dev=*+cuda10.0' \
-        libtool \	
-        openssh-client \
-        rsync \
+        'libcudnn7=*+cuda10.2' \
+        'libcudnn7-dev=*+cuda10.2' \
+        libtool \
         python3-setuptools \
         python \ 
         python3-wheel \
-        python3.7-dev \
+        python3.6-dev \
         python3-six \
-        python3-pip && \
+        python3-pip \
+        protobuf-compiler && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 

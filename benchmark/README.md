@@ -16,8 +16,8 @@ The parameters of the automatic test framework are as follows:
 | -c           | --client-script           | str  | The script used to infer                      | client_script.sh                                                    |
 | -ss          | --serving-script          | str  | The serving script                            | serving_script.sh                                                   |
 | -ov          | --openvino-version        | str  | The version of the OpenVINO                   | 2020.3.194                                                          |
-| -tt          | --tensorrt-tar            | str  | The tar version of the TensorRT               | TensorRT-7.0.0.11.Ubuntu-18.04.x86_64-gnu.cuda-10.0.cudnn7.6.tar.gz |
-| -tv          | --tensorrt-version        | str  | The version of TensorRT                       | 7.0.0.11                                                            |
+| -tt          | --tensorrt-tar            | str  | The tar version of the TensorRT               | TensorRT-7.1.3.4.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn8.0.tar.gz |
+| -tv          | --tensorrt-version        | str  | The version of TensorRT                       | 7.1.3.4                                                            |
 | -l           | --log-path                | str  | The path of log directory                     | log                                                                 |
 | -tm          | --test-model-path         | str  | The path of test model                        |                                                                     |
 | -sj          | --serving-json            | str  | The json of model                             | serving_model.json                                                  |

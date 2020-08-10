@@ -43,18 +43,16 @@ RUN . /etc/os-release && \
         bazel \
         make \
         patch \
-        cuda-cublas-dev-10-0 \
-        cuda-cufft-dev-10-0 \
-        cuda-cupti-10-0 \
-        cuda-curand-dev-10-0 \
-        cuda-cusolver-dev-10-0 \
-        cuda-cusparse-dev-10-0 \
-        cuda-nvml-dev-10-0 \
-        cuda-nvrtc-10-0 \
+        cuda-cufft-dev-10-2 \
+        cuda-cupti-dev-10-2 \
+        cuda-curand-dev-10-2 \
+        cuda-cusolver-dev-10-2 \
+        cuda-cusparse-dev-10-2 \
         git \
         libtbb2 \
-        'libcudnn7=*+cuda10.0' \
-        'libcudnn7-dev=*+cuda10.0' \
+        'libcublas-dev=10.2.*' \
+        'libcudnn7=*+cuda10.2' \
+        'libcudnn7-dev=*+cuda10.2' \
         libtool \
         openssh-client \
         rsync \
@@ -91,7 +89,7 @@ RUN cd /home/john/Adlik &&\
         --config=tensorflow-gpu \
         -c opt \
         --incompatible_use_specific_tool_files=false &&\
-    pip3 install --upgrade pip &&\
+    pip3 install --upgrade pip setuptools &&\
     pip3 install /tmp/pip-packages/adlik_serving_api-0.0.0-py2.py3-none-any.whl &&\
     cd /home/john/Adlik/model_compiler_2 &&\
     pip3 install . &&\
