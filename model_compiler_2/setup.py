@@ -67,5 +67,6 @@ setuptools.setup(
             'pytest-cov',
             'pytest-xdist'
         ]
-    }
+    },
+    python_requires='>= 3.6'
 )
