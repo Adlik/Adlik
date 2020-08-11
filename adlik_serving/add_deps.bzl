@@ -41,7 +41,6 @@ def add_all_deps():
         sha256 = "a474d4328524de1951655cd6afb4888d256c37a0b4a47e6c623b353ab382b39f",
         strip_prefix = "tensorflow-b36436b087bd8e8701ef51718179037cccdfc26e",
         urls = [
-            "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/b36436b087bd8e8701ef51718179037cccdfc26e.tar.gz",
             "https://github.com/tensorflow/tensorflow/archive/b36436b087bd8e8701ef51718179037cccdfc26e.tar.gz",
         ],
     )
