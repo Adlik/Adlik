@@ -48,21 +48,23 @@ class CompileSourceTestCase(TestCase):
         with NamedTemporaryFile(suffix='.onnx') as model_file:
             onnx.save_model(_make_onnx_model().model_proto, model_file.name)
 
-            config = Config.from_json({'input_formats': ['channels_first']})
+            config = Config.from_json({'input_formats': ['channels_first', None]})
             compiled = onnx_compiler.compile_source(source=ONNXModelFile(model_file.name), config=config)
-        compiled_graph = compiled.model_proto.graph
 
-        self.assertEqual([graph_input.name for graph_input in compiled_graph.input], ['x:0', 'y:0'])
-        self.assertEqual(compiled.input_data_formats, [DataFormat.CHANNELS_FIRST])
+        self.assertEqual([graph_input.name for graph_input in compiled.model_proto.graph.input], ['x:0', 'y:0'])
+        self.assertEqual(compiled.input_data_formats, [DataFormat.CHANNELS_FIRST, None])
 
     def test_compile_with_input_formats_is_none(self):
         with NamedTemporaryFile(suffix='.onnx') as model_file:
             onnx.save_model(_make_onnx_model().model_proto, model_file.name)
 
             config = Config.from_json({'input_formats': []})
-            compiled = onnx_compiler.compile_source(source=ONNXModelFile(model_file.name), config=config)
 
-        self.assertEqual(compiled.input_data_formats, [])
+            with self.assertRaises(ValueError) as context_manager:
+                onnx_compiler.compile_source(source=ONNXModelFile(model_file.name), config=config)
+
+        self.assertEqual(context_manager.exception.args,
+                         ('Number of input formats (0) does not match number of inputs (2)',))
 
     def test_compile_with_no_input_formats(self):
         with NamedTemporaryFile(suffix='.onnx') as model_file:
@@ -71,4 +73,4 @@ class CompileSourceTestCase(TestCase):
             config = Config.from_json({})
             compiled = onnx_compiler.compile_source(source=ONNXModelFile(model_file.name), config=config)
 
-        self.assertEqual(compiled.input_data_formats, [])
+        self.assertEqual(compiled.input_data_formats, [None, None])
