@@ -17,10 +17,10 @@ def _main():
         "input_model": os.path.join(base_dir, "./model/mnist.h5"),
         "export_path": os.path.join(base_dir, "model_repos"),
         "input_layer_names": [
-            "conv2d_1"
+            "conv2d"
         ],
         "output_layer_names": [
-            "dense_2"
+            "dense_1"
         ],
         "input_formats": [
             "channels_last"
