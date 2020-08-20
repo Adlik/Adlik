@@ -25,15 +25,15 @@ to edge environment, and the Adlik Inference Engine should automatically update 
 or ***lib***). Users who want to run model inference on device should link user defined AI function and Adlik binary
 file to the execution file, and run directly.
 
-## [Inference performance of Adlik](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#inference-performance-of-adlik)
+## [Inference performance of Adlik](https://github.com/Adlik/Adlik/tree/master/benchmark#inference-performance-of-adlik)
 
 We test the inference performance of Adlik on the same CPU or GPU using the simple CNN model (MNIST model),
 the ResNet50 model, and InceptionV3 with different serving engines. The test performance data of Adlik
 on different models are as follows:
 
-- [The test result of the MNIST model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-mnist-model-in-tensorflow-format)
-- [The test result of the ResNet50 model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-the-resnet50-model)
-- [The test result of the InceptionV3 model](https://github.com/Adlik/Adlik/tree/add-incpetionV3-test-result/benchmark#the-test-result-of-the-inceptionv3-model)
+- [The test result of the MNIST model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-mnist-model)
+- [The test result of the ResNet50 model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-resnet50-model)
+- [The test result of the InceptionV3 model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-inceptionv3-model)
 
 ## Contents
 
