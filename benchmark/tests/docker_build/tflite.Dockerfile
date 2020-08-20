@@ -29,9 +29,10 @@ RUN . /etc/os-release && \
         libtool \
         python3-setuptools \
         python3-wheel \
-        python3.7-dev \
+        python3.6-dev \
         python3-six \
-        python3-pip && \
+        python3-pip \
+        protobuf-compiler && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 

@@ -27,9 +27,9 @@ def _parse_arguments():
     args_parser.add_argument("-ov", "--openvino-version", type=str, default="2020.3.194",
                              help="The version of the OpenVINO")
     args_parser.add_argument("-tt", "--tensorrt-tar", type=str,
-                             default="TensorRT-7.0.0.11.Ubuntu-18.04.x86_64-gnu.cuda-10.0.cudnn7.6.tar.gz",
+                             default="TensorRT-7.1.3.4.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn8.0.tar.gz",
                              help="The tar version of the TensorRT")
-    args_parser.add_argument("-tv", "--tensorrt-version", type=str, default="7.0.0.11", help="The version of TensorRT")
+    args_parser.add_argument("-tv", "--tensorrt-version", type=str, default="7.1.3.4", help="The version of TensorRT")
     args_parser.add_argument("-l", "--log-path", type=str, default="log", help="The path of log directory")
     args_parser.add_argument('-tm', '--test-model-path', type=str, required=True, help="The path of test model")
     args_parser.add_argument("-sj", "--serving-json", type=str, default="serving_model.json", help="The json of model")

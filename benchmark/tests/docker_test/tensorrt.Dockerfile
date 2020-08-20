@@ -49,33 +49,40 @@ RUN . /etc/os-release && \
         bazel \
         make \
         patch \
-        cuda-cublas-dev-10-0 \
-        cuda-cufft-dev-10-0 \
-        cuda-cupti-10-0 \
-        cuda-curand-dev-10-0 \
-        cuda-cusolver-dev-10-0 \
-        cuda-cusparse-dev-10-0 \
-        cuda-nvml-dev-10-0 \
-        cuda-nvrtc-10-0 \
+        cuda-cufft-10-2 \
+        cuda-cufft-dev-10-2 \
+        cuda-cupti-dev-10-2 \
+        cuda-curand-10-2 \
+        cuda-curand-dev-10-2 \
+        cuda-cusolver-10-2 \
+        cuda-cusolver-dev-10-2 \
+        cuda-cusparse-dev-10-2 \
+        cuda-cusparse-10-2 \
+        cuda-nvml-dev-10-2 \
+        cuda-nvrtc-10-2 \
         git \
         libtbb2 \
-        'libcudnn7=*+cuda10.0' \
-        'libcudnn7-dev=*+cuda10.0' \
-        'libnvinfer7=*+cuda10.0' \
-        'libnvinfer-dev=*+cuda10.0' \
-        'libnvonnxparsers7=*+cuda10.0' \
-        'libnvonnxparsers-dev=*+cuda10.0' \
+        libcublas-dev=10.2.* \
+        'libcudnn8=*+cuda10.2' \
+        'libcudnn8-dev=*+cuda10.2' \
+        'libnvinfer7=*+cuda10.2' \
+        'libnvinfer-dev=*+cuda10.2' \
+        'libnvinfer-plugin7=*+cuda10.2' \
+        'libnvparsers7=*+cuda10.2' \
+        'libnvonnxparsers7=*+cuda10.2' \
+        'libnvonnxparsers-dev=*+cuda10.2' \
         libtool \
         python \
         python3-setuptools \
         python3-wheel \
-        python3.7-dev \
+        python3.6-dev \
         python3-six \
-        python3-pip && \
+        python3-pip \
+        protobuf-compiler && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN apt-mark hold libcudnn7 libcudnn7-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
+RUN apt-mark hold libcudnn8 libcudnn8-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
 
 WORKDIR /home/john
 
@@ -108,13 +115,13 @@ RUN cd /home/john/Adlik &&\
      bazel build //adlik_serving \
          --config=tensorrt \
          -c opt \
-         --action_env=LIBRARY_PATH=/usr/local/cuda-10.0/lib64/stubs \
+         --action_env=LIBRARY_PATH=/usr/local/cuda-10.2/lib64/stubs \
          --incompatible_use_specific_tool_files=false &&\
-    pip3 install --upgrade pip &&\
+    pip3 install --upgrade pip setuptools &&\
     pip3 install /tmp/pip-packages/adlik_serving_api-0.0.0-py2.py3-none-any.whl &&\
     cd /home/john/Adlik/model_compiler_2 &&\
     pip3 install . &&\
-    pip3 install -U tensorflow==1.14 pillow
+    pip3 install -U pillow
 
 COPY ${SERVING_SCRIPT} /home/john/serving_script.sh
 RUN chmod +x /home/john/serving_script.sh
