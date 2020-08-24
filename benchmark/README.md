@@ -6,25 +6,25 @@ The benchmark is used to test the Adlik serving performance of different models.
 
 The parameters of the automatic test framework are as follows:
 
-| abbreviation | detail                    | type | help                                          | default                                                             |
-| ------------ | ------------------------- | ---- | --------------------------------------------- | ------------------------------------------------------------------- |
-| -d           | --docker-file-path        | str  | The docker file path of the test serving type |                                                                     |
-| -s           | --serving-type            | str  | The test serving type                         |                                                                     |
-| -b           | --build-directory         | str  | The directory which to build the docker       |                                                                     |
-| -a           | --adlik-directory         | str  | The adlik directory                           | Adlik                                                               |
-| -m           | --model-name              | str  | The path of model used for test               |                                                                     |
-| -c           | --client-script           | str  | The script used to infer                      | client_script.sh                                                    |
-| -ss          | --serving-script          | str  | The serving script                            | serving_script.sh                                                   |
-| -ov          | --openvino-version        | str  | The version of the OpenVINO                   | 2020.3.194                                                          |
+| abbreviation | detail                    | type | help                                          | default                                                            |
+| ------------ | ------------------------- | ---- | --------------------------------------------- | ------------------------------------------------------------------ |
+| -d           | --docker-file-path        | str  | The docker file path of the test serving type |                                                                    |
+| -s           | --serving-type            | str  | The test serving type                         |                                                                    |
+| -b           | --build-directory         | str  | The directory which to build the docker       |                                                                    |
+| -a           | --adlik-directory         | str  | The adlik directory                           | Adlik                                                              |
+| -m           | --model-name              | str  | The path of model used for test               |                                                                    |
+| -c           | --client-script           | str  | The script used to infer                      | client_script.sh                                                   |
+| -ss          | --serving-script          | str  | The serving script                            | serving_script.sh                                                  |
+| -ov          | --openvino-version        | str  | The version of the OpenVINO                   | 2020.4.287                                                         |
 | -tt          | --tensorrt-tar            | str  | The tar version of the TensorRT               | TensorRT-7.1.3.4.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn8.0.tar.gz |
 | -tv          | --tensorrt-version        | str  | The version of TensorRT                       | 7.1.3.4                                                            |
-| -l           | --log-path                | str  | The path of log directory                     | log                                                                 |
-| -tm          | --test-model-path         | str  | The path of test model                        |                                                                     |
-| -sj          | --serving-json            | str  | The json of model                             | serving_model.json                                                  |
-| -cis         | --client-inference-script | str  | The inference script                          |                                                                     |
-| -i           | --image-filename          | str  | Input image                                   |                                                                     |
-| -gl          | --gpu-label               | int  | The GPU label                                 | None                                                                |
-| -cs          | --compile-script          | str  | Compile the model script                      | compile_script.sh                                                   |
+| -l           | --log-path                | str  | The path of log directory                     | log                                                                |
+| -tm          | --test-model-path         | str  | The path of test model                        |                                                                    |
+| -sj          | --serving-json            | str  | The json of model                             | serving_model.json                                                 |
+| -cis         | --client-inference-script | str  | The inference script                          |                                                                    |
+| -i           | --image-filename          | str  | Input image                                   |                                                                    |
+| -gl          | --gpu-label               | int  | The GPU label                                 | None                                                               |
+| -cs          | --compile-script          | str  | Compile the model script                      | compile_script.sh                                                  |
 
 If you want to use the automatic_test.py test the runtime, you need to follow the steps below:
 

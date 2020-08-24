@@ -96,7 +96,7 @@ First, install the following packages:
 #### Build serving with OpenVINO runtime
 
 1. Install `intel-openvino-runtime-ubuntu<OS_VERSION>-<VERSION>` package from
-   [OpenVINO](https://docs.openvinotoolkit.org/2020.3/_docs_install_guides_installing_openvino_apt.html).
+   [OpenVINO](https://docs.openvinotoolkit.org/2020.4/_docs_install_guides_installing_openvino_apt.html).
 2. Assume the installation path of OpenVINO is `/opt/intel/openvino_VERSION`, run the following command:
 
    ```sh

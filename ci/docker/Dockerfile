@@ -35,7 +35,7 @@ RUN . /etc/os-release && \
         default-jdk-headless \
         flake8 \
         git \
-        "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2020.3.194" \
+        "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2020.4.287" \
         iwyu \
         libclang-common-5.0-dev \
         libclang-common-6.0-dev \
