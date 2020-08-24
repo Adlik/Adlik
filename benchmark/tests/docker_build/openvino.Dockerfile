@@ -26,8 +26,8 @@ RUN . /etc/os-release && \
         patch \
         git \
         make \
-        intel-openvino-runtime-ubuntu18-2020.3.194 \
-        intel-openvino-dev-ubuntu18-2020.3.194 \
+        intel-openvino-runtime-ubuntu18-2020.4.287 \
+        intel-openvino-dev-ubuntu18-2020.4.287 \
         libtbb2 \
         libtool \
         python3-setuptools \
@@ -39,7 +39,6 @@ RUN . /etc/os-release && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-
 RUN useradd -m john
 
 USER john
@@ -47,4 +46,3 @@ USER john
 WORKDIR /home/john
 
 RUN bazel version
-
