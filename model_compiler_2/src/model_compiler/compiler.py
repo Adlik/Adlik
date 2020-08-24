@@ -12,8 +12,8 @@ from .serving_model_repository import Config
 def compile_from_json(value):
     try:
         source_type = next(model for model in MODEL_REPOSITORY.get_source_models() if model.accepts_json(value))
-    except StopIteration:
-        raise ValueError('Unable to determine the source model type.')
+    except StopIteration as exception:
+        raise ValueError('Unable to determine the source model type.') from exception
 
     target_type = MODEL_REPOSITORY.get_target_model(value['serving_type'])
     compiler, compiler_config_type = COMPILER_REPOSITORY.get(source_type=source_type, target_type=target_type)
@@ -28,8 +28,8 @@ def compile_from_env():
 
     try:
         source_type = next(model for model in MODEL_REPOSITORY.get_source_models() if model.accepts_env(env))
-    except StopIteration:
-        raise ValueError('Unable to determine the source model type.')
+    except StopIteration as exception:
+        raise ValueError('Unable to determine the source model type.') from exception
 
     target_type = MODEL_REPOSITORY.get_target_model(env['SERVING_TYPE'])
     compiler, compiler_config_type = COMPILER_REPOSITORY.get(source_type=source_type, target_type=target_type)

@@ -15,8 +15,8 @@ from ..models.targets.tflite_model import TfLiteModel
 def _parse_data_type(value: str):
     try:
         data_type = getattr(tf.dtypes, value)
-    except AttributeError:
-        raise ValueError
+    except AttributeError as exception:
+        raise ValueError from exception
 
     if isinstance(data_type, tf.DType):
         return data_type
