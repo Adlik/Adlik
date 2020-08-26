@@ -20,7 +20,12 @@ def _save_model(path):
 class CompileFromJsonTestCase(TestCase):
     def test_invalid_source(self):
         with self.assertRaises(ValueError):
-            compiler.compile_from_json({})
+            compiler.compile_from_json({
+                'serving_type': 'tf',
+                'model_name': 'foobar',
+                'max_batch_size': 3,
+                'export_path': '/foo/bar'
+            })
 
     def test_keras_model_to_saved_model(self):
         with NamedTemporaryFile(suffix='.h5') as model_file, TemporaryDirectory() as target_dir:
