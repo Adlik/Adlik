@@ -13,7 +13,10 @@ import model_compiler
 
 class CompileModelTestCase(TestCase):
     def test_error_result(self):
-        result = model_compiler.compile_model({})
+        result = model_compiler.compile_model({'serving_type': 'foo',
+                                               'model_name': 'bar',
+                                               'max_batch_size': 4,
+                                               'export_path': '/foo/bar'})
 
         self.assertEqual(result, {'status': 'failure', 'error_msg': 'Unable to determine the source model type.'})
 

@@ -20,18 +20,22 @@ class Config(NamedTuple):
     version: Optional[int] = None
 
     @staticmethod
-    def from_json_and_target_model(value: Mapping[str, Any], target_model):
+    def from_target_model(target_model,
+                          model_name: str,
+                          max_batch_size: int,
+                          export_path: str,
+                          version: Optional[int] = None):
         platform, platform_version = target_model.get_platform()
 
         return Config(model=target_model,
-                      model_config=ModelConfigProto(name=value['model_name'],
+                      model_config=ModelConfigProto(name=model_name,
                                                     platform=platform,
                                                     platform_version=platform_version,
-                                                    max_batch_size=value['max_batch_size'],
+                                                    max_batch_size=max_batch_size,
                                                     input=target_model.get_inputs(),
                                                     output=target_model.get_outputs()),
-                      path=value['export_path'],
-                      version=value.get('version'))
+                      path=export_path,
+                      version=version)
 
     @staticmethod
     def from_env_and_target_model(env: Mapping[str, str], target_model):

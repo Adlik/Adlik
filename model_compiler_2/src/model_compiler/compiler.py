@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+from typing import Optional
 
 from . import serving_model_repository
 from .compilers.repository import REPOSITORY as COMPILER_REPOSITORY
@@ -9,18 +10,33 @@ from .models.repository import REPOSITORY as MODEL_REPOSITORY
 from .serving_model_repository import Config
 
 
-def compile_from_json(value):
+def compile_model(serving_type: str,
+                  model_name: str,
+                  max_batch_size: int,
+                  export_path: str,
+                  version: Optional[int] = None,
+                  **kwargs):
+    value = kwargs
+    value.update({'model_name': model_name, 'max_batch_size': max_batch_size})
+
     try:
         source_type = next(model for model in MODEL_REPOSITORY.get_source_models() if model.accepts_json(value))
     except StopIteration as exception:
         raise ValueError('Unable to determine the source model type.') from exception
 
-    target_type = MODEL_REPOSITORY.get_target_model(value['serving_type'])
+    target_type = MODEL_REPOSITORY.get_target_model(serving_type)
     compiler, compiler_config_type = COMPILER_REPOSITORY.get(source_type=source_type, target_type=target_type)
     target_model = compiler(source=source_type.from_json(value), config=compiler_config_type.from_json(value))
 
-    return serving_model_repository.save_model(Config.from_json_and_target_model(value=value,
-                                                                                 target_model=target_model))
+    return serving_model_repository.save_model(Config.from_target_model(target_model=target_model,
+                                                                        model_name=model_name,
+                                                                        max_batch_size=max_batch_size,
+                                                                        export_path=export_path,
+                                                                        version=version))
+
+
+def compile_from_json(value):
+    return compile_model(**value)
 
 
 def compile_from_env():
