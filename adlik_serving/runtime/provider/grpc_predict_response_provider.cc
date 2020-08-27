@@ -8,10 +8,9 @@
 
 namespace adlik {
 namespace serving {
-tensorflow::Status GRPCPredictResponseProvider::create(const PredictRequest& req,
-                                                       PredictResponse& rsp,
-                                                       std::unique_ptr<GRPCPredictResponseProvider>* rsp_provider) {
-  std::vector<std::string> output_names;
+
+GRPCPredictResponseProvider::GRPCPredictResponseProvider(const PredictRequest& req, PredictResponse& rsp)
+    : rsp(rsp), batch_size(req.batch_size()) {
   std::set<absl::string_view> seens;
   for (auto& it : req.output_filter()) {
     if (seens.emplace(it.first).second) {
@@ -22,16 +21,6 @@ tensorflow::Status GRPCPredictResponseProvider::create(const PredictRequest& req
   auto spec = rsp.mutable_model_spec();
   spec->set_name(req.model_spec().name());
   *spec->mutable_version() = req.model_spec().version();
-
-  GRPCPredictResponseProvider* provider = new GRPCPredictResponseProvider(output_names, req.batch_size(), rsp);
-  rsp_provider->reset(provider);
-  return tensorflow::Status::OK();
-}
-
-GRPCPredictResponseProvider::GRPCPredictResponseProvider(const std::vector<std::string>& output_names,
-                                                         size_t batch_size,
-                                                         PredictResponse& response)
-    : PredictResponseProvider(), output_names(output_names), rsp(response), batch_size(batch_size) {
 }
 
 void* GRPCPredictResponseProvider::addOutput(const std::string& name,

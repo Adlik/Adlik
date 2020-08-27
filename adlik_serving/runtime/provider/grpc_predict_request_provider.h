@@ -21,9 +21,9 @@ struct GRPCPredictRequestProvider : public PredictRequestProvider {
   size_t batchSize() const;
   void visitInputs(InputVisitor) const;
 
-private:
   GRPCPredictRequestProvider(const PredictRequest& req);
 
+private:
   const PredictRequest& req;
 };
 

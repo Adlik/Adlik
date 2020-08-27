@@ -33,7 +33,7 @@ tensorflow::Status GRPCPredictRequestProvider::create(const PredictRequest& requ
     }
   }
 
-  provider->reset(new GRPCPredictRequestProvider(request));
+  *provider = std::make_unique<GRPCPredictRequestProvider>(request);
   return tensorflow::Status::OK();
 }
 

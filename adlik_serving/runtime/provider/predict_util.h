@@ -43,8 +43,7 @@ tensorflow::Status PredictUtil::predict() {
   std::unique_ptr<GRPCPredictRequestProvider> request_provider;
   TF_RETURN_IF_ERROR(GRPCPredictRequestProvider::create(req, &request_provider));
 
-  std::unique_ptr<GRPCPredictResponseProvider> response_provider;
-  TF_RETURN_IF_ERROR(GRPCPredictResponseProvider::create(req, rsp, &response_provider));
+  auto response_provider = std::make_unique<GRPCPredictResponseProvider>(req, rsp);
 
   return bundle->predict(opts, request_provider.get(), response_provider.get());
 }
