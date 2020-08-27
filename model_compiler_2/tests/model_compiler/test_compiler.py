@@ -17,6 +17,34 @@ def _save_model(path):
         keras.Sequential([keras.layers.Dense(units=4, input_shape=[8])]).save(path)
 
 
+class CompileModelTestCase(TestCase):
+    def test_invalid_source(self):
+        with self.assertRaises(ValueError):
+            compiler.compile_model(serving_type='tf', model_name='foobar', max_batch_size=3, export_path='/foo/bar')
+
+    def test_keras_model_to_saved_model(self):
+        with NamedTemporaryFile(suffix='.h5') as model_file, TemporaryDirectory() as target_dir:
+            _save_model(path=model_file.name)
+
+            compiler.compile_model(serving_type='tf',
+                                   model_name='foobar',
+                                   version=4,
+                                   max_batch_size=7,
+                                   model_path=model_file.name,
+                                   input_signatures=['x'],
+                                   output_signatures=['y'],
+                                   export_path=target_dir)
+
+            self.assertEqual(sorted(os.listdir(target_dir)), ['foobar', 'foobar_4.zip'])
+            self.assertEqual(sorted(os.listdir(os.path.join(target_dir, 'foobar'))), ['4', 'config.pbtxt'])
+
+            self.assertEqual(sorted(os.listdir(os.path.join(target_dir, 'foobar', '4'))),
+                             ['saved_model.pb', 'variables'])
+
+            self.assertEqual(sorted(os.listdir(os.path.join(target_dir, 'foobar', '4', 'variables'))),
+                             ['variables.data-00000-of-00001', 'variables.index'])
+
+
 class CompileFromJsonTestCase(TestCase):
     def test_invalid_source(self):
         with self.assertRaises(ValueError):

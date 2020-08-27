@@ -8,6 +8,15 @@ from model_compiler.compilers.repository import Repository
 
 
 class RepositoryTestCase(TestCase):
+    def test_invalid_config_type(self):
+        repository = Repository()
+
+        with self.assertRaises(AssertionError):
+            repository.register(source_type=int, target_type=float, config_type=list)
+
+        with self.assertRaises(AssertionError):
+            repository.register(source_type=int, target_type=float, config_type=tuple)
+
     def test_get_identity(self):
         repository = Repository()
         compiler, config_type = repository.get(int, int)

@@ -20,6 +20,12 @@ class FrozenGraphFile(NamedTuple):
         return FrozenGraphFile(model_path=env['FROZEN_GRAPH_PATH'])
 
     @staticmethod
+    def accepts_kwargs(kwargs: Mapping[str, Any]) -> bool:
+        input_model = kwargs.get('model_path')
+
+        return isinstance(input_model, str) and input_model[-3:].upper() == '.PB' and path.isfile(input_model)
+
+    @staticmethod
     def accepts_json(value: Mapping[str, Any]) -> bool:
         input_model = value.get('input_model')
         return isinstance(input_model, str) and input_model.lower().endswith('.pb') and path.isfile(input_model)

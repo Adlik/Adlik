@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from collections import deque
-from typing import Any, Callable, Deque, Dict, List, Mapping, NamedTuple, Sequence, Tuple
+from typing import Any, Callable, Deque, Dict, List, Mapping, NamedTuple, Sequence, Tuple, Type
+
+from .. import utilities
 
 
-class _NoConfig:
+class _NoConfig(NamedTuple):
     @staticmethod
     def from_json(_value) -> '_NoConfig':
         return _NoConfig()
@@ -17,7 +19,7 @@ class _NoConfig:
 
 class _Edge(NamedTuple):
     compiler: Callable[[Any, Any], Any]
-    config_type: type
+    config_type: Type[NamedTuple]
     target_type: type
 
     @staticmethod
@@ -57,11 +59,16 @@ def _find_path(compiler_graph: Mapping[type, List[_Edge]], source_type: type, ta
 
 
 def _get_config_type(edges: Sequence[_Edge]):
-    from_jsons = [getattr(edge.config_type, 'from_json') for edge in edges]
-    from_envs = [getattr(edge.config_type, 'from_env') for edge in edges]
+    config_types = [edge.config_type for edge in edges]
+    from_jsons = [getattr(config_type, 'from_json') for config_type in config_types]
+    from_envs = [getattr(config_type, 'from_env') for config_type in config_types]
 
     class _Config(NamedTuple):
         configs: Sequence[Any]
+
+        @staticmethod
+        def from_kwargs(**kwargs) -> '_Config':
+            return _Config(configs=[utilities.create_named_tuple(config_type, kwargs) for config_type in config_types])
 
         @staticmethod
         def from_json(value) -> '_Config':
@@ -79,6 +86,9 @@ class Repository:
         self._compiler_graph: Dict[type, List[_Edge]] = {}
 
     def register(self, source_type, target_type, config_type=None):
+        if not (config_type is None or (issubclass(config_type, tuple) and hasattr(config_type, '_fields'))):
+            raise AssertionError
+
         def _decorator(compiler):
             self._compiler_graph.setdefault(source_type, []).append(_Edge.create(compiler=compiler,
                                                                                  target_type=target_type,
