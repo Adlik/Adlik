@@ -12,16 +12,11 @@
 namespace adlik {
 namespace serving {
 
-GRPCPredictRequestProvider::GRPCPredictRequestProvider(const ModelId& id, const PredictRequest& req)
-    : PredictRequestProvider(id), req(req) {
-  // content_delivered_.resize(request_.raw_input_size(), false);
+GRPCPredictRequestProvider::GRPCPredictRequestProvider(const PredictRequest& req) : req(req) {
 }
 
-tensorflow::Status GRPCPredictRequestProvider::create(const ModelId& id,
-                                                      const PredictRequest& request,
+tensorflow::Status GRPCPredictRequestProvider::create(const PredictRequest& request,
                                                       std::unique_ptr<GRPCPredictRequestProvider>* provider) {
-  // Make sure the request has a batch-size > 0. Even for models that
-  // don't support batching the requested batch size must be 1.
   if (request.batch_size() < 1) {
     return tensorflow::errors::InvalidArgument("inference request batch-size must be >= 1 for models that ",
                                                "support batching, and must be 1 for models that don't ",
@@ -38,7 +33,7 @@ tensorflow::Status GRPCPredictRequestProvider::create(const ModelId& id,
     }
   }
 
-  provider->reset(new GRPCPredictRequestProvider(id, request));
+  *provider = std::make_unique<GRPCPredictRequestProvider>(request);
   return tensorflow::Status::OK();
 }
 
@@ -46,24 +41,10 @@ size_t GRPCPredictRequestProvider::batchSize() const {
   return req.batch_size();
 }
 
-size_t GRPCPredictRequestProvider::inputSize() const {
-  return req.inputs().size();
-}
-
 void GRPCPredictRequestProvider::visitInputs(InputVisitor visitor) const {
   for (auto& i : req.inputs()) {
     if (!visitor(i.first, i.second))
       break;
-  }
-}
-
-void GRPCPredictRequestProvider::outputNames(OutputNames& output_names) const {
-  std::set<absl::string_view> seens;
-
-  for (auto& it : req.output_filter()) {
-    if (seens.emplace(it.first).second) {
-      output_names.emplace_back(it.first);
-    }
   }
 }
 

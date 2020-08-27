@@ -8,19 +8,13 @@
 
 #include "adlik_serving/framework/domain/dims_list.h"
 #include "tensorflow/core/framework/types.pb.h"
-#include "tensorflow/core/lib/core/status.h"
 
 namespace adlik {
 namespace serving {
 
 struct PredictResponseProvider {
-public:
-  explicit PredictResponseProvider() {
-  }
+  virtual ~PredictResponseProvider() = default;
 
-  // Get a pointer to the buffer into which output 'name' should be
-  // written. The size of the buffer must be exactly
-  // 'buffer_byte_size'.
   virtual void* addOutput(const std::string& name,
                           tensorflow::DataType dtype,
                           const adlik::serving::DimsList& dims,

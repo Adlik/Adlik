@@ -13,13 +13,10 @@ namespace adlik {
 namespace serving {
 
 struct PredictResponse;
+struct PredictRequest;
 
 struct GRPCPredictResponseProvider : PredictResponseProvider {
-public:
-  static tensorflow::Status create(const std::vector<std::string>& output_names,
-                                   size_t batch_size,
-                                   PredictResponse& rsp,
-                                   std::unique_ptr<GRPCPredictResponseProvider>* provider);
+  GRPCPredictResponseProvider(const PredictRequest&, PredictResponse& response);
 
   virtual void* addOutput(const std::string& name,
                           tensorflow::DataType dtype,
@@ -29,13 +26,9 @@ public:
   virtual std::string* addOutput(const std::string& name, tensorflow::DataType dtype, const DimsList& dims) override;
 
 private:
-  GRPCPredictResponseProvider(const std::vector<std::string>& output_names,
-                              size_t batch_size,
-                              PredictResponse& response);
-
-  std::vector<std::string> output_names;
   PredictResponse& rsp;
   size_t batch_size;
+  std::vector<std::string> output_names;
 };
 
 }  // namespace serving
