@@ -8,16 +8,17 @@
 #include <vector>
 
 #include "adlik_serving/runtime/provider/predict_response_provider.h"
+#include "tensorflow/core/lib/core/status.h"
 
 namespace adlik {
 namespace serving {
 
 struct PredictResponse;
+struct PredictRequest;
 
 struct GRPCPredictResponseProvider : PredictResponseProvider {
 public:
-  static tensorflow::Status create(const std::vector<std::string>& output_names,
-                                   size_t batch_size,
+  static tensorflow::Status create(const PredictRequest&,
                                    PredictResponse& rsp,
                                    std::unique_ptr<GRPCPredictResponseProvider>* provider);
 

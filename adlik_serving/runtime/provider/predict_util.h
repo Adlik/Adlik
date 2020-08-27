@@ -41,16 +41,10 @@ tensorflow::Status PredictUtil::predict() {
   AutoModelHandle<ModelType> bundle(handle);
 
   std::unique_ptr<GRPCPredictRequestProvider> request_provider;
-  TF_RETURN_IF_ERROR(GRPCPredictRequestProvider::create(bundle.id(), req, &request_provider));
-
-  auto spec = rsp.mutable_model_spec();
-  spec->set_name(req.model_spec().name());
-  spec->mutable_version()->set_value(bundle.id().getVersion());
+  TF_RETURN_IF_ERROR(GRPCPredictRequestProvider::create(req, &request_provider));
 
   std::unique_ptr<GRPCPredictResponseProvider> response_provider;
-  std::vector<std::string> output_names;
-  request_provider->outputNames(output_names);
-  TF_RETURN_IF_ERROR(GRPCPredictResponseProvider::create(output_names, req.batch_size(), rsp, &response_provider));
+  TF_RETURN_IF_ERROR(GRPCPredictResponseProvider::create(req, rsp, &response_provider));
 
   return bundle->predict(opts, request_provider.get(), response_provider.get());
 }
