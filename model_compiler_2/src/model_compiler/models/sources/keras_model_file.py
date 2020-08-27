@@ -21,6 +21,12 @@ class KerasModelFile(NamedTuple):
         return KerasModelFile(model_path=env['H5_PATH'], script_path=env.get('SCRIPT_PATH'))
 
     @staticmethod
+    def accepts_kwargs(kwargs: Mapping[str, Any]) -> bool:
+        input_model = kwargs.get('model_path')
+
+        return isinstance(input_model, str) and input_model[-3:].upper() == '.H5' and path.isfile(input_model)
+
+    @staticmethod
     def accepts_json(value: Mapping[str, Any]) -> bool:
         input_model = value.get('input_model')
 

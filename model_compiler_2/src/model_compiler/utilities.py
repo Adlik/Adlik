@@ -9,6 +9,18 @@ _Type1 = TypeVar('_Type1')
 _Type2 = TypeVar('_Type2')
 
 
+def create_named_tuple(type_class, kwargs):
+    filtered_args = {}
+
+    for field in getattr(type_class, '_fields'):
+        try:
+            filtered_args[field] = kwargs[field]
+        except KeyError:
+            pass
+
+    return type_class(**filtered_args)
+
+
 def map_optional(value: Optional[_Type1], func: Callable[[_Type1], _Type2]) -> Optional[_Type2]:
     if value is None:
         return None
