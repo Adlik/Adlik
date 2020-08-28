@@ -41,6 +41,24 @@ class ConfigTestCase(TestCase):
         self.assertEqual(Config(optimization=True, supported_types=[tf.float16, tf.float32]),
                          Config.from_json({'optimization': True, 'supported_types': ['float16', 'float32']}))
 
+        self.assertEqual(Config(supported_ops=None), Config.from_json({}))
+
+        self.assertEqual(Config(supported_ops=[tf.lite.OpsSet.TFLITE_BUILTINS_INT8]),
+                         Config.from_json({'supported_ops': ['TFLITE_BUILTINS_INT8']}))
+
+        self.assertEqual(Config(supported_ops=[tf.lite.OpsSet.SELECT_TF_OPS, tf.lite.OpsSet.TFLITE_BUILTINS_INT8]),
+                         Config.from_json({'supported_ops': ['SELECT_TF_OPS', 'TFLITE_BUILTINS_INT8']}))
+
+        self.assertEqual(Config(inference_input_type=None), Config.from_json({}))
+
+        self.assertEqual(Config(inference_input_type=tf.float32),
+                         Config.from_json({'inference_input_type': 'float32'}))
+
+        self.assertEqual(Config(inference_output_type=None), Config.from_json({}))
+
+        self.assertEqual(Config(inference_output_type=tf.float32),
+                         Config.from_json({'inference_output_type': 'float32'}))
+
     def test_from_env(self):
         self.assertEqual(Config(optimization=False, supported_types=None), Config.from_env({}))
         self.assertEqual(Config(optimization=False, supported_types=None), Config.from_env({'OPTIMIZATION': '0'}))
@@ -54,6 +72,24 @@ class ConfigTestCase(TestCase):
 
         self.assertEqual(Config(optimization=True, supported_types=[tf.float16, tf.float32]),
                          Config.from_env({'OPTIMIZATION': '1', 'SUPPORTED_TYPES': 'float16,float32'}))
+
+        self.assertEqual(Config(supported_ops=None), Config.from_env({}))
+
+        self.assertEqual(Config(supported_ops=[tf.lite.OpsSet.TFLITE_BUILTINS_INT8]),
+                         Config.from_env({'SUPPORTED_OPS': 'TFLITE_BUILTINS_INT8'}))
+
+        self.assertEqual(Config(supported_ops=[tf.lite.OpsSet.SELECT_TF_OPS, tf.lite.OpsSet.TFLITE_BUILTINS_INT8]),
+                         Config.from_env({'SUPPORTED_OPS': 'SELECT_TF_OPS,TFLITE_BUILTINS_INT8'}))
+
+        self.assertEqual(Config(inference_input_type=None), Config.from_env({}))
+
+        self.assertEqual(Config(inference_input_type=tf.float32),
+                         Config.from_env({'INFERENCE_INPUT_TYPE': 'float32'}))
+
+        self.assertEqual(Config(inference_output_type=None), Config.from_env({}))
+
+        self.assertEqual(Config(inference_output_type=tf.float32),
+                         Config.from_env({'INFERENCE_OUTPUT_TYPE': 'float32'}))
 
     def test_invalid_data_type(self):
         with self.assertRaises(ValueError):
@@ -77,3 +113,10 @@ class CompileSourceTestCase(TestCase):
                                              config=Config(optimization=True, supported_types=[tf.float16]))
 
         self.assertLess(len(compiled_2.tflite_model), len(compiled_1.tflite_model))
+
+    def test_compile_select_tf_op(self):
+        compiled = compiler.compile_source(source=_make_saved_model(),
+                                           config=Config(supported_ops=[tf.lite.OpsSet.SELECT_TF_OPS]))
+
+        self.assertIsInstance(compiled.tflite_model, bytes)
+        self.assertEqual(compiled.input_formats, [DataFormat.CHANNELS_FIRST, DataFormat.CHANNELS_LAST])
