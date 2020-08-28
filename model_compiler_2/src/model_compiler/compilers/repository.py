@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from collections import deque
-from typing import Any, Callable, Deque, Dict, List, Mapping, NamedTuple, Sequence, Tuple, Type
+from typing import Any, Callable, Deque, Dict, List, Mapping, NamedTuple, Optional, Sequence, Tuple, Type
 
 from .. import utilities
 
@@ -85,7 +85,7 @@ class Repository:
     def __init__(self):
         self._compiler_graph: Dict[type, List[_Edge]] = {}
 
-    def register(self, source_type, target_type, config_type=None):
+    def register(self, source_type, target_type, config_type: Optional[type] = None):
         if not (config_type is None or (issubclass(config_type, tuple) and hasattr(config_type, '_fields'))):
             raise AssertionError
 
