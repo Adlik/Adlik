@@ -1,5 +1,5 @@
 [MASTER]
-extension-pkg-whitelist = tensorrt
+extension-pkg-whitelist = pycuda, tensorrt
 ignore = generated
 jobs = 0
 

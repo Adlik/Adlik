@@ -1,7 +1,7 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Any, Mapping, NamedTuple
+from typing import Any, Mapping, NamedTuple, Optional
 
 from . import repository
 from ..models.irs.onnx_model import OnnxModel
@@ -10,7 +10,9 @@ from ..models.targets.tensorrt_model import TensorRTModel
 
 class Config(NamedTuple):
     max_batch_size: int
+    int8_calibrator: Optional[Any] = None  # Real type should be `Optional[tensorrt.IInt8Calibrator]`.
     enable_fp16: bool = False
+    enable_int8: bool = False
     enable_strict_types: bool = False
 
     @staticmethod
@@ -64,8 +66,14 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
 
             builder_config.add_optimization_profile(optimization_profile)
 
+        if config.int8_calibrator:
+            builder_config.int8_calibrator = config.int8_calibrator
+
         if config.enable_fp16:
             builder_config.set_flag(tensorrt.BuilderFlag.FP16)
+
+        if config.enable_int8:
+            builder_config.set_flag(tensorrt.BuilderFlag.INT8)
 
         if config.enable_strict_types:
             builder_config.set_flag(tensorrt.BuilderFlag.STRICT_TYPES)
