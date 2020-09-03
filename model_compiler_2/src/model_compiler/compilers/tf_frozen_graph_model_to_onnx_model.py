@@ -3,7 +3,7 @@
 
 import tensorflow as tf
 from onnx import defs
-from tf2onnx import tfonnx
+from tf2onnx import optimizer, tfonnx
 
 from . import repository
 from ..models.irs.onnx_model import OnnxModel
@@ -20,6 +20,7 @@ def compile_source(source: TensorFlowFrozenGraphModel) -> OnnxModel:
                                          input_names=[source_input.name for source_input in source.inputs],
                                          output_names=list(source.outputs))
 
+    onnx_graph = optimizer.optimize_graph(graph=onnx_graph)
     model_proto = onnx_graph.make_model('ONNX model generated from TensorFlow frozen graph model.')
 
     input_name_to_index = {source_input.name: i for i, source_input in enumerate(source.inputs)}
