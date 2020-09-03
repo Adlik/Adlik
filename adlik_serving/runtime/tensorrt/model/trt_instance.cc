@@ -455,6 +455,7 @@ tensorflow::Status Instance::mergeInputs(MyBatch& batch) {
 }
 
 tensorflow::Status Instance::splitOutputs(MyBatch& batch) {
+  const auto has_implicit_batch_dimension = engine->hasImplicitBatchDimension();
   for (int bindex = 0; bindex < engine->getNbBindings(); ++bindex) {
     if (engine->bindingIsInput(bindex)) {
       continue;
@@ -464,7 +465,7 @@ tensorflow::Status Instance::splitOutputs(MyBatch& batch) {
     tensorflow::DataType dtype = ConvertDatatype(engine->getBindingDataType(bindex));
     nvinfer1::Dims mb_dims = engine->getBindingDimensions(bindex);
     adlik::serving::DimsList dims;
-    ConvertDims(mb_dims, dims);
+    ConvertDims(mb_dims, dims, has_implicit_batch_dimension);
 
     const size_t batch1_byte_size = (byte_sizes[bindex] / std::max(1, max_batch_size));
     size_t binding_copy_offset = 0;

@@ -19,7 +19,7 @@ constexpr char kTensorRTPlanFilename[] = "model.plan";
 
 tensorflow::DataType ConvertDatatype(nvinfer1::DataType trt_type);
 
-bool ConvertDims(const nvinfer1::Dims& model_dims, adlik::serving::DimsList& dims);
+bool ConvertDims(const nvinfer1::Dims& model_dims, adlik::serving::DimsList& dims, bool has_implicit_batch_dimension);
 
 bool CompareDims(const nvinfer1::Dims& model_dims,
                  const adlik::serving::DimsList& dims,
