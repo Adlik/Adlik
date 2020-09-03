@@ -16,6 +16,8 @@ def compile_source(source: TensorFlowModel) -> TensorFlowFrozenGraphModel:
         output_node_names=[source_output.op.name for source_output in source.outputs]
     )
 
+    graph_def = tf.compat.v1.graph_util.remove_training_nodes(input_graph=graph_def)
+
     return TensorFlowFrozenGraphModel(graph_def=graph_def,
                                       inputs=[Input(name=source_input.tensor.name, data_format=source_input.data_format)
                                               for source_input in source.inputs],
