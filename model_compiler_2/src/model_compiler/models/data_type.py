@@ -78,3 +78,18 @@ class DataType(Enum):
             return tensorrt.DataType.HALF
 
         return getattr(tensorrt.DataType, self.name)
+
+    @staticmethod
+    def from_openvino_data_type(data_type):
+        precision_map = {
+            'FP32': DataType.FLOAT,
+            'FP16': DataType.FLOAT16,
+            'I64': DataType.INT64,
+            'I32': DataType.INT32,
+            'I8': DataType.INT8,
+            'U8': DataType.UINT8,
+            'U1': DataType.UINT8,
+            'BOOL': DataType.BOOL,
+            'BIN': DataType.UINT8,
+        }
+        return precision_map[data_type]
