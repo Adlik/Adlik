@@ -11,7 +11,7 @@ from ..models.irs.tf_model import DataFormat, Input, TensorFlowModel
 from ..models.sources.tf_model_file import TfModelFile
 
 
-def _get_input_info(input_names, model_input_formats):
+def _get_input_info(input_names: Sequence[str], model_input_formats: Sequence[str]):
     if model_input_formats:
         input_formats = []
         for input_format in model_input_formats:
@@ -58,7 +58,8 @@ def _load_model(session, model_path, config):
 
 @repository.REPOSITORY.register(source_type=TfModelFile, target_type=TensorFlowModel, config_type=Config)
 def compile_source(source: TfModelFile, config: Config) -> TensorFlowModel:
-    with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+    with tf.Graph().as_default(), \
+         tf.compat.v1.Session(config=utilities.get_tf_cpu_only_config()).as_default() as session:
         inputs, outputs = _load_model(session, source.model_path, config)
 
     return TensorFlowModel(inputs, outputs, session)

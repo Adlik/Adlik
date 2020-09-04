@@ -76,4 +76,4 @@ def compile_source(source: FrozenGraphFile, config: Config) -> TensorFlowModel:
 
     return TensorFlowModel(inputs=_get_inputs(graph, config),
                            outputs=config.get_output_tensors_from_graph(graph),
-                           session=tf.compat.v1.Session(graph=graph))
+                           session=tf.compat.v1.Session(graph=graph, config=utilities.get_tf_cpu_only_config()))

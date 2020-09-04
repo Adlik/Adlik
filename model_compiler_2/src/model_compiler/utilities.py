@@ -3,6 +3,8 @@
 
 from typing import Callable, List, Optional, TypeVar
 
+import tensorflow as tf
+
 from .models.data_format import DataFormat
 
 _Type1 = TypeVar('_Type1')
@@ -35,6 +37,10 @@ def get_tensor_by_fuzzy_name(graph, name):
         tensor = graph.get_operation_by_name(name).outputs[0]
 
     return tensor
+
+
+def get_tf_cpu_only_config():
+    return tf.compat.v1.ConfigProto(device_count={'GPU': 0})
 
 
 def get_data_formats(input_formats):
