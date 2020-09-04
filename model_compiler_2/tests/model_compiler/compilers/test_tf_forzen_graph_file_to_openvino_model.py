@@ -27,18 +27,14 @@ class ConfigTestCase(TestCase):
 
     def test_from_json_no_names(self):
         self.assertEqual(Config.from_json({}),
-                         Config(input_names=None,
-                                input_shapes=None,
-                                output_names=None,
-                                max_batch_size=None,
-                                enable_nhwc_to_nchw=None))
+                         Config())
 
     def test_from_env_all_names(self):
         self.assertEqual(Config.from_env({'INPUT_NAMES': 'input',
                                           'INPUT_SHAPES': '[1, 2, 3, 4]',
                                           'OUTPUT_NAMES': 'output',
                                           'MAX_BATCH_SIZE': '1',
-                                          'ENABLE_NHWC_TO_NCHW': 'False'}),
+                                          'ENABLE_NHWC_TO_NCHW': '0'}),
                          Config(input_names='input',
                                 input_shapes='[1, 2, 3, 4]',
                                 output_names='output',
@@ -47,11 +43,7 @@ class ConfigTestCase(TestCase):
 
     def test_from_env_no_names(self):
         self.assertEqual(Config.from_env({}),
-                         Config(input_names=None,
-                                input_shapes=None,
-                                output_names=None,
-                                max_batch_size=None,
-                                enable_nhwc_to_nchw=None))
+                         Config())
 
 
 def _save_frozen_graph_model(model_file):

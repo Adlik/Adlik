@@ -1,7 +1,6 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-import ast
 import os
 import subprocess  # nosec
 import sys
@@ -13,7 +12,7 @@ from .protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
 class Layer(NamedTuple):
-    ports: Dict
+    ports: Dict[str, tuple]
     type: str
     id: str
     name: str
@@ -36,7 +35,7 @@ class Layer(NamedTuple):
     @staticmethod
     def _get_input_port_from_xml(xml_port):
         input_shape = [int(dim.text) for dim in xml_port]
-        return {xml_port.attrib['id']: input_shape}
+        return {xml_port.attrib['id']: (input_shape,)}
 
     @staticmethod
     def _get_output_port_from_xml(xml_port):
@@ -113,11 +112,11 @@ class ModelParser(NamedTuple):
 
 
 class Config(NamedTuple):
-    input_names: Optional[str]
-    input_shapes: Optional[str]
-    output_names: Optional[str]
-    max_batch_size: Optional[int]
-    enable_nhwc_to_nchw: Optional[bool]
+    input_names: Optional[str] = None
+    input_shapes: Optional[str] = None
+    output_names: Optional[str] = None
+    max_batch_size: Optional[int] = None
+    enable_nhwc_to_nchw: Optional[bool] = None
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
@@ -133,16 +132,14 @@ class Config(NamedTuple):
                       enable_nhwc_to_nchw=enable_nhwc_to_nchw)
 
     @staticmethod
-    def from_env(env: Mapping[str, Any]) -> 'Config':
+    def from_env(env: Mapping[str, str]) -> 'Config':
         input_names = env.get('INPUT_NAMES')
         input_shapes = env.get('INPUT_SHAPES')
         output_names = env.get('OUTPUT_NAMES')
-        max_batch_size = env.get('MAX_BATCH_SIZE')
-        enable_nhwc_to_nchw = env.get('ENABLE_NHWC_TO_NCHW')
-        if max_batch_size is not None:
-            max_batch_size = int(max_batch_size)
-        if enable_nhwc_to_nchw is not None:
-            enable_nhwc_to_nchw = ast.literal_eval(enable_nhwc_to_nchw)
+        temp_max_batch_size = env.get('MAX_BATCH_SIZE')
+        temp_enable_nhwc_to_nchw = env.get('ENABLE_NHWC_TO_NCHW')
+        max_batch_size = int(temp_max_batch_size) if temp_max_batch_size else None
+        enable_nhwc_to_nchw = bool(int(temp_enable_nhwc_to_nchw)) if temp_enable_nhwc_to_nchw else None
         return Config(input_names=input_names,
                       input_shapes=input_shapes,
                       output_names=output_names,
