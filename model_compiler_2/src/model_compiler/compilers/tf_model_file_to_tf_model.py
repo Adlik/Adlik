@@ -1,7 +1,7 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Any, Mapping, NamedTuple, Optional, Sequence, Tuple
+from typing import Any, List, Mapping, NamedTuple, Optional, Sequence, Tuple
 
 import tensorflow as tf
 
@@ -13,7 +13,7 @@ from ..models.sources.tf_model_file import TfModelFile
 
 def _get_input_info(input_names: Sequence[str], model_input_formats: Sequence[str]):
     if model_input_formats:
-        input_formats = []
+        input_formats: List[Optional[DataFormat]] = []
         for input_format in model_input_formats:
             if input_format == 'channels_first':
                 input_formats.append(DataFormat.CHANNELS_FIRST)
