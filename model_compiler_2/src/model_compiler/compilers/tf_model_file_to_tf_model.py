@@ -1,7 +1,7 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Any, Mapping, NamedTuple, Optional, Sequence, Tuple
+from typing import Any, List, Mapping, NamedTuple, Optional, Sequence, Tuple
 
 import tensorflow as tf
 
@@ -11,9 +11,9 @@ from ..models.irs.tf_model import DataFormat, Input, TensorFlowModel
 from ..models.sources.tf_model_file import TfModelFile
 
 
-def _get_input_info(input_names, model_input_formats):
+def _get_input_info(input_names: Sequence[str], model_input_formats: Sequence[str]):
     if model_input_formats:
-        input_formats = []
+        input_formats: List[Optional[DataFormat]] = []
         for input_format in model_input_formats:
             if input_format == 'channels_first':
                 input_formats.append(DataFormat.CHANNELS_FIRST)
@@ -58,7 +58,8 @@ def _load_model(session, model_path, config):
 
 @repository.REPOSITORY.register(source_type=TfModelFile, target_type=TensorFlowModel, config_type=Config)
 def compile_source(source: TfModelFile, config: Config) -> TensorFlowModel:
-    with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+    with tf.Graph().as_default(), \
+         tf.compat.v1.Session(config=utilities.get_tf_cpu_only_config()).as_default() as session:
         inputs, outputs = _load_model(session, source.model_path, config)
 
     return TensorFlowModel(inputs, outputs, session)
