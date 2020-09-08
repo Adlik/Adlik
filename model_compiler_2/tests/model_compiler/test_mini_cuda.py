@@ -4,9 +4,12 @@
 import contextlib
 from unittest import TestCase
 
+import pytest
+
 from tests.model_compiler import mini_cuda
 
 
+@pytest.mark.gpu_test
 class TestMiniCuda(TestCase):
     def test_check_cuda_error(self):
         mini_cuda.init()
