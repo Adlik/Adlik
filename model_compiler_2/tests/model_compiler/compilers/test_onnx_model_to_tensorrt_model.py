@@ -1,11 +1,11 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+import contextlib
 from unittest import TestCase
 
 import pytest
 import tensorflow as tf
-from pycuda import driver, tools
 from tensorflow.core.framework.types_pb2 import DataType as TfDataType
 from tensorrt import ICudaEngine, IInt8EntropyCalibrator2
 
@@ -15,6 +15,7 @@ import model_compiler.compilers.tf_model_to_tf_frozen_graph_model as frozen_grap
 from model_compiler.compilers.onnx_model_to_tensorrt_model import Config
 from model_compiler.models.irs.tf_model import Input as TfInput, TensorFlowModel
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
+from .. import mini_cuda
 
 
 class ConfigTestCase(TestCase):
@@ -127,9 +128,13 @@ class CompileSourceTestCase(TestCase):
             def __init__(self):
                 super().__init__()
 
-                self._buffers = [driver.mem_alloc(4 * 4 * 3), driver.mem_alloc(4 * 4 * 3)]
+                self._buffers = [mini_cuda.allocate_memory(4 * 4 * 3), mini_cuda.allocate_memory(4 * 4 * 3)]
                 self._cache = None
                 self._index = 0
+
+            def close(self):
+                for buffer in self._buffers:
+                    buffer.close()
 
             def get_batch(self, names, p_str=None):
                 del names, p_str
@@ -150,22 +155,19 @@ class CompileSourceTestCase(TestCase):
             def write_calibration_cache(self, cache):
                 self._cache = cache
 
-        driver.init()
+        mini_cuda.init()
 
         for batch_size in [3, None]:
             onnx_model = _make_onnx_model(func=_build_model, batch_size_1=batch_size, batch_size_2=batch_size)
 
-            context = tools.make_default_context()
-
-            try:
+            with contextlib.closing(mini_cuda.get_device(0).create_context(0)), \
+                 contextlib.closing(_MyCalibrator()) as calibrator:
                 compiled = compiler.compile_source(source=onnx_model,
                                                    config=Config(max_batch_size=4,
-                                                                 int8_calibrator=_MyCalibrator(),
+                                                                 int8_calibrator=calibrator,
                                                                  enable_int8=True,
                                                                  enable_fp16=True,
                                                                  enable_strict_types=True))
-            finally:
-                context.pop()
 
             self.assertEqual(compiled.get_inputs(),
                              [ModelInput(name='x:0', data_type=TfDataType.DT_FLOAT, format=None, dims=[4]),

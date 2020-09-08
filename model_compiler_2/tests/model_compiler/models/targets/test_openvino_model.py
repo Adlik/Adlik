@@ -8,7 +8,7 @@ from unittest import TestCase
 import tensorflow as tf
 
 from model_compiler.models.targets.openvino_model import OpenvinoModel
-from model_compiler.openvino_util import execute_optimize_action, ModelParser
+from model_compiler.openvino_util import ModelParser, execute_optimize_action
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 

@@ -63,7 +63,6 @@ setuptools.setup(
             'bandit',
             'flake8',
             'mypy',
-            'pycuda',
             'pylint',
             'pytest-cov',
             'pytest-xdist'

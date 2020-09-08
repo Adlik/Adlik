@@ -6,6 +6,7 @@ omit = */generated/*
        */site-packages/model_compiler/models/targets/tensorrt_model.py
        tests/model_compiler/compilers/test_onnx_model_to_tensorrt_model.py
        tests/model_compiler/models/targets/test_tensorrt_model.py
+       tests/mini_cuda.py
 
 parallel = true
 
