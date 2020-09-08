@@ -15,7 +15,6 @@ import model_compiler.compilers.tf_model_to_tf_frozen_graph_model as frozen_grap
 from model_compiler.compilers.onnx_model_to_tensorrt_model import Config
 from model_compiler.models.irs.tf_model import Input as TfInput, TensorFlowModel
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
-from .. import mini_cuda
 
 
 class ConfigTestCase(TestCase):
@@ -117,6 +116,8 @@ class CompileSourceTestCase(TestCase):
             self.assertIsInstance(compiled.cuda_engine, ICudaEngine)
 
     def test_compile_int8(self):
+        from .. import mini_cuda  # pylint: disable=import-outside-toplevel
+
         def _build_model(input_x, input_y, session):
             weight = tf.Variable(initial_value=0.0, dtype=tf.float32, name='w')
 
