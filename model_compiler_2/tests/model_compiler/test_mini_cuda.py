@@ -1,5 +1,6 @@
-# Copyright 2019 ZTE corporation. All Rights Reserved.
+# Copyright 2020 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
+
 import contextlib
 from unittest import TestCase
 
