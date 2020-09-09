@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import ast
 import subprocess  # nosec
 import sys
 import xml.etree.ElementTree as xmlTree  # nosec
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional
-
+from .utilities import split_by
 from .models.data_type import DataType
 from .protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
@@ -112,39 +113,41 @@ class ModelParser(NamedTuple):
 
 
 class Config(NamedTuple):
-    input_names: Optional[str] = None
-    input_shapes: Optional[str] = None
-    output_names: Optional[str] = None
+    input_names: Optional[List[str]] = None
+    input_shapes: Optional[List[list]] = None
+    output_names: Optional[List[str]] = None
     max_batch_size: Optional[int] = None
     enable_nhwc_to_nchw: Optional[bool] = None
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
-        input_names = value.get('input_names')
-        input_shapes = value.get('input_shapes')
-        output_names = value.get('output_names')
-        max_batch_size = value.get('max_batch_size')
-        enable_nhwc_to_nchw = value.get('enable_nhwc_to_nchw')
-        return Config(input_names=input_names,
-                      input_shapes=input_shapes,
-                      output_names=output_names,
-                      max_batch_size=max_batch_size,
-                      enable_nhwc_to_nchw=enable_nhwc_to_nchw)
+        return Config(input_names=value.get('input_names'),
+                      input_shapes=value.get('input_shapes'),
+                      output_names=value.get('output_names'),
+                      max_batch_size=value.get('max_batch_size'),
+                      enable_nhwc_to_nchw=value.get('enable_nhwc_to_nchw'))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        input_names = env.get('INPUT_NAMES')
-        input_shapes = env.get('INPUT_SHAPES')
-        output_names = env.get('OUTPUT_NAMES')
+        input_names = split_by(env.get('INPUT_NAMES'), ',')
+        input_shapes = Config._get_input_shapes(env.get('INPUT_SHAPES'))
+        output_names = split_by(env.get('OUTPUT_NAMES'), ',')
         temp_max_batch_size = env.get('MAX_BATCH_SIZE')
-        temp_enable_nhwc_to_nchw = env.get('ENABLE_NHWC_TO_NCHW')
         max_batch_size = int(temp_max_batch_size) if temp_max_batch_size else None
+        temp_enable_nhwc_to_nchw = env.get('ENABLE_NHWC_TO_NCHW')
         enable_nhwc_to_nchw = bool(int(temp_enable_nhwc_to_nchw)) if temp_enable_nhwc_to_nchw else None
         return Config(input_names=input_names,
                       input_shapes=input_shapes,
                       output_names=output_names,
                       max_batch_size=max_batch_size,
                       enable_nhwc_to_nchw=enable_nhwc_to_nchw)
+
+    @staticmethod
+    def _get_input_shapes(env_input_shapes):
+        if env_input_shapes is None:
+            return env_input_shapes
+        env_input_shapes = ast.literal_eval(env_input_shapes)
+        return list(env_input_shapes) if isinstance(env_input_shapes, tuple) else [env_input_shapes]
 
 
 def get_version():

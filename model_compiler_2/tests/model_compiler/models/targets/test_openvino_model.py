@@ -8,7 +8,7 @@ from unittest import TestCase
 import tensorflow as tf
 
 from model_compiler.models.targets.openvino_model import OpenvinoModel
-from model_compiler.openvino_util import ModelParser, execute_optimize_action
+from model_compiler.openvino_util import execute_optimize_action
 from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
@@ -41,8 +41,7 @@ def _make_openvino_model(pb_model_file):
     temp_path = TemporaryDirectory()
     optimize_params = _get_optimize_params(pb_model_file.name, temp_path.name)
     execute_optimize_action(optimize_params)
-    model_parser = ModelParser.from_xml(os.path.join(temp_path.name, 'model.xml'))
-    return OpenvinoModel(model_parser.get_inputs(), model_parser.get_outputs(), temp_path)
+    return OpenvinoModel.from_directory(temp_path)
 
 
 class FrozenGraphFileTestCase(TestCase):

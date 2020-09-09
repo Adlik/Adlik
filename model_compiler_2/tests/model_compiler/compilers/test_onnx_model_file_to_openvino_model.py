@@ -47,9 +47,9 @@ class CompileSourceTestCase(TestCase):
     def test_compile_with_all_params(self):
         with NamedTemporaryFile(suffix='.onnx') as model_file:
             _save_onnx_model(model_file)
-            config = Config.from_json({'input_names': '0:import/add, 1:import/add',
-                                       'input_shapes': '[1, 2, 3, 4], [1, 2, 3, 4]',
-                                       'output_names': 'import/z'})
+            config = Config.from_json({'input_names': ['0:import/add', '1:import/add'],
+                                       'input_shapes': [[1, 2, 3, 4], [1, 2, 3, 4]],
+                                       'output_names': ['import/z']})
             compiled = compiler.compile_source(ONNXModelFile(model_path=model_file.name), config)
             self.assertEqual(compiled.get_inputs(),
                              [ModelInput(name='import/add/placeholder_port_0', data_type=tf.float32.as_datatype_enum,
