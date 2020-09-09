@@ -1,15 +1,16 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-import os
 import ast
+import os
 import subprocess  # nosec
 import sys
 import xml.etree.ElementTree as xmlTree  # nosec
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional
-from .utilities import split_by
+
 from .models.data_type import DataType
 from .protos.generated.model_config_pb2 import ModelInput, ModelOutput
+from .utilities import split_by
 
 
 class Layer(NamedTuple):
