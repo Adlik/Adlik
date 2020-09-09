@@ -6,12 +6,12 @@ from unittest import TestCase
 
 import pytest
 
-from tests.model_compiler import mini_cuda
-
 
 @pytest.mark.gpu_test
 class TestMiniCuda(TestCase):
     def test_check_cuda_error(self):
+        from tests.model_compiler import mini_cuda  # pylint: disable=import-outside-toplevel
+
         mini_cuda.init()
 
         with contextlib.closing(mini_cuda.get_device(0).create_context(0)):
@@ -24,6 +24,8 @@ class TestMiniCuda(TestCase):
 
     @staticmethod
     def test_close_twice():
+        from tests.model_compiler import mini_cuda  # pylint: disable=import-outside-toplevel
+
         mini_cuda.init()
 
         with contextlib.closing(mini_cuda.get_device(0).create_context(0)):
