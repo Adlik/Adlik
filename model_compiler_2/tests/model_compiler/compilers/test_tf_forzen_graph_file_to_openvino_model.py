@@ -14,14 +14,14 @@ from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOu
 
 class ConfigTestCase(TestCase):
     def test_from_json_all_names(self):
-        self.assertEqual(Config.from_json({'input_names': 'input',
-                                           'input_shapes': '[1, 2, 3, 4]',
-                                           'output_names': 'output',
+        self.assertEqual(Config.from_json({'input_names': ['input'],
+                                           'input_shapes': [[1, 2, 3, 4]],
+                                           'output_names': ['output'],
                                            'max_batch_size': 1,
                                            'enable_nhwc_to_nchw': False}),
-                         Config(input_names='input',
-                                input_shapes='[1, 2, 3, 4]',
-                                output_names='output',
+                         Config(input_names=['input'],
+                                input_shapes=[[1, 2, 3, 4]],
+                                output_names=['output'],
                                 max_batch_size=1,
                                 enable_nhwc_to_nchw=False))
 
@@ -35,9 +35,9 @@ class ConfigTestCase(TestCase):
                                           'OUTPUT_NAMES': 'output',
                                           'MAX_BATCH_SIZE': '1',
                                           'ENABLE_NHWC_TO_NCHW': '0'}),
-                         Config(input_names='input',
-                                input_shapes='[1, 2, 3, 4]',
-                                output_names='output',
+                         Config(input_names=['input'],
+                                input_shapes=[[1, 2, 3, 4]],
+                                output_names=['output'],
                                 max_batch_size=1,
                                 enable_nhwc_to_nchw=False))
 
@@ -79,8 +79,8 @@ class CompileSourceTestCase(TestCase):
     def test_compile_with_all_params_with_batch_size(self):
         with NamedTemporaryFile(suffix='.pb') as model_file:
             _save_frozen_graph_model(model_file)
-            config = Config.from_json({'input_names': 'x,y',
-                                       'output_names': 'z',
+            config = Config.from_json({'input_names': ['x', 'y'],
+                                       'output_names': ['z'],
                                        'enable_nhwc_to_nchw': False,
                                        'max_batch_size': 1})
             compiled = compiler.compile_source(FrozenGraphFile(model_path=model_file.name), config)
@@ -95,9 +95,9 @@ class CompileSourceTestCase(TestCase):
     def test_compile_with_all_params_with_shape(self):
         with NamedTemporaryFile(suffix='.pb') as model_file:
             _save_frozen_graph_model(model_file)
-            config = Config.from_json({'input_names': 'x,y',
-                                       'input_shapes': '[1, 2, 3, 4],[1, 2, 3, 4]',
-                                       'output_names': 'z',
+            config = Config.from_json({'input_names': ['x', 'y'],
+                                       'input_shapes': [[1, 2, 3, 4], [1, 2, 3, 4]],
+                                       'output_names': ['z'],
                                        'enable_nhwc_to_nchw': False})
             compiled = compiler.compile_source(FrozenGraphFile(model_path=model_file.name), config)
             self.assertEqual(compiled.get_inputs(),
@@ -111,8 +111,8 @@ class CompileSourceTestCase(TestCase):
     def test_compile_with_all_params_with_enable_nhwc_to_nchw_true(self):
         with NamedTemporaryFile(suffix='.pb') as model_file:
             _save_frozen_graph_model(model_file)
-            config = Config.from_json({'input_names': 'x,y',
-                                       'output_names': 'z',
+            config = Config.from_json({'input_names': ['x', 'y'],
+                                       'output_names': ['z'],
                                        'enable_nhwc_to_nchw': True,
                                        'max_batch_size': 1})
             compiled = compiler.compile_source(FrozenGraphFile(model_path=model_file.name), config)
