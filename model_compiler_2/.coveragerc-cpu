@@ -6,6 +6,8 @@ omit = */generated/*
        */site-packages/model_compiler/models/targets/tensorrt_model.py
        tests/model_compiler/compilers/test_onnx_model_to_tensorrt_model.py
        tests/model_compiler/models/targets/test_tensorrt_model.py
+       tests/model_compiler/mini_cuda.py
+       tests/model_compiler/test_mini_cuda.py
 
 parallel = true
 
@@ -17,4 +19,4 @@ source = src
          */site-packages
 
 [report]
-fail_under = 99.7
+fail_under = 99.73
