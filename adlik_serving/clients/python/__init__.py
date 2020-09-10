@@ -85,12 +85,15 @@ class _GrpcRunner(object):
         self._signature = signature
         self._verbose = verbose
         if credentials is None:
-            channel = grpc.insecure_channel(url)
+            options = [('grpc.max_receive_message_length', 512 * 1024 * 1024)]
+            channel = grpc.insecure_channel(url, options=options)
         else:
             credentials = grpc.ssl_channel_credentials(credentials)
+            options = [("grpc.ssl_target_name_override", grpc_domain),
+                       ('grpc.max_receive_message_length', 512 * 1024 * 1024)]
             channel = grpc.secure_channel(url,
                                           credentials=credentials,
-                                          options=[("grpc.ssl_target_name_override", grpc_domain)])
+                                          options=options)
         self._stub = predict_service_pb2_grpc.PredictServiceStub(channel)
 
     def predict(self, request):
