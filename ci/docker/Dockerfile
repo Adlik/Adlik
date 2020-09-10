@@ -46,12 +46,12 @@ RUN . /etc/os-release && \
         libcurand-dev-11-0 \
         libcusolver-dev-11-0 \
         libcusparse-dev-11-0 \
-        'libnvinfer7=7.1.*+cuda11.0' \
-        'libnvinfer-dev=7.1.*+cuda11.0' \
-        'libnvinfer-plugin7=7.1.*+cuda11.0' \
-        'libnvonnxparsers7=7.1.*+cuda11.0' \
-        'libnvonnxparsers-dev=7.1.*+cuda11.0' \
-        'libnvparsers7=7.1.*+cuda11.0' \
+        'libnvinfer7=7.2.*+cuda11.0' \
+        'libnvinfer-dev=7.2.*+cuda11.0' \
+        'libnvinfer-plugin7=7.2.*+cuda11.0' \
+        'libnvonnxparsers7=7.2.*+cuda11.0' \
+        'libnvonnxparsers-dev=7.2.*+cuda11.0' \
+        'libnvparsers7=7.2.*+cuda11.0' \
         libtool \
         protobuf-compiler \
         python3-pip \
