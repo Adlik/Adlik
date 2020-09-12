@@ -331,7 +331,7 @@ tensorflow::Status Instance::initializeOutputBindings(const ::google::protobuf::
     cudaError_t err = cudaMalloc(&buffer, byte_size);
     if (err != cudaSuccess) {
       return tensorflow::errors::Internal(
-          "unable to allocate memory for input '", io.name(), "' for ", name, ": ", cudaGetErrorString(err));
+          "unable to allocate memory for output '", io.name(), "' for ", name, ": ", cudaGetErrorString(err));
     }
 
     byte_sizes[index] = byte_size;
