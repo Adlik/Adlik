@@ -64,6 +64,12 @@ FROM base
 
 ARG OPENVINO_VERSION
 
+RUN . /etc/os-release && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y "intel-openvino-ie-rt-cpu-$ID-$VERSION_CODENAME-$OPENVINO_VERSION" && \
+    apt-get clean && \
+    find /var/lib/apt/lists -delete
+
 COPY --from=builder /src/bazel-bin/adlik_serving/adlik_serving /usr/local/bin/adlik-serving
 
 ENV LD_LIBRARY_PATH=/opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/inference_engine/lib/intel64:/opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/ngraph/lib:/opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/inference_engine/external/tbb/lib
