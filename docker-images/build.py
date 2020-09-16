@@ -1,3 +1,6 @@
+# Copyright 2020 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 import os
 import subprocess
 from os import path
