@@ -45,8 +45,6 @@ RUN apt-get update && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-# RUN python3 -m pip install numpy
-
 COPY . /src
 
 WORKDIR /src
