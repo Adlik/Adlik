@@ -171,10 +171,10 @@ Assume building with CUDA version 11.0.
    - `libcurand-dev-11-0`
    - `libcusolver-dev-11-0`
    - `libcusparse-dev-11-0`
-   - `libnvinfer7=7.1.*+cuda11.0`
-   - `libnvinfer-dev=7.1.*+cuda11.0`
-   - `libnvonnxparsers7=7.1.*+cuda11.0`
-   - `libnvonnxparsers-dev=7.1.*+cuda11.0`
+   - `libnvinfer7=7.2.*+cuda11.0`
+   - `libnvinfer-dev=7.2.*+cuda11.0`
+   - `libnvonnxparsers7=7.2.*+cuda11.0`
+   - `libnvonnxparsers-dev=7.2.*+cuda11.0`
 2. Run the following command:
 
    ```sh
