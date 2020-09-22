@@ -155,3 +155,43 @@ parameters used in the test are as follows:
 | TF Serving2.1  `CPU` |             4.622              |                 4.752                  |              0.00589              |
 | TF Serving2.2  `CPU` |             3.752              |                 3.854                  |              0.00704              |
 | TF Serving2.1  `GPU` |            107.667             |                291.931                 |              0.00586              |
+
+### The test result of the YoloV3 model
+
+The test result of YoloV3 model based on trained weights and config
+
+config: [yolov3.cfg](https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg)
+
+weights: [yolov3.weights](https://pjreddie.com/media/files/yolov3.weights)
+
+#### The test result of YoloV3 model using TensorRT runtime
+
+The ONNX model of yolov3 is converted by `yolov3_to_onnx.py`([NVIDIA](https://developer.nvidia.com)) based on the
+`yolov3.cfg` and `yolov3.weights`.
+
+The TensorRT model of yolov3 is compiled by the `model_compiler_2` in the `Adlik`.
+
+The batch size of the model is 128.
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| Yolov3-320     `GPU` |            59.574              |                 212.705                |              0.01208              |
+| YoloV3-416     `GPU` |            35.760              |                 133.017                |              0.02045              |
+| YoloV3-608     `GPU` |            16.164              |                 62.893                 |              0.04597              |
+
+#### The test result of the YoloV3 model using TensorFlow runtime
+
+First convert the `yolov3.cfg` and `yolov3.weights` to `yolov3.h5`.
+
+Then compile the `yolov3.h5` model to TensorFlow model using `model_compiler_2`.
+
+The batch size of the model is 128.
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| Yolov3-320     `CPU` |             2.642              |                   2.552                |               0.01328             |
+| YoloV3-416     `CPU` |             1.755              |                   1.804                |               0.01567             |
+| YoloV3-608     `CPU` |             0.692              |                   0.721                |               0.05770             |
+| Yolov3-320     `GPU` |            47.541              |                  119.880               |               0.01269             |
+| YoloV3-416     `GPU` |            29.250              |                  70.663                |               0.02004             |
+| YoloV3-608     `GPU` |            12.354              |                  33.881                |               0.05142             |
