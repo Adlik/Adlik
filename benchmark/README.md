@@ -127,7 +127,7 @@ parameters used in the test are as follows:
 | TFLite         `CPU` |             2.838              |                 2.862                  |              0.00298              |
 | TF Serving1.14 `GPU` |            175.423             |                433.627                 |              0.00339              |
 | TF Serving2.1  `GPU` |            170.680             |                420.814                 |              0.00348              |
-| TensorRT       `GPU` |            237.176             |                1402.338                |              0.00350              |
+| TensorRT       `GPU` |            246.745             |                1381.023                |              0.00332              |
 
 #### The test result of ResNet50 model in Tensorflow format
 
@@ -144,7 +144,7 @@ parameters used in the test are as follows:
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
 | OpenVINO       `CPU` |             9.274              |                 9.552                  |              0.00313              |
-| TensorRT       `GPU` |            238.244             |                1332.449                |              0.00344              |
+| TensorRT       `GPU` |            243.526             |                1387.198                |              0.00344              |
 
 ### The test result of the InceptionV3 model
 
