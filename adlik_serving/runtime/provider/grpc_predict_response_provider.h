@@ -27,7 +27,7 @@ struct GRPCPredictResponseProvider : PredictResponseProvider {
 
 private:
   PredictResponse& rsp;
-  size_t batch_size;
+  const size_t batch_size;
   std::vector<std::string> output_names;
 };
 
