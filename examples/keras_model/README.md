@@ -32,7 +32,7 @@ This sample demonstrates how to use Adlik to compile serving model and deploy se
     python3 train_model.py
     ```
 
-    After running this script, there is a .h5 file in the "model" directory.
+    After running this script, there is a .h5 file in the “model” directory.
 
     ```text
     ├── model
@@ -46,7 +46,7 @@ which show how to build a request about compiling models):
     python3 compile_model.py
     ```
 
-    After that there is a serving model in the "model_repos" directory:
+    After that there is a serving model in the “model_repos” directory:
 
     ```text
     |-- model_repos
