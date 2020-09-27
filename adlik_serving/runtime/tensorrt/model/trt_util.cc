@@ -49,17 +49,6 @@ bool CompareDims(const nvinfer1::Dims& model_dims,
                     dims.end());
 }
 
-tensorflow::Status GetModelVersionFromPath(const tensorflow::StringPiece& path, uint32_t* version) {
-  auto version_dir = tensorflow::io::Basename(path);
-
-  // Determine the version from the last segment of 'path'
-  if (!absl::SimpleAtoi(version_dir, version)) {
-    return tensorflow::errors::Internal("unable to determine model version from ", path);
-  }
-
-  return tensorflow::Status::OK();
-}
-
 tensorflow::Status ValidateModelInput(const ModelInput& io) {
   if (io.name().empty()) {
     return tensorflow::errors::InvalidArgument("model input must specify 'name'");

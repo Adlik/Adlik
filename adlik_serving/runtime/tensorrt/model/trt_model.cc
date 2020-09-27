@@ -27,13 +27,15 @@ using namespace adlik::serving;
 
 namespace {
 
+constexpr char TENSORRT_PLAN_DEFAULT_NAME[] = "model.plan";
+
 std::string nameOfPlan(const ModelConfigProto& config, const int gpu_device) {
   cudaDeviceProp cuprops;
   cudaError_t cuerr = cudaGetDeviceProperties(&cuprops, gpu_device);
   if (cuerr != cudaSuccess) {
     FATAL_LOG << "unable to get CUDA device properties for " << config.name() << ": " << cudaGetErrorString(cuerr);
   }
-  return kTensorRTPlanFilename;
+  return TENSORRT_PLAN_DEFAULT_NAME;
 }
 
 tensorflow::Status createInstance(const ModelConfigProto& config,
