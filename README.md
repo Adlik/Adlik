@@ -119,7 +119,7 @@ bazel build //adlik_serving \
 
 #### Build serving with TensorFlow GPU runtime
 
-Assume builing with CUDA version 11.0.
+Assume building with CUDA version 11.0.
 
 1. Install the following packages from
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
@@ -180,7 +180,7 @@ Assume building with CUDA version 11.0.
    ```sh
    env TF_CUDA_VERSION=11.0 \
        bazel build //adlik_serving \
-           --config=tensorrt \
+           --config=TensorRT \
            -c opt \
            --action_env=LIBRARY_PATH=/usr/local/cuda-11.0/lib64/stubs \
            --incompatible_use_specific_tool_files=false
@@ -209,7 +209,7 @@ Adlik. You can build Adlik with the Docker image.
 
 The version of the service engine Adlik supports.
 
-|            | TensorFlow 1.14 | TensorFlow 2.x | OpenVINO 2020 | Tensorrt 6 | Tensorrt 7 |
+|            | TensorFlow 1.14 | TensorFlow 2.x | OpenVINO 2020 | TensorRT 6 | TensorRT 7 |
 | ---------- | :-------------: | :------------: | :-----------: | :--------: | :--------: |
 | Keras      |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
 | TensorFlow |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
