@@ -1,4 +1,4 @@
-# Pytorch model
+# PyTorch model
 
 1. Train the model and save as .h5 file:
 
@@ -34,9 +34,9 @@
     |   `-- mnist.zip
     ```
 
-    >Note:
+    > Note:
     >
-    >1. You also can modify the `serving_type` in [compile_model](compile_model.py) to compile the model to `tensorrt`.
+    > 1. You also can modify the `serving_type` in [compile_model](compile_model.py) to compile the model to `tensorrt`.
 
 3. Deploy a serving service:
 
