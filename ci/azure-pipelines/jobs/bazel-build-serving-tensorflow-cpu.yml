@@ -5,8 +5,8 @@ jobs:
         matrix:
             Linux:
                 vmImage: ubuntu-latest
-            macOS:
-                vmImage: macos-latest
+            # macOS:
+            #     vmImage: macos-latest
     pool:
         vmImage: $(vmImage)
     timeoutInMinutes: 0
