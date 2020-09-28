@@ -2,7 +2,7 @@
 
 ## Install and build Adlik
 
-Fllow the [Usage](adlik_serving/README.md#Usage) compile your model.
+Follow the [Usage](adlik_serving/README.md#Usage) compile your model.
 
 >Note:
 >You need to build the Adlik serving accord to the demand scenario and environment hardware configuration. If you want
@@ -11,18 +11,18 @@ Fllow the [Usage](adlik_serving/README.md#Usage) compile your model.
 
 ## Optimize model
 
-Fllow the [Usage](https://github.com/Adlik/model_optimizer/blob/master/README.md#usage) optimize your model.
+Follow the [Usage](https://github.com/Adlik/model_optimizer/blob/master/README.md#usage) optimize your model.
 
 ## Compile model
 
-Fllow the [Usage](model_compiler/README.md#usage) compile your model.
+Follow the [Usage](model_compiler/README.md#usage) compile your model.
 
->Note:
+> Note:
 >
->You need to pay attention that the compiled model type needs to be consistent with the build serving type.
+> You need to pay attention that the compiled model type needs to be consistent with the build serving type.
 >
->When you compile the TensorRT model, the version of the TensorRT python package must be the same as the version of
->TensorRT (`dpkg -l | grep TensorRT`)
+> When you compile the TensorRT model, the version of the TensorRT python package must be the same as the version of
+> TensorRT (`dpkg -l | grep TensorRT`)
 
 ## Deploy serving service
 
@@ -54,7 +54,7 @@ sets required for inference.
 python3 client.py --batch-size=1 image
 ```
 
-## Test the serving engine profermance
+## Test the serving engine performance
 
 ### Automatic test the serving engine performance
 
@@ -62,7 +62,7 @@ python3 client.py --batch-size=1 image
 
 **Second**, follow the step in [benchmark](benchmark/README.md), you can get the test result.
 
-**Thrid**, if you want to test the performance of the new serving engine which provided by yourself, you can write a new
+**Third**, if you want to test the performance of the new serving engine which provided by yourself, you can write a new
 serving Dockerfile based on the [existing serving Dockerfile](benchmark/tests/docker_test), then following the step 2.
 
 ### Manually test serving engine performance
