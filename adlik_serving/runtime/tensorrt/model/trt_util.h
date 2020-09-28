@@ -15,8 +15,6 @@
 
 namespace tensorrt {
 
-constexpr char kTensorRTPlanFilename[] = "model.plan";
-
 tensorflow::DataType ConvertDatatype(nvinfer1::DataType trt_type);
 
 bool ConvertDims(const nvinfer1::Dims& model_dims, adlik::serving::DimsList& dims, bool has_implicit_batch_dimension);
@@ -33,8 +31,6 @@ const std::string DimsDebugString(const T& values) {
   str.append("]");
   return str;
 }
-
-tensorflow::Status GetModelVersionFromPath(const tensorflow::StringPiece& path, uint32_t* version);
 
 tensorflow::Status ValidateModelInput(const adlik::serving::ModelInput& io);
 tensorflow::Status ValidateModelOutput(const adlik::serving::ModelOutput& io);
