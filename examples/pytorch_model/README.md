@@ -6,7 +6,7 @@
     python3 train_model.py
     ```
 
-    After running this script, there is a .onnx file in the "model" directory.
+    After running this script, there is a .onnx file in the “model” directory.
 
     ```text
     ├── model
@@ -19,7 +19,7 @@
     python3 compile_model.py
     ```
 
-    After that there is a serving model in the "model_repos" directory:
+    After that there is a serving model in the “model_repos” directory:
 
     ```text
     |-- model_repos
