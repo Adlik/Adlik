@@ -1,18 +1,19 @@
 # Roadmap
 
-## 2019-12 Release 1
+## 2020-6 Release 0.1
 
-- Support model optimizer.
-- Support compiling models from more frameworks.
+- Support model optimizer. Multi nodes multi GPUs training and pruning.
+- Support new model compiler.
+- Support ARM CPU.
 - Support custom runtimes and service cores.
-- Support FPGA runtime.
+- Support Benchmark Test Framework for Deep Learning Model.
 
-## 2020-06 Release 2
+## 2020-10 Release 0.2
 
-- Support more hardwares.
-- Support model orchestration DSL.
-- Auto optimize parameters.
+- Support native cloud service.
+- Support integration of model compiler and model quantization.
 
-## 2020-12 Release 3
+## 2020-12 Release 0.3
 
-- Adlik cloud service.
+- Support optimizing Yolo model, and accelerate inference procedure.
+  
