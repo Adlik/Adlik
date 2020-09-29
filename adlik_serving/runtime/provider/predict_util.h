@@ -40,7 +40,7 @@ template <typename ModelType>
 tensorflow::Status PredictUtil::predict() {
   AutoModelHandle<ModelType> bundle(handle);
 
-  std::unique_ptr<GRPCPredictRequestProvider> request_provider;
+  std::unique_ptr<PredictRequestProvider> request_provider;
   TF_RETURN_IF_ERROR(GRPCPredictRequestProvider::create(req, &request_provider));
 
   auto response_provider = std::make_unique<GRPCPredictResponseProvider>(req, rsp);

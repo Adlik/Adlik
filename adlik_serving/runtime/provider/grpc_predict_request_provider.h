@@ -15,8 +15,7 @@ namespace serving {
 struct PredictRequest;
 
 struct GRPCPredictRequestProvider : public PredictRequestProvider {
-  static tensorflow::Status create(const PredictRequest& request,
-                                   std::unique_ptr<GRPCPredictRequestProvider>* provider);
+  static tensorflow::Status create(const PredictRequest& request, std::unique_ptr<PredictRequestProvider>* provider);
 
   size_t batchSize() const;
   void visitInputs(InputVisitor) const;

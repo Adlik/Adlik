@@ -16,7 +16,7 @@ GRPCPredictRequestProvider::GRPCPredictRequestProvider(const PredictRequest& req
 }
 
 tensorflow::Status GRPCPredictRequestProvider::create(const PredictRequest& request,
-                                                      std::unique_ptr<GRPCPredictRequestProvider>* provider) {
+                                                      std::unique_ptr<PredictRequestProvider>* provider) {
   if (request.batch_size() < 1) {
     return tensorflow::errors::InvalidArgument("inference request batch-size must be >= 1 for models that ",
                                                "support batching, and must be 1 for models that don't ",
