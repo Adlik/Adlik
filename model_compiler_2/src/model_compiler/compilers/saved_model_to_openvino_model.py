@@ -14,8 +14,8 @@ def _get_optimize_params(input_model, output_dir, config, inputs, outputs):
               'model_name': 'model',
               'saved_model_dir': input_model,
               'output_dir': output_dir,
-              'input': ','.join(item.name for item in inputs),
-              'output': ','.join(item.name for item in outputs)}
+              'input': ','.join(item.name.split(':')[0] for item in inputs),
+              'output': ','.join(item.name.split(':')[0] for item in outputs)}
     # if enble_nhwc_to_nchw=None or False set --disable_nhwc_to_nchw
     if not config.enable_nhwc_to_nchw:
         params['disable_nhwc_to_nchw'] = None
