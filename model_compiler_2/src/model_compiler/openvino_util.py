@@ -13,7 +13,7 @@ from .protos.generated.model_config_pb2 import ModelInput, ModelOutput
 from .utilities import split_by
 
 
-class Layer(NamedTuple):
+class _Layer(NamedTuple):
     ports: Dict[str, tuple]
     type: str
     id: str
@@ -25,14 +25,14 @@ class Layer(NamedTuple):
         for attr in xml_layer:
             if attr.tag == 'input':
                 for port in attr:
-                    ports.update(Layer._get_input_port_from_xml(port))
+                    ports.update(_Layer._get_input_port_from_xml(port))
             elif attr.tag == 'output':
                 for port in attr:
-                    ports.update(Layer._get_output_port_from_xml(port))
-        return Layer(ports=ports,
-                     type=xml_layer.attrib['type'],
-                     id=xml_layer.attrib['id'],
-                     name=xml_layer.attrib['name'])
+                    ports.update(_Layer._get_output_port_from_xml(port))
+        return _Layer(ports=ports,
+                      type=xml_layer.attrib['type'],
+                      id=xml_layer.attrib['id'],
+                      name=xml_layer.attrib['name'])
 
     @staticmethod
     def _get_input_port_from_xml(xml_port):
@@ -45,7 +45,7 @@ class Layer(NamedTuple):
         return {xml_port.attrib['id']: (output_shape, xml_port.attrib['precision'])}
 
 
-class Edge(NamedTuple):
+class _Edge(NamedTuple):
     from_layer: str
     from_port: str
     to_layer: str
@@ -53,15 +53,15 @@ class Edge(NamedTuple):
 
     @staticmethod
     def from_xml(xml_edge):
-        return Edge(from_layer=xml_edge.attrib['from-layer'],
-                    from_port=xml_edge.attrib['from-port'],
-                    to_layer=xml_edge.attrib['to-layer'],
-                    to_port=xml_edge.attrib['to-port'])
+        return _Edge(from_layer=xml_edge.attrib['from-layer'],
+                     from_port=xml_edge.attrib['from-port'],
+                     to_layer=xml_edge.attrib['to-layer'],
+                     to_port=xml_edge.attrib['to-port'])
 
 
 class ModelParser(NamedTuple):
-    edges: List[Edge] = []
-    layers: List[Layer] = []
+    edges: List[_Edge] = []
+    layers: List[_Layer] = []
 
     @staticmethod
     def from_xml(xml_path: str):
@@ -72,10 +72,10 @@ class ModelParser(NamedTuple):
         for child in xml_root:
             if child.tag == 'layers':
                 for layer in child:
-                    layers.append(Layer.from_xml(layer))
+                    layers.append(_Layer.from_xml(layer))
             elif child.tag == 'edges':
                 for edge in child:
-                    edges.append(Edge.from_xml(edge))
+                    edges.append(_Edge.from_xml(edge))
         return ModelParser(edges=edges, layers=layers)
 
     def _get_inputs_info(self):

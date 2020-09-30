@@ -10,7 +10,7 @@ from unittest import TestCase
 import tensorflow as tf
 
 from model_compiler import openvino_util
-from model_compiler.openvino_util import Layer, ModelParser
+from model_compiler.openvino_util import _Layer, ModelParser
 
 
 def _set_env(env, key, value):
@@ -108,7 +108,7 @@ class ModelParserTestCase(TestCase):
             openvino_util.execute_optimize_action(optimize_params)
             model_parser = ModelParser.from_xml(os.path.join(temp_path.name, 'model.xml'))
             layer = next(layer for layer in model_parser.layers if layer.type == 'Result')
-            fake_layer = Layer(ports=layer.ports, type=layer.type, id='xxx', name=layer.name)
+            fake_layer = _Layer(ports=layer.ports, type=layer.type, id='xxx', name=layer.name)
             model_parser.layers.append(fake_layer)
             with self.assertRaises(ValueError):
                 model_parser.get_outputs()
