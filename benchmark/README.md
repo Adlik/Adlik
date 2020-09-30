@@ -189,9 +189,34 @@ The batch size of the model is 128.
 
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| Yolov3-320     `CPU` |             2.642              |                   2.552                |               0.01328             |
+| YoloV3-320     `CPU` |             2.642              |                   2.552                |               0.01328             |
 | YoloV3-416     `CPU` |             1.755              |                   1.804                |               0.01567             |
 | YoloV3-608     `CPU` |             0.692              |                   0.721                |               0.05770             |
 | Yolov3-320     `GPU` |            47.541              |                  119.880               |               0.01269             |
 | YoloV3-416     `GPU` |            29.250              |                  70.663                |               0.02004             |
 | YoloV3-608     `GPU` |            12.354              |                  33.881                |               0.05142             |
+
+### The test result of the Bert model
+
+#### The test result of the Bert model using TensorFlow Lite runtime
+
+First, get the .zip file of pretrained bert model,
+[BERT-Base, Chinese](https://storage.googleapis.com/bert_models/2018_11_03/chinese_L-12_H-768_A-12.zip): Chinese
+Simplified and Traditional, 12-layer, 768-hidden, 12-heads, 110M parameters, and in this
+[page](https://github.com/google-research/bert) you can get more bert model.
+
+The .zip file contains three items:
+
+- A TensorFlow checkpoint (bert_model.ckpt) containing the pre-trained weights (which is actually 3 files).
+
+- A vocab file (vocab.txt) to map WordPiece to word id.
+
+- A config file (bert_config.json) which specifies the hyperparameters of the model.
+
+Then compile the model to TensorFlow Lite using `model_compiler_2`.
+
+The batch size of the model is 1.
+
+|                      | speed of client (samples/sec) | speed of serving engine (samples/sec) | tail latency of one statement (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| Bert     `CPU`       |             83.435              |                   83.543                |               1.55E-05             |
