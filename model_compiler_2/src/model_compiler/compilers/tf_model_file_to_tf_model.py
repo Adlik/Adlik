@@ -62,4 +62,7 @@ def compile_source(source: TfModelFile, config: Config) -> TensorFlowModel:
          tf.compat.v1.Session(config=utilities.get_tf_cpu_only_config()).as_default() as session:
         inputs, outputs = _load_model(session, source.model_path, config)
 
+    utilities.judge_batch_size([model_input.tensor.shape for model_input in inputs],
+                               [model_output.shape for model_output in outputs])
+
     return TensorFlowModel(inputs, outputs, session)

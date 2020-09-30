@@ -56,3 +56,9 @@ def get_data_formats(input_formats):
 
 def split_by(value: Optional[str], separator: str) -> Optional[List[str]]:
     return map_optional(value, lambda val: val.split(separator))
+
+
+def judge_batch_size(inputs_shape, outputs_shape):
+    input_batch = {input_shape[0] for input_shape in inputs_shape}
+    output_batch = {output_shape[0] for output_shape in outputs_shape}
+    assert input_batch == output_batch  # nosec: B101
