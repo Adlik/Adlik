@@ -1,0 +1,6 @@
+**/.git/
+**/.idea/
+**/.tox/
+**/.vscode/
+**/venv/
+docker-images/
