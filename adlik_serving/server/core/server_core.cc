@@ -78,7 +78,10 @@ private:
     Runtime& runtime = RuntimeSuite::inst();
     runtime.init(prog);
 
-    return prog.parse(argc, argv);
+    if (!prog.parse(argc, argv)) {
+      exit(0);
+    }
+    return true;
   }
 
   cub::Status config() {
