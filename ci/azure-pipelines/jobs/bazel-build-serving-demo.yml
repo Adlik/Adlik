@@ -25,3 +25,24 @@ jobs:
                 -c opt \
                 --disk_cache="$BAZEL_BUILD_CACHE"
         displayName: Bazel build serving demo
+  - job: BazelBuildServingDemoAArch64
+    displayName: Bazel build serving demo (AArch64)
+    pool:
+        vmImage: ubuntu-latest
+    timeoutInMinutes: 0
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use latest Python
+      - script: pip install -U numpy six
+        displayName: Install additional dependencies
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-demo-aarch64
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            bazel build //adlik_serving/demo \
+                --config=tensorflow-lite-cpu \
+                --config=aarch64 \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE"
+        displayName: Bazel build serving demo (AArch64)

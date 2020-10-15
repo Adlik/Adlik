@@ -31,6 +31,12 @@ build:tensorflow-gpu --copt=-DNDEBUG # https://github.com/tensorflow/tensorflow/
 
 build:tensorflow-lite-cpu --define=runtime=tensorflow-lite
 
+build:arm --crosstool_top=@local_config_embedded_arm//:toolchain
+build:arm --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+
+build:aarch64 --config=arm
+build:aarch64 --cpu=aarch64
+
 # TensorRT.
 
 build:tensorrt --define=runtime=tensorrt
