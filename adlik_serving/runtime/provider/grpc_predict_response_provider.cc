@@ -3,6 +3,9 @@
 
 #include "adlik_serving/runtime/provider/grpc_predict_response_provider.h"
 
+#include <set>
+
+#include "absl/strings/string_view.h"
 #include "adlik_serving/apis/predict.pb.h"
 
 namespace adlik {
