@@ -3,6 +3,7 @@ ARG UBUNTU_VERSION
 # Base.
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
+COPY script/run_server.sh /script/run_server.sh
 
 # Builder.
 
@@ -50,4 +51,5 @@ FROM base
 
 COPY --from=builder /src/bazel-bin/adlik_serving/adlik_serving /usr/local/bin/adlik-serving
 
-CMD ["adlik-serving", "--grpc_port=8500", "--http_port=8501", "--model_base_path=/srv/adlik-serving"]
+RUN chmod +x /script/run_server.sh
+CMD /script/run_server.sh

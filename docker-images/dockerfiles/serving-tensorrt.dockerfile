@@ -10,6 +10,7 @@ ENV TENSORRT_VERSION=${TENSORRT_VERSION}
 ENV CUDA_VERSION=${CUDA_VERSION}
 
 COPY script/cuda.sh /script/cuda.sh
+COPY script/run_server.sh /script/run_server.sh
 
 RUN . /etc/os-release && \
     apt-get update && \
@@ -74,4 +75,5 @@ COPY --from=builder /src/bazel-bin/adlik_serving/adlik_serving /usr/local/bin/ad
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
-CMD ["adlik-serving", "--grpc_port=8500", "--http_port=8501", "--model_base_path=/srv/adlik-serving"]
+RUN chmod +x /script/run_server.sh
+CMD /script/run_server.sh
