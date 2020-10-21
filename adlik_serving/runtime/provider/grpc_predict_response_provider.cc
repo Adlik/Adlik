@@ -4,7 +4,6 @@
 #include "adlik_serving/runtime/provider/grpc_predict_response_provider.h"
 
 #include "adlik_serving/apis/predict.pb.h"
-#include "tensorflow/core/lib/core/errors.h"
 
 namespace adlik {
 namespace serving {
