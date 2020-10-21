@@ -12,6 +12,8 @@ jobs:
     timeoutInMinutes: 0
     steps:
       - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
         displayName: Use latest Python
       - script: pip install -U numpy six
         displayName: Install additional dependencies
@@ -32,6 +34,8 @@ jobs:
     timeoutInMinutes: 0
     steps:
       - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
         displayName: Use latest Python
       - script: pip install -U numpy six
         displayName: Install additional dependencies
