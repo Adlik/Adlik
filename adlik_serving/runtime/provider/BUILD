@@ -32,7 +32,6 @@ serving_cc_library(
     deps = [
         ":predict_request_provider",
         "//adlik_serving/apis:predict_proto",
-        "//cub/log",
         "@org_tensorflow//tensorflow/core:lib",
     ],
 )

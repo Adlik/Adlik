@@ -3,10 +3,7 @@
 
 #include "adlik_serving/runtime/provider/grpc_predict_request_provider.h"
 
-#include <set>
-
 #include "adlik_serving/apis/predict.pb.h"
-#include "cub/log/log.h"
 #include "tensorflow/core/lib/core/errors.h"
 
 namespace adlik {
