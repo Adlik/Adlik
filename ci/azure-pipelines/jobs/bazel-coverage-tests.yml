@@ -14,6 +14,8 @@ jobs:
         disable.coverage.autogenerate: 'true'
     steps:
       - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
         displayName: Use latest Python
       - script: pip install -U numpy six
         displayName: Install additional dependencies
