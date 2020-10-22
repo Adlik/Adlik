@@ -34,6 +34,8 @@ on different models are as follows:
 - [The test result of the MNIST model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-mnist-model)
 - [The test result of the ResNet50 model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-resnet50-model)
 - [The test result of the InceptionV3 model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-inceptionv3-model)
+- [The test result of the YoloV3 model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-YoloV3-model)
+- [The test result of the Bert model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-Bert-model)
 
 ## Contents
 
