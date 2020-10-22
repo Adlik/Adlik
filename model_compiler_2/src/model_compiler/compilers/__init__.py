@@ -4,7 +4,8 @@
 from types import ModuleType
 
 from . import keras_model_file_to_keras_model, keras_model_to_tf_model, onnx_model_file_to_onnx_model, \
-    onnx_model_file_to_openvino_model, saved_model_to_openvino_model, saved_model_to_tflite_model, \
+    onnx_model_file_to_openvino_model, saved_model_file_to_openvino_model, saved_model_file_to_tflite_model, \
+    saved_model_to_openvino_model, saved_model_to_tflite_model, \
     tf_frozen_graph_model_file_to_openvino_model, tf_frozen_graph_model_file_to_tf_model, \
     tf_frozen_graph_model_to_onnx_model, tf_model_file_to_tf_model, tf_model_to_saved_model, \
     tf_model_to_tf_frozen_graph_model
@@ -20,6 +21,8 @@ __all__ = [
     'onnx_model_file_to_onnx_model',
     'onnx_model_file_to_openvino_model',
     'onnx_model_to_tensorrt_model',
+    'saved_model_file_to_openvino_model',
+    'saved_model_file_to_tflite_model',
     'saved_model_to_openvino_model',
     'saved_model_to_tflite_model',
     'tf_frozen_graph_model_file_to_openvino_model',
