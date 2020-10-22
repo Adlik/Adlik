@@ -73,7 +73,11 @@ def compile_source(source: FrozenGraphFile, config: Config) -> TensorFlowModel:
 
     with tf.Graph().as_default() as graph:
         tf.import_graph_def(graph_def, name='')
+    inputs = _get_inputs(graph, config)
+    outputs = config.get_output_tensors_from_graph(graph)
+    utilities.judge_batch_size([model_input[0].shape for model_input in inputs],
+                               [model_output.shape for model_output in outputs])
 
-    return TensorFlowModel(inputs=_get_inputs(graph, config),
-                           outputs=config.get_output_tensors_from_graph(graph),
+    return TensorFlowModel(inputs=inputs,
+                           outputs=outputs,
                            session=tf.compat.v1.Session(graph=graph, config=utilities.get_tf_cpu_only_config()))

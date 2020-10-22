@@ -4,6 +4,7 @@
 from typing import Any, Mapping, NamedTuple, Optional
 
 from . import repository
+from .. import utilities
 from ..models.irs.onnx_model import OnnxModel
 from ..models.targets.tensorrt_model import TensorRTModel
 
@@ -39,6 +40,9 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
         if not onnx_parser.parse(source.model_proto.SerializeToString()):
             raise ValueError('\n'.join(map(str, (onnx_parser.get_error(i) for i in range(onnx_parser.num_errors)))))
 
+        utilities.judge_batch_size([network.get_input(i).shape for i in range(network.num_inputs)],
+                                   [network.get_output(i).shape for i in range(network.num_outputs)])
+
         builder.max_batch_size = config.max_batch_size
 
         # Extract batch sizes.
@@ -51,6 +55,8 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
         # Build CUDA engine.
 
         builder_config = builder.create_builder_config()
+        # Some layer operations require larger memory space, such as: ArgMax
+        builder_config.max_workspace_size = 1 << 20
 
         if -1 in batch_sizes:
             optimization_profile = builder.create_optimization_profile()

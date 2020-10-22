@@ -109,5 +109,7 @@ def _get_outputs(model: keras.Model, input_specs: Optional[Sequence[NodeSpec]]):
 def compile_source(source: KerasModel, config: Config) -> TensorFlowModel:
     inputs = _get_inputs(source.model, config.input_nodes)
     outputs = _get_outputs(source.model, config.output_nodes)
+    utilities.judge_batch_size([model_input.tensor.shape for model_input in inputs],
+                               [model_output.shape for model_output in outputs])
 
     return TensorFlowModel(inputs=inputs, outputs=outputs, session=source.session)
