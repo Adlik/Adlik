@@ -42,13 +42,6 @@ build:aarch64 --cpu=aarch64
 build:tensorrt --define=runtime=tensorrt
 build:tensorrt --config=using_cuda
 
-# FPGA, just for FPGA demo and not support serving service.
-
-build:fpga --define=runtime=fpga
-build:fpga --cpu=aarch64
-build:fpga --crosstool_top=//third_party/aarch64_compiler:toolchain
-build:fpga --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-
 # ML runtime.
 
 build:ml --define=runtime=ml
