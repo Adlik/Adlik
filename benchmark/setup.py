@@ -37,7 +37,7 @@ setup(
     package_dir={'': 'src'},
     description=__doc__,
     license='Apache 2.0',
-    keywords='Test serving-lite performance',
+    keywords='Test Adlik performance',
     install_requires=_REQUIRED_PACKAGES,
     extras_require={'test': _TEST_REQUIRES}
 
