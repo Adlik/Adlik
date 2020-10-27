@@ -8,12 +8,12 @@
 ***Adlik*** [ædlik] is an end-to-end optimizing framework for deep learning models. The goal of Adlik is to accelerate deep
 learning inference process both on cloud and embedded environment.
 
-![Adlik schematic diagram](resources/arch.PNG)
+![Adlik schematic diagram](resources/arch.png)
 
 With Adlik framework, different deep learning models can be deployed to different platforms with high performance in a
 much flexible and easy way.
 
-![Using Adlik to Deploy Models in Cloud/Edge/Device](resources/deployment.PNG)
+![Using Adlik to Deploy Models in Cloud/Edge/Device](resources/deployment.png)
 
 1. In cloud environment, the compiled model and Adlik Inference Engine should be built as a docker image, and deployed
 as a container.
@@ -193,13 +193,13 @@ Assume building with CUDA version 11.0.
 The `ci/docker/build.sh` file can be used to build a Docker images that contains all the requirements for building
 Adlik. You can build Adlik with the Docker image.
 
->Note: If you build the runtime with GPU in a Docker image, you need to add the CUDA environment variables in the
->Dockerfile, such as:
+> Note: If you build the runtime with GPU in a Docker image, you need to add the CUDA environment variables in the
+> Dockerfile, such as:
 >
->```dockerfile
->ENV NVIDIA_VISIBLE_DEVICES all
->ENV NVIDIA_DRIVER_CAPABILITIES compute, utility
->```
+> ```dockerfile
+> ENV NVIDIA_VISIBLE_DEVICES all
+> ENV NVIDIA_DRIVER_CAPABILITIES compute, utility
+> ```
 
 ## Getting Started
 
