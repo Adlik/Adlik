@@ -22,6 +22,6 @@ Adlik is released 4 times per year, typically 1 time in 3 months.
 
 Releases are managed by:
 
-- [Liu Tao](https://github.com/amadeus-zte)  <liu.tao23@zte.com.cn>
-- [Zhao Lufan](https://github.com/EFanZh)  <zhao.lufan30@zte.com.cn>
-- [Jin Shiying](https://github.com/shiyingjin)  <jin.shiying@zte.com.cn>
+- [Liu Tao](https://github.com/amadeus-zte) <liu.tao23@zte.com.cn>
+- [Zhao Lufan](https://github.com/EFanZh) <zhao.lufan30@zte.com.cn>
+- [Jin Shiying](https://github.com/shiyingjin) <jin.shiying@zte.com.cn>

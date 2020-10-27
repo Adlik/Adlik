@@ -12,7 +12,7 @@ message PredictRequest {
   ModelSpec model_spec = 1;
 
   // map of name to tensor, it is recommended to put input in "tensor_content"
-  // field  of proto, especially for tensorRT model
+  // field of proto, especially for tensorRT model
   map<string, tensorflow.TensorProto> inputs = 2;
 
   // The batch size of the predict request. This must be >= 1. For
