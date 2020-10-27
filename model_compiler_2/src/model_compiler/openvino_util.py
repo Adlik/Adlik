@@ -118,6 +118,7 @@ class Config(NamedTuple):
     input_shapes: Optional[List[list]] = None
     output_names: Optional[List[str]] = None
     max_batch_size: Optional[int] = None
+    # if set enable_nhwc_to_nchw=True, the optimizer will transform the model format from channel_last to channel_first
     enable_nhwc_to_nchw: Optional[bool] = None
 
     @staticmethod
