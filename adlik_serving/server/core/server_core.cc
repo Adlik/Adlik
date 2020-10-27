@@ -81,7 +81,7 @@ private:
     if (!prog.parse(argc, argv)) {
       exit(0);
     }
-    return true;
+    return cub::Success;
   }
 
   cub::Status config() {
