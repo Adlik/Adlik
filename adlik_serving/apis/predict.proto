@@ -15,20 +15,14 @@ message PredictRequest {
   // field  of proto, especially for tensorRT model
   map<string, tensorflow.TensorProto> inputs = 2;
 
-  //@@  .. cpp:var:: uint32 batch_size
-  //@@
-  //@@     The batch size of the inference request. This must be >= 1. For
-  //@@     models that don't support batching batch_size must be 1.
-  //@@
+  // The batch size of the predict request. This must be >= 1. For
+  // models that don't support batching batch_size must be 1.
   uint32 batch_size = 3;
 
   message Class {
-    //@@      .. cpp:var:: uint32 count
-    //@@
-    //@@         Indicates how many classification values should be returned
-    //@@         for the output. The 'count' highest priority values are
-    //@@         returned.
-    //@@
+
+    // Indicates how many classification values should be returned
+    // for the output. The 'count' highest priority values are returned.
     uint32 count = 1;
   }
 
@@ -56,6 +50,6 @@ message PredictResponse {
     tensorflow.TensorProto tensor = 1;
     repeated Classes batch_classes = 2;
   }
-  // Output tensors.
+
   map<string, Output> outputs = 2;
 }
