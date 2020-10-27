@@ -31,16 +31,3 @@ serving_cc_library(
         "@org_tensorflow//tensorflow/core:lib",
     ],
 )
-
-# cc_test(
-#     name = "ir_model_test",
-#     srcs = ["ir_model_test.cc"],
-#     deps = [
-#         ":ir_model",
-#         "//cub/env/posix",
-#         "//cub/log",
-#         "@gtest",
-#         "@gtest//:gtest_main",
-#         "@local_config_openvino//:libinference_engine",
-#     ],
-# )
