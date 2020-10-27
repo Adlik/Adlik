@@ -89,7 +89,7 @@ parameters used in the test are as follows:
 | TF Serving2.1  `GPU` |           19395.129            |               53640.456                |             3.29E-05              |
 | TensorRT       `GPU` |           37342.687            |               163058.592               |             2.06E-05              |
 
-#### The test result of MNIST model in Tensorflow format
+#### The test result of MNIST model in TensorFlow format
 
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
@@ -99,7 +99,7 @@ parameters used in the test are as follows:
 | TF Serving1.14 `GPU` |           19043.582            |               51448.587                |             3.31E-05              |
 | TF Serving2.1  `GPU` |           19244.343            |               50705.164                |             3.22E-05              |
 
-#### The test result of MNIST model in Pytorch format
+#### The test result of MNIST model in PyTorch format
 
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
@@ -129,7 +129,7 @@ parameters used in the test are as follows:
 | TF Serving2.1  `GPU` |            170.680             |                420.814                 |              0.00348              |
 | TensorRT       `GPU` |            246.745             |                1381.023                |              0.00332              |
 
-#### The test result of ResNet50 model in Tensorflow format
+#### The test result of ResNet50 model in TensorFlow format
 
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
@@ -139,7 +139,7 @@ parameters used in the test are as follows:
 | TF Serving1.14 `GPU` |            181.118             |                454.013                 |              0.00331              |
 | TF Serving2.1  `GPU` |            176.710             |                473.091                 |              0.00354              |
 
-#### The test result of ResNet50 model in Pytorch format
+#### The test result of ResNet50 model in PyTorch format
 
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |

@@ -8,7 +8,7 @@
 ### Model Compiler
 
 1. A new framework which is easy to expand and maintain.
-2. Compilation of models trained from Keras, Tensorflow and Pytorch for better execution on CPU/GPU.
+2. Compilation of models trained from Keras, TensorFlow and PyTorch for better execution on CPU/GPU.
 
 | Training framework | Model format | Target runtime | compiled format |
 | ------------------ | ------------ | -------------- | --------------- |
@@ -64,7 +64,7 @@
 
 ### Benchmark Test Framework for Deep Learning Model
 
-1. A containalized solution which should automatically execute compiling models, loading runtime and compiled
+1. A containerized solution which should automatically execute compiling models, loading runtime and compiled
    models, starting inference service, then run inference client script, and finally generate testing results.
 2. Supports all the compilers and runtime that can be integrated into Adlik.
 3. Supported output: inference result, inference speed, delay of inference execution.
