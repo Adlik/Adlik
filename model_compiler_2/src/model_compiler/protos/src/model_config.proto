@@ -24,8 +24,8 @@ message ModelInstanceGroup {
     string name = 1;
 
     // The kind of this instance group. Default is KIND_AUTO. If KIND_AUTO or
-    // KIND_GPU then both 'count' and 'gpu' are valid and  may be specified. If
-    // KIND_CPU only 'count' is valid and 'gpu'  cannot be specified.
+    // KIND_GPU then both 'count' and 'gpu' are valid and may be specified. If
+    // KIND_CPU only 'count' is valid and 'gpu' cannot be specified.
     Kind kind = 4;
 
     // For a group assigned to GPU, the number of instances created for each GPU
@@ -35,7 +35,7 @@ message ModelInstanceGroup {
 
     // GPU(s) where instances should be available. For each GPU listed, 'count'
     // instances of the model will be available. Setting 'gpus' to empty (or not
-    // specifying at all) is eqivalent to listing all  available GPUs.
+    // specifying at all) is equivalent to listing all available GPUs.
     repeated int32 gpus = 3;
 }
 
@@ -90,7 +90,7 @@ message ModelOutput {
 // batching operates for the model.
 message ModelDynamicBatching {
     // Preferred batch sizes for dynamic batching. If a batch of one of
-    // these sizes can be formed it will be executed immediately.  If
+    // these sizes can be formed it will be executed immediately. If
     // not specified a preferred batch size will be chosen automatically
     // based on model and GPU characteristics.
     repeated int32 preferred_batch_size = 1;
