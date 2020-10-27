@@ -211,7 +211,7 @@ tensorflow::Status PluginLoader::splitOutputs(MyBatch& batch) {
       void* content = responseProvider->addOutput(item.first, dtype, dims, expectedByteSize);
 
       if (content == nullptr) {
-        // maybe not need thist output
+        // maybe not need this output
       } else {
         if (offsetByteSize + expectedByteSize > outputPtr->byteSize()) {
           return tensorflow::errors::InvalidArgument("unexpected size ",
