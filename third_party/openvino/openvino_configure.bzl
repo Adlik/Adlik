@@ -11,7 +11,7 @@ _INTEL_CVSDK_DIR = "INTEL_CVSDK_DIR"
 _INFERENCE_ENGINE_DIR = "InferenceEngine_DIR"
 
 _INFERENCE_ENGINE_LIBS = ["inference_engine"]
-_INFERENCE_ENGINE_HEADERS = ["ie_plugin_dispatcher.hpp"]  # just list a few of headers for checking
+_INFERENCE_ENGINE_HEADERS = ["inference_engine.hpp"]  # just list a few of headers for checking
 
 def auto_configure_fail(msg):
     """Output failure message when cuda configuration fails."""

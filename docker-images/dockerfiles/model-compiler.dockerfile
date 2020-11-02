@@ -47,6 +47,10 @@ deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(ec
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         intel-openvino-model-optimizer-"$OPENVINO_VERSION" \
+        libnvinfer-plugin7='7.2.*+cuda11.0' \
+        libnvinfer7='7.2.*+cuda11.0' \
+        libnvonnxparsers7='7.2.*+cuda11.0' \
+        libnvparsers7='7.2.*+cuda11.0' \
         python3-libnvinfer='7.2.*+cuda11.0' && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
