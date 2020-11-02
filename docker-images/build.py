@@ -6,7 +6,7 @@ import subprocess
 from os import path
 
 _UBUNTU_VERSION = 'bionic'
-_OPENVINO_VERSION = '2020.4.287'
+_OPENVINO_VERSION = '2021.1.110'
 
 _IMAGES = {
     'model-compiler': {'OPENVINO_VERSION': _OPENVINO_VERSION},
