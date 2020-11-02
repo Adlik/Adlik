@@ -4,5 +4,5 @@ steps:
         . /etc/os-release
         curl https://apt.repos.intel.com/openvino/2021/GPG-PUB-KEY-INTEL-OPENVINO-2021 | sudo apt-key add -
         sudo apt-add-repository -u 'deb https://apt.repos.intel.com/openvino/2021 all main'
-        sudo apt-get install --no-install-recommends -y "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2021.4.287"
+        sudo apt-get install --no-install-recommends -y "intel-openvino-ie-rt-core-$ID-$VERSION_CODENAME-2021.1.110"
     displayName: Install OpenVINO libraries
