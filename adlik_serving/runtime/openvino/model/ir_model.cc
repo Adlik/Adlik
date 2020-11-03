@@ -32,14 +32,6 @@ namespace {
       return cub::Status(_status.code());               \
   } while (0)
 
-struct ErrorListener : IErrorListener {
-  void onError(const char* msg) noexcept override {
-    ERR_LOG << "Plugin message: " << msg;
-  }
-};
-
-ErrorListener error_listener;
-
 struct PluginLoader : BatchProcessor {
   PluginLoader(const std::string& name, const adlik::serving::ModelConfigProto& config) : name(name), config(config) {
   }
@@ -73,26 +65,29 @@ tensorflow::Status PluginLoader::load(const std::string& path) {
   INFO_LOG << "Read the openvino model";
   std::string binFileName = tensorflow::io::JoinPath(path, "model.bin");
   std::string xmlFileName = tensorflow::io::JoinPath(path, "model.xml");
-  CNNNetReader netReader;
-  netReader.ReadNetwork(xmlFileName);
-  netReader.ReadWeights(binFileName);
-  if (!netReader.isParseSuccess()) {
-    INFO_LOG << "Cannot load the model";
-    return tensorflow::errors::Internal("Cannot load the model ", config.name());
+
+  CNNNetwork network;
+
+  try {
+    network = this->core.ReadNetwork(xmlFileName, binFileName);
+  } catch (const details::InferenceEngineException &e) {
+    return tensorflow::errors::Internal("Cannot load the model ", e.what());
   }
-  auto currentBatchSize = netReader.getNetwork().getBatchSize();
+
+  auto currentBatchSize = network.getBatchSize();
   if (currentBatchSize != config.max_batch_size()) {
-    netReader.getNetwork().setBatchSize(config.max_batch_size());
+    network.setBatchSize(config.max_batch_size());
   }
-  INFO_LOG << "network BacthSize:" << netReader.getNetwork().getBatchSize();
+
+  INFO_LOG << "network BacthSize:" << network.getBatchSize();
 
   // 2.Prepare inputs and outputs format
-  TF_RETURN_IF_ERROR(setInputBlob(netReader.getNetwork().getInputsInfo()));
-  TF_RETURN_IF_ERROR(setOutputBlob(netReader.getNetwork().getOutputsInfo()));
+  TF_RETURN_IF_ERROR(setInputBlob(network.getInputsInfo()));
+  TF_RETURN_IF_ERROR(setOutputBlob(network.getOutputsInfo()));
 
   // 3. get executeNetwork
   INFO_LOG << "Loading plugin";
-  ExecutableNetwork executableNetwork = getExeNetWork(netReader.getNetwork());
+  ExecutableNetwork executableNetwork = getExeNetWork(network);
 
   // 4. set inferrequest
   infer_request = executableNetwork.CreateInferRequest();
