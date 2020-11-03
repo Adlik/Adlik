@@ -70,7 +70,7 @@ tensorflow::Status PluginLoader::load(const std::string& path) {
 
   try {
     network = this->core.ReadNetwork(xmlFileName, binFileName);
-  } catch (const details::InferenceEngineException &e) {
+  } catch (const details::InferenceEngineException& e) {
     return tensorflow::errors::Internal("Cannot load the model ", e.what());
   }
 
