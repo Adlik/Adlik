@@ -74,7 +74,6 @@ tensorflow::Status PluginLoader::load(const std::string& path) {
     INFO_LOG << "Cannot load the model";
     return tensorflow::errors::Internal("Cannot load the model ", e.what());
   }
-
   auto currentBatchSize = network.getBatchSize();
   if (currentBatchSize != config.max_batch_size()) {
     network.setBatchSize(config.max_batch_size());
