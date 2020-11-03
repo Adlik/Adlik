@@ -71,6 +71,7 @@ tensorflow::Status PluginLoader::load(const std::string& path) {
   try {
     network = this->core.ReadNetwork(xmlFileName, binFileName);
   } catch (const details::InferenceEngineException& e) {
+    INFO_LOG << "Cannot load the model";
     return tensorflow::errors::Internal("Cannot load the model ", e.what());
   }
 
@@ -78,7 +79,6 @@ tensorflow::Status PluginLoader::load(const std::string& path) {
   if (currentBatchSize != config.max_batch_size()) {
     network.setBatchSize(config.max_batch_size());
   }
-
   INFO_LOG << "network BacthSize:" << network.getBatchSize();
 
   // 2.Prepare inputs and outputs format
