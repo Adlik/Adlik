@@ -12,9 +12,6 @@ serving_cc_library(
         "ir_model.h",
         "openvino_util.h",
     ],
-    linkopts = [
-        "-linference_engine",
-    ],
     deps = [
         "//adlik_serving/framework/domain:dims_list",
         "//adlik_serving/framework/domain:model_config_helper",
