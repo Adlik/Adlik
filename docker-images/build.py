@@ -10,7 +10,8 @@ _OPENVINO_VERSION = '2021.1.110'
 
 _IMAGES = {
     'model-compiler': {'OPENVINO_VERSION': _OPENVINO_VERSION},
-    'serving-openvino': {'OPENVINO_VERSION': _OPENVINO_VERSION}
+    'serving-openvino': {'OPENVINO_VERSION': _OPENVINO_VERSION},
+    'serving-tensorflow-cpu': {}
 }
 
 _BASE_DIR = path.dirname(path.abspath(__file__))
