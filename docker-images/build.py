@@ -15,7 +15,8 @@ _IMAGES = {
     'serving-openvino': {'OPENVINO_VERSION': _OPENVINO_VERSION},
     'serving-tensorrt': {'TENSORRT_VERSION': _TENSORRT_VERSION, 'CUDA_VERSION': _CUDA_VERSION},
     'serving-tensorflow-cpu': {},
-    'serving-tflite-cpu': {}
+    'serving-tflite-cpu': {},
+    'serving-tensorflow-gpu': {}
 }
 
 _BASE_DIR = path.dirname(path.abspath(__file__))
