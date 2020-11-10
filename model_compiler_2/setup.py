@@ -55,7 +55,7 @@ setuptools.setup(
         'networkx',
         'tensorflow',
         'test-generator==0.1.1',
-        'tf2onnx==1.6.3'
+        'tf2onnx'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={
