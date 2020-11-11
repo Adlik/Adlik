@@ -136,6 +136,7 @@ class Config(NamedTuple):
         output_names = split_by(env.get('OUTPUT_NAMES'), ',')
         temp_max_batch_size = env.get('MAX_BATCH_SIZE')
         max_batch_size = int(temp_max_batch_size) if temp_max_batch_size else None
+        # if set enable_nhwc_to_nchw to a non-zero value, the optimizer will transform the model format
         temp_enable_nhwc_to_nchw = env.get('ENABLE_NHWC_TO_NCHW')
         enable_nhwc_to_nchw = bool(int(temp_enable_nhwc_to_nchw)) if temp_enable_nhwc_to_nchw else None
         return Config(input_names=input_names,
