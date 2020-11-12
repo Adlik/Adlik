@@ -1,0 +1,22 @@
+{
+  "serving_type": "tf",
+  "input_model": "/model/inceptionv3.ckpt",
+  "export_path":  "model_tf",
+  "input_names": [
+    "input_1"
+  ],
+  "input_formats": [
+    "channels_last"
+  ],
+  "output_names": [
+    "predictions/Softmax"
+  ],
+  "input_signatures": [
+    "image"
+  ],
+  "output_signatures": [
+    "label"
+  ],
+  "model_name": "inceptionv3",
+  "max_batch_size": 128
+}

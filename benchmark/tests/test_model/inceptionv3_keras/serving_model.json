@@ -1,0 +1,22 @@
+{
+  "serving_type": "tf",
+  "input_model": "model/inceptionv3.h5",
+  "export_path": "model_repos",
+  "input_layer_names": [
+    "input_1"
+  ],
+  "output_layer_names": [
+    "predictions"
+  ],
+  "input_formats": [
+    "channels_last"
+  ],
+  "input_signatures": [
+    "image"
+  ],
+  "output_signatures": [
+    "label"
+  ],
+  "model_name": "inceptionv3",
+  "max_batch_size": 128
+}

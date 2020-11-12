@@ -1,0 +1,22 @@
+{
+	"serving_type": "tflite",
+        "input_model": "model_pb/frozen_graph.pb",
+        "export_path": "model_pb_tflite",
+        "input_names": [
+            "x:0"
+        ],
+        "output_names": [
+            "Identity:0"
+        ],
+        "input_formats": [
+            "channels_last"
+        ],
+        "input_signatures": [
+            "image"
+        ],
+        "output_signatures": [
+            "label"
+        ],
+        "model_name": "inceptionv3",
+        "max_batch_size": 128
+    }

@@ -153,8 +153,28 @@ parameters used in the test are as follows:
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
 | TF Serving2.1  `CPU` |             4.622              |                 4.752                  |              0.00589              |
-| TF Serving2.2  `CPU` |             3.752              |                 3.854                  |              0.00704              |
+| TF Serving2.2  `CPU` |             3.996              |                 4.120                  |              0.00756              |
+| OpenVINO       `CPU` |             5.974              |                 6.179                  |              0.00556              |
+| TFLite         `CPU` |             1.596              |                 1.611                  |              0.00602              |
 | TF Serving2.1  `GPU` |            107.667             |                291.931                 |              0.00586              |
+| TF Serving2.2  `GPU` |            111.572             |                296.222                 |              0.00559              |
+
+#### The test result of InceptionV3 model in TensorFlow format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| TF Serving2.1  `CPU` |             3.943              |                 4.056                  |              0.00703              |
+| TF Serving2.2  `CPU` |             3.758              |                 3.867                  |              0.00751              |
+| TFLite         `CPU` |             1.640              |                 1.656                  |              0.00563              |
+| TF Serving2.1  `GPU` |            109.931             |                288.978                 |              0.00564              |
+| TF Serving2.2  `GPU` |            111.172             |                289.187                 |              0.00554              |
+
+#### The test result of InceptionV3 model in PyTorch format
+
+|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| OpenVINO       `CPU` |             6.527              |                 6.760                  |              0.00528              |
+| TensorRT       `GPU` |            167.590             |                2894.354                |              0.00562              |
 
 ### The test result of the YoloV3 model
 
