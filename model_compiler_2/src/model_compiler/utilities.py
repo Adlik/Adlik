@@ -11,6 +11,10 @@ _Type1 = TypeVar('_Type1')
 _Type2 = TypeVar('_Type2')
 
 
+class ModelFileExtension:  # pylint: disable=too-few-public-methods
+    TF_MODEL_EXTENSION = ".ckpt"
+
+
 def create_named_tuple(type_class, kwargs):
     filtered_args = {}
 

@@ -8,12 +8,12 @@ ARG OPENVINO_VERSION
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y ca-certificates wget && \
-    wget 'https://apt.repos.intel.com/openvino/2020/GPG-PUB-KEY-INTEL-OPENVINO-2020' -O /etc/apt/trusted.gpg.d/openvino.asc && \
+    wget 'https://apt.repos.intel.com/openvino/2021/GPG-PUB-KEY-INTEL-OPENVINO-2021' -O /etc/apt/trusted.gpg.d/openvino.asc && \
     apt-get autoremove --purge -y wget && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN echo 'deb https://apt.repos.intel.com/openvino/2020 all main' >> /etc/apt/sources.list
+RUN echo 'deb https://apt.repos.intel.com/openvino/2021 all main' >> /etc/apt/sources.list
 
 RUN . /etc/os-release && \
     apt-get update && \
