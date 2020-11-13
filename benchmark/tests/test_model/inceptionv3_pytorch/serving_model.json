@@ -1,0 +1,23 @@
+{
+  "serving_type": "tensorrt",
+  "input_model": "./model/inceptionv3.onnx",
+  "export_path":  "model_tensorrt",
+  "input_names": [
+    "x.1"
+  ],
+  "input_formats": [
+    "channels_first"
+  ],
+  "output_names": [
+    "924"
+  ],
+  "input_signatures": [
+    "image"
+  ],
+  "output_signatures": [
+    "label"
+  ],
+  "model_name": "inceptionv3",
+  "job_id": "inceptionv3_pytorch",
+  "max_batch_size": 128
+}
