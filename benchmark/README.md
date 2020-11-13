@@ -74,6 +74,7 @@ parameters used in the test are as follows:
 | --- | :---------------------------------------: | :----: |
 | CPU | Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz |   1    |
 | GPU |           Tesla V100 SXM2 32GB            |   1    |
+| Raspberry Pi |          3B+, Broadcom BCM2837B0 1.4GHz Cortex-A53 64bit 1G LPDDR4            |   1    |
 
 ### The test result of the MNIST model
 
@@ -128,6 +129,8 @@ parameters used in the test are as follows:
 | TF Serving1.14 `GPU` |            175.423             |                433.627                 |              0.00339              |
 | TF Serving2.1  `GPU` |            170.680             |                420.814                 |              0.00348              |
 | TensorRT       `GPU` |            246.745             |                1381.023                |              0.00332              |
+| TFLite Float32 `Raspberry Pi` |             /              |                 0.569                  |              /              |
+| TFLite Int8 `Raspberry Pi` |             /              |                 0.737                  |              /              |
 
 #### The test result of ResNet50 model in TensorFlow format
 
@@ -158,6 +161,8 @@ parameters used in the test are as follows:
 | TFLite         `CPU` |             1.596              |                 1.611                  |              0.00602              |
 | TF Serving2.1  `GPU` |            107.667             |                291.931                 |              0.00586              |
 | TF Serving2.2  `GPU` |            111.572             |                296.222                 |              0.00559              |
+| TFLite Float32 `Raspberry Pi` |             /              |                 0.399                  |              /              |
+| TFLite Int8 `Raspberry Pi` |             /              |                 0.514                 |              /              |
 
 #### The test result of InceptionV3 model in TensorFlow format
 
