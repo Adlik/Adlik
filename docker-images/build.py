@@ -6,11 +6,14 @@ import subprocess
 from os import path
 
 _UBUNTU_VERSION = 'bionic'
+_TENSORRT_VERSION = '7.0.0.11'
+_CUDA_VERSION = '10.0'
 _OPENVINO_VERSION = '2021.1.110'
 
 _IMAGES = {
     'model-compiler': {'OPENVINO_VERSION': _OPENVINO_VERSION},
     'serving-openvino': {'OPENVINO_VERSION': _OPENVINO_VERSION},
+    'serving-tensorrt': {'TENSORRT_VERSION': _TENSORRT_VERSION, 'CUDA_VERSION': _CUDA_VERSION},
     'serving-tensorflow-cpu': {},
     'serving-tflite-cpu': {}
 }
