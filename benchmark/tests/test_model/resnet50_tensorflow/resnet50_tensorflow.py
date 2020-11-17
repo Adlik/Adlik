@@ -20,7 +20,7 @@ def _get_model():
 def main():
     model = _get_model()
     print(model.output_names)
-    save_path = os.path.join(os.path.dirname(__file__), 'model')
+    save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model')
     dir_name = os.path.dirname(save_path)
     os.makedirs(dir_name, exist_ok=True)
     # saved model to SavedModel format
