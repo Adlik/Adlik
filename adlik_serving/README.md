@@ -2,11 +2,11 @@
 
 ![Serving Engine schematic diagram](../resources/serving-engine-new.png)
 
-1. Model uploading & upgrading, model inference & monitoring.
+1. Model upload, upgrade, versioning, inference and monitoring.
 2. Unified inference interfaces for different runtimes.
-3. Management and scheduling for a solution with multiple models in various runtime.
+3. Unified management and scheduling of multi-runtime, multi-model and multi-instance.
 4. Automatic selection of inference runtime.
-5. Ability to add customized runtime.
+5. Supporting customized runtime and ML runtime.
 
 ## Usage
 
@@ -17,4 +17,4 @@ ubuntu system on your environment, but you still want to use Adlik, you can inst
 
 **Second**, use [Git](https://git-scm.com/download) clone the Adlik code or download zip.
 
-**Third**, follow the [build step](../README.md#build) build the Adlik.
+**Third**, follow the [build step](../README.md#build) to build the Adlik.
