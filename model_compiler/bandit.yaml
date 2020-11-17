@@ -1,4 +1,0 @@
-include:
-  - '*.py'
-
-skips: [B404,B603]
