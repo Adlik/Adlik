@@ -1,6 +1,6 @@
 jobs:
-  - job: ToxModelCompiler2
-    displayName: Tox model compiler 2
+  - job: ToxModelCompiler
+    displayName: Tox model compiler
     pool:
         vmImage: ubuntu-latest
     steps:
@@ -16,4 +16,4 @@ jobs:
         displayName: Install Protocol Buffers
       - script: tox -e py36-cpu
         displayName: Run tox
-        workingDirectory: model_compiler_2
+        workingDirectory: model_compiler

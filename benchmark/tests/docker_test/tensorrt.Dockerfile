@@ -119,7 +119,7 @@ RUN cd /home/john/Adlik &&\
          --incompatible_use_specific_tool_files=false &&\
     pip3 install --upgrade pip setuptools &&\
     pip3 install /tmp/pip-packages/adlik_serving_api-0.0.0-py2.py3-none-any.whl &&\
-    cd /home/john/Adlik/model_compiler_2 &&\
+    cd /home/john/Adlik/model_compiler &&\
     pip3 install . &&\
     pip3 install -U pillow
 
