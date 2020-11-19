@@ -118,6 +118,11 @@ parameters used in the test are as follows:
 
 ### The test result of the ResNet50 model
 
+The test model is the pre-trained model. And the script to get the model can be found in
+[Resnet50_keras](tests/test_model/resnet50_keras/resnet50_keras.py),
+[Resnet50_tensorflow](tests/test_model/resnet50_tensorflow/resnet50_tensorflow.py),
+and [Resnet50_torch](tests/test_model/resnet50_pytorch/resnet50_pytorch.py).
+
 #### The test result of ResNet50 model in Keras format
 
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
