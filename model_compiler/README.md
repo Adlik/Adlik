@@ -19,3 +19,12 @@
 cd {Adlik_root_dir}/model_compiler
 python3 -m pip install .
 ```
+
+### Quantify model
+
+1. When you compile the model to tensorflow lite runtime, you can quantify the model by set the parameter `optimization`，
+`supported_types`， `supported_ops`，`inference_input_type`，`inference_output_type` in json file or environment variable,
+you can refer to [quantify tensorflow lite model](../examples/quantify_model).
+
+2. When you compiler the model to tensorrt runtime, you can quantify the model to FP16 by set the parameter `enable_fp16`
+and `enable_strict_types` in json file or environment variable.
