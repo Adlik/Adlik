@@ -44,7 +44,7 @@ on different models are as follows:
 ***Model optimizer*** focuses on specific hardware and runs on it to achieve acceleration.  The proposed
 framework mainly consists of two categories of algorithm components, i.e. pruner and quantizer.
 
-### [Model compiler](model_compiler/README.md)
+### [Model Compiler](model_compiler/README.md)
 
 ***Model compiler*** supports several optimizing technologies like pruning, quantization and structural compression,
 which can be easily used for models developed with TensorFlow, Keras, PyTorch, etc.

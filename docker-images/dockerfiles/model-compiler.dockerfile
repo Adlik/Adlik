@@ -18,7 +18,7 @@ FROM base as builder
 RUN apt-get update
 RUN apt-get install --no-install-recommends -y protobuf-compiler
 
-COPY model_compiler_2 /src
+COPY model_compiler /src
 
 WORKDIR /src
 

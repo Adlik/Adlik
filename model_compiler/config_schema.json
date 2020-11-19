@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "properties": {
+    "serving_type": {
+      "type": "string",
+      "enum": [
+        "tf",
+        "tensorrt",
+        "openvino",
+        "tflite"
+      ],
+      "description": "target serving model type"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "output model name"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "version number of output model"
+    },
+    "max_batch_size": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "maximum batch size of output serving model can support"
+    },
+    "input_model": {
+      "type": "string",
+      "description": "file path of a pre-trained model which can be Keras h5 model(*.h5), TensorFlow checkpoint or frozen graph(*.pb)"
+    },
+    "script_path": {
+      "type": "string",
+      "description": "file path of a model script which describes the model structure especially custom layers or operations , optional"
+    },
+    "input_layer_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Can not be given"
+    },
+    "output_layer_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Can not be given"
+    },
+    "input_formats": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "channels_last",
+          "channels_first",
+          null
+        ]
+      },
+      "description": "required when input is image"
+    },
+    "input_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "input tensor names, required when input model is TensorFlow checkpoint"
+    },
+    "output_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "output tensor names, required when input model is TensorFlow checkpoint"
+    },
+    "input_signatures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "alias of inputs, required when serving_type is tf"
+    },
+    "output_signatures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "alias of outputs, required when serving_type is tf"
+    },
+    "export_path": {
+      "type": "string",
+      "description": "path of output model"
+    },
+    "input_shapes": {
+      "type": "array",
+      "description": "the shape of input, required when serving_type is openvino"
+    },
+    "enable_nhwc_to_nchw": {
+      "type": "boolean",
+      "description": "required when serving_type is openvino, when model is channel last set the 'enable_nhwc_to_nchw' as true"
+    },
+    "enable_fp16": {
+      "type": "integer",
+      "description": "control whether to quantify the model to fp16, used when serving_type is tensorrt"
+    },
+    "enable_strict_types": {
+      "type": "integer",
+      "description": "control whether to strictly implement fp16 quantification, used when serving_type is tensorrt"
+    },
+    "optimization": {
+      "type": "boolean",
+      "description": "control whether to optimize the model, used when serving_type is tensorflow lite"
+    },
+    "supported_types": {
+      "type": "string",
+      "description": "list of types for constant values on the target device, used when serving_type is tensorflow lite"
+    },
+    "supported_ops": {
+      "type": "string",
+      "description": "set of OpsSet options supported by the device, used when serving_type is tensorflow lite"
+    },
+    "inference_input_type": {
+      "type": "string",
+      "description": "data type of the input layer, used when serving_type is tensorflow lite"
+    },
+    "inference_output_type": {
+      "type": "string",
+      "description": "data type of the output layer, used when serving_type is tensorflow lite"
+    }
+  },
+  "required": [
+    "serving_type",
+    "model_name",
+    "max_batch_size",
+    "input_model",
+    "export_path"
+  ],
+  "additionalProperties": true
+}

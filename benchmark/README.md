@@ -194,7 +194,7 @@ weights: [yolov3.weights](https://pjreddie.com/media/files/yolov3.weights)
 The ONNX model of yolov3 is converted by `yolov3_to_onnx.py`([NVIDIA](https://developer.nvidia.com)) based on the
 `yolov3.cfg` and `yolov3.weights`.
 
-The TensorRT model of yolov3 is compiled by the `model_compiler_2` in the `Adlik`.
+The TensorRT model of yolov3 is compiled by the `model_compiler` in the `Adlik`.
 
 The batch size of the model is 128.
 
@@ -208,7 +208,7 @@ The batch size of the model is 128.
 
 First convert the `yolov3.cfg` and `yolov3.weights` to `yolov3.h5`.
 
-Then compile the `yolov3.h5` model to TensorFlow model using `model_compiler_2`.
+Then compile the `yolov3.h5` model to TensorFlow model using `model_compiler`.
 
 The batch size of the model is 128.
 
@@ -238,7 +238,7 @@ The .zip file contains three items:
 
 - A config file (bert_config.json) which specifies the hyperparameters of the model.
 
-Then compile the model to TensorFlow Lite using `model_compiler_2`.
+Then compile the model to TensorFlow Lite using `model_compiler`.
 
 The batch size of the model is 1.
 
