@@ -1,0 +1,5 @@
+export ONNX_PATH=/home/john/model/yolo_416.onnx
+export MODEL_NAME=yolov3
+export EXPORT_PATH=/home/john/model/test_env
+export MAX_BATCH_SIZE=128
+export SERVING_TYPE=openvino
