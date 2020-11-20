@@ -1,0 +1,16 @@
+{
+  "serving_type": "openvino",
+  "input_model": "/mnt/model/yolo_416.onnx",
+  "export_path":  "/srv/yolov3_repos",
+  "input_names": ["000_net"],
+  "input_formats":["channels_last"],
+  "enable_nhwc_to_nchw": "true",
+  "output_names":["082_convolutional","094_convolutional","106_convolutional"],
+  "input_signatures": [
+    "image"
+  ],
+  "model_name": "yolov3",
+  "job_id": "yolov3_onnx",
+  "callback": "",
+  "max_batch_size": 128
+}
