@@ -70,11 +70,12 @@ At present, the inference performance test results of Adlik serving engine on di
 of the MNIST model, the test result of the ResNet50 model, and the test result of the InceptionV3 model.The CPU and GPU
 parameters used in the test are as follows:
 
-|     |                   type                    | number |
-| --- | :---------------------------------------: | :----: |
-| CPU | Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz |   1    |
-| GPU |           Tesla V100 SXM2 32GB            |   1    |
-| Raspberry Pi |          3B+, Broadcom BCM2837B0 1.4GHz Cortex-A53 64bit 1G LPDDR4            |   1    |
+|              |                           type                            | number |
+| ------------ | :-------------------------------------------------------: | :----: |
+| CPU          |         Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz         |   1    |
+| GPU          |                   Tesla V100 SXM2 32GB                    |   1    |
+| Raspberry Pi | 3B+, Broadcom BCM2837B0 1.4GHz Cortex-A53 64bit 1G LPDDR4 |   1    |
+| Jetson Nano  |     Quad-core ARM Cortex-A57 64bit 4 GB 64-bit LPDDR4     |   1    |
 
 ### The test result of the MNIST model
 
@@ -125,17 +126,19 @@ and [Resnet50_torch](tests/test_model/resnet50_pytorch/resnet50_pytorch.py).
 
 #### The test result of ResNet50 model in Keras format
 
-|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
-| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| TF Serving1.14 `CPU` |             3.599              |                 3.640                  |              0.00311              |
-| TF Serving2.1  `CPU` |             6.183              |                 6.301                  |              0.00302              |
-| OpenVINO       `CPU` |             9.359              |                 9.642                  |              0.00313              |
-| TFLite         `CPU` |             2.838              |                 2.862                  |              0.00298              |
-| TF Serving1.14 `GPU` |            175.423             |                433.627                 |              0.00339              |
-| TF Serving2.1  `GPU` |            170.680             |                420.814                 |              0.00348              |
-| TensorRT       `GPU` |            246.745             |                1381.023                |              0.00332              |
-| TFLite Float32 `Raspberry Pi` |             /              |                 0.569                  |              /              |
-| TFLite Int8 `Raspberry Pi` |             /              |                 0.737                  |              /              |
+|                               | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| ----------------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| TF Serving1.14 `CPU`          |             3.599              |                 3.640                  |              0.00311              |
+| TF Serving2.1  `CPU`          |             6.183              |                 6.301                  |              0.00302              |
+| OpenVINO       `CPU`          |             9.359              |                 9.642                  |              0.00313              |
+| TFLite         `CPU`          |             2.838              |                 2.862                  |              0.00298              |
+| TF Serving1.14 `GPU`          |            175.423             |                433.627                 |              0.00339              |
+| TF Serving2.1  `GPU`          |            170.680             |                420.814                 |              0.00348              |
+| TensorRT       `GPU`          |            246.745             |                1381.023                |              0.00332              |
+| TFLite Float32 `Jetson Nano`  |               /                |            0.645(using ARM)            |                 /                 |
+| TFLite Int8 `Jetson Nano`     |               /                |                   /                    |                 /                 |
+| TFLite Float32 `Raspberry Pi` |               /                |                 0.569                  |                 /                 |
+| TFLite Int8 `Raspberry Pi`    |               /                |                 0.737                  |                 /                 |
 
 #### The test result of ResNet50 model in TensorFlow format
 
@@ -158,16 +161,16 @@ and [Resnet50_torch](tests/test_model/resnet50_pytorch/resnet50_pytorch.py).
 
 #### The test result of InceptionV3 model in Keras format
 
-|                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
-| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| TF Serving2.1  `CPU` |             4.622              |                 4.752                  |              0.00589              |
-| TF Serving2.2  `CPU` |             3.996              |                 4.120                  |              0.00756              |
-| OpenVINO       `CPU` |             5.974              |                 6.179                  |              0.00556              |
-| TFLite         `CPU` |             1.596              |                 1.611                  |              0.00602              |
-| TF Serving2.1  `GPU` |            107.667             |                291.931                 |              0.00586              |
-| TF Serving2.2  `GPU` |            111.572             |                296.222                 |              0.00559              |
-| TFLite Float32 `Raspberry Pi` |             /              |                 0.399                  |              /              |
-| TFLite Int8 `Raspberry Pi` |             /              |                 0.514                 |              /              |
+|                               | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| ----------------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| TF Serving2.1  `CPU`          |             4.622              |                 4.752                  |              0.00589              |
+| TF Serving2.2  `CPU`          |             3.996              |                 4.120                  |              0.00756              |
+| OpenVINO       `CPU`          |             5.974              |                 6.179                  |              0.00556              |
+| TFLite         `CPU`          |             1.596              |                 1.611                  |              0.00602              |
+| TF Serving2.1  `GPU`          |            107.667             |                291.931                 |              0.00586              |
+| TF Serving2.2  `GPU`          |            111.572             |                296.222                 |              0.00559              |
+| TFLite Float32 `Raspberry Pi` |               /                |                 0.399                  |                 /                 |
+| TFLite Int8 `Raspberry Pi`    |               /                |                 0.514                  |                 /                 |
 
 #### The test result of InceptionV3 model in TensorFlow format
 
@@ -205,9 +208,9 @@ The batch size of the model is 128.
 
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| Yolov3-320     `GPU` |            59.574              |                 212.705                |              0.01208              |
-| YoloV3-416     `GPU` |            35.760              |                 133.017                |              0.02045              |
-| YoloV3-608     `GPU` |            16.164              |                 62.893                 |              0.04597              |
+| Yolov3-320     `GPU` |             59.574             |                212.705                 |              0.01208              |
+| YoloV3-416     `GPU` |             35.760             |                133.017                 |              0.02045              |
+| YoloV3-608     `GPU` |             16.164             |                 62.893                 |              0.04597              |
 
 #### The test result of the YoloV3 model using TensorFlow runtime
 
@@ -219,12 +222,12 @@ The batch size of the model is 128.
 
 |                      | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| YoloV3-320     `CPU` |             2.642              |                   2.552                |               0.01328             |
-| YoloV3-416     `CPU` |             1.755              |                   1.804                |               0.01567             |
-| YoloV3-608     `CPU` |             0.692              |                   0.721                |               0.05770             |
-| Yolov3-320     `GPU` |            47.541              |                  119.880               |               0.01269             |
-| YoloV3-416     `GPU` |            29.250              |                  70.663                |               0.02004             |
-| YoloV3-608     `GPU` |            12.354              |                  33.881                |               0.05142             |
+| YoloV3-320     `CPU` |             2.642              |                 2.552                  |              0.01328              |
+| YoloV3-416     `CPU` |             1.755              |                 1.804                  |              0.01567              |
+| YoloV3-608     `CPU` |             0.692              |                 0.721                  |              0.05770              |
+| Yolov3-320     `GPU` |             47.541             |                119.880                 |              0.01269              |
+| YoloV3-416     `GPU` |             29.250             |                 70.663                 |              0.02004              |
+| YoloV3-608     `GPU` |             12.354             |                 33.881                 |              0.05142              |
 
 ### The test result of the Bert model
 
@@ -247,6 +250,6 @@ Then compile the model to TensorFlow Lite using `model_compiler`.
 
 The batch size of the model is 1.
 
-|                      | speed of client (samples/sec) | speed of serving engine (samples/sec) | tail latency of one statement (sec) |
-| -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
-| Bert     `CPU`       |             83.435              |                   83.543                |               1.55E-05             |
+|                | speed of client (samples/sec) | speed of serving engine (samples/sec) | tail latency of one statement (sec) |
+| -------------- | :---------------------------: | :-----------------------------------: | :---------------------------------: |
+| Bert     `CPU` |            83.435             |                83.543                 |              1.55E-05               |
