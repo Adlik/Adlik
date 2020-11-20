@@ -19,12 +19,12 @@
 1. Support hybrid scheduling of ML and DL inference jobs.
 2. Support image based deployment of Adlik compiler and inference engine in cloud native environment.
 3. Deployment and functions has been tested in docker (V19.03.12) and Kubernetes (V1.13).
-4. Support Adlik running in Raspberry Pi.
+4. Support Adlik running in Raspberry Pi and JetsonNano.
 5. Support the newest version of OpenVINO (2021.1.110) and TensorFlow (2.3.1).
 
 ### Benchmark Test
 
-1. Support benchmark test for models including ResNet-50, Inception V3, Yolo V3 and Bert with runtimes supported by Adlik
+1. Support benchmark test for models including ResNet-50, Inception V3, Yolo V3 and Bert with runtimes supported by Adlik.
 
 ## Fixed issues
 
