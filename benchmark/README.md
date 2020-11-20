@@ -75,6 +75,7 @@ parameters used in the test are as follows:
 | CPU | Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz |   1    |
 | GPU |           Tesla V100 SXM2 32GB            |   1    |
 | Raspberry Pi |          3B+, Broadcom BCM2837B0 1.4GHz Cortex-A53 64bit 1G LPDDR4            |   1    |
+| Jetson Nano  |     Quad-core ARM Cortex-A57 64bit 4 GB 64-bit LPDDR4     |   1    |
 
 ### The test result of the MNIST model
 
