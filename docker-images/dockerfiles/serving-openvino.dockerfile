@@ -3,6 +3,7 @@ ARG UBUNTU_VERSION
 # Base.
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
+COPY script/run_server.sh /script/run_server.sh
 
 ARG OPENVINO_VERSION
 
@@ -74,4 +75,5 @@ COPY --from=builder /src/bazel-bin/adlik_serving/adlik_serving /usr/local/bin/ad
 
 ENV LD_LIBRARY_PATH=/opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/inference_engine/lib/intel64:/opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/ngraph/lib:/opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/inference_engine/external/tbb/lib
 
-CMD ["adlik-serving", "--grpc_port=8500", "--http_port=8501", "--model_base_path=/srv/adlik-serving"]
+RUN chmod +x /script/run_server.sh
+CMD /script/run_server.sh
