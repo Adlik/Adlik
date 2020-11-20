@@ -59,7 +59,8 @@ class MainTestCase(TestCase):
                         'H5_PATH': model_file.name,
                         'INPUT_SIGNATURES': 'x_2000',
                         'OUTPUT_SIGNATURES': 'y_2000',
-                        'EXPORT_PATH': target_dir})
+                        'EXPORT_PATH': target_dir,
+                        'CALLBACK': 'http:response'})
 
             subprocess.run(args=['model-compiler'], env=env, check=True)  # nosec
 
@@ -71,3 +72,38 @@ class MainTestCase(TestCase):
 
             self.assertEqual(sorted(os.listdir(os.path.join(target_dir, 'foobar2000', '4', 'variables'))),
                              ['variables.data-00000-of-00001', 'variables.index'])
+
+    @staticmethod
+    def test_compile_error():
+        with NamedTemporaryFile(suffix='.h5') as model_file, TemporaryDirectory() as target_dir:
+            _save_model(model_file.name)
+
+            env = os.environ.copy()
+
+            env.update({'SERVING_TYPE': 'tf',
+                        'VERSION': '4',
+                        'MAX_BATCH_SIZE': '7',
+                        'H5_PATH': model_file.name,
+                        'INPUT_SIGNATURES': 'x_2000',
+                        'OUTPUT_SIGNATURES': 'y_2000',
+                        'EXPORT_PATH': target_dir,
+                        'CALLBACK': 'http://response'})
+
+            subprocess.run(args=['model-compiler'], env=env, check=True)  # nosec
+
+    @staticmethod
+    def test_compile_error_no_callback():
+        with NamedTemporaryFile(suffix='.h5') as model_file, TemporaryDirectory() as target_dir:
+            _save_model(model_file.name)
+
+            env = os.environ.copy()
+
+            env.update({'SERVING_TYPE': 'tf',
+                        'VERSION': '4',
+                        'MAX_BATCH_SIZE': '7',
+                        'H5_PATH': model_file.name,
+                        'INPUT_SIGNATURES': 'x_2000',
+                        'OUTPUT_SIGNATURES': 'y_2000',
+                        'EXPORT_PATH': target_dir})
+
+            subprocess.run(args=['model-compiler'], env=env, check=True)  # nosec

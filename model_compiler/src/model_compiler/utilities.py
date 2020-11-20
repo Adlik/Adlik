@@ -3,6 +3,8 @@
 
 from typing import Callable, List, Optional, TypeVar
 
+import time
+import requests
 import tensorflow as tf
 
 from .models.data_format import DataFormat
@@ -66,3 +68,17 @@ def judge_batch_size(inputs_shape, outputs_shape):
     input_batch = {input_shape[0] for input_shape in inputs_shape}
     output_batch = {output_shape[0] for output_shape in outputs_shape}
     assert input_batch == output_batch  # nosec: B101
+
+
+def send_response(url, message):
+    retries = 0
+    max_retries = 3
+
+    while retries <= max_retries:
+        try:
+            result = requests.put(url, json=message)
+            return result
+        except Exception:  # pylint:disable=broad-except
+            time.sleep(2)
+            retries += 1
+            continue
