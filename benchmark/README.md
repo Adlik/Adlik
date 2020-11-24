@@ -137,6 +137,7 @@ and [Resnet50_torch](tests/test_model/resnet50_pytorch/resnet50_pytorch.py).
 | TensorRT       `GPU` |            246.745             |                1381.023                |              0.00332              |
 | TFLite Float32 `Raspberry Pi` |             /              |                 0.569                  |              /              |
 | TFLite Int8 `Raspberry Pi` |             /              |                 0.737                  |              /              |
+| TFLite Float32 `Jetson Nano` |             /              |             1.385(arm cpu)      |              /              |
 
 #### The test result of ResNet50 model in TensorFlow format
 
