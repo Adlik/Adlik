@@ -12,7 +12,7 @@ void BatchingParameters::config(const TfPlanModelConfigProto& config) {
 SharedBatcher::QueueOptions BatchingParameters::getQueueOptions() const {
   SharedBatcher::QueueOptions opts;
   if (proto->has_max_batch_size()) {
-    opts.max_batch_size = proto->max_batch_size().value();
+    opts.input_batch_size_limit = proto->max_batch_size().value();
   }
   if (proto->has_batch_timeout_micros()) {
     opts.batch_timeout_micros = proto->batch_timeout_micros().value();

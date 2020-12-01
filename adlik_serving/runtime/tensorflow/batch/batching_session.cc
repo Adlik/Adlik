@@ -7,8 +7,8 @@
 #include "adlik_serving/runtime/tensorflow/batch/batching_parameters.h"
 #include "adlik_serving/runtime/tensorflow/batch/batching_scheduler.h"
 #include "adlik_serving/runtime/tensorflow/batch/inferential_batch.h"
+#include "adlik_serving/runtime/tensorflow/batch/queue_options.h"
 #include "adlik_serving/runtime/tensorflow/model/meta_graph.h"
-#include "adlik_serving/runtime/util/queue_options.h"
 
 namespace tensorflow {
 
@@ -19,7 +19,7 @@ void BatchingSession::config(const adlik::serving::ModelConfig& config_proto) {
   auto createQueue = [this, &config_proto](auto& signature) {
     UniqueBatcher batcher;
     SharedBatcher::QueueOptions opts = this->ROLE(BatchingParameters).getQueueOptions();
-    adlik::serving::optionsFromConfig<SharedBatcher::QueueOptions>(config_proto, opts);
+    optionsFromConfig<SharedBatcher::QueueOptions>(config_proto, opts);
     this->ROLE(BatchingScheduler).append(opts, signature, *this, batcher);
     schedulers[signature] = std::move(batcher);
   };

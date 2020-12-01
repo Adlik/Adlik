@@ -21,12 +21,12 @@ if '--project_name' in sys.argv:
     sys.argv.remove('--project_name')
     sys.argv.pop(project_name_idx)
 
-_TF_REQ = ['tensorflow==2.3.0']
+_TF_REQ = ['tensorflow==2.4.0rc4']
 
 # GPU build (note: the only difference is we depend on tensorflow-gpu so
 # pip doesn't overwrite it with the CPU build)
 if 'adlik-serving-api-gpu' in project_name:
-    _TF_REQ = ['tensorflow-gpu==2.3.0']
+    _TF_REQ = ['tensorflow-gpu==2.4.0rc4']
 
 
 REQUIRED_PACKAGES = [
