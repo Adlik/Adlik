@@ -25,6 +25,10 @@ struct SharedLock {
     lock.mu = nullptr;
   }
 
+  SharedLock& operator=(SharedLock&& lock) {
+    std::swap(this->mu, lock.mu);
+  }
+
   ~SharedLock() {
     if (mu != nullptr) {
       mu->unlockShared();
@@ -40,6 +44,9 @@ struct SharedLock {
   }
 
 private:
+  SharedLock(const SharedLock&) = delete;
+  SharedLock& operator=(const SharedLock&) = delete;
+
   Mutex* mu;
 };
 

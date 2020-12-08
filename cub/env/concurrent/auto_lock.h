@@ -25,6 +25,10 @@ struct AutoLock {
     lock.mu = nullptr;
   }
 
+  AutoLock& operator=(AutoLock&& lock) {
+    std::swap(this->mu, lock.mu);
+  }
+
   ~AutoLock() {
     if (mu != nullptr) {
       mu->unlock();
@@ -40,6 +44,9 @@ struct AutoLock {
   }
 
 private:
+  AutoLock(const AutoLock&) = delete;
+  AutoLock& operator=(const AutoLock&) = delete;
+
   Mutex* mu;
 };
 
