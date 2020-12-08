@@ -12,7 +12,7 @@ using thread_t = std::function<void()>;
 
 struct Thread {
   // join thread until stops running.
-  virtual ~Thread() = 0;
+  virtual ~Thread() = default;
 };
 
 }  // namespace cub
