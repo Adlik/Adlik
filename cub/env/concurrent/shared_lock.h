@@ -43,10 +43,10 @@ struct SharedLock {
     return mu->native();
   }
 
-private:
   SharedLock(const SharedLock&) = delete;
   SharedLock& operator=(const SharedLock&) = delete;
 
+private:
   Mutex* mu;
 };
 

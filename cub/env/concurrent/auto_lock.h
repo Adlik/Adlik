@@ -43,10 +43,10 @@ struct AutoLock {
     return mu->native();
   }
 
-private:
   AutoLock(const AutoLock&) = delete;
   AutoLock& operator=(const AutoLock&) = delete;
 
+private:
   Mutex* mu;
 };
 
