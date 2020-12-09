@@ -51,7 +51,7 @@ cc_library(
 
 cc_library(
     name = "concurrent",
-    srcs = ["thread.cc"],
+    srcs = [],
     hdrs = [
         "concurrent.h",
         "thread.h",
