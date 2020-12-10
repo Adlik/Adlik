@@ -2,7 +2,7 @@ jobs:
   - job: ToxModelCompiler
     displayName: Tox model compiler
     pool:
-        vmImage: ubuntu-latest
+        vmImage: Ubuntu-18.04
     steps:
       - template: ../steps/install-tensorrt.yml
       - template: ../steps/install-openvino-compiler.yml

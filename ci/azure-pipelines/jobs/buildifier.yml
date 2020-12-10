@@ -2,7 +2,7 @@ jobs:
   - job: Buildifier
     displayName: Buildifier
     pool:
-        vmImage: ubuntu-latest
+        vmImage: Ubuntu-18.04
     steps:
       - template: ../steps/install-buildifier.yml
       - script: buildifier -lint warn -mode check -r .

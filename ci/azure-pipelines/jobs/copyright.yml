@@ -2,7 +2,7 @@ jobs:
   - job: Copyright
     displayName: Copyright
     pool:
-        vmImage: ubuntu-latest
+        vmImage: Ubuntu-18.04
     steps:
       - task: UsePythonVersion@0
         inputs:

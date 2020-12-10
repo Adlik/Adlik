@@ -2,7 +2,7 @@ jobs:
   - job: Flake8
     displayName: Flake8
     pool:
-        vmImage: ubuntu-latest
+        vmImage: Ubuntu-18.04
     steps:
       - task: UsePythonVersion@0
         inputs:
