@@ -80,10 +80,8 @@ bool ManagedStore::isNormal(const std::string& name) {
 }
 
 void ManagedStore::deleteModel(const std::string& modelName) {
-  auto range = manageds.equal_range(modelName);
-  for (auto it = range.first; it != range.second;) {
-    manageds.erase(it++);
-  }
+  manageds.erase(modelName);
+
   ROLE(ServingStore).update(manageds);
 }
 
