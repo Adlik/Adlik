@@ -12,7 +12,7 @@ namespace serving {
 
 void ModelFactorySuite::add(const std::string& runtime, ModelFactory& f) {
   INFO_LOG << "register model factory:" << runtime;
-  factories.insert({runtime, &f});
+  factories.emplace(runtime, &f);
 }
 
 Model* ModelFactorySuite::create(const ModelId& id, const ModelConfig& config) {
