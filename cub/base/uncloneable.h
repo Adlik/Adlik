@@ -16,4 +16,16 @@ public:                        \
 public:                      \
   xlass(const xlass&) = delete;
 
+#define DISALLOW_MOVE_AND_ASSIGN(xlass) \
+  DISALLOW_MOVE_ASSIGN(xlass)           \
+  DISALLOW_MOVE(xlass)
+
+#define DISALLOW_MOVE_ASSIGN(xlass) \
+public:                             \
+  xlass& operator=(xlass&&) = delete;
+
+#define DISALLOW_MOVE(xlass) \
+public:                      \
+  xlass(xlass&&) = delete;
+
 #endif

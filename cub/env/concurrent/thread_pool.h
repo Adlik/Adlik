@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "cub/base/uncloneable.h"
 #include "cub/env/concurrent/thread.h"
 
 namespace cub {
@@ -18,6 +19,9 @@ struct ThreadPool {
   void cancel();
   int getNumThreads() const;
   int getCurrentThreadId() const;
+
+  DISALLOW_COPY_AND_ASSIGN(ThreadPool)
+  DISALLOW_MOVE_AND_ASSIGN(ThreadPool)
 
 private:
   struct Impl;

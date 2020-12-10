@@ -69,6 +69,7 @@ cc_library(
     deps = [
         ":concurrent",
         ":notification",
+        "//cub/base/uncloneable",
         "//cub/env/posix",
         "//cub/env/time",
     ],
@@ -93,6 +94,7 @@ cc_library(
     hdrs = ["thread_pool.h"],
     deps = [
         ":concurrent",
+        "//cub/base/uncloneable",
         "//cub/env",
         "//third_party/eigen3",
     ],
