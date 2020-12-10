@@ -14,7 +14,7 @@ _VERSION = '0.0.0'
 _REQUIRED_PACKAGES = [
     'h5py<3',
     'keras==2.4.0',
-    'onnx==1.5.0',
+    'onnx==1.7.0',
     'torch==1.4.0',
     'requests',
     'tensorflow==2.3.1',
@@ -41,5 +41,4 @@ setup(
     keywords='Test Adlik performance',
     install_requires=_REQUIRED_PACKAGES,
     extras_require={'test': _TEST_REQUIRES}
-
 )

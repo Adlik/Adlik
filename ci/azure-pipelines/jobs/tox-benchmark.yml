@@ -6,9 +6,9 @@ jobs:
     timeoutInMinutes: 0
     steps:
       - task: UsePythonVersion@0
-        displayName: Use Python 3.7
         inputs:
-            versionSpec: '3.7'
+          versionSpec: '3.8'
+        displayName: Install Python3.8
       - script: pip install -U tox
         displayName: Install tox
       - script: cd benchmark && tox
