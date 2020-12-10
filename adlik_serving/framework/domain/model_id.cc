@@ -45,7 +45,7 @@ std::size_t ModelId::hash() const noexcept {
 
 std::string ModelId::to_s() const {
   using namespace std::string_literals;
-  return "{name: "s + name + ", " + "version: " + std::to_string(version) + "}";
+  return "{name: "s + name + ", version: " + std::to_string(version) + "}";
 }
 
 std::ostream& operator<<(std::ostream& os, const ModelId& id) {
