@@ -25,6 +25,10 @@ struct SharedLock {
     lock.mu = nullptr;
   }
 
+  SharedLock& operator=(SharedLock&& lock) {
+    std::swap(this->mu, lock.mu);
+  }
+
   ~SharedLock() {
     if (mu != nullptr) {
       mu->unlockShared();
@@ -38,6 +42,9 @@ struct SharedLock {
   void* native() const {
     return mu->native();
   }
+
+  SharedLock(const SharedLock&) = delete;
+  SharedLock& operator=(const SharedLock&) = delete;
 
 private:
   Mutex* mu;
