@@ -7,9 +7,9 @@ jobs:
       - template: ../steps/install-tensorrt.yml
       - template: ../steps/install-openvino-compiler.yml
       - task: UsePythonVersion@0
-        displayName: Use Python 3.6
         inputs:
-            versionSpec: '3.6'
+          versionSpec: '3.6'
+        displayName: Install Python3.6
       - script: pip install -U tox
         displayName: Install tox
       - script: sudo apt-get install --no-install-recommends -y protobuf-compiler

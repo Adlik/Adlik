@@ -5,7 +5,9 @@ jobs:
         vmImage: ubuntu-latest
     steps:
       - task: UsePythonVersion@0
-        displayName: Use latest Python
+        inputs:
+          versionSpec: '3.8'
+        displayName: Install Python3.8
       - script: python3 -m pip install -U flake8
         displayName: Install Flake8
       - script: ci/checks/flake8.py

@@ -16,7 +16,7 @@ _PACKAGE = 'python3-libnvinfer_7.2.0-1'
 
 _TENSORRT_SOURCES = {
     (3, 5): 'ubuntu1604',
-    (3, 6): 'ubuntu1804',
+    (3, 6): 'ubuntu1804'
 }
 
 _TOOLS_DIR = path.dirname(path.abspath(__file__))
