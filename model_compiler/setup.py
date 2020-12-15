@@ -11,7 +11,7 @@ from urllib import request
 import setuptools
 from setuptools.command.build_py import build_py
 
-_TYPES_PROTO_URL = 'https://github.com/tensorflow/tensorflow/raw/v2.3.0/tensorflow/core/framework/types.proto'
+_TYPES_PROTO_URL = 'https://github.com/tensorflow/tensorflow/raw/v2.3.1/tensorflow/core/framework/types.proto'
 _PROJECT_PATH = path.dirname(path.abspath(__file__))
 
 
@@ -53,7 +53,7 @@ setuptools.setup(
     install_requires=[
         'defusedxml',
         'networkx',
-        'tensorflow',
+        'tensorflow==2.3.1',
         'test-generator==0.1.1',
         'tf2onnx'
     ],
