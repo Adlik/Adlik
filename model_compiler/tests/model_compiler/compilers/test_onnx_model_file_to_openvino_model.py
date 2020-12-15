@@ -20,8 +20,8 @@ def _save_onnx_model(model_file):
         weight = tf.Variable(initial_value=4.2, dtype=tf.float32)
         tf.multiply(input_x + input_y, weight, name='z')
         session.run(weight.initializer)
-
         frozen_graph_def = tf_loader.freeze_session(session, input_names=['x:0', 'y:0'], output_names=['z:0'])
+
     with tf.compat.v1.Session(graph=tf.Graph()) as session, open(model_file.name, mode='wb') as graph_file:
         tf.import_graph_def(frozen_graph_def, name='')
         onnx_model = tfonnx.process_tf_graph(tf_graph=session.graph,
