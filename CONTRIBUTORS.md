@@ -19,6 +19,7 @@
 | Kang Li        |   ICT,CAS    |     likang@ict.ac.cn      | HappyKL             |
 | Kaili Zhang    |     ZTE      |  zhang.kaili@zte.com.cn   | KellyZhang2020      |
 | Xuewei Han     |     ZTE      |   han.xuewei@zte.com.cn   | XueweiHan21         |
+| Chao Wang      |     ZTE      |  wang.chao636@zte.com.cn  | NaNAGISaSA          |
 
 ## Maintainers
 
