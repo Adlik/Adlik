@@ -4,7 +4,7 @@ jobs:
     strategy:
         matrix:
             Linux:
-                vmImage: ubuntu-latest
+                vmImage: Ubuntu-18.04
             macOS:
                 vmImage: macos-latest
     pool:
