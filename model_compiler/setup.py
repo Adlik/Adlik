@@ -53,7 +53,7 @@ setuptools.setup(
     install_requires=[
         'defusedxml',
         'networkx',
-        'tensorflow==2.3.1',
+        'tensorflow==2.4.0',
         'test-generator==0.1.1',
         'tf2onnx'
     ],
