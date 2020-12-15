@@ -6,7 +6,7 @@ from unittest import TestCase
 
 import pytest
 import tensorflow as tf
-from tensorflow.core.framework.types_pb2 import DataType as TfDataType
+from tensorflow.core.framework.types_pb2 import DataType as TfDataType  # pylint: disable=no-name-in-module
 from tensorrt import ICudaEngine, IInt8EntropyCalibrator2
 
 import model_compiler.compilers.onnx_model_to_tensorrt_model as compiler

@@ -7,7 +7,8 @@ CNN-MNIST
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import tensorflow as tf
-from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
+from tensorflow.python.framework.convert_to_constants import \
+    convert_variables_to_constants_v2  # pylint: disable=no-name-in-module
 from tensorflow.keras.layers import Dense, Flatten, Conv2D
 from tensorflow.keras import Model
 import os

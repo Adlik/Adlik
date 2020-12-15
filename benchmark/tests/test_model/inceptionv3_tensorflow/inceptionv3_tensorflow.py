@@ -6,7 +6,8 @@ InceptionV3 model
 """
 
 import tensorflow as tf
-from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
+from tensorflow.python.framework.convert_to_constants import \
+    convert_variables_to_constants_v2  # pylint: disable=no-name-in-module
 import os
 
 
