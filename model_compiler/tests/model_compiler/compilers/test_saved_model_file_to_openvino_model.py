@@ -48,7 +48,6 @@ class CompileSourceTestCase(TestCase):
                                          format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
                               ModelInput(name='y', data_type=tf.float32.as_datatype_enum,
                                          format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
-
             self.assertEqual(compiled.get_outputs(),
                              [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
 

@@ -17,7 +17,6 @@ def _make_saved_model() -> SavedModel:
         input_y = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 2, 3, 4], name='y')
         weight = tf.Variable(initial_value=4.2, dtype=tf.float32)
         output_z = tf.multiply(input_x + input_y, weight, name='z')
-
         session.run(weight.initializer)
 
     return SavedModel(inputs=[Input(name='x', tensor=input_x, data_format=None),
