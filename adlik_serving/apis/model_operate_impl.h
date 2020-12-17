@@ -31,7 +31,7 @@ struct ModelOperateImpl {
   tensorflow::Status deleteModel(const ModelOperateRequest&, ModelOperateResponse&);
   tensorflow::Status deleteModelVersion(const ModelOperateRequest&, ModelOperateResponse&);
   tensorflow::Status activateModel(const ModelOperateRequest&, ModelOperateResponse&);
-  tensorflow::Status queryModel(const ModelOperateRequest&, ModelOperateResponse&);
+  tensorflow::Status queryModel(const ModelOperateRequest&, ModelOperateResponse&) const;
 
 private:
   void update();

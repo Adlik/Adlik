@@ -280,7 +280,7 @@ void ModelOperateImpl::update() {
   ROLE(BoardingLoop).once();
 }
 
-tensorflow::Status ModelOperateImpl::queryModel(const ModelOperateRequest& req, ModelOperateResponse& rsp) {
+tensorflow::Status ModelOperateImpl::queryModel(const ModelOperateRequest& req, ModelOperateResponse& rsp) const {
   std::string modelName = req.model_name();
   tensorflow::Status status = tensorflow::Status::OK();
   QueryConfig queryConfig(rsp);
