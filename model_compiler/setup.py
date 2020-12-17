@@ -55,6 +55,8 @@ setuptools.setup(
         'defusedxml',
         'networkx',
         'tensorflow==2.4.0',
+        'onnx-tf',
+        'tensorflow_addons',
         'test-generator==0.1.1',
         'tf2onnx'
     ],
