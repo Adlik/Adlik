@@ -52,8 +52,8 @@ class Config(NamedTuple):
     representative_dataset: Optional[tf.lite.RepresentativeDataset] = None
     supported_ops: Optional[Iterable[tf.lite.OpsSet]] = None
     supported_types: Optional[Iterable[tf.DType]] = None
-    inference_input_type: Optional[tf.DType] = None
-    inference_output_type: Optional[tf.DType] = None
+    inference_input_type: Optional[tf.DType] = tf.float32
+    inference_output_type: Optional[tf.DType] = tf.float32
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
@@ -66,8 +66,10 @@ class Config(NamedTuple):
             optimization=value.get('optimization', False),
             supported_ops=utilities.map_optional(supported_ops, lambda items: list(map(_parse_op_set, items))),
             supported_types=utilities.map_optional(supported_types, lambda items: list(map(_parse_data_type, items))),
-            inference_input_type=utilities.map_optional(value.get('inference_input_type'), _parse_data_type),
-            inference_output_type=utilities.map_optional(value.get('inference_output_type'), _parse_data_type)
+            inference_input_type=utilities.map_optional(value.get('inference_input_type', 'float32'),
+                                                        _parse_data_type),
+            inference_output_type=utilities.map_optional(value.get('inference_output_type', 'float32'),
+                                                         _parse_data_type)
         )
 
     @staticmethod
@@ -84,8 +86,10 @@ class Config(NamedTuple):
                                                  lambda items: list(map(_parse_op_set, items))),
             supported_types=utilities.map_optional(utilities.split_by(env.get('SUPPORTED_TYPES'), ','),
                                                    lambda items: list(map(_parse_data_type, items))),
-            inference_input_type=utilities.map_optional(env.get('INFERENCE_INPUT_TYPE'), _parse_data_type),
-            inference_output_type=utilities.map_optional(env.get('INFERENCE_OUTPUT_TYPE'), _parse_data_type)
+            inference_input_type=utilities.map_optional(env.get('INFERENCE_INPUT_TYPE', 'float32'),
+                                                        _parse_data_type),
+            inference_output_type=utilities.map_optional(env.get('INFERENCE_OUTPUT_TYPE', 'float32'),
+                                                         _parse_data_type)
         )
 
 

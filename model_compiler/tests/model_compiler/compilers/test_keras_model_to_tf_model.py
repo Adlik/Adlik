@@ -116,16 +116,17 @@ class CompileSourceTestCase(TestCase):
 
     def test_compile_with_input_name(self):
         with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-            layer_1 = keras.layers.Dense(units=8, name='l1', input_shape=[16])
-            layer_2 = keras.layers.Dense(units=4, name='l2')
-            layer_3 = keras.layers.Dense(units=2, name='l3')
+            origin_model = keras.Sequential()
+            origin_model.add(keras.layers.Dense(units=8, name='l1', input_shape=(16,)))
+            origin_model.add(keras.layers.Dense(units=4, name='l2'))
+            origin_model.add(keras.layers.Dense(units=2, name='l3'))
 
-        model = KerasModel(model=keras.Sequential([layer_1, layer_2, layer_3]), session=session)
+        model = KerasModel(model=origin_model, session=session)
 
         compiled = compiler.compile_source(source=model, config=Config(input_nodes=[NodeSpec(layer_name='l2')]))
 
         self.assertEqual(len(compiled.inputs), 1)
-        self.assertIs(compiled.inputs[0].tensor, layer_2.input)
+        self.assertIs(compiled.inputs[0].tensor, origin_model.layers[1].input)
         self.assertIsNone(compiled.inputs[0].data_format)
 
         self.assertEqual(len(compiled.outputs), 1)
@@ -152,11 +153,12 @@ class CompileSourceTestCase(TestCase):
 
     def test_compile_with_output_name(self):
         with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-            layer_1 = keras.layers.Dense(units=8, name='l1', input_shape=[16])
-            layer_2 = keras.layers.Dense(units=4, name='l2')
-            layer_3 = keras.layers.Dense(units=2, name='l3')
+            origin_model = keras.Sequential()
+            origin_model.add(keras.layers.Dense(units=8, name='l1', input_shape=(16,)))
+            origin_model.add(keras.layers.Dense(units=4, name='l2'))
+            origin_model.add(keras.layers.Dense(units=2, name='l3'))
 
-        model = KerasModel(model=keras.Sequential([layer_1, layer_2, layer_3]), session=session)
+        model = KerasModel(model=origin_model, session=session)
         compiled = compiler.compile_source(source=model, config=Config(output_nodes=[NodeSpec(layer_name='l2')]))
 
         self.assertEqual(len(compiled.inputs), 1)
@@ -164,7 +166,7 @@ class CompileSourceTestCase(TestCase):
         self.assertIsNone(compiled.inputs[0].data_format)
 
         self.assertEqual(len(compiled.outputs), 1)
-        self.assertIs(compiled.outputs[0], layer_2.output)
+        self.assertIs(compiled.outputs[0], origin_model.layers[1].output)
 
         self.assertIs(compiled.session, session)
 
