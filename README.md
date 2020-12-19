@@ -4,6 +4,7 @@
 [![Tests](https://img.shields.io/azure-devops/tests/Adlik/GitHub/1/master)](https://dev.azure.com/Adlik/GitHub/_build/latest?definitionId=1&branchName=master)
 [![Coverage](https://img.shields.io/azure-devops/coverage/Adlik/GitHub/1/master)](https://dev.azure.com/Adlik/GitHub/_build/latest?definitionId=1&branchName=master)
 [![Bors enabled](https://bors.tech/images/badge_small.svg)](https://app.bors.tech/repositories/20625)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4513/badge)](https://bestpractices.coreinfrastructure.org/projects/4513)
 
 ***Adlik*** [ædlik] is an end-to-end optimizing framework for deep learning models. The goal of Adlik is to accelerate deep
 learning inference process both on cloud and embedded environment.
