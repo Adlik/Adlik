@@ -79,12 +79,12 @@ class ConfigTestCase(TestCase):
 
     def test_from_env(self):
         self.assertEqual(Config(input_names=[], input_formats=[]), Config.from_env({}))
-        self.assertEqual(Config(input_names=['x', 'y']), Config.from_env({'INPUT_NAMES': ['x', 'y']}))
+        self.assertEqual(Config(input_names=['x', 'y']), Config.from_env({'INPUT_NAMES': 'x,y'}))
         self.assertEqual(Config(input_names=['x', 'y'], input_formats=['channels_first']),
-                         Config.from_env({'INPUT_NAMES': ['x', 'y'], 'INPUT_FORMATS': ['channels_first']}))
+                         Config.from_env({'INPUT_NAMES': 'x,y', 'INPUT_FORMATS': 'channels_first'}))
         self.assertEqual(Config(input_names=['x', 'y'], input_formats=['channels_first', 'channels_last']),
-                         Config.from_env({'INPUT_NAMES': ['x', 'y'],
-                                          'INPUT_FORMATS': ['channels_first', 'channels_last']}))
+                         Config.from_env({'INPUT_NAMES': 'x,y',
+                                          'INPUT_FORMATS': 'channels_first,channels_last'}))
 
         self.assertEqual(Config(optimization=False, supported_types=None), Config.from_env({}))
         self.assertEqual(Config(optimization=False, supported_types=None), Config.from_env({'OPTIMIZATION': '0'}))
