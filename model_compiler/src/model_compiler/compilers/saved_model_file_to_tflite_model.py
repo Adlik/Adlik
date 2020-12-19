@@ -72,11 +72,13 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
+
+        def _custom_map(env_var, default_value, func):
+            return func(env_var) if env_var else default_value
+
         return Config(
-            input_names=[x.strip() for x in env.get('INPUT_NAMES').split(',')]
-            if env.get('INPUT_NAMES') else [],  # type: ignore
-            input_formats=[x.strip() for x in env.get('INPUT_FORMATS').split(',')]
-            if env.get('INPUT_FORMATS') else [],  # type: ignore
+            input_names=_custom_map(env.get('INPUT_NAMES'), [], lambda x: [x.strip() for x in x.split(',')]),
+            input_formats=_custom_map(env.get('INPUT_FORMATS'), [], lambda x: [x.strip() for x in x.split(',')]),
             optimization=bool(int(env.get('OPTIMIZATION', '0'))),
             supported_ops=utilities.map_optional(utilities.split_by(env.get('SUPPORTED_OPS'), ','),
                                                  lambda items: list(map(_parse_op_set, items))),
