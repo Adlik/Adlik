@@ -46,8 +46,8 @@ def _parse_op_set(value: str) -> tf.lite.OpsSet:
 
 
 class Config(NamedTuple):
-    input_names: Sequence[str] = None
-    input_formats: Sequence[str] = None
+    input_names: Sequence[str]
+    input_formats: Sequence[str]
     optimization: bool = False
     representative_dataset: Optional[tf.lite.RepresentativeDataset] = None
     supported_ops: Optional[Iterable[tf.lite.OpsSet]] = None
