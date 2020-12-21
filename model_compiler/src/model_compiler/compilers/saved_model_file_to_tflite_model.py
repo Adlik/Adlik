@@ -46,8 +46,8 @@ def _parse_op_set(value: str) -> tf.lite.OpsSet:
 
 
 class Config(NamedTuple):
-    input_names: Sequence[str] = []
-    input_formats: Sequence[str] = []
+    input_names: Sequence[str]
+    input_formats: Sequence[str]
     optimization: bool = False
     representative_dataset: Optional[tf.lite.RepresentativeDataset] = None
     supported_ops: Optional[Iterable[tf.lite.OpsSet]] = None
@@ -72,9 +72,13 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
+
+        def _custom_map(env_var, default_value, func):
+            return func(env_var) if env_var else default_value
+
         return Config(
-            input_names=env.get('INPUT_NAMES', []),
-            input_formats=env.get('INPUT_FORMATS', []),
+            input_names=_custom_map(env.get('INPUT_NAMES'), [], lambda x: [x.strip() for x in x.split(',')]),
+            input_formats=_custom_map(env.get('INPUT_FORMATS'), [], lambda x: [x.strip() for x in x.split(',')]),
             optimization=bool(int(env.get('OPTIMIZATION', '0'))),
             supported_ops=utilities.map_optional(utilities.split_by(env.get('SUPPORTED_OPS'), ','),
                                                  lambda items: list(map(_parse_op_set, items))),
