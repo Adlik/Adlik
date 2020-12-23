@@ -24,6 +24,7 @@ build:using_cuda --action_env=TF_CUDA_COMPUTE_CAPABILITIES=7.0
 # TensorFlow (GPU).
 
 build:tensorflow-gpu --define=runtime=tensorflow
+build:tensorflow-gpu --define=tensorflow_enable_mlir_generated_gpu_kernels=1
 build:tensorflow-gpu --config=using_cuda
 build:tensorflow-gpu --copt=-DNDEBUG # https://github.com/tensorflow/tensorflow/issues/22766
 
