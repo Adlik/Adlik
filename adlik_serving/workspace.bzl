@@ -15,4 +15,4 @@ def adlik_serving_workspace():
 
     openvino_configure(name = "local_config_openvino")
 
-    check_bazel_version_at_least(minimum_bazel_version = "2.1.0")
+    check_bazel_version_at_least(minimum_bazel_version = "3.1.0")
