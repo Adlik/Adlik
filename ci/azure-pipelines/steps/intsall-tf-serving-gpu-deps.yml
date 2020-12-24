@@ -1,0 +1,11 @@
+steps:
+  - template: install-cuda.yml
+  # Since TF 2.4, tensorflow serving gpu must install some tensorrt dependences and
+  # export TF_NEED_TENSORRT=1 when building
+  - script: |
+        sudo apt-get install --no-install-recommends -y \
+            libnvinfer7=7.2.*+cuda11.0 \
+            libnvinfer-dev=7.2.*+cuda11.0 \
+            libnvinfer-plugin7=7.2.*+cuda11.0 \
+            libnvinfer-plugin-dev=7.2.*+cuda11.0
+    displayName: Install additional TensorRT packages

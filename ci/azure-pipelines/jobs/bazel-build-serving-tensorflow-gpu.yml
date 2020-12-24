@@ -5,13 +5,7 @@ jobs:
         vmImage: Ubuntu-18.04
     timeoutInMinutes: 0
     steps:
-      - template: ../steps/install-cuda.yml
-      - script: |
-            sudo apt-get install --no-install-recommends -y \
-                libnvinfer7=7.2.*+cuda11.0 \
-                libnvinfer-dev=7.2.*+cuda11.0 \
-                libnvinfer-plugin7=7.2.*+cuda11.0 \
-                libnvinfer-plugin-dev=7.2.*+cuda11.0
+      - template: ../steps/intsall-tf-serving-gpu-deps.yml
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.8'
@@ -26,8 +20,7 @@ jobs:
             env TF_CUDA_VERSION=11.0 TF_NEED_TENSORRT=1 \
                 ci/checks/bazel-build-serving.py \
                     --config=tensorflow-gpu \
-                    -c opt \
-                    --disk_cache="$BAZEL_BUILD_CACHE"
+                    -c opt
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
