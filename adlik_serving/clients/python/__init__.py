@@ -84,13 +84,13 @@ class _GrpcRunner(object):
         self._model_version = model_version
         self._signature = signature
         self._verbose = verbose
+        options = [('grpc.max_receive_message_length', 512 * 1024 * 1024)]
+        if grpc_domain is not None:
+            options.append(("grpc.ssl_target_name_override", grpc_domain))
         if credentials is None:
-            options = [('grpc.max_receive_message_length', 512 * 1024 * 1024)]
             channel = grpc.insecure_channel(url, options=options)
         else:
             credentials = grpc.ssl_channel_credentials(credentials)
-            options = [("grpc.ssl_target_name_override", grpc_domain),
-                       ('grpc.max_receive_message_length', 512 * 1024 * 1024)]
             channel = grpc.secure_channel(url,
                                           credentials=credentials,
                                           options=options)
