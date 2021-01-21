@@ -16,7 +16,7 @@ def compile_source(source: TensorFlowFrozenGraphModel) -> OnnxModel:
         tf.import_graph_def(graph_def=source.graph_def, name='')
 
     onnx_graph = tfonnx.process_tf_graph(tf_graph=graph,
-                                         opset=defs.onnx_opset_version(),
+                                         opset=min(10, defs.onnx_opset_version()),
                                          input_names=[source_input.name for source_input in source.inputs],
                                          output_names=list(source.outputs))
 
