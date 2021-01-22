@@ -38,10 +38,10 @@ def add_all_deps():
 
     http_archive(
         name = "org_tensorflow",
-        sha256 = "ad41490904b0313c00f3729c7e2ba931b2b8d1e54ea1a859a4bcea3054d4fdc0",
-        strip_prefix = "tensorflow-fcc4b966f1265f466e82617020af93670141b009",
+        sha256 = "9c94bfec7214853750c7cacebd079348046f246ec0174d01cd36eda375117628",
+        strip_prefix = "tensorflow-582c8d236cb079023657287c318ff26adb239002",
         urls = [
-            "https://github.com/tensorflow/tensorflow/archive/fcc4b966f1265f466e82617020af93670141b009.tar.gz",
+            "https://github.com/tensorflow/tensorflow/archive/582c8d236cb079023657287c318ff26adb239002.tar.gz",
         ],
     )
 

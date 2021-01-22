@@ -10,6 +10,7 @@
 namespace tensorflow {
 
 using SharedBatcher = serving::SharedBatchScheduler<InferentialTask>;
+
 }
 
 #endif

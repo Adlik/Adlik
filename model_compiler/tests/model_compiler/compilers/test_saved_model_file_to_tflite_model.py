@@ -23,15 +23,13 @@ def _save_saved_model_file(model_dir):
         builder = tf.compat.v1.saved_model.builder.SavedModelBuilder(model_dir)
         input_x_tensor_info = tf.compat.v1.saved_model.build_tensor_info(input_x)
         input_y_tensor_info = tf.compat.v1.saved_model.build_tensor_info(input_y)
-        weight_tensor_info = tf.compat.v1.saved_model.build_tensor_info(weight)
         output_tensor_info = tf.compat.v1.saved_model.build_tensor_info(output)
 
         builder.add_meta_graph_and_variables(session, tags=[tf.compat.v1.saved_model.tag_constants.SERVING],
                                              signature_def_map={
                                                  'predict': tf.compat.v1.saved_model.build_signature_def(
                                                      inputs={'x': input_x_tensor_info,
-                                                             'y': input_y_tensor_info,
-                                                             'weight': weight_tensor_info},
+                                                             'y': input_y_tensor_info},
                                                      outputs={'z': output_tensor_info})})
         builder.save()
 
@@ -74,13 +72,13 @@ class ConfigTestCase(TestCase):
                                 supported_ops=[tf.lite.OpsSet.SELECT_TF_OPS, tf.lite.OpsSet.TFLITE_BUILTINS_INT8]),
                          Config.from_json({'supported_ops': ['SELECT_TF_OPS', 'TFLITE_BUILTINS_INT8']}))
 
-        self.assertEqual(Config(input_names=[], input_formats=[], inference_input_type=None), Config.from_json({}))
-
+        self.assertEqual(Config(input_names=[], input_formats=[], inference_input_type=tf.float32),
+                         Config.from_json({}))
         self.assertEqual(Config(input_names=[], input_formats=[], inference_input_type=tf.float32),
                          Config.from_json({'inference_input_type': 'float32'}))
 
-        self.assertEqual(Config(input_names=[], input_formats=[], inference_output_type=None), Config.from_json({}))
-
+        self.assertEqual(Config(input_names=[], input_formats=[], inference_output_type=tf.float32),
+                         Config.from_json({}))
         self.assertEqual(Config(input_names=[], input_formats=[], inference_output_type=tf.float32),
                          Config.from_json({'inference_output_type': 'float32'}))
 
@@ -120,13 +118,12 @@ class ConfigTestCase(TestCase):
                                 supported_ops=[tf.lite.OpsSet.SELECT_TF_OPS, tf.lite.OpsSet.TFLITE_BUILTINS_INT8]),
                          Config.from_env({'SUPPORTED_OPS': 'SELECT_TF_OPS,TFLITE_BUILTINS_INT8'}))
 
-        self.assertEqual(Config(input_names=[], input_formats=[], inference_input_type=None), Config.from_env({}))
-
+        self.assertEqual(Config(input_names=[], input_formats=[], inference_input_type=tf.float32), Config.from_env({}))
         self.assertEqual(Config(input_names=[], input_formats=[], inference_input_type=tf.float32),
                          Config.from_env({'INFERENCE_INPUT_TYPE': 'float32'}))
 
-        self.assertEqual(Config(input_names=[], input_formats=[], inference_output_type=None), Config.from_env({}))
-
+        self.assertEqual(Config(input_names=[], input_formats=[],
+                                inference_output_type=tf.float32), Config.from_env({}))
         self.assertEqual(Config(input_names=[], input_formats=[], inference_output_type=tf.float32),
                          Config.from_env({'INFERENCE_OUTPUT_TYPE': 'float32'}))
 
@@ -143,7 +140,7 @@ class CompileSourceTestCase(TestCase):
         with TemporaryDirectory() as model_dir:
             _save_saved_model_file(model_dir)
             compiled = compiler.compile_source(source=SavedModelFile(model_path=model_dir),
-                                               config=Config(input_names=['x', 'y', 'weight'],
+                                               config=Config(input_names=['x', 'y'],
                                                              input_formats=['channels_first', 'channels_last']))
 
             self.assertIsInstance(compiled.tflite_model, bytes)
@@ -152,12 +149,12 @@ class CompileSourceTestCase(TestCase):
         with TemporaryDirectory() as model_dir:
             _save_saved_model_file(model_dir)
             compiled_1 = compiler.compile_source(source=SavedModelFile(model_path=model_dir),
-                                                 config=Config(input_names=['x', 'y', 'weight'],
+                                                 config=Config(input_names=['x', 'y'],
                                                                input_formats=[]))
             compiled_2 = compiler.compile_source(source=SavedModelFile(model_path=model_dir),
                                                  config=Config(optimization=True, supported_types=[tf.float16],
-                                                               input_names=['x', 'y', 'weight'],
-                                                               input_formats=[]))
+                                                               input_names=['x', 'y'],
+                                                               input_formats=['']))
 
             self.assertLess(len(compiled_1.tflite_model), len(compiled_2.tflite_model))
 
@@ -166,7 +163,7 @@ class CompileSourceTestCase(TestCase):
             _save_saved_model_file(model_dir)
             compiled = compiler.compile_source(source=SavedModelFile(model_path=model_dir),
                                                config=Config(supported_ops=[tf.lite.OpsSet.SELECT_TF_OPS],
-                                                             input_names=['x', 'y', 'weight'],
-                                                             input_formats=['channels_first', 'channels_last', '']))
+                                                             input_names=['x', 'y'],
+                                                             input_formats=['channels_first']))
 
             self.assertIsInstance(compiled.tflite_model, bytes)

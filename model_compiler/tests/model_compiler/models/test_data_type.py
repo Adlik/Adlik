@@ -4,7 +4,7 @@
 from unittest import TestCase
 
 from onnx import TensorProto as OnnxTensorProto
-from tensorflow.core.framework.types_pb2 import DataType as TfDataType
+from tensorflow.core.framework.types_pb2 import DataType as TfDataType  # pylint: disable=no-name-in-module
 from tensorrt import DataType as TrtDataType
 
 from model_compiler.models.data_type import DataType

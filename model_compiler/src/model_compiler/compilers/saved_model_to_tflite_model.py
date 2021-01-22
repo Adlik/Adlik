@@ -33,8 +33,8 @@ class Config(NamedTuple):
     representative_dataset: Optional[tf.lite.RepresentativeDataset] = None
     supported_ops: Optional[Iterable[tf.lite.OpsSet]] = None
     supported_types: Optional[Iterable[tf.DType]] = None
-    inference_input_type: Optional[tf.DType] = None
-    inference_output_type: Optional[tf.DType] = None
+    inference_input_type: Optional[tf.DType] = tf.float32
+    inference_output_type: Optional[tf.DType] = tf.float32
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
@@ -45,8 +45,10 @@ class Config(NamedTuple):
             optimization=value.get('optimization', False),
             supported_ops=utilities.map_optional(supported_ops, lambda items: list(map(_parse_op_set, items))),
             supported_types=utilities.map_optional(supported_types, lambda items: list(map(_parse_data_type, items))),
-            inference_input_type=utilities.map_optional(value.get('inference_input_type'), _parse_data_type),
-            inference_output_type=utilities.map_optional(value.get('inference_output_type'), _parse_data_type)
+            inference_input_type=utilities.map_optional(value.get('inference_input_type', 'float32'),
+                                                        _parse_data_type),
+            inference_output_type=utilities.map_optional(value.get('inference_output_type', 'float32'),
+                                                         _parse_data_type)
         )
 
     @staticmethod
@@ -57,8 +59,10 @@ class Config(NamedTuple):
                                                  lambda items: list(map(_parse_op_set, items))),
             supported_types=utilities.map_optional(utilities.split_by(env.get('SUPPORTED_TYPES'), ','),
                                                    lambda items: list(map(_parse_data_type, items))),
-            inference_input_type=utilities.map_optional(env.get('INFERENCE_INPUT_TYPE'), _parse_data_type),
-            inference_output_type=utilities.map_optional(env.get('INFERENCE_OUTPUT_TYPE'), _parse_data_type)
+            inference_input_type=utilities.map_optional(env.get('INFERENCE_INPUT_TYPE', 'float32'),
+                                                        _parse_data_type),
+            inference_output_type=utilities.map_optional(env.get('INFERENCE_OUTPUT_TYPE', 'float32'),
+                                                         _parse_data_type)
         )
 
 
@@ -69,22 +73,22 @@ def compile_source(source: SavedModel, config: Config) -> TfLiteModel:
 
         converter = tf.lite.TFLiteConverter.from_saved_model(directory)
 
-    if config.optimization:
-        converter.optimizations.append(tf.lite.Optimize.DEFAULT)
+        if config.optimization:
+            converter.optimizations.append(tf.lite.Optimize.DEFAULT)
 
-    converter.representative_dataset = config.representative_dataset
+        converter.representative_dataset = config.representative_dataset
 
-    if config.supported_ops:
-        converter.target_spec.supported_ops.clear()
-        converter.target_spec.supported_ops.update(config.supported_ops)
+        if config.supported_ops:
+            converter.target_spec.supported_ops.clear()
+            converter.target_spec.supported_ops.update(config.supported_ops)
 
-    if config.supported_types:
-        converter.target_spec.supported_types.extend(config.supported_types)
+        if config.supported_types:
+            converter.target_spec.supported_types.extend(config.supported_types)
 
-    converter.inference_input_type = config.inference_input_type
-    converter.inference_output_type = config.inference_output_type
+        converter.inference_input_type = config.inference_input_type
+        converter.inference_output_type = config.inference_output_type
 
-    tflite_model = converter.convert()
-    input_formats = [model_input.data_format for model_input in source.inputs]
+        tflite_model = converter.convert()
+        input_formats = [model_input.data_format for model_input in source.inputs]
 
-    return TfLiteModel(tflite_model, input_formats)
+        return TfLiteModel(tflite_model, input_formats)

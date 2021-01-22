@@ -5,7 +5,7 @@ jobs:
         vmImage: Ubuntu-18.04
     timeoutInMinutes: 0
     steps:
-      - template: ../steps/install-cuda.yml
+      - template: ../steps/intsall-tf-serving-gpu-deps.yml
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.8'
@@ -17,12 +17,10 @@ jobs:
       #       key: bazel-build-serving-tensorflow-gpu
       #       path: $(BAZEL_BUILD_CACHE)
       - script: |
-            env TF_CUDA_VERSION=11.0 \
+            env TF_CUDA_VERSION=11.0 TF_NEED_TENSORRT=1 \
                 ci/checks/bazel-build-serving.py \
                     --config=tensorflow-gpu \
-                    -c opt \
-                    --disk_cache="$BAZEL_BUILD_CACHE" \
-                    --incompatible_use_specific_tool_files=false
+                    -c opt
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
