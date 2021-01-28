@@ -10,13 +10,14 @@ from ..models.irs.tf_model import TensorFlowModel
 
 @repository.REPOSITORY.register(source_type=TensorFlowModel, target_type=TensorFlowFrozenGraphModel)
 def compile_source(source: TensorFlowModel) -> TensorFlowFrozenGraphModel:
+    output_node_names = [source_output.op.name for source_output in source.outputs]
     graph_def = tf.compat.v1.graph_util.convert_variables_to_constants(
         sess=source.session,
         input_graph_def=source.session.graph_def,
-        output_node_names=[source_output.op.name for source_output in source.outputs]
+        output_node_names=output_node_names
     )
 
-    graph_def = tf.compat.v1.graph_util.remove_training_nodes(input_graph=graph_def)
+    graph_def = tf.compat.v1.graph_util.remove_training_nodes(input_graph=graph_def, protected_nodes=output_node_names)
 
     return TensorFlowFrozenGraphModel(graph_def=graph_def,
                                       inputs=[Input(name=source_input.tensor.name, data_format=source_input.data_format)
