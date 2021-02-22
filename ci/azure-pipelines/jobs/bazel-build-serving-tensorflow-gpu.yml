@@ -1,6 +1,8 @@
 jobs:
   - job: BazelBuildServingTensorFlowGPU
     displayName: Bazel build serving (TensorFlow GPU)
+    condition: and(succeeded(), eq(dependencies.BazelBuildServingTensorFlowCheck.outputs['TensorflowBuildCheck.BuildTensorFlow'], 'true'))
+    dependsOn: BazelBuildServingTensorFlowCheck
     pool:
         vmImage: Ubuntu-18.04
     timeoutInMinutes: 0

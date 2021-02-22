@@ -1,6 +1,8 @@
 jobs:
   - job: BazelBuildServingTensorFlowCPU
     displayName: Bazel build serving (TensorFlow CPU)
+    condition: and(succeeded(), eq(dependencies.BazelBuildServingTensorFlowCheck.outputs['TensorflowBuildCheck.BuildTensorFlow'], 'true'))
+    dependsOn: BazelBuildServingTensorFlowCheck
     strategy:
         matrix:
             Linux:
