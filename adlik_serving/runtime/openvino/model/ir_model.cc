@@ -36,7 +36,7 @@ struct PluginLoader : BatchProcessor {
   PluginLoader(const std::string& name, const adlik::serving::ModelConfigProto& config) : name(name), config(config) {
   }
 
-  tensorflow::Status load(const std::string& path);
+  tensorflow::Status load(const CNNNetwork& network, ExecutableNetwork& executableNetwork);
 
   using MyBatch = Batch<BatchingMessageTask>;
   OVERRIDE(tensorflow::Status processBatch(MyBatch&));
@@ -47,11 +47,9 @@ private:
   mutable InferRequest infer_request;
   BlobMap outputs;
   BlobMap inputs;
-  InferenceEngine::Core core;
 
   tensorflow::Status setInputBlob(InputsDataMap inputsInfo);
   tensorflow::Status setOutputBlob(OutputsDataMap outputsInfo);
-  ExecutableNetwork getExeNetWork(const CNNNetwork& cnnNetwork);
 
   tensorflow::Status mergeInputs(MyBatch&);
   tensorflow::Status splitOutputs(MyBatch&);
@@ -60,35 +58,12 @@ private:
   Layout getInputLayout(const std::string& inputName);
 };
 
-tensorflow::Status PluginLoader::load(const std::string& path) {
-  // 1.read model file
-  INFO_LOG << "Read the openvino model";
-  std::string binFileName = tensorflow::io::JoinPath(path, "model.bin");
-  std::string xmlFileName = tensorflow::io::JoinPath(path, "model.xml");
-
-  CNNNetwork network;
-
-  try {
-    network = this->core.ReadNetwork(xmlFileName, binFileName);
-  } catch (const details::InferenceEngineException& e) {
-    INFO_LOG << "Cannot load the model";
-    return tensorflow::errors::Internal("Cannot load the model ", e.what());
-  }
-  auto currentBatchSize = network.getBatchSize();
-  if (currentBatchSize != config.max_batch_size()) {
-    network.setBatchSize(config.max_batch_size());
-  }
-  INFO_LOG << "network BacthSize:" << network.getBatchSize();
-
-  // 2.Prepare inputs and outputs format
+tensorflow::Status PluginLoader::load(const CNNNetwork& network, ExecutableNetwork& executableNetwork) {
+  // 1.Prepare inputs and outputs format
   TF_RETURN_IF_ERROR(setInputBlob(network.getInputsInfo()));
   TF_RETURN_IF_ERROR(setOutputBlob(network.getOutputsInfo()));
 
-  // 3. get executeNetwork
-  INFO_LOG << "Loading plugin";
-  ExecutableNetwork executableNetwork = getExeNetWork(network);
-
-  // 4. set inferrequest
+  // 2. set inferrequest
   infer_request = executableNetwork.CreateInferRequest();
   infer_request.SetInput(inputs);
   infer_request.SetOutput(outputs);
@@ -129,19 +104,16 @@ tensorflow::Status PluginLoader::setOutputBlob(OutputsDataMap outputsInfo) {
   return tensorflow::Status::OK();
 }
 
-ExecutableNetwork PluginLoader::getExeNetWork(const CNNNetwork& cnnNetwork) {
-  return core.LoadNetwork(cnnNetwork, "CPU");
-}
-
 tensorflow::Status PluginLoader::processBatch(MyBatch& batch) {
-  DEBUG_LOG << "Instance \"" << name << "\" running with " << batch.size() << " request payloads";
+  DEBUG_LOG << "Instance \"" << name << "\"running with " << batch.size() << " request payloads";
 
   auto status = mergeInputs(batch);
   if (!status.ok()) {
     ERR_LOG << "After merge inputs, error message: " << status.error_message() << std::endl;
     return status;
   }
-  infer_request.Infer();
+  infer_request.StartAsync();
+  infer_request.Wait(InferenceEngine::IInferRequest::RESULT_READY);
   status = splitOutputs(batch);
   if (!status.ok()) {
     ERR_LOG << "After predict, error message: " << status.error_message();
@@ -255,10 +227,11 @@ Precision PluginLoader::getOutputDataType(const std::string& outputName) {
 
 tensorflow::Status createInstance(const std::string& instance_name,
                                   const ModelConfig& config,
-                                  const std::string& path,
+                                  const CNNNetwork& network,
+                                  ExecutableNetwork& executableNetwork,
                                   std::unique_ptr<BatchProcessor>* model) {
   std::unique_ptr<PluginLoader> raw = std::make_unique<PluginLoader>(instance_name, config);
-  TF_RETURN_IF_ERROR(raw->load(path));
+  TF_RETURN_IF_ERROR(raw->load(network, executableNetwork));
   *model = std::move(raw);
   return tensorflow::Status::OK();
 }
@@ -269,11 +242,36 @@ IRModel::IRModel(const ModelConfig& config, const ModelId& model_id) : config(co
 }
 
 tensorflow::Status IRModel::init() {
-  for (const auto& group : config.instance_group()) {
-    std::unique_ptr<BatchProcessor> instance;
-    TF_RETURN_IF_ERROR(createInstance(group.name(), config, config.getModelPath(model_id), &instance));
-    add(std::move(instance));
+  std::string filePath = config.getModelPath(model_id);
+  // 1.read model file
+  INFO_LOG << "Read the openvino model";
+  std::string binFileName = tensorflow::io::JoinPath(filePath, "model.bin");
+  std::string xmlFileName = tensorflow::io::JoinPath(filePath, "model.xml");
+  // 2.load model
+  CNNNetwork network;
+  InferenceEngine::Core core;
+  try {
+    network = core.ReadNetwork(xmlFileName, binFileName);
+  } catch (const details::InferenceEngineException& e) {
+    INFO_LOG << "Cannot load the model";
+    return tensorflow::errors::Internal("Cannot load the model ", e.what());
   }
+  // 3.set batch size
+  auto currentBatchSize = network.getBatchSize();
+  if (currentBatchSize != config.max_batch_size()) {
+    network.setBatchSize(config.max_batch_size());
+  }
+  // 4. set instance
+  ExecutableNetwork executableNetwork = core.LoadNetwork(network, "CPU");
+  for (const auto& group : config.instance_group()) {
+    for (int i = 0; i != group.count(); ++i) {
+      std::unique_ptr<BatchProcessor> instance;
+      std::string instance_name = group.name() + "_" + std::to_string(i);
+      TF_RETURN_IF_ERROR(createInstance(instance_name, config, network, executableNetwork, &instance));
+      add(std::move(instance));
+    }
+  }
+
   return tensorflow::Status::OK();
 }
 
