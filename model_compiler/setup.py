@@ -64,7 +64,7 @@ setuptools.setup(
             'bandit',
             'flake8',
             'mypy',
-            'pylint',
+            'pylint==2.6.2',
             'pytest-cov',
             'pytest-xdist'
         ]
