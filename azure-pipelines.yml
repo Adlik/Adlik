@@ -10,7 +10,7 @@ jobs:
   - template: ci/azure-pipelines/jobs/bazel-build-serving-ml.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-openvino.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-cpu.yml
-  - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-gpu.yml
+  # - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-gpu.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-lite-cpu.yml
   - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorrt.yml
   - template: ci/azure-pipelines/jobs/bazel-coverage-tests.yml
