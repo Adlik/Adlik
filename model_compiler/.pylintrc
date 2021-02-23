@@ -6,8 +6,7 @@ jobs = 0
 [MESSAGES CONTROL]
 disable = missing-class-docstring,
           missing-function-docstring,
-          missing-module-docstring,
-          duplicate-code
+          missing-module-docstring
 
 [TYPECHECK]
 contextmanager-decorators = contextlib.contextmanager,
