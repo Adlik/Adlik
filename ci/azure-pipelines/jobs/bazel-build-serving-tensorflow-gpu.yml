@@ -1,6 +1,8 @@
 jobs:
   - job: BazelBuildServingTensorFlowGPU
     displayName: Bazel build serving (TensorFlow GPU)
+    condition: and(succeeded(), eq(dependencies.BazelBuildServingTensorFlowCheck.outputs['TensorflowBuildCheck.BuildTensorFlow'], 'true'))
+    dependsOn: BazelBuildServingTensorFlowCheck
     pool:
         vmImage: Ubuntu-18.04
     timeoutInMinutes: 0
@@ -10,20 +12,3 @@ jobs:
         inputs:
           versionSpec: '3.8'
         displayName: Install Python3.8
-      - script: pip install -U numpy six
-        displayName: Install additional dependencies
-      # - template: ../steps/use-build-cache.yml
-      #   parameters:
-      #       key: bazel-build-serving-tensorflow-gpu
-      #       path: $(BAZEL_BUILD_CACHE)
-      - script: |
-            env TF_CUDA_VERSION=11.0 TF_NEED_TENSORRT=1 \
-                ci/checks/bazel-build-serving.py \
-                    --config=tensorflow-gpu \
-                    -c opt
-        displayName: Bazel build serving
-      - task: PublishBuildArtifacts@1
-        displayName: Publish build artifacts
-        inputs:
-            pathtoPublish: __adlik_serving/adlik_serving
-            artifactName: adlik-serving-tensorflow-gpu

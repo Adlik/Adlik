@@ -1,6 +1,8 @@
 jobs:
   - job: BazelBuildServingTensorFlowCPU
     displayName: Bazel build serving (TensorFlow CPU)
+    condition: and(succeeded(), eq(dependencies.BazelBuildServingTensorFlowCheck.outputs['TensorflowBuildCheck.BuildTensorFlow'], 'true'))
+    dependsOn: BazelBuildServingTensorFlowCheck
     strategy:
         matrix:
             Linux:
@@ -16,20 +18,3 @@ jobs:
         inputs:
           versionSpec: '3.8'
         displayName: Install Python3.8
-      - script: pip install -U numpy six
-        displayName: Install additional dependencies
-      - template: ../steps/use-build-cache.yml
-        parameters:
-            key: bazel-build-serving-tensorflow-cpu
-            path: $(BAZEL_BUILD_CACHE)
-      - script: |
-            ci/checks/bazel-build-serving.py \
-                --config=tensorflow-cpu \
-                -c opt \
-                --disk_cache="$BAZEL_BUILD_CACHE"
-        displayName: Bazel build serving
-      - task: PublishBuildArtifacts@1
-        displayName: Publish build artifacts
-        inputs:
-            pathtoPublish: __adlik_serving/adlik_serving
-            artifactName: adlik-serving-tensorflow-cpu ($(Agent.OS))

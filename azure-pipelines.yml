@@ -3,22 +3,9 @@ trigger:
   - trying
   - master
 variables:
-    BAZEL_BUILD_CACHE: $(Pipeline.Workspace)/__bazel_build_cache
-jobs:
-  - template: ci/azure-pipelines/jobs/bazel-build-clients.yml
-  - template: ci/azure-pipelines/jobs/bazel-build-serving-demo.yml
-  - template: ci/azure-pipelines/jobs/bazel-build-serving-ml.yml
-  - template: ci/azure-pipelines/jobs/bazel-build-serving-openvino.yml
-  - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-cpu.yml
-  # - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-gpu.yml
-  - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-lite-cpu.yml
-  - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorrt.yml
-  - template: ci/azure-pipelines/jobs/bazel-coverage-tests.yml
-  - template: ci/azure-pipelines/jobs/buildifier.yml
-  - template: ci/azure-pipelines/jobs/clang-format.yml
-  - template: ci/azure-pipelines/jobs/commit-message.yml
-  - template: ci/azure-pipelines/jobs/copyright.yml
-  - template: ci/azure-pipelines/jobs/flake8.yml
-  - template: ci/azure-pipelines/jobs/markdownlint.yml
-  - template: ci/azure-pipelines/jobs/tox-benchmark.yml
-  - template: ci/azure-pipelines/jobs/tox-model-compiler.yml
+  BAZEL_BUILD_CACHE: $(Pipeline.Workspace)/__bazel_build_cache
+  SOURCE_BRANCH_NAME: $(Build.SourceBranchName)
+stages:
+  - stage: Stage1
+    jobs:
+      - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-checks.yml
