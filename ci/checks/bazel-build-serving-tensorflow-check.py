@@ -19,7 +19,7 @@ def main(args):
 
     changed_files = subprocess.check_output(args=['git', 'diff', 'HEAD', 'origin/master', '--name-only'],
                                             universal_newlines=True)
-    print("All changed files: ", changed_files)
+    print('All changed files: ', changed_files)
 
     need_to_build_tf = False
     for file_path in changed_files.splitlines():
