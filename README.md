@@ -56,6 +56,134 @@ which can be easily used for models developed with TensorFlow, Keras, PyTorch, e
 simply, based on a deep learning model, the users of Adlik can optimize it with model compiler and then deploy it to a
 certain platform with Adlik serving platform.
 
+## Docker images
+
+All Adlik compiler images and serving images are stored in [Alibaba Cloud](https://free.aliyun.com/). These images can
+be downloaded and used directly, users do not need to build the Adlik on [Ubuntu](https://ubuntu.com). Users can use
+the compiler images to compile model from H5, CheckPoint, FrozenGraph, ONNX and SavedModel to Openvino, TensorFlow,
+TensorFlow Lite, TensorRT. Users also can use the serving images for model inference.
+
+Docker pull command:
+
+```shell script
+docker pull docker_image_name:tag
+```
+
+### Compiler docker images
+
+The compiler docker images can be used in CPU and GPU. In the CPU, you can  compile the model from source type to TensorFlow
+model, OpenVino model and TensorFlow Lite model. And in the CPU, you can compile the model from source type to TensorFlow
+model, and TensorRT model. The names and labels of compiler mirrors are as follows, and the first half of label
+represents the version of TensorRT, the latter part of label represents the version of CUDA:
+
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.2.1.6_11.0
+
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.2.1.6_10.2
+
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.2.0.11_11.0
+
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.1.3.4_11.0
+
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.1.3.4_10.2
+
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.0.0.11_10.2
+
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.0.0.11_10.0
+
+#### Using model compiler image compile model
+
+1. Run the image.
+
+   ```shell script
+   docker run -it --rm -v source_model:/home/john/model
+   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:latest bash
+   ```
+
+2. Configure the json file or environment variables required to compile the model.
+
+   The [json_field.json](docker-images/json_field.json) describle the json file field information, and for the example, you
+   can reference [compiler_json_example.json](docker-images/compiler_json_example.json). For the environment variable field
+   description, see [env_field.txt](docker-images/env_field.txt), for the example, reference [compiler_env_example.txt](docker-images/compiler_env_example.txt).
+
+   Note: The checkpoint model must be given the input and output op names of the model when compiling, and other models
+   can be compiled without the input and output op names of the model.
+
+3. Compile the model.
+
+   Compilation instructions (json file mode):
+
+   ```shell script
+   python3 "-c" "import json; import model_compiler as compiler;
+   file=open('/mnt/model/serving_model.json','r'); request = json.load(file);compiler.compile_model(request);file.close()"
+   ```
+
+   Compilation instructions (environment variable mode):
+
+   ```shell script
+   python3 "-c" "import model_compiler.compiler as compiler;compiler.compile_from_env()"
+   ```
+
+### Serving docker imaegs
+
+The serving docker imaegs contains CPU and GPU mirrors. The label of openvino image represents the version of OpenVINO.
+And for the TensorRT image the first half of label represents the version of TensorRT, the latter part of label
+represents the version of CUDA. The names and labels of serving mirrors are as follows:
+
+CPU:
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tflite-cpu:latest
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorflow-cpu:latest
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/openvino:2021.1.110
+
+GPU:
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorflow-gpu:latest
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.2.1.6_11.0
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.2.1.6_10.2
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.2.0.11_11.0
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.1.3.4_11.0
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.1.3.4_10.2
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.0.0.11_10.2
+
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.0.0.11_10.0
+
+### Using the serving images for model inference
+
+1. Run the mirror and pay attention to mapping out the service port.
+   example command line:
+
+   ```shell script
+   docker run -it --rm -p 8500:8500 -v compiled_model:/model adlik/serving-openvino:latest bash
+   ```
+
+2. Load the compiled model in the image and start the service.
+
+   example command line:
+
+   ```shell script
+   adlik-serving --grpc_port=8500 --http_port=8501 --model_base_path=/model
+   ```
+
+3. Install the client wheel package [adlik serving package](
+   https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api-0.0.0-py2.py3-none-any.whl) or [adlik
+   serving gpu package](
+      https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api_gpu-0.0.0-py2.py3-none-any.whl) locally,
+      execute the inference code, and perform inference.
+
+Note: If you not mapping out the service port when you run the mirror, you need install the [adlik serving package](
+   https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api-0.0.0-py2.py3-none-any.whl) or [adlik
+   serving gpu package](
+      https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api_gpu-0.0.0-py2.py3-none-any.whl) in the
+      container. Then execute the inference code, and perform inference in the container.
+
 ## Build
 
 This guide is for building Adlik on [Ubuntu](https://ubuntu.com) systems.
