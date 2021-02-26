@@ -12,6 +12,13 @@ def _echo_var(value):
     print(f'##vso[task.setvariable variable=BuildTensorFlow;isOutput=true]{value}')
 
 
+def _file_is_related_to_build(file_path):
+    root_path, file_extension = os.path.splitext(file_path)
+    file_name = os.path.basename(root_path)
+    return file_extension in ('.h', '.cc', '.BUILD', '.proto', '.bzl', '.tpl') or \
+        file_name in ('.bazelrc', 'WORKSPACE', 'BUILD')
+
+
 def main(args):
     if args[0] == 'master':
         _echo_var('true')
@@ -23,8 +30,7 @@ def main(args):
 
     need_to_build_tf = False
     for file_path in changed_files.splitlines():
-        _, file_extension = os.path.splitext(file_path)
-        if file_extension in ('.h', '.cc'):
+        if _file_is_related_to_build(file_path):
             need_to_build_tf = True
             break
 
