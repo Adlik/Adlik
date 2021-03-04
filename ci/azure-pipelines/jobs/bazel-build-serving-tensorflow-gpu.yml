@@ -20,12 +20,7 @@ jobs:
       #       path: $(BAZEL_BUILD_CACHE)
       - script: |
             env TF_CUDA_VERSION=11.0 TF_NEED_TENSORRT=1 \
-                ci/checks/bazel-build-serving.py \
+                bazel build //adlik_serving/runtime/tensorflow/factory/tf_runtime
                     --config=tensorflow-gpu \
                     -c opt
         displayName: Bazel build serving
-      - task: PublishBuildArtifacts@1
-        displayName: Publish build artifacts
-        inputs:
-            pathtoPublish: __adlik_serving/adlik_serving
-            artifactName: adlik-serving-tensorflow-gpu

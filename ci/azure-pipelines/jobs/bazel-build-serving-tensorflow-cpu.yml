@@ -30,8 +30,3 @@ jobs:
                 -c opt \
                 --disk_cache="$BAZEL_BUILD_CACHE"
         displayName: Bazel build serving
-      - task: PublishBuildArtifacts@1
-        displayName: Publish build artifacts
-        inputs:
-            pathtoPublish: __adlik_serving/adlik_serving
-            artifactName: adlik-serving-tensorflow-cpu ($(Agent.OS))
