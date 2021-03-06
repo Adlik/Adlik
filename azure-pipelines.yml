@@ -29,4 +29,4 @@ stages:
   jobs:
     - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-checks.yml
     - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-cpu.yml
-    - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-gpu.yml
+    # - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-gpu.yml

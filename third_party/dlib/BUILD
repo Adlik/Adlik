@@ -1054,12 +1054,15 @@ genrule(
         "cd $$TMP_DIR",
         "mkdir build",
         "cd build",
-        "cmake -D CMAKE_INSTALL_PREFIX=$$INSTALL_DIR ..",
+        "cmake -D CMAKE_INSTALL_PREFIX=$$INSTALL_DIR -DCMAKE_C_COMPILER=$(CC) -DCMAKE_CXX_COMPILER=$(CC) ..",
         "echo $$INSTALL_DIR",
         "make install",
         "ls $$INSTALL_DIR",
         "rm -rf $$TMP_DIR",
     ]),
+    toolchains = [
+        "@bazel_tools//tools/cpp:current_cc_toolchain",
+    ],
 )
 
 cc_library(
