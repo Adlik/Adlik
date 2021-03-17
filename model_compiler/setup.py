@@ -56,7 +56,8 @@ setuptools.setup(
         'networkx',
         'tensorflow==2.4.0',
         'test-generator==0.1.1',
-        'tf2onnx'
+        'tf2onnx',
+        'mxnet'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={
