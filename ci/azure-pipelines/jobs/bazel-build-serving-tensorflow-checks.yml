@@ -1,0 +1,13 @@
+jobs:
+  - job: BazelBuildServingTensorFlowCheck
+    displayName: Bazel build serving tensorflow check
+    pool:
+        vmImage: Ubuntu-18.04
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
+        displayName: Install Python3.8
+      - script: ci/checks/bazel-build-serving-tensorflow-check.py "$SOURCE_BRANCH_NAME"
+        name: TensorflowBuildCheck
+        displayName: Bazel build serving tensorflow check
