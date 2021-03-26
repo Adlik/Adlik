@@ -157,3 +157,13 @@ class CompileSourceTestCase(TestCase):
                                                              input_formats=['channels_first']))
 
             self.assertIsInstance(compiled.tflite_model, bytes)
+
+    def test_compile_with_signature_keys(self):
+        with TemporaryDirectory() as model_dir:
+            _save_saved_model_file(model_dir)
+            compiled = compiler.compile_source(source=SavedModelFile(model_path=model_dir),
+                                               config=Config(signature_keys=['predict'],
+                                                             supported_ops=[tf.lite.OpsSet.SELECT_TF_OPS],
+                                                             input_formats=['channels_first']))
+
+            self.assertIsInstance(compiled.tflite_model, bytes)
