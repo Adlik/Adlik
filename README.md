@@ -56,6 +56,12 @@ which can be easily used for models developed with TensorFlow, Keras, PyTorch, e
 simply, based on a deep learning model, the users of Adlik can optimize it with model compiler and then deploy it to a
 certain platform with Adlik serving platform.
 
+## Getting Started
+
+- [Tutorials](TUTORIALS.md)
+
+- [Samples](examples)
+
 ## Docker images
 
 All Adlik compiler images and serving images are stored in [Alibaba Cloud](https://free.aliyun.com/). These images can
@@ -329,12 +335,6 @@ Adlik. You can build Adlik with the Docker image.
 > ENV NVIDIA_VISIBLE_DEVICES all
 > ENV NVIDIA_DRIVER_CAPABILITIES compute, utility
 > ```
-
-## Getting Started
-
-- [Tutorials](TUTORIALS.md)
-
-- [Samples](examples)
 
 ### Release
 
