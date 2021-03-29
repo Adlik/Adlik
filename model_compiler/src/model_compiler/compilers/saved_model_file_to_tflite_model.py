@@ -13,7 +13,12 @@ from ..tflite_util import get_tflite_model
 
 @repository.REPOSITORY.register(source_type=SavedModelFile, target_type=TfLiteModel, config_type=Config)
 def compile_source(source: SavedModelFile, config: Config) -> TfLiteModel:
-    converter = tf.lite.TFLiteConverter.from_saved_model(source.model_path)
+    if config.signature_keys:
+        signature_keys = config.signature_keys
+    else:
+        signature_keys = tf.saved_model.load(source.model_path, tags=['serve']).signatures
+
+    converter = tf.lite.TFLiteConverter.from_saved_model(source.model_path, signature_keys=signature_keys)
     tflite_model = get_tflite_model(converter, config)
 
     return TfLiteModel(tflite_model, config.input_formats)

@@ -27,12 +27,13 @@ def _parse_op_set(value: str) -> tf.lite.OpsSet:
 
 class Config(NamedTuple):
     input_formats: Sequence[Optional[DataFormat]] = []
-    optimization: bool = False
-    representative_dataset: Optional[tf.lite.RepresentativeDataset] = None
-    supported_ops: Optional[Iterable[tf.lite.OpsSet]] = None
-    supported_types: Optional[Iterable[tf.DType]] = None
     inference_input_type: Optional[tf.DType] = tf.float32
     inference_output_type: Optional[tf.DType] = tf.float32
+    optimization: bool = False
+    representative_dataset: Optional[tf.lite.RepresentativeDataset] = None
+    signature_keys: Optional[List[str]] = None
+    supported_ops: Optional[Iterable[tf.lite.OpsSet]] = None
+    supported_types: Optional[Iterable[tf.DType]] = None
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
@@ -41,13 +42,15 @@ class Config(NamedTuple):
 
         return Config(
             input_formats=utilities.get_data_formats(value.get('input_formats')),
-            optimization=value.get('optimization', False),
-            supported_ops=utilities.map_optional(supported_ops, lambda items: list(map(_parse_op_set, items))),
-            supported_types=utilities.map_optional(supported_types, lambda items: list(map(_parse_data_type, items))),
             inference_input_type=utilities.map_optional(value.get('inference_input_type', 'float32'),
                                                         _parse_data_type),
             inference_output_type=utilities.map_optional(value.get('inference_output_type', 'float32'),
-                                                         _parse_data_type)
+                                                         _parse_data_type),
+            optimization=value.get('optimization', False),
+            signature_keys=value.get('signature_keys'),
+            supported_ops=utilities.map_optional(supported_ops, lambda items: list(map(_parse_op_set, items))),
+            supported_types=utilities.map_optional(supported_types, lambda items: list(map(_parse_data_type, items))),
+
         )
 
     @staticmethod
@@ -55,15 +58,17 @@ class Config(NamedTuple):
         return Config(
             input_formats=utilities.get_data_formats(utilities.map_optional(env.get('INPUT_FORMATS'),
                                                                             lambda val: val.split(','))),
+            inference_input_type=utilities.map_optional(env.get('INFERENCE_INPUT_TYPE', 'float32'),
+                                                        _parse_data_type),
+            inference_output_type=utilities.map_optional(env.get('INFERENCE_OUTPUT_TYPE', 'float32'),
+                                                         _parse_data_type),
             optimization=bool(int(env.get('OPTIMIZATION', '0'))),
+            signature_keys=utilities.map_optional(env.get('SIGNATURE_KEYS'), lambda val: val.split(',')),
             supported_ops=utilities.map_optional(utilities.split_by(env.get('SUPPORTED_OPS'), ','),
                                                  lambda items: list(map(_parse_op_set, items))),
             supported_types=utilities.map_optional(utilities.split_by(env.get('SUPPORTED_TYPES'), ','),
                                                    lambda items: list(map(_parse_data_type, items))),
-            inference_input_type=utilities.map_optional(env.get('INFERENCE_INPUT_TYPE', 'float32'),
-                                                        _parse_data_type),
-            inference_output_type=utilities.map_optional(env.get('INFERENCE_OUTPUT_TYPE', 'float32'),
-                                                         _parse_data_type)
+
         )
 
 
