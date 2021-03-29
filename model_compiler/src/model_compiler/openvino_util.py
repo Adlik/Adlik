@@ -120,6 +120,7 @@ class Config(NamedTuple):
     max_batch_size: Optional[int] = None
     # if set enable_nhwc_to_nchw=True, the optimizer will transform the model format from channel_last to channel_first
     enable_nhwc_to_nchw: Optional[bool] = None
+    saved_model_tags: Optional[List[str]] = None
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
@@ -127,7 +128,8 @@ class Config(NamedTuple):
                       input_shapes=value.get('input_shapes'),
                       output_names=value.get('output_names'),
                       max_batch_size=value.get('max_batch_size'),
-                      enable_nhwc_to_nchw=value.get('enable_nhwc_to_nchw'))
+                      enable_nhwc_to_nchw=value.get('enable_nhwc_to_nchw'),
+                      saved_model_tags=value.get('saved_model_tags'))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
@@ -139,11 +141,14 @@ class Config(NamedTuple):
         # if set enable_nhwc_to_nchw to a non-zero value, the optimizer will transform the model format
         temp_enable_nhwc_to_nchw = env.get('ENABLE_NHWC_TO_NCHW')
         enable_nhwc_to_nchw = bool(int(temp_enable_nhwc_to_nchw)) if temp_enable_nhwc_to_nchw else None
+        saved_model_tags = env.get('SAVED_MODEL_TAGS')
+
         return Config(input_names=input_names,
                       input_shapes=input_shapes,
                       output_names=output_names,
                       max_batch_size=max_batch_size,
-                      enable_nhwc_to_nchw=enable_nhwc_to_nchw)
+                      enable_nhwc_to_nchw=enable_nhwc_to_nchw,
+                      saved_model_tags=saved_model_tags.split(',') if saved_model_tags else None)
 
     @staticmethod
     def _get_input_shapes(env_input_shapes):
