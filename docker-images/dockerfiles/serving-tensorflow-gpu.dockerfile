@@ -4,6 +4,7 @@ ARG UBUNTU_VERSION
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
 COPY script/run_server.sh /script/run_server.sh
+COPY sources.list /etc/apt/sources.list
 
 RUN . /etc/os-release && \
     apt-get update && \
@@ -18,24 +19,22 @@ deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(ec
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-        cuda-cufft-10-2 \
-        cuda-cufft-dev-10-2 \
-        cuda-cupti-dev-10-2 \
-        cuda-curand-10-2 \
-        cuda-curand-dev-10-2 \
-        cuda-cusolver-10-2 \
-        cuda-cusolver-dev-10-2 \
-        cuda-cusparse-dev-10-2 \
-        cuda-cusparse-10-2 \
-        cuda-nvml-dev-10-2 \
-        cuda-nvrtc-10-2 \
-        libcublas-dev=10.2.* \
-        'libcudnn7=*+cuda10.2' \
-        'libcudnn7-dev=*+cuda10.2' && \
+        cuda-cupti-dev-11-0 \
+        libcublas-dev-11-0 \
+        libcudnn8=*+cuda11.0 \
+        libcudnn8-dev=*+cuda11.0 \
+        libcufft-dev-11-0 \
+        libcurand-dev-11-0 \
+        libcusolver-dev-11-0 \
+        libcusparse-dev-11-0 \
+        libnvinfer7=7.2.*+cuda11.0 \
+        libnvinfer-dev=7.2.*+cuda11.0 \
+        libnvinfer-plugin7=7.2.*+cuda11.0 \
+        libnvinfer-plugin-dev=7.2.*+cuda11.0 && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN apt-mark hold libcudnn7 libcudnn7-dev
+RUN apt-mark hold libcudnn8 libcudnn8-dev
 
 # Builder.
 
@@ -69,8 +68,8 @@ COPY . /src
 
 WORKDIR /src
 
-RUN env PYTHON_BIN_PATH=/usr/bin/python3 \
-        TF_CUDA_VERSION=10.2 \
+RUN env PYTHON_BIN_PATH=/usr/bin/python3 TF_NEED_TENSORRT=1\
+        TF_CUDA_VERSION=11.0 \
         bazel build //adlik_serving \
          --config=tensorflow-gpu \
          -c opt \
