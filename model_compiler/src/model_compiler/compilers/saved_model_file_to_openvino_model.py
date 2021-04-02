@@ -25,6 +25,10 @@ def _get_optimize_params(input_model, output_dir, config):
         params['batch'] = str(config.max_batch_size)
     if config.output_names is not None:
         params['output'] = ','.join(config.output_names)
+    if config.saved_model_tags is None:
+        params['saved_model_tags'] = 'serve'
+    else:
+        params['saved_model_tags'] = ','.join(config.saved_model_tags)
     return params
 
 

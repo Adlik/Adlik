@@ -271,10 +271,15 @@ Assume building with CUDA version 11.0.
    - `libcurand-dev-11-0`
    - `libcusolver-dev-11-0`
    - `libcusparse-dev-11-0`
+   - `libnvinfer7=7.2.*+cuda11.0`
+   - `libnvinfer-dev=7.2.*+cuda11.0`
+   - `libnvinfer-plugin7=7.2.*+cuda11.0`
+   - `libnvinfer-plugin-dev=7.2.*+cuda11.0`
+
 2. Run the following command:
 
    ```sh
-   env TF_CUDA_VERSION=11.0 \
+   env TF_CUDA_VERSION=11.0 TF_NEED_TENSORRT=1 \
        bazel build //adlik_serving \
            --config=tensorflow-gpu \
            -c opt \
