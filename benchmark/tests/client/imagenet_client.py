@@ -7,8 +7,6 @@ This is a sample for Adlik_serving prediction
 
 import argparse
 import os
-import time
-import logging
 
 from PIL import Image
 from adlik_serving import PredictContext, model_config_pb2, tensor_dtype_to_np_dtype
@@ -133,20 +131,12 @@ def _main():
         return inputs, outputs
 
     num_of_batches = 99
-    if num_of_images % FLAGS.batch_size != 0:
-        num_of_batches += 1
-    logging.basicConfig(level=logging.DEBUG,
-                        filename=os.path.join(FLAGS.log_path, 'client_time.log'),
-                        filemode='a',
-                        format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s')
+
     for _ in range(num_of_batches):
         i_inputs, i_outputs = _next_batch(FLAGS.batch_size)
-        time1 = time.time()
         context.run(inputs={input_name: i_inputs},
                     outputs={output_name: FLAGS.classes},
                     batch_size=FLAGS.batch_size)
-        logging.info(f'The time of predict: {time.time() - time1}')
-        print(f'{_} / {num_of_batches}')
 
 
 if __name__ == '__main__':
@@ -164,6 +154,5 @@ if __name__ == '__main__':
                              'communicate with service. Default is "grpc".')
     parser.add_argument('image_filename', type=str, nargs='?',
                         help='Input image.')
-    parser.add_argument('-l', '--log-path', default='/home/john/Adlik', type=str, help='Log path')
     FLAGS = parser.parse_args()
     _main()

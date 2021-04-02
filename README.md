@@ -37,6 +37,7 @@ on different models are as follows:
 - [The test result of the InceptionV3 model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-inceptionv3-model)
 - [The test result of the YoloV3 model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-YoloV3-model)
 - [The test result of the Bert model](https://github.com/Adlik/Adlik/tree/master/benchmark#the-test-result-of-the-Bert-model)
+- [The test result of PaddlePaddle model](benchmark/PADDLE_RESULT.md)
 
 ## Contents
 

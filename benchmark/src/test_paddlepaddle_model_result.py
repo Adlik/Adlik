@@ -19,7 +19,7 @@ def _speed_of_client(client_log_path, batch_size):
         sum_time.pop(0)
         sum_time.pop(0)
         batch_num = len(sum_time)
-        speed_processing_picture = (batch_num * batch_size) / sum(sum_time) * 1000
+        speed_processing_picture = (batch_num * batch_size) / sum(sum_time)
     return speed_processing_picture, batch_num
 
 
@@ -38,7 +38,7 @@ def _speed_of_serving(serving_log_path, batch_size):
         sum_time.pop(0)
         sum_time.pop(0)
         batch_num = len(sum_time)
-        speed_processing_picture = (batch_num * batch_size) / sum(sum_time) * 1000
+        speed_processing_picture = (batch_num * batch_size) / sum(sum_time)
     return speed_processing_picture, batch_num, runtime
 
 
@@ -54,10 +54,10 @@ def main(args):
         serving_runtime = args.runtime
     else:
         serving_runtime = serving_runtime
-    tail_latency = 1 / speed_processing_picture_client - 1 / speed_processing_picture_serving
+    tail_latency = speed_processing_picture_client - speed_processing_picture_serving
     print(f'Model: {args.model_name}, Runtime: {serving_runtime}')
-    print(f'The speed of processing picture in the client is : {speed_processing_picture_client}')
-    print(f'The speed of processing picture in the serving is : {speed_processing_picture_serving}')
+    print(f'The time of processing one picture in the client is : {speed_processing_picture_client}ms')
+    print(f'The time of processing one picture in the serving is : {speed_processing_picture_serving}ms')
     print(f'The tail latency of one picture is : {tail_latency}')
 
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
                              help='The path of client log')
     ARGS_PARSER.add_argument('-s', '--serving-log-path', type=str, required=True,
                              help='The path of serving log')
-    ARGS_PARSER.add_argument('-b', '--batch-size', type=int, required=False, default=128,
+    ARGS_PARSER.add_argument('-b', '--batch-size', type=int, required=False, default=1,
                              help='Batch size. Default is 128.')
     ARGS_PARSER.add_argument('-m', '--model-name', type=str, required=True,
                              help='The name of model')
