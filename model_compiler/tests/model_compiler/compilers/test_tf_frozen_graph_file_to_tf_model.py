@@ -12,36 +12,6 @@ from model_compiler.models.irs.tf_frozen_graph_model import DataFormat
 from model_compiler.models.sources.tf_frozen_graph_file import FrozenGraphFile
 
 
-class ConfigTestCase(TestCase):
-    def test_from_json(self):
-        self.assertEqual(Config.from_json({'input_names': ['input'],
-                                           'output_names': ['output'],
-                                           'input_formats': ['channels_first']}),
-                         Config(input_names=['input'],
-                                data_formats=[DataFormat.CHANNELS_FIRST],
-                                output_names=['output']))
-
-    def test_from_json_no_names(self):
-        self.assertEqual(Config.from_json({}),
-                         Config(input_names=None,
-                                data_formats=[],
-                                output_names=None))
-
-    def test_from_env(self):
-        self.assertEqual(Config.from_env({'INPUT_NAMES': 'input1,input2:0',
-                                          'OUTPUT_NAMES': 'output',
-                                          'INPUT_FORMATS': 'channels_last'}),
-                         Config(input_names=['input1', 'input2:0'],
-                                data_formats=[DataFormat.CHANNELS_LAST],
-                                output_names=['output']))
-
-    def test_from_env_no_names(self):
-        self.assertEqual(Config.from_env({}),
-                         Config(input_names=None,
-                                data_formats=[],
-                                output_names=None))
-
-
 def _save_frozen_graph_model(model_file):
     with tf.compat.v1.Session(graph=tf.Graph()) as session:
         input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[3, 4], name='x')
