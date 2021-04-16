@@ -25,21 +25,6 @@ def _save_tensorflow_model(model_path):
         tf.compat.v1.train.Saver().save(session, model_path)
 
 
-class ConfigTestCase(TestCase):
-    def test_from_json(self):
-        self.assertEqual(Config.from_json({'input_names': ['input'],
-                                           'output_names': ['output'],
-                                           'input_formats': ['channels_first']}),
-                         Config(input_info=[('input', DataFormat.CHANNELS_FIRST)], output_names=['output']))
-
-    def test_from_env(self):
-        self.assertEqual(Config.from_env({'INPUT_NAMES': 'input1,input2:0',
-                                          'OUTPUT_NAMES': 'output',
-                                          'INPUT_FORMATS': 'channels_first'}),
-                         Config(input_info=[('input1', DataFormat.CHANNELS_FIRST), ('input2:0', None)],
-                                output_names=['output']))
-
-
 class CompileSourceTestCase(TestCase):
     def test_compile_with_variables(self):
         with TemporaryDirectory() as directory:
@@ -49,7 +34,7 @@ class CompileSourceTestCase(TestCase):
 
             config = Config.from_json({'input_names': ['x:0', 'y:0'],
                                        'output_names': ['z:0'],
-                                       'input_formats': ['channels_first', '']})
+                                       'input_formats': ['channels_first']})
 
             compiled = compiler.compile_source(TfModelFile(model_path=model_path), config)
 
