@@ -34,7 +34,7 @@ docker run -it --rm -p 8500:8500 -v model_repos:/model adlik/serving-openvino:la
 
 5. Run a client and do inference
 ```
-python3 resnet50_client.py cat.png
+python3 resnet50_client.py data/cat.png
 ```
 We will get result as below
 ```
