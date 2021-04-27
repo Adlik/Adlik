@@ -1,5 +1,15 @@
 # PaddlePaddle model
 
+## More Information
+- [PaddlePaddle Official Websize](https://www.paddlepaddle.org.cn/)
+- [PaddlePaddle GitHub Repo](https://github.com/paddlepaddle/paddle)
+- [Paddle2ONNX GitHub Repo](https://github.com/paddlepaddle/Paddle2ONNX)
+
+- [PaddleDetection](https://github.com/paddlepaddle/PaddleDetection): An end-to-end object detection development kit based on PaddlePaddle.
+- [PaddleSeg](https://github.com/paddlepaddle/PaddleSeg): An end-to-end image segmentation kit based on PaddlePaddle.
+- [PaddleClas](https://github.com/paddlepaddle/PaddleClas): A treasure chest for image classification powered by PaddlePaddle.
+
+## Run PaddlePaddle model by Adlik
 1. Convert PaddlePaddle model to ONNX format, run the example code as below to get a ResNet50 model(ONNX format)
 ```
 python3 paddle_resnet50.py
@@ -24,13 +34,13 @@ After that there is a serving model in the `model_repos` directory:
 ```
 > **Note:** You also can modify the `serving type` in [compile_model.py]() to compile the model to tensorrt.
 
-4. Deploy a serving service
+3. Deploy a serving service
 
 ```
 docker run -it --rm -p 8500:8500 -v model_repos:/model adlik/serving-openvino:latest bash
 ```
 
-5. Run a client and do inference
+4. Run a client and do inference
 ```
 python3 resnet50_client.py data/cat.png data/labels.txt
 ```

@@ -1,8 +1,8 @@
-# Copyright 2019 ZTE corporation. All Rights Reserved.
+# Copyright 2021 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 """
-This is a mnist sample which compile PaddlePaddle model(ONNX format) to tf serving/openvino/tensorrt model.
+This is a ResNet50 sample which compile PaddlePaddle model(ONNX format) to tf serving/openvino/tensorrt model.
 The request of compiling model must match config_schema.json
 """
 import os
