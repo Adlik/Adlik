@@ -71,21 +71,19 @@ def _preprocess(image_path):
     return im
 
 
-def _postprocess(results, file_names, batch_size):
+def _postprocess(results, file_names, batch_size, labels):
     if len(results.tensor) != len(file_names):
         raise Exception("expected {} results, got {}".format(batch_size, len(results)))
     if len(file_names) != batch_size:
         raise Exception("expected {} file names, got {}".format(batch_size, len(file_names)))
 
     if results.batch_classes:
-        print("========", results.batch_classes)
-#        for i in range(batch_size):
-#            print("Image: '{}', result: {}".format(file_names[i],
-#                                                   results.batch_classes[i]))
-#    else:
-#        print("response doesn't contain 'batch classes' field, get class information from 'tensor' field!")
-#        for i in range(batch_size):
-#            print("Image: '{}', result: {}".format(file_names[i], np.argmax(results.tensor[i])))
+        for i in range(batch_size):
+            for j in range(len(results.batch_classes[i])):
+                label_id = results.batch_classes[i][j]["idx"]
+                results.batch_classes[i][j]["label"] = labels[label_id]
+            print("Image: '{}', result: {}".format(file_names[i],
+                  results.batch_classes[i]))
 
 
 def _main():
@@ -98,6 +96,8 @@ def _main():
 
     cur_idx = 0
     num_of_images = len(image_data)
+
+    labels = open(FLAGS.label_file).read().strip().split('\n')
 
     def _next_batch(batch_size):
         nonlocal cur_idx
@@ -123,12 +123,12 @@ def _main():
         result = context.run(inputs={input_name: i_inputs},
                              outputs={output_name: FLAGS.classes},
                              batch_size=FLAGS.batch_size)
-        _postprocess(result[output_name], i_outputs, FLAGS.batch_size)
+        _postprocess(result[output_name], i_outputs, FLAGS.batch_size, labels)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model-name', type=str, required=False, default='mnist',
+    parser.add_argument('-m', '--model-name', type=str, required=False, default='ResNet50_vd_ssld',
                         help='Name of model')
     parser.add_argument('-b', '--batch-size', type=int, required=False, default=1,
                         help='Batch size. Default is 1.')
@@ -141,5 +141,8 @@ if __name__ == '__main__':
                              'communicate with service. Default is "grpc".')
     parser.add_argument('image_filename', type=str, nargs='?',
                         help='Input image.')
+    parser.add_argument('label_file', type=str, nargs='?',
+                        help='Label file path.')
+
     FLAGS = parser.parse_args()
     _main()

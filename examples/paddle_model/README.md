@@ -14,15 +14,13 @@ python3 compile_model.py
 After that there is a serving model in the `model_repos` directory:
 ```
 |-- model_repos
-|   |-- 
+|   |-- ResNet50_vd_ssld 
 |   |   |-- 1
-|   |   |   |-- TFVERSION
-|   |   |   |-- saved_model.pbtxt
-|   |   |   `-- variables
-|   |   |       |-- variables.data-00000-of-00001
-|   |   |       `-- variables.index
+|   |   |   |-- model.bin
+|   |   |   |-- model.mapping
+|   |   |   `-- model.xml
 |   |   `-- config.pbtxt
-|   `-- mnist.zip
+|   `-- ResNet50_vd_ssld_1.zip
 ```
 > **Note:** You also can modify the `serving type` in [compile_model.py]() to compile the model to tensorrt.
 
@@ -34,8 +32,9 @@ docker run -it --rm -p 8500:8500 -v model_repos:/model adlik/serving-openvino:la
 
 5. Run a client and do inference
 ```
-python3 resnet50_client.py data/cat.png
+python3 resnet50_client.py data/cat.png data/labels.txt
 ```
 We will get result as below
 ```
+Image: 'data/cat.jpg', result: [{'idx': 281, 'score': 11.564541816711426, 'label': 'tabby'}]
 ```
