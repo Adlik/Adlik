@@ -20,7 +20,7 @@ python3 paddle_resnet50.py
 
 > We can also use [Paddle2ONNX](https://github.com/PaddlePaddle/Paddle2ONNX) to convert a PaddlePaddle Inference model to ONNX format
 
-2.Convert the ONNX format file to OpenVINO Serving model
+2.Convert the ONNX format model to OpenVINO Serving model
 
 ```Shell
 python3 compile_model.py
