@@ -6,9 +6,9 @@
 - [PaddlePaddle GitHub Repo](https://github.com/paddlepaddle/paddle)
 - [Paddle2ONNX GitHub Repo](https://github.com/paddlepaddle/Paddle2ONNX)
 
-- [PaddleDetection](https://github.com/paddlepaddle/PaddleDetection): An end-to-end object detection development kit based on PaddlePaddle.
-- [PaddleSeg](https://github.com/paddlepaddle/PaddleSeg): An end-to-end image segmentation kit based on PaddlePaddle.
-- [PaddleClas](https://github.com/paddlepaddle/PaddleClas): A treasure chest for image classification powered by PaddlePaddle.
+- [PaddleDetection](https://github.com/paddlepaddle/PaddleDetection)
+- [PaddleSeg](https://github.com/paddlepaddle/PaddleSeg)
+- [PaddleClas](https://github.com/paddlepaddle/PaddleClas)
 
 ## Run PaddlePaddle model by Adlik
 
@@ -18,7 +18,8 @@
 python3 paddle_resnet50.py
 ```
 
-> We can also use [Paddle2ONNX](https://github.com/PaddlePaddle/Paddle2ONNX) to convert a PaddlePaddle Inference model to ONNX format
+> We can also use [Paddle2ONNX](https://github.com/PaddlePaddle/Paddle2ONNX)
+to convert a PaddlePaddle Inference model to ONNX format
 
 2.Convert the ONNX format model to OpenVINO Serving model
 
