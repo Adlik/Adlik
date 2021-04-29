@@ -62,4 +62,3 @@ We will get result as below
 Image: 'data/cat.jpg', result: [{'idx': 281, 'score': 11.564541816711426,
 'label': 'tabby'}]
 ```
-
