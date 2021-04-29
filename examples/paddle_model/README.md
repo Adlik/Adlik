@@ -2,7 +2,7 @@
 
 ## More Information
 
-- [PaddlePaddle Official Websize](https://www.paddlepaddle.org.cn/)
+- [PaddlePaddle Official Websize](https://www.paddlepaddle.org.cn)
 - [PaddlePaddle GitHub Repo](https://github.com/paddlepaddle/paddle)
 - [Paddle2ONNX GitHub Repo](https://github.com/paddlepaddle/Paddle2ONNX)
 
