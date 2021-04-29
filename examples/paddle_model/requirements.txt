@@ -1,0 +1,3 @@
+paddlepaddle >= 2.0.0
+paddlehub >= 2.0.0
+paddle2onnx >= 0.5.1
