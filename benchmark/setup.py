@@ -12,6 +12,7 @@ from setuptools import find_packages, setup
 _VERSION = '0.0.0'
 
 _REQUIRED_PACKAGES = [
+    'astroid==2.5.3',
     'h5py<3',
     'keras==2.4.0',
     'onnx==1.7.0',
