@@ -4,6 +4,7 @@
 from typing import Callable, List, Optional, TypeVar
 
 import time
+import ast
 import requests
 import tensorflow as tf
 
@@ -49,6 +50,29 @@ def get_data_formats(input_formats):
     else:
         data_formats = []
     return data_formats
+
+
+def get_input_shapes_from_env(env_input_shapes):
+    env_input_shapes = ast.literal_eval(env_input_shapes)
+    return list(env_input_shapes) if isinstance(env_input_shapes, tuple) else [env_input_shapes]
+
+
+def get_onnx_model_input_data_formats(graph, input_data_formats):
+
+    initializers = {initializer.name for initializer in graph.initializer}
+    input_length = sum(1 for input_spec in graph.input if input_spec.name not in initializers)
+
+    if input_data_formats is None:
+        input_data_formats = [None for _ in range(input_length)]
+    else:
+        input_formats_length = len(input_data_formats)
+
+        if input_formats_length != input_length:
+            raise ValueError(
+                f'Number of input formats ({input_formats_length}) does not match number of inputs ({input_length})'
+            )
+
+    return input_data_formats
 
 
 def split_by(value: Optional[str], separator: str) -> Optional[List[str]]:

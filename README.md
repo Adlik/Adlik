@@ -83,19 +83,19 @@ model, OpenVino model and TensorFlow Lite model. And in the CPU, you can compile
 model, and TensorRT model. The names and labels of compiler mirrors are as follows, and the first half of label
 represents the version of TensorRT, the latter part of label represents the version of CUDA:
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.2.1.6_11.0
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.2.1.6_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.2.1.6_10.2
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.2.1.6_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.2.0.11_11.0
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.2.0.11_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.1.3.4_11.0
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.1.3.4_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.1.3.4_10.2
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.1.3.4_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.0.0.11_10.2
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.0.0.11_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.0.0.11_10.0
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.0.0.11_cuda10.0
 
 #### Using model compiler image compile model
 
@@ -138,29 +138,29 @@ represents the version of CUDA. The names and labels of serving mirrors are as f
 
 CPU:
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tflite-cpu:latest
+registry.cn-beijing.aliyuncs.com/adlik/serving-tflite-cpu:v0.2.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorflow-cpu:latest
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.2.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/openvino:2021.1.110
+registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.2.0
 
 GPU:
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorflow-gpu:latest
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-gpu:v0.2.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.2.1.6_11.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.2.1.6_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.2.1.6_10.2
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.2.1.6_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.2.0.11_11.0
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.2.0.11_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.1.3.4_11.0
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.1.3.4_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.1.3.4_10.2
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.1.3.4_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.0.0.11_10.2
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.0.0.11_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:7.0.0.11_10.0
+registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.0.0.11_cuda10.0
 
 ### Using the serving images for model inference
 
