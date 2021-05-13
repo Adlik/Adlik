@@ -53,9 +53,12 @@ setuptools.setup(
     package_data={'model_compiler': ['protos/src/*.proto']},
     install_requires=[
         'defusedxml',
+        'future',
         'networkx',
         'tensorflow==2.4.0',
+        'torch',
         'onnx-tf',
+        'onnx-caffe2==1.0.0',
         'tensorflow_addons',
         'test-generator==0.1.1',
         'tf2onnx',
