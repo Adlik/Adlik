@@ -58,7 +58,8 @@ setuptools.setup(
         'onnx-tf',
         'tensorflow_addons',
         'test-generator==0.1.1',
-        'tf2onnx'
+        'tf2onnx',
+        'mxnet'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={
