@@ -24,18 +24,15 @@ def _get_onnx_model_layer_dims(layer):
 class ONNXModel(NamedTuple):
     onnx_model: ModelProto
     input_formats: Sequence[Optional[DataFormat]]
+    model_inputs: Sequence
 
     def get_inputs(self) -> Sequence[ModelInput]:
-        graph = self.onnx_model.graph
-        initializers = {initializer.name for initializer in graph.initializer}
-
-        model_input = [input_spec for input_spec in graph.input if input_spec.name not in initializers]
 
         return [ModelInput(name=model_input.name,
                            data_type=_onnx_dtype_to_tf_dtype(model_input.type.tensor_type.elem_type),
                            format=data_format.as_model_config_data_format(input_format),
                            dims=_get_onnx_model_layer_dims(model_input))
-                for model_input, input_format in zip(model_input, self.input_formats)]
+                for model_input, input_format in zip(self.model_inputs, self.input_formats)]
 
     def get_outputs(self) -> Sequence[ModelOutput]:
         return [ModelOutput(name=model_output.name,

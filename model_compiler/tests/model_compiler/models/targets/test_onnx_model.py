@@ -27,7 +27,8 @@ def _make_onnx_model():
                                              output_names=['z:0']).make_model(graph_doc='Test onnx model')
 
     return ONNXModel(onnx_model=onnx_model,
-                     input_formats=[DataFormat.CHANNELS_LAST, DataFormat.CHANNELS_FIRST])
+                     input_formats=[DataFormat.CHANNELS_LAST, DataFormat.CHANNELS_FIRST],
+                     model_inputs=onnx_model.graph.input)
 
 
 class OnnxModelFileTestCase(TestCase):
