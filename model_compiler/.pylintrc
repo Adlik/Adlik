@@ -6,11 +6,13 @@ jobs = 0
 [MESSAGES CONTROL]
 disable = missing-class-docstring,
           missing-function-docstring,
-          missing-module-docstring
+          missing-module-docstring,
+          no-member
 
 [TYPECHECK]
 contextmanager-decorators = contextlib.contextmanager,
                             tensorflow.python.util.tf_contextlib.contextmanager
+generated-members=numpy.*, torch.*
 
 [FORMAT]
 max-line-length = 120
