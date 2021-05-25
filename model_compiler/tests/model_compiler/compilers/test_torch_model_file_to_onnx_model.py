@@ -1,3 +1,6 @@
+# Copyright 2019 ZTE corporation. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 import os
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 from unittest import TestCase
@@ -11,24 +14,29 @@ from model_compiler.models.sources.torch_model_file import TorchModelFile
 class ConfigTestCase(TestCase):
 
     def test_from_json(self):
-        self.assertEqual(Config.from_json({'input_shapes': [[1, 2, 3, 4]],
+        self.assertEqual(Config.from_json({'input_names': ['input'],
+                                           'input_shapes': [1, 2, 3, 4],
                                            'data_type': 'FLOAT16',
                                            'max_batch_size': 1,
                                            'input_formats': ['channels_first']
                                            }),
-                         Config(input_shapes=[[1, 2, 3, 4]],
+                         Config(input_names=['input'],
+                                input_shapes=[[1, 2, 3, 4]],
                                 max_batch_size=1,
                                 data_type=torch.float16,
                                 input_formats=[DataFormat.CHANNELS_FIRST]))
 
     def test_from_env(self):
-        self.assertEqual(Config.from_env({'INPUT_SHAPES': '[1, 2, 3, 4]',
+        self.assertEqual(Config.from_env({'INPUT_NAMES': 'input',
+                                          'INPUT_SHAPES': '[1, 2, 3, 4]',
                                           'MAX_BATCH_SIZE': '1',
                                           'DATA_TYPE': 'FLOAT16',
-                                          'INPUT_FORMATS': 'channels_last'}),
-                         Config(input_shapes=[[1, 2, 3, 4]],
-                                data_type=torch.float16,
+                                          'INPUT_FORMATS': 'channels_last'
+                                          }),
+                         Config(input_names=['input'],
+                                input_shapes=[[1, 2, 3, 4]],
                                 max_batch_size=1,
+                                data_type=torch.float16,
                                 input_formats=[DataFormat.CHANNELS_LAST]))
 
 
@@ -61,17 +69,18 @@ class CompileSourceTestCase(TestCase):
             model_path = os.path.join(model_file, 'model.pth')
             model = get_torch_model()
             torch.save(model, model_path)
-            config = Config(input_shapes=[[1, 10]],
+            config = Config(input_names=['fc_w'],
+                            input_shapes=[[1, 10]],
                             data_type=torch.float,
                             max_batch_size=2,
                             input_formats=None)
-            # [DataFormat.CHANNELS_LAST]
 
             compiled = compiler.compile_source(TorchModelFile(model_path=model_path), config)
         compiled_graph = compiled.model_proto.graph
-        self.assertEqual([graph_input.name for graph_input in compiled_graph.input], ['input.1'])
+        initializers = {initializer.name for initializer in compiled_graph.initializer}
+        input_name = [input_spec.name for input_spec in compiled_graph.input if input_spec.name not in initializers]
+        self.assertEqual(input_name, ['fc_w'])
         self.assertEqual(compiled.input_data_formats, [None])
-        # [DataFormat.CHANNELS_LAST]
 
     def test_compile_custom_objects(self):
         with NamedTemporaryFile(mode='w+', suffix='.py') as script_path, \
@@ -91,12 +100,15 @@ class CompileSourceTestCase(TestCase):
                               "        return out\n"
                               )
             script_path.seek(0)
-            config = Config(input_shapes=[[1, 10]],
+            config = Config(input_names=['data'],
+                            input_shapes=[[1, 10]],
                             data_type=torch.float,
                             max_batch_size=2,
                             input_formats=[DataFormat.CHANNELS_LAST])
             compiled = compiler.compile_source(TorchModelFile(model_path=model_file.name, script_path=script_path.name),
                                                config)
         compiled_graph = compiled.model_proto.graph
-        self.assertEqual([graph_input.name for graph_input in compiled_graph.input], ['input.1'])
+        initializers = {initializer.name for initializer in compiled_graph.initializer}
+        input_name = [input_spec.name for input_spec in compiled_graph.input if input_spec.name not in initializers]
+        self.assertEqual(input_name, ['data'])
         self.assertEqual(compiled.input_data_formats, [DataFormat.CHANNELS_LAST])

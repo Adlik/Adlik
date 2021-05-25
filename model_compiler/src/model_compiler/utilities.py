@@ -7,6 +7,7 @@ import time
 import ast
 import requests
 import tensorflow as tf
+
 from .models.data_format import DataFormat
 
 _Type1 = TypeVar('_Type1')
@@ -103,24 +104,4 @@ def send_response(url, message):
 
 
 def get_input_shapes(input_shapes):
-    input_shapes = [list(input_shape) for input_shape in input_shapes]
-    return input_shapes
-
-
-def get_input_shapes_from_env(env_input_shapes):
-    env_input_shapes = ast.literal_eval(env_input_shapes)
-    return list(env_input_shapes) if isinstance(env_input_shapes, tuple) else [env_input_shapes]
-
-
-def get_onnx_model_input_data_formats(graph, input_data_formats):
-    initializers = {initializer.name for initializer in graph.initializer}
-    input_length = sum(1 for input_spec in graph.input if input_spec.name not in initializers)
-    if input_data_formats is None:
-        input_data_formats = [None for _ in range(input_length)]
-    # else:
-    #     input_formats_length = len(input_data_formats)
-    #     if input_formats_length != input_length:
-    #         raise ValueError(
-    #             f'Number of input formats ({input_formats_length}) does not match number of inputs ({input_length})'
-    #         )
-    return input_data_formats
+    return [input_shapes] if isinstance(input_shapes[0], int) else [list(input_shape) for input_shape in input_shapes]

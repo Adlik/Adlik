@@ -33,6 +33,7 @@ def get_torch_data_type_form_str(type_str):
 
 
 class Config(NamedTuple):
+    input_names: Sequence[str]
     input_shapes: List[List]
     data_type: torch.dtype
     max_batch_size: int
@@ -41,25 +42,25 @@ class Config(NamedTuple):
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
         raw_input_formats: Optional[str] = value.get('input_formats')
-        return Config(input_shapes=utilities.get_input_shapes(value.get('input_shapes')),
+        return Config(input_names=value['input_names'],
+                      input_shapes=utilities.get_input_shapes(value.get('input_shapes')),
                       data_type=get_torch_data_type_form_str(value['data_type']),
                       max_batch_size=value['max_batch_size'],
                       input_formats=utilities.map_optional(
                           raw_input_formats,
-                          lambda formats: list(map(data_format.str_to_data_format, formats))
-                      )
-                      )
+                          lambda formats: list(map(data_format.str_to_data_format, formats))))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
         input_shapes = utilities.get_input_shapes_from_env(env.get('INPUT_SHAPES'))
         data_type = get_torch_data_type_form_str(env.get('DATA_TYPE'))
-        return Config(input_shapes=input_shapes,
+        return Config(input_names=env['INPUT_NAMES'].split(','),
+                      input_shapes=input_shapes,
                       data_type=data_type,
                       max_batch_size=int(env['MAX_BATCH_SIZE']),
-                      input_formats=utilities.map_optional(utilities.split_by(env.get('INPUT_FORMATS'), ','),
-                                                           lambda formats: list(map(data_format.str_to_data_format,
-                                                                                    formats))))
+                      input_formats=utilities.map_optional(
+                          utilities.split_by(env.get('INPUT_FORMATS'), ','),
+                          lambda formats: list(map(data_format.str_to_data_format, formats))))
 
 
 def _load_module(file_path, name):
@@ -90,9 +91,10 @@ def compile_source(source: TorchModelFile, config: Config) -> OnnxModel:
     torch.onnx.export(model,
                       tuple(dummy_inputs),
                       onnx_path.name,
-                      verbose=True)
+                      verbose=True,
+                      input_names=config.input_names)
     onnx_model = onnx.load(onnx_path.name)
     onnx.checker.check_model(onnx_model)
-    graph = onnx_model.graph
+    graph = onnx_model.graph  # pylint: disable=no-member
     return OnnxModel(model_proto=onnx_model,
                      input_data_formats=utilities.get_onnx_model_input_data_formats(graph, input_formats))
