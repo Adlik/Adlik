@@ -101,7 +101,4 @@ def send_response(url, message):
             time.sleep(2)
             retries += 1
             continue
-
-
-def get_input_shapes(input_shapes):
-    return [input_shapes] if isinstance(input_shapes[0], int) else [list(input_shape) for input_shape in input_shapes]
+            
