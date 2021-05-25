@@ -57,6 +57,10 @@ def get_input_shapes_from_env(env_input_shapes):
     return list(env_input_shapes) if isinstance(env_input_shapes, tuple) else [env_input_shapes]
 
 
+def get_input_shapes(input_shapes):
+    return [input_shapes] if isinstance(input_shapes[0], int) else [list(input_shape) for input_shape in input_shapes]
+
+
 def get_onnx_model_input_data_formats(graph, input_data_formats):
 
     initializers = {initializer.name for initializer in graph.initializer}
