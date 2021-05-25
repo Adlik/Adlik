@@ -101,4 +101,3 @@ def send_response(url, message):
             time.sleep(2)
             retries += 1
             continue
-            
