@@ -5,7 +5,7 @@ import os
 import subprocess
 from os import path
 
-_UBUNTU_VERSION = 'focal'
+_UBUNTU_VERSION = 'bionic'
 _TENSORRT_VERSION = '7.2.1.6'
 _CUDA_VERSION = '10.2'
 _OPENVINO_VERSION = '2021.1.110'

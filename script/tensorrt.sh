@@ -14,7 +14,7 @@ elif [[ ${CUDA_VERSION} = '11.0' ]]; then
   libcufft-dev-11-0 \
   libcurand-dev-11-0 \
   libcusolver-dev-11-0 \
-  libcusparse-dev-11-0 \
+  libcusparse-dev-11-0
 fi
 
 if [[ ${TENSORRT_VERSION} = 7.0.* ]] ; then
