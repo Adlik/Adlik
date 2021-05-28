@@ -50,16 +50,16 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
 1. Pull the image for TensorFlow serving
 
     ```sh
-    docker pull registry.cn-beijing.aliyuncs.com/adlik/serving/tensorflow-cpu:latest
+    registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.2.0
     ```
 
 2. In the `Adlik/examples/keras_model` directory, run the command:
 
     ```sh
-    docker run -d -p 8500:8500 -v $PWD/model_repos:/srv/adlik-serving registry.cn-beijing.aliyuncs.com/adlik/serving/tensorflow-cpu:latest
+    docker run -d -p 8500:8500 -v $PWD/model_repos:/srv/adlik-serving registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.2.0
     ```
 
-### Do inference
+### Do inference 
 
 1. Install the `Adlik serving` package
 
