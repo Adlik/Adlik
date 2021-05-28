@@ -7,7 +7,8 @@ import tensorflow as tf
 from tensorflow import keras
 
 import model_compiler.compilers.keras_model_to_tf_model as compiler
-from model_compiler.compilers.keras_model_to_tf_model import Config, KerasModel, NodeSpec
+from model_compiler.compilers.keras_model_to_tf_model import KerasModel
+from model_compiler.keras_util import Config, NodeSpec
 from model_compiler.models.irs.tf_model import DataFormat
 
 

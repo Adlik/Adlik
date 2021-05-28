@@ -1,7 +1,7 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from os import listdir
+import os
 from typing import Any, Mapping, NamedTuple
 
 from .. import repository
@@ -23,16 +23,16 @@ class CaffeModelFile(NamedTuple):
     def accepts_kwargs(kwargs: Mapping[str, Any]) -> bool:
         input_model = kwargs.get('model_path')
 
-        return 'predict_net.pb' in listdir(input_model) and 'init_net.pb' in listdir(input_model)
+        return isinstance(input_model, str) and os.path.isdir(input_model)
 
     @staticmethod
     def accepts_json(value: Mapping[str, Any]) -> bool:
         input_model = value.get('input_model')
 
-        return 'predict_net.pb' in listdir(input_model) and 'init_net.pb' in listdir(input_model)
+        return isinstance(input_model, str) and os.path.isdir(input_model)
 
     @staticmethod
     def accepts_env(env: Mapping[str, str]) -> bool:
         input_model = env.get('CAFFE_PATH')
 
-        return 'predict_net.pb' in listdir(input_model) and 'init_net.pb' in listdir(input_model)
+        return isinstance(input_model, str) and os.path.isdir(input_model)
