@@ -6,7 +6,7 @@ jobs:
     steps:
       - template: ../steps/install-tensorrt.yml
       - template: ../steps/install-openvino-compiler.yml
-      - script: sudo apt-get install -y libquadmath0
+      - script: sudo apt-get install -y libquadmath0 libopenblas-dev
         displayName: Install libquadmath0
       - task: UsePythonVersion@0
         inputs:
