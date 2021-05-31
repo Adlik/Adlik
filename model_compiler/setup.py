@@ -52,7 +52,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     package_data={'model_compiler': ['protos/src/*.proto']},
     install_requires=[
-        'mxnet==1.8.0',
+        'mxnet-native',
         'defusedxml',
         'future',
         'networkx',
