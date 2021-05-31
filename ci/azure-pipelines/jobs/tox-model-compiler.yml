@@ -6,6 +6,10 @@ jobs:
     steps:
       - template: ../steps/install-tensorrt.yml
       - template: ../steps/install-openvino-compiler.yml
+      - script: sudo apt-get install -y libquadmath0
+        displayName: Install libquadmath0
+      - script: sudo ldconfig -v | grep -i libquadmath
+        displayName: Run ldconfig
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.6'
