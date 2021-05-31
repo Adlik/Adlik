@@ -72,7 +72,8 @@ setuptools.setup(
             'mypy',
             'pylint==2.6.2',
             'pytest-cov',
-            'pytest-xdist'
+            'pytest-xdist',
+            'pytest-faulthandler'
         ]
     },
     python_requires='>= 3.6'
