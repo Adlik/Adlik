@@ -62,7 +62,7 @@ setuptools.setup(
         'tensorflow_addons',
         'test-generator==0.1.1',
         'tf2onnx',
-        'torch',
+        'torch==1.7.1',
         'mxnet'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
