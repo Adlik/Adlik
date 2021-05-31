@@ -52,6 +52,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     package_data={'model_compiler': ['protos/src/*.proto']},
     install_requires=[
+        'mxnet',
         'defusedxml',
         'future',
         'networkx',
@@ -61,8 +62,7 @@ setuptools.setup(
         'onnx-caffe2==1.0.0',
         'tensorflow_addons',
         'test-generator==0.1.1',
-        'tf2onnx',
-        'mxnet'
+        'tf2onnx'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={
