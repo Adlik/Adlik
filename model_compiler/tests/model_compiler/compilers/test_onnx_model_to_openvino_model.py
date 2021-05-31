@@ -36,7 +36,7 @@ class CompileSourceTestCase(TestCase):
         compiled = compiler.compile_source(OnnxModel(model_proto=onnx_model, input_data_formats=[None, None]), config)
         self.assertEqual(compiled.get_inputs(),
                          [ModelInput(name='x:0', data_type=tf.float32.as_datatype_enum,
-                                     format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
+                                     format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),    # pylint: disable=no-member
                           ModelInput(name='y:0', data_type=tf.float32.as_datatype_enum,
                                      format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
 
@@ -57,3 +57,18 @@ class CompileSourceTestCase(TestCase):
                                      format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
         self.assertEqual(compiled.get_outputs(),
                          [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
+
+    def test_compile_with_fp16(self):
+        onnx_model = _make_onnx_model()
+        config = Config.from_json({'max_batch_size': 1,
+                                   'data_type': 'FP16'})
+        compiled = compiler.compile_source(OnnxModel(model_proto=onnx_model, input_data_formats=[None, None]), config)
+
+        self.assertEqual(compiled.get_inputs(),
+                         [ModelInput(name='x:0', data_type=tf.float16.as_datatype_enum,
+                                     format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
+                          ModelInput(name='y:0', data_type=tf.float16.as_datatype_enum,
+                                     format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
+
+        self.assertEqual(compiled.get_outputs(),
+                         [ModelOutput(name='z:0', data_type=tf.float16.as_datatype_enum, dims=[2, 3, 4])])
