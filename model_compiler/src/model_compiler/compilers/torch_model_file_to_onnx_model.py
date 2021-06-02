@@ -2,49 +2,35 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Any, Mapping, NamedTuple, Optional, List, Sequence
-import importlib.util
 from tempfile import NamedTemporaryFile
+import importlib.util
 import torch
 import onnx
-from ..models.sources.torch_model_file import TorchModelFile
-from ..models.irs.onnx_model import OnnxModel
+
+
 from . import repository
 from .. import utilities
+from ..models.sources.torch_model_file import TorchModelFile
+from ..models.irs.onnx_model import OnnxModel
+from ..models.data_type import DataType
 from ..models.data_format import DataFormat
 from ..models import data_format
-
-
-def get_torch_data_type_form_str(type_str):
-    torch_data_type_map = {
-        'FLOAT': torch.float,
-        'DOUBLE': torch.double,
-        'COMPLEX64': torch.complex64,
-        'COMPLEX128': torch.complex128,
-        'FLOAT16': torch.float16,
-        'BFLOAT16': torch.bfloat16,
-        'UINT8': torch.uint8,
-        'INT8': torch.int8,
-        'INT16': torch.int16,
-        'INT32': torch.int32,
-        'INT64': torch.int64,
-        'BOOL': torch.bool
-    }
-    return torch_data_type_map[type_str.upper()]
 
 
 class Config(NamedTuple):
     input_names: Sequence[str]
     input_shapes: List[List]
-    data_type: torch.dtype
+    data_type: torch.dtype    # pylint: disable=no-member
     max_batch_size: int
     input_formats: Optional[Sequence[Optional[DataFormat]]]
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
         raw_input_formats: Optional[str] = value.get('input_formats')
+
         return Config(input_names=value['input_names'],
                       input_shapes=utilities.get_input_shapes(value.get('input_shapes')),
-                      data_type=get_torch_data_type_form_str(value['data_type']),
+                      data_type=DataType.from_torch_data_type(value['data_type']),
                       max_batch_size=value['max_batch_size'],
                       input_formats=utilities.map_optional(
                           raw_input_formats,
@@ -53,7 +39,8 @@ class Config(NamedTuple):
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
         input_shapes = utilities.get_input_shapes_from_env(env.get('INPUT_SHAPES'))
-        data_type = get_torch_data_type_form_str(env.get('DATA_TYPE'))
+        data_type = DataType.from_torch_data_type(env.get('DATA_TYPE'))
+
         return Config(input_names=env['INPUT_NAMES'].split(','),
                       input_shapes=input_shapes,
                       data_type=data_type,
@@ -72,29 +59,27 @@ def _load_module(file_path, name):
 
 @repository.REPOSITORY.register(source_type=TorchModelFile, target_type=OnnxModel, config_type=Config)
 def compile_source(source: TorchModelFile, config: Config) -> OnnxModel:
-    input_shapes = config.input_shapes
-    data_type = config.data_type
-    max_batch_size = config.max_batch_size
-    input_formats = config.input_formats
     dummy_inputs = []
-    onnx_path = NamedTemporaryFile(suffix='.onnx')
-    for shape in input_shapes:
-        shape.insert(0, max_batch_size)
-        dummy_inputs.append(torch.ones(shape, dtype=data_type))
+    for shape in config.input_shapes:
+        shape.insert(0, config.max_batch_size)
+        dummy_inputs.append(torch.ones(shape, dtype=config.data_type))    # pylint: disable=no-member
+
     if source.script_path:
         model_module = _load_module(source.script_path, 'TheModelClass')
         model = model_module.TheModelClass()
         model.load_state_dict(torch.load(source.model_path))
-
     else:
         model = torch.load(source.model_path)
-    torch.onnx.export(model,
-                      tuple(dummy_inputs),
-                      onnx_path.name,
-                      verbose=True,
-                      input_names=config.input_names)
-    onnx_model = onnx.load(onnx_path.name)
+
+    with NamedTemporaryFile(suffix='.onnx') as onnx_path:
+        torch.onnx.export(model,
+                          tuple(dummy_inputs),
+                          onnx_path.name,
+                          verbose=True,
+                          input_names=config.input_names)
+        onnx_model = onnx.load(onnx_path.name)
+
     onnx.checker.check_model(onnx_model)
     graph = onnx_model.graph  # pylint: disable=no-member
     return OnnxModel(model_proto=onnx_model,
-                     input_data_formats=utilities.get_onnx_model_input_data_formats(graph, input_formats))
+                     input_data_formats=utilities.get_onnx_model_input_data_formats(graph, config.input_formats))

@@ -1,6 +1,8 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+# pylint: disable=no-member
+
 import os
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 from unittest import TestCase
@@ -40,7 +42,7 @@ class ConfigTestCase(TestCase):
                                 input_formats=[DataFormat.CHANNELS_LAST]))
 
 
-class Net(torch.nn.Module):
+class _Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.linear = torch.nn.Sequential(
@@ -49,8 +51,7 @@ class Net(torch.nn.Module):
             )
 
     def forward(self, net):
-        out = self.linear(net)
-        return out
+        return self.linear(net)
 
 
 def get_torch_model():
@@ -58,7 +59,7 @@ def get_torch_model():
         if isinstance(weight, torch.nn.Linear):
             torch.nn.init.xavier_normal_(weight.weight).float()
             torch.nn.init.constant_(weight.bias, 0).float()
-    model = Net()
+    model = _Net()
     model.apply(weight_init)
     return model
 
@@ -69,13 +70,14 @@ class CompileSourceTestCase(TestCase):
             model_path = os.path.join(model_file, 'model.pth')
             model = get_torch_model()
             torch.save(model, model_path)
+
             config = Config(input_names=['fc_w'],
                             input_shapes=[[1, 10]],
                             data_type=torch.float,
                             max_batch_size=2,
                             input_formats=None)
-
             compiled = compiler.compile_source(TorchModelFile(model_path=model_path), config)
+
         compiled_graph = compiled.model_proto.graph
         initializers = {initializer.name for initializer in compiled_graph.initializer}
         input_name = [input_spec.name for input_spec in compiled_graph.input if input_spec.name not in initializers]
@@ -96,10 +98,10 @@ class CompileSourceTestCase(TestCase):
                               "            torch.nn.Linear(10, 30),\n"
                               "            torch.nn.Linear(30, 5))\n\n"
                               "    def forward(self, net):\n"
-                              "        out = self.linear(net)\n"
-                              "        return out\n"
+                              "        return self.linear(net)\n"
                               )
             script_path.seek(0)
+
             config = Config(input_names=['data'],
                             input_shapes=[[1, 10]],
                             data_type=torch.float,
@@ -107,6 +109,7 @@ class CompileSourceTestCase(TestCase):
                             input_formats=[DataFormat.CHANNELS_LAST])
             compiled = compiler.compile_source(TorchModelFile(model_path=model_file.name, script_path=script_path.name),
                                                config)
+
         compiled_graph = compiled.model_proto.graph
         initializers = {initializer.name for initializer in compiled_graph.initializer}
         input_name = [input_spec.name for input_spec in compiled_graph.input if input_spec.name not in initializers]

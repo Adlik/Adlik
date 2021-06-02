@@ -11,7 +11,6 @@ disable = missing-class-docstring,
 [TYPECHECK]
 contextmanager-decorators = contextlib.contextmanager,
                             tensorflow.python.util.tf_contextlib.contextmanager
-generated-members=numpy.*, torch.*
 
 [FORMAT]
 max-line-length = 120
