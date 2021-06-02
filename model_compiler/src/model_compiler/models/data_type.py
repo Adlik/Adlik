@@ -1,11 +1,13 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+# pylint: disable=no-member
+
 import enum
 from enum import Enum
-
 from onnx import TensorProto as OnnxTensorProto
 from tensorflow.core.framework.types_pb2 import DataType as TfDataType  # pylint: disable=no-name-in-module
+import torch
 
 _ONNX_DATA_TYPE = OnnxTensorProto.DataType  # pylint: disable=no-member
 
@@ -97,3 +99,21 @@ class DataType(Enum):
     @staticmethod
     def from_caffe_data_type(type_str):
         return DataType[type_str.upper()]
+
+    @staticmethod
+    def from_torch_data_type(type_str):
+        torch_data_type_map = {
+            'FLOAT': torch.float,
+            'DOUBLE': torch.double,
+            'COMPLEX64': torch.complex64,
+            'COMPLEX128': torch.complex128,
+            'FLOAT16': torch.float16,
+            'BFLOAT16': torch.bfloat16,
+            'UINT8': torch.uint8,
+            'INT8': torch.int8,
+            'INT16': torch.int16,
+            'INT32': torch.int32,
+            'INT64': torch.int64,
+            'BOOL': torch.bool
+        }
+        return torch_data_type_map[type_str.upper()]
