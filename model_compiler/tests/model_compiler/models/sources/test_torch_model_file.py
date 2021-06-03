@@ -21,5 +21,6 @@ class TorchModelFileTestCase(TestCase):
 
     def test_from_env(self):
         config = TorchModelFile.from_env({'TORCH_PATH': 'model', 'SCRIPT_PATH': 'bar'})
+
         self.assertEqual(config.model_path, 'model')
         self.assertEqual(config.script_path, 'bar')
