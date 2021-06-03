@@ -18,6 +18,7 @@ from ..models.data_format import DataFormat
 from ..models import data_format
 
 
+# If put this function in data_type.py, pytest has bug about "import torch"
 def from_torch_data_type(type_str):
     torch_data_type_map = {
         'FLOAT': torch.float,

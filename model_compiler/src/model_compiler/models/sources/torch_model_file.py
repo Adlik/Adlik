@@ -27,7 +27,6 @@ class TorchModelFile(NamedTuple):
     @staticmethod
     def accepts_json(value: Mapping[str, Any]) -> bool:
         input_model = value.get('input_model')
-
         return isinstance(input_model, str) and input_model.lower().endswith('.pth') and path.isfile(input_model)
 
     @staticmethod

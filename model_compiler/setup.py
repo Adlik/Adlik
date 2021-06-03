@@ -56,7 +56,7 @@ setuptools.setup(
         'future',
         'networkx',
         'tensorflow==2.4.0',
-        'torch',
+        'torch==1.7.1',
         'onnx-tf',
         'onnx-caffe2==1.0.0',
         'paddlepaddle',
@@ -64,7 +64,6 @@ setuptools.setup(
         'tensorflow_addons',
         'test-generator==0.1.1',
         'tf2onnx',
-        'torch==1.7.1',
         'mxnet'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
