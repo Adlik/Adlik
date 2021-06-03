@@ -56,7 +56,7 @@ setuptools.setup(
         'future',
         'networkx',
         'tensorflow==2.4.0',
-        'torch',
+        'torch==1.7.1',
         'onnx-tf',
         'onnx-caffe2==1.0.0',
         'paddlepaddle',
