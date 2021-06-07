@@ -25,6 +25,8 @@ def _get_optimize_params(input_model, output_dir, config):
         params['batch'] = str(config.max_batch_size)
     if config.output_names is not None:
         params['output'] = ','.join(config.output_names)
+    if config.data_type is not None:
+        params['data_type'] = config.data_type
     return params
 
 
