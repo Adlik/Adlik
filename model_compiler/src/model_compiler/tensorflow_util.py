@@ -30,12 +30,9 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        def _get_information(value):
-            return utilities.map_optional(env.get(value), lambda val: val.split(','))
-
-        return Config(input_names=_get_information('INPUT_NAMES'),
-                      data_formats=utilities.get_data_formats(_get_information('INPUT_FORMATS')),
-                      output_names=_get_information('OUTPUT_NAMES'))
+        return Config(input_names=utilities.split_by(env.get('INPUT_NAMES'), ','),
+                      data_formats=utilities.get_data_formats(utilities.split_by(env.get('INPUT_FORMATS'), ',')),
+                      output_names=utilities.split_by(env.get('OUTPUT_NAMES'), ','))
 
     def get_input_tensors_from_graph(self, graph):
         if self.input_names is None:

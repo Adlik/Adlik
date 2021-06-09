@@ -8,30 +8,22 @@ import onnx.utils
 
 from . import repository
 from .. import utilities
-from ..models import data_format
 from ..models.data_format import DataFormat
 from ..models.irs.onnx_model import OnnxModel
 from ..models.sources.onnx_model_file import ONNXModelFile
 
 
 class Config(NamedTuple):
-    input_formats: Optional[Sequence[Optional[DataFormat]]]
+    input_formats: Sequence[Optional[DataFormat]]
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
-        raw_input_formats: Optional[str] = value.get('input_formats')
 
-        return Config(input_formats=utilities.map_optional(
-            raw_input_formats,
-            lambda formats: list(map(data_format.str_to_data_format, formats))
-        ))
+        return Config(input_formats=utilities.get_data_formats(value.get('input_formats')))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
-        return Config(input_formats=utilities.map_optional(
-            utilities.split_by(env.get('INPUT_FORMATS'), ','),
-            lambda formats: list(map(data_format.str_to_data_format, formats))
-        ))
+        return Config(input_formats=utilities.get_data_formats(utilities.split_by(env.get('INPUT_FORMATS'), ',')))
 
 
 @repository.REPOSITORY.register(source_type=ONNXModelFile, target_type=OnnxModel, config_type=Config)

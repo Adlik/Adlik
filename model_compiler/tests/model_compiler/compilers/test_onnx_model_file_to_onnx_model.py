@@ -65,12 +65,3 @@ class CompileSourceTestCase(TestCase):
 
         self.assertEqual(context_manager.exception.args,
                          ('Number of input formats (0) does not match number of inputs (2)',))
-
-    def test_compile_with_no_input_formats(self):
-        with NamedTemporaryFile(suffix='.onnx') as model_file:
-            onnx.save_model(_make_onnx_model().model_proto, model_file.name)
-
-            config = Config.from_json({})
-            compiled = onnx_compiler.compile_source(source=ONNXModelFile(model_file.name), config=config)
-
-        self.assertEqual(compiled.input_data_formats, [None, None])

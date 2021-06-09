@@ -9,13 +9,11 @@ import importlib.util
 import torch
 import onnx
 
-
 from . import repository
 from .. import utilities
 from ..models.sources.torch_model_file import TorchModelFile
 from ..models.irs.onnx_model import OnnxModel
 from ..models.data_format import DataFormat
-from ..models import data_format
 
 
 # If put this function in data_type.py, pytest has bug about "import torch"
@@ -42,19 +40,15 @@ class Config(NamedTuple):
     input_shapes: List[List]
     data_type: torch.dtype
     max_batch_size: int
-    input_formats: Optional[Sequence[Optional[DataFormat]]]
+    input_formats: Sequence[Optional[DataFormat]]
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
-        raw_input_formats: Optional[str] = value.get('input_formats')
-
         return Config(input_names=value['input_names'],
                       input_shapes=utilities.get_input_shapes(value.get('input_shapes')),
                       data_type=from_torch_data_type(value['data_type']),
                       max_batch_size=value['max_batch_size'],
-                      input_formats=utilities.map_optional(
-                          raw_input_formats,
-                          lambda formats: list(map(data_format.str_to_data_format, formats))))
+                      input_formats=utilities.get_data_formats(value.get('input_formats')))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
@@ -65,9 +59,7 @@ class Config(NamedTuple):
                       input_shapes=input_shapes,
                       data_type=data_type,
                       max_batch_size=int(env['MAX_BATCH_SIZE']),
-                      input_formats=utilities.map_optional(
-                          utilities.split_by(env.get('INPUT_FORMATS'), ','),
-                          lambda formats: list(map(data_format.str_to_data_format, formats))))
+                      input_formats=utilities.get_data_formats(utilities.split_by(env.get('INPUT_FORMATS'), ',')))
 
 
 def _load_module(file_path, name):
