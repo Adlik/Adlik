@@ -16,7 +16,7 @@ from ..models.sources.caffe_model_file import CaffeModelFile
 
 class Config(NamedTuple):
     input_names: Sequence[str]
-    input_formats: Optional[Sequence[Optional[DataFormat]]]
+    input_formats: Sequence[Optional[DataFormat]]
     input_shapes: List[List]
     input_type: np.dtype
     max_batch_size: int

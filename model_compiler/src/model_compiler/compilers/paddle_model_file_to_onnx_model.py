@@ -15,7 +15,7 @@ from ..models.sources.paddle_model_file import PaddlePaddleModelFile
 
 
 class Config(NamedTuple):
-    input_formats: Optional[Sequence[Optional[DataFormat]]]
+    input_formats: Sequence[Optional[DataFormat]]
     model_filename: Optional[str]
     params_filename: Optional[str]
     opset_version: int

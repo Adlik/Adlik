@@ -11,6 +11,8 @@ except ImportError:  # pragma: no cover
     tensorrt_model = ModuleType('model_compiler.models.targets.tensorrt_model')
 
 __all__ = [
+    'onnx_model',
+    'openvino_model',
     'saved_model',
     'tensorrt_model',
     'tflite_model'
