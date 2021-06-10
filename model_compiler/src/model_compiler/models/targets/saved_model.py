@@ -25,7 +25,8 @@ class Output(NamedTuple):
 class SavedModel(NamedTuple):
     inputs: Sequence[Input]
     outputs: Sequence[Output]
-    session: tf.compat.v1.Session
+    session: Optional[tf.compat.v1.Session] = None
+    model: Optional[tf.saved_model.load] = None
 
     def get_inputs(self) -> Sequence[ModelInput]:
         return [ModelInput(name=item.name,
@@ -41,22 +42,25 @@ class SavedModel(NamedTuple):
                 for item in self.outputs]
 
     def save(self, path: str) -> None:
-        with self.session.graph.as_default():
-            builder = tf.compat.v1.saved_model.Builder(export_dir=path)
+        if self.session:
+            with self.session.graph.as_default():
+                builder = tf.compat.v1.saved_model.Builder(export_dir=path)
 
-            builder.add_meta_graph_and_variables(
-                sess=self.session,
-                tags=[tf.compat.v1.saved_model.tag_constants.SERVING],
-                signature_def_map={
-                    'predict': tf.compat.v1.saved_model.predict_signature_def(inputs={item.name: item.tensor
-                                                                                      for item in self.inputs},
-                                                                              outputs={item.name: item.tensor
-                                                                                       for item in self.outputs})
-                },
-                clear_devices=True
-            )
+                builder.add_meta_graph_and_variables(
+                    sess=self.session,
+                    tags=[tf.compat.v1.saved_model.tag_constants.SERVING],
+                    signature_def_map={
+                        'predict': tf.compat.v1.saved_model.predict_signature_def(inputs={item.name: item.tensor
+                                                                                          for item in self.inputs},
+                                                                                  outputs={item.name: item.tensor
+                                                                                           for item in self.outputs})
+                    },
+                    clear_devices=True
+                )
 
-            builder.save()
+                builder.save()
+        else:
+            tf.saved_model.save(obj=self.model, export_dir=path)
 
     @staticmethod
     def get_platform() -> Tuple[str, str]:
