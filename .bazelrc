@@ -43,6 +43,13 @@ build:aarch64 --cpu=aarch64
 build:tensorrt --define=runtime=tensorrt
 build:tensorrt --config=using_cuda
 
+#Tensorflow Tensorrt (GPU).
+
+build:tensorflow-tensorrt --define=runtime=tensorflow-tensorrt
+build:tensorflow-tensorrt --define=tensorflow_enable_mlir_generated_gpu_kernels=1
+build:tensorflow-tensorrt --config=using_cuda
+build:tensorflow-tensorrt --action_env=TF_NEED_TENSORRT=1
+
 # ML runtime.
 
 build:ml --define=runtime=ml

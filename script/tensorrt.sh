@@ -8,7 +8,13 @@ elif [[ ${CUDA_VERSION} = '10.2' ]]; then
   apt-get install --no-install-recommends -y cuda-nvrtc-10-2
 elif [[ ${CUDA_VERSION} = '11.0' ]]; then
   apt-get update && \
-  apt-get install --no-install-recommends -y cuda-nvrtc-11-0
+  apt-get install --no-install-recommends -y \
+  cuda-nvrtc-11-0 \
+  cuda-cudart-dev-11-0 \
+  libcufft-dev-11-0 \
+  libcurand-dev-11-0 \
+  libcusolver-dev-11-0 \
+  libcusparse-dev-11-0 \
 fi
 
 if [[ ${TENSORRT_VERSION} = 7.0.* ]] ; then
