@@ -229,6 +229,7 @@ RunOptions toTfOptions(const adlik::serving::RunOptions& opts) {
 }  // namespace
 
 REGISTER_RUNTIME(TfRuntime, "tensorflow");
+REGISTER_RUNTIME(TfRuntime, "tensorflow-tensorrt");
 
 TfRuntime::TfRuntime(const std::string& name) : runtime_name(name) {
 }
