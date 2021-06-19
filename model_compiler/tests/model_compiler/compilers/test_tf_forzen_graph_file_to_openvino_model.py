@@ -75,6 +75,20 @@ class CompileSourceTestCase(TestCase):
             self.assertEqual(compiled.get_outputs(),
                              [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
 
+    def test_compile_with_fp16(self):
+        with NamedTemporaryFile(suffix='.pb') as model_file:
+            _save_frozen_graph_model(model_file)
+            config = Config.from_json({'max_batch_size': 1,
+                                       'data_type': 'FP16'})
+            compiled = compiler.compile_source(FrozenGraphFile(model_path=model_file.name), config)
+            self.assertEqual(compiled.get_inputs(),
+                             [ModelInput(name='x', data_type=tf.float16.as_datatype_enum,
+                                         format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
+                              ModelInput(name='y', data_type=tf.float16.as_datatype_enum,
+                                         format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
+            self.assertEqual(compiled.get_outputs(),
+                             [ModelOutput(name='z', data_type=tf.float16.as_datatype_enum, dims=[2, 3, 4])])
+
     def test_compile_with_all_params_with_batch_size(self):
         with NamedTemporaryFile(suffix='.pb') as model_file:
             _save_frozen_graph_model(model_file)

@@ -93,3 +93,7 @@ class DataType(Enum):
             'BIN': DataType.UINT8,
         }
         return precision_map[data_type]
+
+    @staticmethod
+    def from_caffe_data_type(type_str):
+        return DataType[type_str.upper()]

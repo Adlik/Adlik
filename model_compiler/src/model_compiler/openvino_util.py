@@ -1,7 +1,6 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-import ast
 import os
 import subprocess  # nosec
 import sys
@@ -10,7 +9,7 @@ from typing import Any, Dict, List, Mapping, NamedTuple, Optional
 
 from .models.data_type import DataType
 from .protos.generated.model_config_pb2 import ModelInput, ModelOutput
-from .utilities import split_by
+from .utilities import split_by, get_input_shapes_from_env
 
 
 class _Layer(NamedTuple):
@@ -117,6 +116,7 @@ class Config(NamedTuple):
     input_names: Optional[List[str]] = None
     input_shapes: Optional[List[list]] = None
     output_names: Optional[List[str]] = None
+    data_type: Optional[str] = None
     max_batch_size: Optional[int] = None
     # if set enable_nhwc_to_nchw=True, the optimizer will transform the model format from channel_last to channel_first
     enable_nhwc_to_nchw: Optional[bool] = None
@@ -127,6 +127,7 @@ class Config(NamedTuple):
         return Config(input_names=value.get('input_names'),
                       input_shapes=value.get('input_shapes'),
                       output_names=value.get('output_names'),
+                      data_type=value.get('data_type'),
                       max_batch_size=value.get('max_batch_size'),
                       enable_nhwc_to_nchw=value.get('enable_nhwc_to_nchw'),
                       saved_model_tags=value.get('saved_model_tags'))
@@ -134,7 +135,8 @@ class Config(NamedTuple):
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
         input_names = split_by(env.get('INPUT_NAMES'), ',')
-        input_shapes = Config._get_input_shapes(env.get('INPUT_SHAPES'))
+        input_shapes = env.get('INPUT_SHAPES')
+        input_shapes = None if input_shapes is None else get_input_shapes_from_env(input_shapes)
         output_names = split_by(env.get('OUTPUT_NAMES'), ',')
         temp_max_batch_size = env.get('MAX_BATCH_SIZE')
         max_batch_size = int(temp_max_batch_size) if temp_max_batch_size else None
@@ -142,20 +144,15 @@ class Config(NamedTuple):
         temp_enable_nhwc_to_nchw = env.get('ENABLE_NHWC_TO_NCHW')
         enable_nhwc_to_nchw = bool(int(temp_enable_nhwc_to_nchw)) if temp_enable_nhwc_to_nchw else None
         saved_model_tags = env.get('SAVED_MODEL_TAGS')
+        data_type = env.get('DATA_TYPE')
 
         return Config(input_names=input_names,
                       input_shapes=input_shapes,
                       output_names=output_names,
+                      data_type=data_type,
                       max_batch_size=max_batch_size,
                       enable_nhwc_to_nchw=enable_nhwc_to_nchw,
                       saved_model_tags=saved_model_tags.split(',') if saved_model_tags else None)
-
-    @staticmethod
-    def _get_input_shapes(env_input_shapes):
-        if env_input_shapes is None:
-            return env_input_shapes
-        env_input_shapes = ast.literal_eval(env_input_shapes)
-        return list(env_input_shapes) if isinstance(env_input_shapes, tuple) else [env_input_shapes]
 
 
 def get_version():

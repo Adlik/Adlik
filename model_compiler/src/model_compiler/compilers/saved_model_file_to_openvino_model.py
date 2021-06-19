@@ -29,6 +29,8 @@ def _get_optimize_params(input_model, output_dir, config):
         params['saved_model_tags'] = 'serve'
     else:
         params['saved_model_tags'] = ','.join(config.saved_model_tags)
+    if config.data_type is not None:
+        params['data_type'] = config.data_type
     return params
 
 
