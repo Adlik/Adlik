@@ -360,6 +360,21 @@ Assume building with CUDA version 11.0.
            --incompatible_use_specific_tool_files=false
    ```
 
+#### Build serving with Tvm runtime
+
+1. Install the following packages:
+
+   - `build-essential`
+   - `cmake`
+
+2. Run the following command:
+
+   ```sh
+   bazel build //adlik_serving \
+      --config=tvm-cpu \
+      -c opt
+   ```
+
 ### Build in Docker
 
 The `ci/docker/build.sh` file can be used to build a Docker images that contains all the requirements for building
