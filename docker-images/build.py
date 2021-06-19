@@ -18,7 +18,8 @@ _IMAGES = {
     'serving-tensorflow-cpu': {},
     'serving-tflite-cpu': {},
     'serving-tensorflow-gpu': {},
-    'serving-tftrt-gpu': {}
+    'serving-tftrt-gpu': {},
+    'serving-tvm-cpu': {}
 }
 
 _BASE_DIR = path.dirname(path.abspath(__file__))
