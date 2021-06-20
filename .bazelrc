@@ -53,3 +53,7 @@ build:tensorflow-tensorrt --action_env=TF_NEED_TENSORRT=1
 # ML runtime.
 
 build:ml --define=runtime=ml
+
+# TVM runtime.
+
+build:tvm --define=runtime=tvm
