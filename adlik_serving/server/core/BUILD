@@ -45,6 +45,11 @@ config_setting(
     values = {"define": "runtime=ml"},
 )
 
+config_setting(
+    name = "tvm",
+    values = {"define": "runtime=tvm"},
+)
+
 serving_cc_library(
     name = "server_core",
     srcs = [
@@ -69,5 +74,6 @@ serving_cc_library(
         ":tensorflow-tensorrt": ["//adlik_serving/runtime/tensorflow/factory:tf_runtime"],
         ":openvino": ["//adlik_serving/runtime/openvino/factory:openvino_runtime"],
         ":ml": ["//adlik_serving/runtime/ml/model:ml_runtime"],
+        ":tvm": ["//adlik_serving/runtime/tvm:tvm_runtime"],
     }),
 )
