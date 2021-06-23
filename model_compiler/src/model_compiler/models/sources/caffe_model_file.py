@@ -23,13 +23,13 @@ class CaffeModelFile(NamedTuple):
     def accepts_kwargs(kwargs: Mapping[str, Any]) -> bool:
         input_model = kwargs.get('model_path')
 
-        return isinstance(input_model, str) and os.path.isdir(input_model)
+        return isinstance(input_model, str) and os.path.isfile(input_model + '/predict_net.pb')
 
     @staticmethod
     def accepts_json(value: Mapping[str, Any]) -> bool:
         input_model = value.get('input_model')
 
-        return isinstance(input_model, str) and os.path.isdir(input_model)
+        return isinstance(input_model, str) and os.path.isfile(input_model + '/predict_net.pb')
 
     @staticmethod
     def accepts_env(env: Mapping[str, str]) -> bool:
