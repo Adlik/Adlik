@@ -23,12 +23,12 @@ class SavedModelFile(NamedTuple):
     def accepts_kwargs(kwargs: Mapping[str, Any]) -> bool:
         input_model = kwargs.get('model_path')
 
-        return isinstance(input_model, str) and path.isdir(input_model)
+        return isinstance(input_model, str) and path.isfile(input_model + '/saved_model.pb')
 
     @staticmethod
     def accepts_json(value: Mapping[str, Any]) -> bool:
         input_model = value.get('input_model')
-        return isinstance(input_model, str) and path.isdir(input_model)
+        return isinstance(input_model, str) and path.isfile(input_model + '/saved_model.pb')
 
     @staticmethod
     def accepts_env(env: Mapping[str, str]) -> bool:
