@@ -152,15 +152,15 @@ registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.2.1.6_cuda11
 
 registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.2.1.6_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.2.0.11_cuda11.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.2.0.11_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.1.3.4_cuda11.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.1.3.4_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.1.3.4_cuda10.2
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.1.3.4_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.0.0.11_cuda10.2
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.0.0.11_cuda10.2
 
-registry.cn-beijing.aliyuncs.com/adlik/serving/tensorrt:v0.2.0_trt7.0.0.11_cuda10.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.0.0.11_cuda10.0
 
 ### Using the serving images for model inference
 
@@ -398,6 +398,7 @@ The version of the service engine Adlik supports.
 | Keras      |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
 | TensorFlow |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
 | PyTorch    |        ✗        |       ✗        |       ✓       |     ✓      |     ✓      |
+| PaddlePaddle|       ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
 
 ## License
 
