@@ -393,12 +393,12 @@ Adlik. You can build Adlik with the Docker image.
 
 The version of the service engine Adlik supports.
 
-|            | TensorFlow 1.14 | TensorFlow 2.x | OpenVINO 2021 | TensorRT 6 | TensorRT 7 |
-| ---------- | :-------------: | :------------: | :-----------: | :--------: | :--------: |
-| Keras      |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
-| TensorFlow |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
-| PyTorch    |        ✗        |       ✗        |       ✓       |     ✓      |     ✓      |
-| PaddlePaddle|       ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
+|              | TensorFlow 1.14 | TensorFlow 2.x | OpenVINO 2021 | TensorRT 6 | TensorRT 7 |
+| ------------ | :-------------: | :------------: | :-----------: | :--------: | :--------: |
+| Keras        |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
+| TensorFlow   |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
+| PyTorch      |        ✗        |       ✗        |       ✓       |     ✓      |     ✓      |
+| PaddlePaddle |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
 
 ## License
 
