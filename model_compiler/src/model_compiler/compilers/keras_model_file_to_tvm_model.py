@@ -15,7 +15,6 @@ def _get_shape_dict(model_inputs, max_batch_size):
     shape_dict = {}
     for input_tensor, data_format in model_inputs:
         tensor_shape = list(input_tensor.shape)
-        print(tensor_shape)
         tensor_shape.pop(0)
         tensor_shape.insert(0, max_batch_size)
         if data_format == DataFormat.CHANNELS_LAST:
