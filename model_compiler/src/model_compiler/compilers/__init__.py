@@ -13,9 +13,13 @@ from . import caffe_model_file_to_onnx_model, keras_model_file_to_keras_model, k
     tf_model_to_tf_frozen_graph_model, torch_model_file_to_onnx_model
 
 try:
-    from . import onnx_model_to_tensorrt_model, keras_model_file_to_tvm_model
+    from . import onnx_model_to_tensorrt_model
 except ImportError:  # pragma: no cover
     onnx_model_to_tensorrt_model = ModuleType('model_compiler.compilers.onnx_model_to_tensorrt_model')
+
+try:
+    from . import keras_model_file_to_tvm_model
+except ImportError:  # pragma: no cover
     keras_model_file_to_tvm_model = ModuleType('model_compiler.compilers.keras_model_file_to_tvm_model')
 
 __all__ = [

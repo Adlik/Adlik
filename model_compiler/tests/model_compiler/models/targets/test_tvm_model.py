@@ -47,4 +47,4 @@ class TvmModelFileTestCase(TestCase):
             self.assertEqual(os.listdir(save_path), ['model.so'])
 
     def test_get_platform(self):
-        self.assertEqual(TvmModel.get_platform(), ('tvm', 'v0.7.0'))
+        self.assertEqual(TvmModel.get_platform(), ('tvm', '0.7.0'))

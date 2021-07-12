@@ -50,4 +50,4 @@ class TvmModel(NamedTuple):
 
     @staticmethod
     def get_platform() -> Tuple[str, str]:
-        return 'tvm', 'v0.7.0'
+        return 'tvm', tvm.__version__
