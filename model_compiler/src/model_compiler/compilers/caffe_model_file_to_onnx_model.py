@@ -4,8 +4,6 @@
 import os
 from typing import Any, Mapping, NamedTuple, Optional, Sequence, List
 import numpy as np
-import caffe2.python.onnx.frontend
-from caffe2.proto import caffe2_pb2
 from . import repository
 from .. import utilities
 from ..models.data_format import DataFormat
@@ -48,6 +46,9 @@ def parse_caffe_net(net, pb_path):
 
 @repository.REPOSITORY.register(source_type=CaffeModelFile, target_type=OnnxModel, config_type=Config)
 def compile_source(source: CaffeModelFile, config: Config) -> OnnxModel:
+    import caffe2.python.onnx.frontend  # pylint: disable=import-outside-toplevel
+    from caffe2.proto import caffe2_pb2  # pylint: disable=import-outside-toplevel
+
     predict_net = parse_caffe_net(caffe2_pb2.NetDef(), os.path.join(source.model_path, 'predict_net.pb'))
     predict_net.name = "model" if predict_net.name == "" else predict_net.name  # pylint: disable=no-member
     init_net = parse_caffe_net(caffe2_pb2.NetDef(), os.path.join(source.model_path, 'init_net.pb'))
