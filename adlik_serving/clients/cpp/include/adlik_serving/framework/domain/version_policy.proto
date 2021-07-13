@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+message VersionPolicyProto {
+  message Latest {
+    uint32 num_versions = 1;
+  }
+
+  message All {
+  }
+  
+  message None{
+
+  }
+  
+  message Specific {
+    repeated int64 versions = 1;
+  }
+
+  oneof policy_choice {
+    Latest latest = 1;
+    All all = 2;
+    Specific specific = 3;
+    None none = 4;
+  }
+}
