@@ -81,4 +81,5 @@ def compile_source(source: SavedModelFile, config: Config) -> SavedModel:
                                          config.input_names, config.data_formats),
                       outputs=_get_outputs(get_model_info(infer.structured_outputs), config.output_names),
                       session=None,
-                      model=model)
+                      model=model,
+                      signature=infer)
