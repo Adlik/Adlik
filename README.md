@@ -72,9 +72,9 @@ TensorFlow Lite, TensorRT. Users also can use the serving images for model infer
 
 Docker pull command:
 
-```shell script
-docker pull docker_image_name:tag
-```
+   ```shell script
+   docker pull docker_image_name:tag
+   ```
 
 ### Compiler docker images
 
@@ -83,34 +83,25 @@ model, OpenVino model and TensorFlow Lite model. And in the CPU, you can compile
 model, and TensorRT model. The names and labels of compiler mirrors are as follows, and the first half of label
 represents the version of TensorRT, the latter part of label represents the version of CUDA:
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.2.1.6_cuda11.0
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.2.1.6_cuda10.2
-
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.2.0.11_cuda11.0
-
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.1.3.4_cuda11.0
-
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.1.3.4_cuda10.2
-
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.0.0.11_cuda10.2
-
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.0.0.11_cuda10.0
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda10.2
 
 #### Using model compiler image compile model
 
 1. Run the image.
 
    ```shell script
-   docker run -it --rm -v source_model:/home/john/model
-   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:latest bash
+   docker run -it --rm -v source_model:/mnt/model
+   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda11.0 bash
    ```
 
 2. Configure the json file or environment variables required to compile the model.
 
-   The [json_field.json](docker-images/json_field.json) describle the json file field information, and for the example, you
-   can reference [compiler_json_example.json](docker-images/compiler_json_example.json). For the environment variable field
-   description, see [env_field.txt](docker-images/env_field.txt), for the example, reference [compiler_env_example.txt](docker-images/compiler_env_example.txt).
+   The [config_schema.json](model_compiler/config_schema.json) describle the json file field information,
+   and for the example, you can reference [compiler_json_example.json](docker-images/compiler_json_example.json).
+   For the environment variable field description, see [env_field.txt](docker-images/env_field.txt), for the example,
+   reference [compiler_env_example.txt](docker-images/compiler_env_example.txt).
 
    Note: The checkpoint model must be given the input and output op names of the model when compiling, and other models
    can be compiled without the input and output op names of the model.
@@ -120,8 +111,8 @@ registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.0.0.11_cuda10.
    Compilation instructions (json file mode):
 
    ```shell script
-   python3 "-c" "import json; import model_compiler as compiler;
-   file=open('/mnt/model/serving_model.json','r'); request = json.load(file);compiler.compile_model(request);file.close()"
+   python3 "-c" "import json; import model_compiler as compiler; file=open('/mnt/model/serving_model.json','r');
+   request = json.load(file);compiler.compile_model(request); file.close()"
    ```
 
    Compilation instructions (environment variable mode):
@@ -130,65 +121,57 @@ registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.2.0_trt7.0.0.11_cuda10.
    python3 "-c" "import model_compiler.compiler as compiler;compiler.compile_from_env()"
    ```
 
-### Serving docker imaegs
+### Serving docker images
 
-The serving docker imaegs contains CPU and GPU mirrors. The label of openvino image represents the version of OpenVINO.
+The serving docker images contains CPU and GPU mirrors. The label of openvino image represents the version of OpenVINO.
 And for the TensorRT image the first half of label represents the version of TensorRT, the latter part of label
 represents the version of CUDA. The names and labels of serving mirrors are as follows:
 
 CPU:
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tflite-cpu:v0.2.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tflite-cpu:v0.3.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.2.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.3.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.2.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.3.0
+
+registry.cn-beijing.aliyuncs.com/adlik/serving-tvm-cpu:v0.3.0
 
 GPU:
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-gpu:v0.2.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-gpu:v0.3.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.2.1.6_cuda11.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tftrt-gpu:v0.3.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.2.1.6_cuda10.2
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.3.0_trt7.2.1.6_cuda11.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.2.0.11_cuda11.0
-
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.1.3.4_cuda11.0
-
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.1.3.4_cuda10.2
-
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.0.0.11_cuda10.2
-
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.2.0_trt7.0.0.11_cuda10.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.3.0_trt7.2.1.6_cuda10.2
 
 ### Using the serving images for model inference
 
 1. Run the mirror and pay attention to mapping out the service port.
-   example command line:
 
    ```shell script
-   docker run -it --rm -p 8500:8500 -v compiled_model:/model adlik/serving-openvino:latest bash
+   docker run -it --rm -p 8500:8500 -v compiled_model:/model
+   registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.3.0 bash
    ```
 
 2. Load the compiled model in the image and start the service.
-
-   example command line:
 
    ```shell script
    adlik-serving --grpc_port=8500 --http_port=8501 --model_base_path=/model
    ```
 
 3. Install the client wheel package [adlik serving package](
-   https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api-0.0.0-py2.py3-none-any.whl) or [adlik
+   https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl) or [adlik
    serving gpu package](
-      https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api_gpu-0.0.0-py2.py3-none-any.whl) locally,
+      https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl) locally,
       execute the inference code, and perform inference.
 
 Note: If you not mapping out the service port when you run the mirror, you need install the [adlik serving package](
-   https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api-0.0.0-py2.py3-none-any.whl) or [adlik
+   https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl) or [adlik
    serving gpu package](
-      https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api_gpu-0.0.0-py2.py3-none-any.whl) in the
+      https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl) in the
       container. Then execute the inference code, and perform inference in the container.
 
 ## Build
@@ -199,10 +182,10 @@ First, install [Git](https://git-scm.com/download) and [Bazel](https://docs.baze
 
 Then, clone Adlik and change the working directory into the source directory:
 
-```sh
-git clone https://github.com/ZTE/Adlik.git
-cd Adlik
-```
+   ```sh
+   git clone https://github.com/ZTE/Adlik.git
+   cd Adlik
+   ```
 
 ### Build clients
 
@@ -247,13 +230,13 @@ First, install the following packages:
 
 #### Build serving with TensorFlow CPU runtime
 
-Run the following command:
+1. Run the following command:
 
-```sh
-bazel build //adlik_serving \
-    --config=tensorflow-cpu \
-    -c opt
-```
+   ```sh
+   bazel build //adlik_serving \
+       --config=tensorflow-cpu \
+       -c opt
+   ```
 
 #### Build serving with TensorFlow GPU runtime
 
@@ -288,13 +271,13 @@ Assume building with CUDA version 11.0.
 
 #### Build serving with TensorFlow Lite CPU runtime
 
-Run the following command:
+1. Run the following command:
 
-```sh
-bazel build //adlik_serving \
-    --config=tensorflow-lite-cpu \
-    -c opt
-```
+   ```sh
+   bazel build //adlik_serving \
+       --config=tensorflow-lite-cpu \
+       -c opt
+   ```
 
 #### Build serving with TensorRT runtime
 
