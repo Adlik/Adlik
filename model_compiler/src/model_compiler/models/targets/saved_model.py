@@ -27,6 +27,7 @@ class SavedModel(NamedTuple):
     outputs: Sequence[Output]
     session: Optional[tf.compat.v1.Session] = None
     model: Optional[tf.saved_model.load] = None
+    signature: Optional[tf.function] = None
 
     def get_inputs(self) -> Sequence[ModelInput]:
         return [ModelInput(name=item.name,
@@ -60,7 +61,7 @@ class SavedModel(NamedTuple):
 
                 builder.save()
         else:
-            tf.saved_model.save(obj=self.model, export_dir=path)
+            tf.saved_model.save(obj=self.model, export_dir=path, signatures=self.signature)
 
     @staticmethod
     def get_platform() -> Tuple[str, str]:
