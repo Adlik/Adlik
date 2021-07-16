@@ -4,7 +4,6 @@ ARG UBUNTU_VERSION
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
 COPY script/run_server.sh /script/run_server.sh
-COPY sources.list /etc/apt/sources.list
 
 RUN . /etc/os-release && \
     apt-get update && \

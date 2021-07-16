@@ -39,7 +39,7 @@ RUN apt-get update && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN cd /usr && git clone --recursive -b v0.7 https://github.com/apache/tvm.git tvm && \
+RUN git clone --recursive -b v0.7 https://github.com/apache/tvm.git tvm && \
     cd tvm && mkdir build && cp cmake/config.cmake build && \
     cd build && cmake .. && make runtime && \
     mv libtvm_runtime.so /usr/local/lib && \
@@ -56,6 +56,10 @@ RUN env PYTHON_BIN_PATH=/usr/bin/python3 \
 # Runtime.
 
 FROM base
+
+COPY --from=builder /src/tvm/build/libtvm_runtime.so /usr/local/lib
+
+COPY --from=builder /src/tvm/include /src/tvm/3rdparty/dlpack/include /src/tvm/3rdparty/dmlc-core/include /usr/local/include/
 
 COPY --from=builder /src/bazel-bin/adlik_serving/adlik_serving /usr/local/bin/adlik-serving
 

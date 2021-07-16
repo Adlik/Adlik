@@ -4,10 +4,13 @@
     "serving_type": {
       "type": "string",
       "enum": [
+        "onnx",
         "tf",
         "tensorrt",
         "openvino",
-        "tflite"
+        "tflite",
+        "tvm",
+        "tf-trt"
       ],
       "description": "target serving model type"
     },
@@ -86,6 +89,37 @@
       },
       "description": "alias of outputs, required when serving_type is tf"
     },
+    "signature_keys": {
+      "type": "string",
+      "description": "required when the format of source model is saved model file"
+    },
+    "saved_model_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "required when the saved model file has multiple tag_sets"
+    },
+    "model_filename": {
+      "type": "string",
+      "description": "the path of the model file of the paddlepaddle"
+    },
+    "params_filename": {
+      "type": "string",
+      "description": "the path of the model params file of the paddlepaddle"
+    },
+    "opset_version": {
+      "type": "int",
+      "description": "the opset version used by the paddlepaddle model"
+    },
+    "enable_onnx_checker": {
+      "type": "boolean",
+      "description": "whether to use the official ONNX toolkit to check the correctness of the compiled model"
+    },
+    "optimize_offline": {
+      "type": "boolean",
+      "description": "whether to build TensorRT engines before runtime"
+    },
     "export_path": {
       "type": "string",
       "description": "path of output model"
@@ -100,7 +134,11 @@
     },
     "enable_fp16": {
       "type": "integer",
-      "description": "control whether to quantify the model to fp16, used when serving_type is tensorrt"
+      "description": "control whether to quantify the model to fp16, used when serving_type is tensorrt or tf-trt"
+    },
+    "enable_int8": {
+      "type": "integer",
+      "description": "control whether to quantify the model to int8, used when serving_type is tensorrt or tf-trt"
     },
     "enable_strict_types": {
       "type": "integer",
