@@ -111,15 +111,22 @@ class Config(NamedTuple):
     input_nodes: Optional[Sequence[NodeSpec]] = None
     output_nodes: Optional[Sequence[NodeSpec]] = None
     max_batch_size: Optional[int] = None
+    need_search_schedule: Optional[bool] = None
+    target: Optional[str] = None
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
         return Config(input_nodes=_get_node_specs(value.get('input_layer_names')),
                       output_nodes=_get_node_specs(value.get('output_layer_names')),
-                      max_batch_size=value.get('max_batch_size'))
+                      max_batch_size=value.get('max_batch_size'),
+                      target=value.get('target'),
+                      need_search_schedule=value.get('need_search_schedule'))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
         return Config(input_nodes=_get_node_specs(utilities.split_by(env.get('INPUT_LAYER_NAMES'), ',')),
                       output_nodes=_get_node_specs(utilities.split_by(env.get('OUTPUT_LAYER_NAMES'), ',')),
-                      max_batch_size=utilities.map_optional(env.get('max_batch_size'), int))
+                      max_batch_size=utilities.map_optional(env.get('max_batch_size'), int),
+                      target=env.get('TARGET'),
+                      need_search_schedule=env.get('NEED_SEARCH_SCHEDULE') in ['True', 'true', 'TRUE'] if
+                      env.get('NEED_SEARCH_SCHEDULE') else None)
