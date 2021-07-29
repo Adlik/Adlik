@@ -252,3 +252,49 @@ The batch size of the model is 1.
 |                      | speed of client (samples/sec) | speed of serving engine (samples/sec) | tail latency of one statement (sec) |
 | -------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
 | Bert     `CPU`       |             83.435              |                   83.543                |               1.55E-05             |
+
+### The test result of the Faster R-CNN ResNet50 model
+
+The CPU and GPU parameters used in the test are as follows:
+
+|     |                   type                    | number |
+| --- | :---------------------------------------: | :----: |
+| CPU | Intel(R) Xeon(R) Platinum 8260 CPU @ 2.40GHz |   1    |
+| GPU |           Tesla V100 SXM2 32GB            |   1    |
+
+#### The test result of Faster R-CNN ResNet50 model using TF-TRT runtime
+
+The Faster R-CNN ResNet50 saved model is obtained from [TF2 Object Detection API](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md).
+
+The TF-TRT model of Faster R-CNN ResNet50 is compiled by the `model_compiler` in the `Adlik`.
+
+The batch size of the model is 1.
+
+|                                              | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| -------------------------------------------- | :----------------------------: | :------------------------------------: | :-------------------------------: |
+| Faster R-CNN ResNet50 V1 640x640       `GPU` |            10.508              |                  11.221                |              0.00604              |
+| Faster R-CNN ResNet50 V1 1024x1024     `GPU` |             7.479              |                   8.758                |              0.01952              |
+| Faster R-CNN ResNet50 V1 800x1333      `GPU` |             7.199              |                   8.607                |              0.02271              |
+
+#### The test result of Faster R-CNN ResNet50 model using OpenVINO runtime
+
+The Faster R-CNN ResNet50 frozen graph model is obtained from [TF1 Object Detection API](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf1_detection_zoo.md).
+TF2.x Object Detection API models are not currently supported on Adlik OpenVINO toolkit, only TF1.x Object Detection API
+models are supported.
+
+The OpenVINO model of Faster R-CNN ResNet50 is compiled by the `model_compiler` in the `Adlik`.
+Compile command：
+
+```sh
+python3 /opt/intel/openvino_2021.1.110/deployment_tools/model_optimizer/mo_tf.py --input_model=<path_to_frozen.pb>
+--input image_tensor --model_name model --tensorflow_use_custom_operations_config
+/opt/intel/openvino_2021.1.110/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json
+--tensorflow_object_detection_api_pipeline_config <path_to_pipeline_config>
+--reverse_input_channels
+```
+
+The batch size of the model is 1.
+
+|                                        | speed of client (pictures/sec) | speed of serving engine (pictures/sec) | tail latency of one picture (sec) |
+| ---------------------------------------| :----------------------------: | :------------------------------------: | :-------------------------------: |
+| Faster R-CNN ResNet50 COCO       `CPU` |            0.8685              |                  0.8786                |              0.01322              |
