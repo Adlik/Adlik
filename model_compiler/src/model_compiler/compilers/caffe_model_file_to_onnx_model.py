@@ -4,7 +4,6 @@
 import os
 from typing import Any, Mapping, NamedTuple, Optional, Sequence, List
 import numpy as np
-import caffe2.python.onnx.frontend
 from caffe2.proto import caffe2_pb2
 from . import repository
 from .. import utilities
@@ -57,7 +56,8 @@ def compile_source(source: CaffeModelFile, config: Config) -> OnnxModel:
         input_shape.insert(0, config.max_batch_size)
         value_info[config.input_names[i]] = (config.input_type, input_shape)
 
-    onnx_model = caffe2.python.onnx.frontend.caffe2_net_to_onnx_model(predict_net, init_net, value_info)
+    from caffe2.python.onnx.frontend import caffe2_net_to_onnx_model    # pylint: disable=import-outside-toplevel
+    onnx_model = caffe2_net_to_onnx_model(predict_net, init_net, value_info)
 
     graph = onnx_model.graph  # pylint: disable=no-member
     return OnnxModel(model_proto=onnx_model,

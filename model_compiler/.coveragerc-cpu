@@ -2,8 +2,10 @@
 branch = true
 
 omit = */generated/*
+       */site-packages/model_compiler/compilers/mxnet_model_file_to_onnx_model.py
        */site-packages/model_compiler/compilers/onnx_model_to_tensorrt_model.py
        */site-packages/model_compiler/models/targets/tensorrt_model.py
+       tests/model_compiler/compilers/test_mxnet_model_file_to_onnx_model.py
        tests/model_compiler/compilers/test_onnx_model_to_tensorrt_model.py
        tests/model_compiler/models/targets/test_tensorrt_model.py
        tests/model_compiler/mini_cuda.py

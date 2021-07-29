@@ -3,11 +3,9 @@
 
 from typing import Any, Mapping, NamedTuple, Optional, Sequence, List
 from tempfile import TemporaryDirectory, NamedTemporaryFile
-from mxnet.contrib import onnx as onnx_mxnet
-import mxnet as mx
+
 import onnx
 import numpy as np
-
 from . import repository
 from .. import utilities
 from ..models.data_format import DataFormat
@@ -45,31 +43,40 @@ class Config(NamedTuple):
                       max_batch_size=int(env['MAX_BATCH_SIZE']))
 
 
-@repository.REPOSITORY.register(source_type=MxnetModelFile, target_type=OnnxModel, config_type=Config)
-def compile_source(source: MxnetModelFile, config: Config) -> OnnxModel:
-    num_epoch = int(source.model_path.rpartition('-')[-1])
-
-    sym, arg_params, aux_params = mx.model.load_checkpoint(source.model_path.rpartition('-')[0], num_epoch)
+def _get_new_arg_params(arg_params):
     new_arg_params = {}
     for operation, value in arg_params.items():
         if 'relu' in operation:
             value = value.reshape(1, -1, 1, 1)
         new_arg_params[operation] = value
+    return new_arg_params
+
+
+def _get_onnx_model(model_path, config):
+    import mxnet as mx  # pylint: disable=import-outside-toplevel
+
+    num_epoch = int(model_path.rpartition('-')[-1])
+    sym, arg_params, aux_params = mx.model.load_checkpoint(model_path.rpartition('-')[0], num_epoch)
+    new_arg_params = _get_new_arg_params(arg_params)
 
     for input_shape in config.input_shapes:
         input_shape.insert(0, config.max_batch_size)
 
     with TemporaryDirectory() as new_model_dir:
-        new_model_path = new_model_dir + 'model'
-        mx.model.save_checkpoint(new_model_path, num_epoch, sym, new_arg_params, aux_params)
+        mx.model.save_checkpoint(new_model_dir + 'model', num_epoch, sym, new_arg_params, aux_params)
 
         with NamedTemporaryFile(suffix='.onnx') as model_file:
-            onnx_mxnet.export_model(sym=new_model_path + '-symbol.json',
-                                    params=new_model_path + '-{:04d}.params'.format(num_epoch),
-                                    input_shape=config.input_shapes,
-                                    input_type=config.input_type, onnx_file_path=model_file.name)
+            mx.contrib.onnx.export_model(sym=new_model_dir + 'model-symbol.json',
+                                         params=new_model_dir + 'model-{:04d}.params'.format(num_epoch),
+                                         input_shape=config.input_shapes,
+                                         input_type=config.input_type, onnx_file_path=model_file.name)
             onnx_model = onnx.load(model_file.name)
+    return onnx_model
 
+
+@repository.REPOSITORY.register(source_type=MxnetModelFile, target_type=OnnxModel, config_type=Config)
+def compile_source(source: MxnetModelFile, config: Config) -> OnnxModel:
+    onnx_model = _get_onnx_model(source.model_path, config)
     onnx.checker.check_model(onnx_model)
 
     graph = onnx_model.graph  # pylint: disable=no-member

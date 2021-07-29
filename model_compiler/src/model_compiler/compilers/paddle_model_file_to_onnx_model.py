@@ -5,7 +5,6 @@ from typing import Any, Mapping, NamedTuple, Optional, Sequence
 from tempfile import NamedTemporaryFile
 import onnx
 import onnx.utils
-from paddle2onnx.command import program2onnx
 from . import repository
 from .. import utilities
 
@@ -43,6 +42,7 @@ class Config(NamedTuple):
 
 @repository.REPOSITORY.register(source_type=PaddlePaddleModelFile, target_type=OnnxModel, config_type=Config)
 def compile_source(source: PaddlePaddleModelFile, config: Config) -> OnnxModel:
+    from paddle2onnx.command import program2onnx  # pylint: disable=import-outside-toplevel
     with NamedTemporaryFile(suffix='.onnx') as onnx_file:
         program2onnx(model_dir=source.model_path,
                      save_file=onnx_file.name,
