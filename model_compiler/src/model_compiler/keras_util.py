@@ -128,5 +128,5 @@ class Config(NamedTuple):
                       output_nodes=_get_node_specs(utilities.split_by(env.get('OUTPUT_LAYER_NAMES'), ',')),
                       max_batch_size=utilities.map_optional(env.get('max_batch_size'), int),
                       target=env.get('TARGET'),
-                      need_search_schedule=env.get('NEED_SEARCH_SCHEDULE') in ['True', 'true', 'TRUE'] if
-                      env.get('NEED_SEARCH_SCHEDULE') else None)
+                      need_search_schedule=env.get('need_search_schedule') in ['True', 'true', 'TRUE'] if
+                      env.get('need_search_schedule') else None)

@@ -4,6 +4,7 @@
 import json
 import time
 from collections import namedtuple
+from itertools import product
 
 import tvm
 from tvm import autotvm, te, relay
@@ -11,12 +12,7 @@ from tvm.topi import nn
 from tvm.topi.x86.conv2d_avx_common import _schedule_conv_NCHWc as schedule_conv_NCHWc
 from tvm.topi.x86.conv2d_avx_1x1 import _schedule_conv_NCHWc as schedule_conv_NCHWc_1x1
 from tvm.autotvm.graph_tuner import DPTuner
-# if tvm.__version__ == '0.7.0':
 from tvm._ffi.runtime_ctypes import TVMContext as Device
-# elif tvm.__version__ == '0.8.0':
-#     from tvm._ffi.runtime_ctypes import Device
-# else:
-#    raise Exception('Not supported TVM version')
 
 from .tvm_util import construct_conv_tensors, format_conv_workload, generate_conv_candidates
 
@@ -66,16 +62,16 @@ class CpuSearch:
             candidates = generate_conv_candidates(wkl)
 
             self.index = 1
-            for reg_n in candidates.reg_n_candidates:
-                for ic_bn in candidates.ic_bn_candidates:
-                    for oc_bn in candidates.oc_bn_candidates:
-                        for oh_bn_or_unroll_kw in candidates.alter_candidates:
-                            with self.target:
-                                sch_config = (reg_n, ic_bn, oc_bn, oh_bn_or_unroll_kw)
-                                conv_tensors, sch = self._create_conv_tensor_and_schedule(wkl, sch_config)
-                                result = self._evaluate_schedule(wkl, conv_tensors, sch, sch_config)
-                                self._write_kernel_logs(result)
-                                self.index += 1
+            for reg_n, ic_bn, oc_bn, oh_bn_or_unroll_kw in product(candidates.reg_n_candidates,
+                                                                   candidates.ic_bn_candidates,
+                                                                   candidates.oc_bn_candidates,
+                                                                   candidates.alter_candidates):
+                with self.target:
+                    sch_config = (reg_n, ic_bn, oc_bn, oh_bn_or_unroll_kw)
+                    conv_tensors, sch = self._create_conv_tensor_and_schedule(wkl, sch_config)
+                    result = self._evaluate_schedule(wkl, conv_tensors, sch, sch_config)
+                    self._write_kernel_logs(result)
+                    self.index += 1
 
     def _create_conv_tensor_and_schedule(self, workload, sch_config):
         reg_n, ic_bn, oc_bn, oh_bn_or_unroll_kw = sch_config
