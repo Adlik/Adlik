@@ -3,9 +3,9 @@
 
 from tempfile import TemporaryDirectory
 from unittest import TestCase
+import pytest
 
 import numpy as np
-from mxnet import autograd, gluon, nd
 
 import model_compiler.compilers.mxnet_model_file_to_onnx_model as compiler
 from model_compiler.compilers.mxnet_model_file_to_onnx_model import Config, DataFormat
@@ -35,6 +35,7 @@ class ConfigTestCase(TestCase):
 
 
 def get_mxnet_model(model_path):
+    from mxnet import autograd, gluon, nd  # pylint: disable=import-outside-toplevel
     x_label = nd.random.normal(shape=(2, 100))
     y_label = 3 * x_label[:, 0] - 2.5 * x_label[:, 1] + 7.6
     dataset = gluon.data.ArrayDataset(x_label, y_label)
@@ -46,8 +47,7 @@ def get_mxnet_model(model_path):
     net.initialize()
     loss = gluon.loss.L2Loss()
     trainer = gluon.Trainer(net.collect_params(), "sgd", {"learning_rate": 0.03})
-    num_epoch = 2
-    for _ in range(num_epoch):
+    for _ in range(2):
         for x_input, y_output in data_iter:
             with autograd.record():
                 temp_loss = loss(net(x_input), y_output)
@@ -55,9 +55,10 @@ def get_mxnet_model(model_path):
             trainer.step(10)
     net.hybridize()
     net(x_label)
-    net.export(model_path, num_epoch)
+    net.export(model_path, 2)
 
 
+@pytest.mark.no_test
 class CompileSourceTestCase(TestCase):
     def test_compile_with_variables(self):
         with TemporaryDirectory() as model_dir:
