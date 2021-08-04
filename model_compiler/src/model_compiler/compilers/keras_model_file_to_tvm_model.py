@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import tensorflow as tf
-import tvm
 import tvm.relay as relay
 
 from . import repository
 from ..models.sources.keras_model_file import KerasModelFile
 from ..models.targets.tvm_model import TvmModel, Input, Output
 from ..keras_util import Config, get_inputs, get_outputs, DataFormat
+from ..tvm_utils import compile_relay as tvm_compile
 
 
 def _get_shape_dict(model_inputs, max_batch_size):
@@ -31,7 +31,7 @@ def compile_source(source: KerasModelFile, config: Config) -> TvmModel:
 
     shape_dict = _get_shape_dict(model_inputs, config.max_batch_size)
     model, params = relay.frontend.from_keras(source_model, shape_dict)
-    compiled_lib = relay.build(model, tvm.target.create("llvm"), params=params)
+    compiled_lib = tvm_compile(model, params, config, shape_dict)
     return TvmModel(tvm_model=compiled_lib,
                     model_inputs=[Input(name=tensor.name,
                                         shape=shape_dict[tensor.name],
