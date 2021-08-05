@@ -39,7 +39,7 @@ This sample demonstrates how to use Adlik to compile serving model and deploy se
     │   └── mnist.h5
     ```
 
-2. Convert the .h5 file to TensorFlow serving model (see [compile_model.py](./compile_model.py) and [config_schema.json](../../model_compiler/src/model_compiler/config_schema.json)
+2. Convert the .h5 file to TensorFlow serving model (see [compile_model.py](./compile_model.py) and [config_schema.json](../../model_compiler/config_schema.json)
 which show how to build a request about compiling models):
 
     ```sh
