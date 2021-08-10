@@ -116,4 +116,26 @@ Steps for usage:
     adlik-serving --grpc_port=8500 --http_port=8501 --model_base_path=/model
     ```
 
-4. Install the client wheel package locally, execute the inference code, and perform inference.
+4. Install the client wheel package [adlik serving package](
+   https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl) or [adlik
+   serving gpu package](
+      https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl) locally.
+
+    ```sh
+    wget https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl
+
+    python3 -m pip install adlik_serving_api-0.3.0-py2.py3-none-any.whl
+    ```
+
+5. Infer with the provided client script, The script used in this example is [yolov3_client.py](https://github.com/Adlik/Adlik/blob/master/benchmark/tests/client/yolov3_client.py).
+   For more client model inference script examples, please refer to [client](https://github.com/Adlik/Adlik/tree/master/benchmark/tests/client).
+
+    ```sh
+    python3 yolov3_client.py data/dog.png
+    ```
+
+Note: If the service port is not mapped when you run the mirror, you need install the [adlik serving package](
+   https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl) or [adlik
+   serving gpu package](
+      https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl) in the
+      container. Then execute the inference code, and perform inference in the container.

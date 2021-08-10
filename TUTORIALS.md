@@ -9,7 +9,7 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
 1. Pull the compiler docker image
 
     ```sh
-    docker pull registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.0.0.11_10.0
+    docker pull registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda10.2
     ```
 
 2. Use the example code to train a simple keras model:
@@ -30,7 +30,7 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
 
     ```sh
     docker run -it --rm -v $PWD:/home/john/model
-    registry.cn-beijing.aliyuncs.com/adlik/model-compiler:7.0.0.11_10.0 bash
+    registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda10.2 bash
     ```
 
 4. Compile the model: convert the .h5 file to TensorFlow serving model
@@ -50,13 +50,14 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
 1. Pull the image for TensorFlow serving
 
     ```sh
-    docker pull registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.2.0
+    docker pull registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.3.0
     ```
 
 2. In the `Adlik/examples/keras_model` directory, run the command:
 
     ```sh
-    docker run -d -p 8500:8500 -v $PWD/model_repos:/srv/adlik-serving registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.2.0
+    docker run -d -p 8500:8500 -v $PWD/model_repos:/srv/adlik-serving
+    registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.3.0
     ```
 
 ### Do inference
@@ -64,9 +65,9 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
 1. Install the `Adlik serving` package
 
     ```sh
-    wget https://github.com/Adlik/Adlik/releases/download/v0.2.0/adlik_serving_api-0.0.0-py2.py3-none-any.whl
+    wget https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl
 
-    python3 -m pip install adlik_serving_api-0.0.0-py2.py3-none-any.whl
+    python3 -m pip install adlik_serving_api-0.3.0-py2.py3-none-any.whl
     ```
 
 2. Infer with the provided client script:
