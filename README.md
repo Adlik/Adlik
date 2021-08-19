@@ -168,7 +168,7 @@ registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.3.0_trt7.2.1.6_cuda10
       https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl) locally,
       execute the inference code, and perform inference.
 
-Note: If you not mapping out the service port when you run the mirror, you need install the [adlik serving package](
+Note: If the service port is not mapped when you run the mirror, you need install the [adlik serving package](
    https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl) or [adlik
    serving gpu package](
       https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl) in the
