@@ -55,7 +55,7 @@ setuptools.setup(
         'defusedxml',
         'future',
         'networkx',
-        'tensorflow==2.4.0',
+        'tensorflow==2.5.1',
         'torch',
         'onnx-tf',
         'onnx-caffe2',
