@@ -72,6 +72,13 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
 
 2. Infer with the provided client script:
 
+   Adlik serving provides grpc and http interfaces, grpc interface mainly supports model inference and model management,
+   and http interface mainly supports model inference. For detailed interface description, refer to [adlik_serving_apis.md](adlik_serving/clients/adlik_serving_apis.md).
+
+   Examples of model inference are as follows:
+
+   Infer with the python script.
+
    In the `Adlik/examples/keras_model` directory, run the command:
 
     ```sh
@@ -84,7 +91,16 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
     Image: 'data/0.png', result: [{'idx': 0, 'score': 0.9999995231628418, 'label': ''}]
     ```
 
+   Infer with the cpp script.
+
+    ```sh
+    ./cpp_client
+    ```
+
+   Currently, we provide both bazel and cmake to build cpp client. Please refer to
+   [adlik_serving/clients/cpp/README.md](adlik_serving/clients/cpp/README.md) for instructions.
+
 ## More
 
-Refer to the above example, you can also convert PyTorch, Keras, TensorFlow models to OpenVINO, TensorFlow Lite and
-TensorRT serving model and deploy these serving models easily with our provided [images](README.md#Docker-images).
+Refer to the above example, you can also convert PyTorch, Keras, TensorFlow models to OpenVINO, TensorFlow Lite, TVM,
+TF-TRT and TensorRT serving model and deploy these serving models easily with our provided [images](README.md#Docker-images).

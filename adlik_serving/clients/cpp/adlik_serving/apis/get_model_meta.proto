@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+import "adlik_serving/framework/domain/model_spec.proto";
+import "adlik_serving/framework/domain/model_config.proto";
+
+enum ModelReadyState {
+  MODEL_UNKNOWN = 0;
+  MODEL_READY = 1;
+  MODEL_UNAVAILABLE = 2;
+  MODEL_LOADING = 3;
+  MODEL_UNLOADING = 4;
+}
+
+message ModelVersionStatus
+{
+  ModelReadyState ready_state = 1;
+}
+
+message GetModelMetaRequest {
+  ModelSpec model_spec = 1;
+}
+
+message GetModelMetaResponse {
+  ModelSpec model_spec = 1;
+  ModelConfigProto config = 2;
+  map<uint32, ModelVersionStatus> version_status = 3;
+}
