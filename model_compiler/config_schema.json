@@ -10,7 +10,7 @@
         "openvino",
         "tflite",
         "tvm",
-        "tf-trt"
+        "tftrt"
       ],
       "description": "target serving model type"
     },
@@ -100,6 +100,10 @@
       },
       "description": "required when the saved model file has multiple tag_sets"
     },
+    "target": {
+      "type": "string",
+      "description": "set the appropriate target according to the running CPU and its optional functions，for example, for most processors {target = \"llvm\"}, for processors with the AVX-512 vector instruction set {target = \"llvm -mcpu=skylake-avx512\"}, required when serving_type is tvm"
+    },
     "model_filename": {
       "type": "string",
       "description": "the path of the model file of the paddlepaddle"
@@ -126,7 +130,28 @@
     },
     "input_shapes": {
       "type": "array",
-      "description": "the shape of input, required when serving_type is openvino"
+      "description": "the shape of input, required when the source model format is Caffe format and optional when serving_type is openvino"
+    },
+    "data_type": {
+      "type": "string",
+      "enum": [
+        "bool",
+        "int8",
+        "uint8",
+        "int16",
+        "uint16",
+        "int32",
+        "uint32",
+        "int64",
+        "uint64",
+        "float16",
+        "bfloat16",
+        "float",
+        "double",
+        "complex64",
+        "complex128"
+      ],
+      "description": "the data type of input, required when the source model format is Caffe format"
     },
     "enable_nhwc_to_nchw": {
       "type": "boolean",
