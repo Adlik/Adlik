@@ -1,14 +1,14 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+# pylint: disable=import-outside-toplevel
+
 import tensorflow as tf
-import tvm.relay as relay
 
 from . import repository
 from ..models.sources.keras_model_file import KerasModelFile
 from ..models.targets.tvm_model import TvmModel, Input, Output
 from ..keras_util import Config, get_inputs, get_outputs, DataFormat
-from ..tvm_utils import compile_relay as tvm_compile
 
 
 def _get_shape_dict(model_inputs, max_batch_size):
@@ -25,6 +25,9 @@ def _get_shape_dict(model_inputs, max_batch_size):
 
 @repository.REPOSITORY.register(source_type=KerasModelFile, target_type=TvmModel, config_type=Config)
 def compile_source(source: KerasModelFile, config: Config) -> TvmModel:
+    import tvm.relay as relay
+    from ..tvm_utils import compile_relay as tvm_compile
+
     tf.keras.backend.set_learning_phase(0)
     source_model = tf.keras.models.load_model(source.model_path, compile=False)
     model_inputs = get_inputs(source_model, config.input_nodes)
