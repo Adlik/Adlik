@@ -3,7 +3,6 @@
 
 import os
 from typing import Any, NamedTuple, Optional, Sequence, Tuple
-import tvm
 
 from .. import data_format, repository
 from ..data_format import DataFormat
@@ -25,7 +24,7 @@ class Output(NamedTuple):
 
 @repository.REPOSITORY.register_target_model('tvm')
 class TvmModel(NamedTuple):
-    tvm_model: tvm.relay.backend.graph_runtime_factory.GraphRuntimeFactoryModule
+    tvm_model: Any
     model_inputs: Sequence[Input]
     model_outputs: Sequence[Output]
 
@@ -50,4 +49,4 @@ class TvmModel(NamedTuple):
 
     @staticmethod
     def get_platform() -> Tuple[str, str]:
-        return 'tvm', tvm.__version__
+        return 'tvm', '0.7.0'
