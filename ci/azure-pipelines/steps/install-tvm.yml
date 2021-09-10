@@ -5,6 +5,6 @@ steps:
         mkdir tvm/build && cp tvm/cmake/config.cmake tvm/build
         cmake -Stvm -Btvm/build
         sudo cmake --build tvm/build --parallel 16 --target install
-        sudo cp -r tvm/3rdparty/dlpack/include/dlpack /usr/local/include
+        sudo cp -r tvm/3rdparty/dlpack/include/dlpack tvm/3rdparty/dmlc-core/include/dmlc /usr/local/include
         sudo rm -rf tvm
     displayName: Build and install Tvm
