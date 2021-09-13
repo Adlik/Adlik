@@ -1,0 +1,10 @@
+steps:
+  - script: |
+        sudo apt-get update && sudo apt-get install -y libedit-dev libxml2-dev
+        git clone --recursive --single-branch --branch v0.7 https://github.com/apache/tvm.git
+        mkdir tvm/build && cp tvm/cmake/config.cmake tvm/build
+        cmake -Stvm -Btvm/build
+        sudo cmake --build tvm/build --parallel 16 --target install
+        sudo cp -r tvm/3rdparty/dlpack/include/dlpack tvm/3rdparty/dmlc-core/include/dmlc /usr/local/include
+        sudo rm -rf tvm
+    displayName: Build and install Tvm
