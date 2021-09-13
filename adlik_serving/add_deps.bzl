@@ -86,3 +86,13 @@ def add_all_deps():
         strip_prefix = "dlib-19.19",
         build_file = str(Label("//third_party/dlib:BUILD")),
     )
+
+    http_archive(
+        name = "paddle_inference",
+        urls = [
+            "https://paddle-inference-lib.bj.bcebos.com/2.1.1-cpu-avx-mkl-gcc5.4/paddle_inference.tgz",
+        ],
+        sha256 = "e9b7bb9f5ab612483c45b07d2d9fb1f67d8f0bf62997d82921c82b940bcdb45a",
+        strip_prefix = "paddle_inference",
+        build_file = str(Label("//third_party/paddle:BUILD")),
+    )
