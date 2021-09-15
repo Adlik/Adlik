@@ -416,6 +416,7 @@ genrule(
         "mkdir build",
         "cd build",
         "cmake .. -DPY_VERSION=3 -DWITH_TESTING=OFF -DWITH_MKL=ON -DWITH_GPU=OFF -DON_INFER=ON -DWITH_AVX=ON",
+        "sed 's/^CXX_FLAGS\\(.*\\)$$/CXX_FLAGS\\1 -Wno-error=pessimizing-move/' -i `find paddle -type f -name flags.make`",
         "make inference_lib_dist -j",
         "echo $$INSTALL_DIR",
         "cd paddle_inference_install_dir",
