@@ -104,6 +104,10 @@
       "type": "string",
       "description": "set the appropriate target according to the running CPU and its optional functions，for example, for most processors {target = \"llvm\"}, for processors with the AVX-512 vector instruction set {target = \"llvm -mcpu=skylake-avx512\"}, required when serving_type is tvm"
     },
+    "need_search_schedule": {
+      "type": "boolean",
+      "description": "required when serving_type is tvm, whether to use the automatic optimization operator provided by tvm, default is False"
+    },
     "model_filename": {
       "type": "string",
       "description": "the path of the model file of the paddlepaddle"
