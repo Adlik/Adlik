@@ -1,4 +1,4 @@
-#/bin/bash -e
+#!/bin/bash -e
 
 SCRIPT_DIR=$(
   cd "$(dirname "$0")"
@@ -6,32 +6,6 @@ SCRIPT_DIR=$(
 )
 
 EXIT_FAILURE=1
-
-uninstall_user_mode()
-{
-    echo Looking for previously installed user-mode driver...
-
-    PACKAGES=("intel-opencl"
-              "intel-ocloc"
-              "intel-gmmlib"
-              "intel-igc-core"
-              "intel-igc-opencl")
-
-    for package in "${PACKAGES[@]}"; do
-        found_package=$(dpkg-query -W -f='${binary:Package}\n' "${package}")
-        if [[ $? -eq 0 ]]; then
-            echo "Found installed user-mode driver, performing uninstall..."
-            cmd="apt-get autoremove -y $package"
-            echo "$cmd"
-            eval "$cmd"
-            if [[ $? -ne 0 ]]; then
-                echo "ERROR: failed to uninstall existing user-mode driver." >&2
-                echo "Please try again manually and run the script again." >&2
-                exit $EXIT_FAILURE
-            fi
-        fi
-    done
-}
 
 download_packages()
 {
@@ -99,7 +73,6 @@ install_prerequisites()
 }
 
 echo "Intel® Graphics Compute Runtime for OpenCL™ Driver installer"
-uninstall_user_mode
 install_prerequisites
 download_packages
 install_user_mode

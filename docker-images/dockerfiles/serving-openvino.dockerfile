@@ -9,7 +9,7 @@ COPY script/opencl.sh /script/opencl.sh
 ARG OPENVINO_VERSION
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y ca-certificates wget curl&& \
+    apt-get install --no-install-recommends -y ca-certificates wget curl && \
     wget 'https://apt.repos.intel.com/openvino/2021/GPG-PUB-KEY-INTEL-OPENVINO-2021' -O /etc/apt/trusted.gpg.d/openvino.asc && \
     bash /script/opencl.sh && rm /script/opencl.sh && \
     apt-get autoremove --purge -y wget curl && \
