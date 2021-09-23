@@ -4,13 +4,15 @@ ARG UBUNTU_VERSION
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
 COPY script/run_server.sh /script/run_server.sh
+COPY script/opencl.sh /script/opencl.sh
 
 ARG OPENVINO_VERSION
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y ca-certificates wget && \
+    apt-get install --no-install-recommends -y ca-certificates wget curl && \
     wget 'https://apt.repos.intel.com/openvino/2021/GPG-PUB-KEY-INTEL-OPENVINO-2021' -O /etc/apt/trusted.gpg.d/openvino.asc && \
-    apt-get autoremove --purge -y wget && \
+    bash /script/opencl.sh && rm /script/opencl.sh && \
+    apt-get autoremove --purge -y wget curl && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
@@ -68,6 +70,7 @@ ARG OPENVINO_VERSION
 RUN . /etc/os-release && \
     apt-get update && \
     apt-get install --no-install-recommends -y "intel-openvino-ie-rt-cpu-$ID-$VERSION_CODENAME-$OPENVINO_VERSION" && \
+    apt-get install --no-install-recommends -y "intel-openvino-ie-rt-gpu-$ID-$VERSION_CODENAME-$OPENVINO_VERSION" && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 

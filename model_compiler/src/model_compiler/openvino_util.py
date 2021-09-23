@@ -183,4 +183,4 @@ def _acquire_optimizer_script_dir(script_name):
 
 
 def _acquire_optimizer_base_dir():
-    return os.getenv('INTEL_CVSDK_DIR', '/opt/intel/openvino_2021.1.110')
+    return os.getenv('INTEL_CVSDK_DIR', '/opt/intel/openvino_2021.4.582')
