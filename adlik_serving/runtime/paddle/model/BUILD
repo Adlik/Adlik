@@ -20,6 +20,7 @@ serving_cc_library(
         "//adlik_serving/runtime/batching:composite_batch_processor",
         "//adlik_serving/runtime/provider:predict_request_provider",
         "//adlik_serving/runtime/provider:predict_response_provider",
+        "//adlik_serving/runtime/util:datatype_size",
         "//cub/log",
         "@paddle_inference",
     ],

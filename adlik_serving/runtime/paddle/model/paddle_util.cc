@@ -5,102 +5,44 @@
 
 namespace paddle_runtime {
 
-size_t GetDataTypeSize(const tensorflow::DataType dtype) {
-  switch (dtype) {
-    case tensorflow::DataType::DT_BOOL:
-      return 1;
-    case tensorflow::DataType::DT_INT8:
-      return 1;
-    case tensorflow::DataType::DT_UINT8:
-      return 1;
-    case tensorflow::DataType::DT_INT16:
-      return 2;
-    case tensorflow::DataType::DT_INT32:
-      return 4;
-    case tensorflow::DataType::DT_INT64:
-      return 8;
-    case tensorflow::DataType::DT_HALF:
-      return 2;
-    case tensorflow::DataType::DT_FLOAT:
-      return 4;
-    case tensorflow::DataType::DT_DOUBLE:
-      return 8;
-    case tensorflow::DataType::DT_COMPLEX64:
-      return 8;
-    case tensorflow::DataType::DT_COMPLEX128:
-      return 16;
-    default:
-      return 0;
-  }
-}
-
-paddle::DataType ConvertToOpenVinoDataType(const tensorflow::DataType dtype) {
-  switch (dtype) {
-    case tensorflow::DataType::DT_BOOL:
-      return paddle::DataType::BOOL;
-    case tensorflow::DataType::DT_INT8:
-      return paddle::DataType::INT8;
-    case tensorflow::DataType::DT_UINT8:
-      return paddle::DataType::UINT8;
-    case tensorflow::DataType::DT_INT16:
-      return paddle::DataType::INT16;
-    case tensorflow::DataType::DT_INT32:
-      return paddle::DataType::INT32;
-    case tensorflow::DataType::DT_INT64:
-      return paddle::DataType::INT64;
-    case tensorflow::DataType::DT_HALF:
-      return paddle::DataType::FLOAT16;
-    case tensorflow::DataType::DT_FLOAT:
-      return paddle::DataType::FLOAT32;
-    case tensorflow::DataType::DT_DOUBLE:
-      return paddle::DataType::FLOAT64;
-    case tensorflow::DataType::DT_COMPLEX64:
-      return paddle::DataType::COMPLEX64;
-    case tensorflow::DataType::DT_COMPLEX128:
-      return paddle::DataType::COMPLEX128;
-    default:
-      return paddle::DataType::FLOAT32;
-  }
-}
-
 // Some data type not supported by paddle inference yet
-void CopyFromCpu(std::unique_ptr<paddle_infer::Tensor> tensor, void* buffer, const tensorflow::DataType dtype) {
+void CopyFromCpu(std::unique_ptr<paddle_infer::Tensor> tensor, const void* buffer, const tensorflow::DataType dtype) {
   switch (dtype) {
     // case tensorflow::DataType::DT_BOOL:
-    //   tensor->CopyFromCpu<bool>((bool *)buffer);
+    //   tensor->CopyFromCpu<bool>((const bool *)buffer);
     //   return;
     case tensorflow::DataType::DT_INT8:
-      tensor->CopyFromCpu<int8_t>((int8_t*)buffer);
+      tensor->CopyFromCpu<int8_t>((const int8_t*)buffer);
       return;
     case tensorflow::DataType::DT_UINT8:
-      tensor->CopyFromCpu<uint8_t>((uint8_t*)buffer);
+      tensor->CopyFromCpu<uint8_t>((const uint8_t*)buffer);
       return;
     // case tensorflow::DataType::DT_INT16:
-    //   tensor->CopyFromCpu<int16_t>((int16_t *)buffer);
+    //   tensor->CopyFromCpu<int16_t>((const int16_t *)buffer);
     //   return;
     case tensorflow::DataType::DT_INT32:
-      tensor->CopyFromCpu<int>((int*)buffer);
+      tensor->CopyFromCpu<int>((const int*)buffer);
       return;
     case tensorflow::DataType::DT_INT64:
-      tensor->CopyFromCpu<int64_t>((int64_t*)buffer);
+      tensor->CopyFromCpu<int64_t>((const int64_t*)buffer);
       return;
     // case tensorflow::DataType::DT_HALF:
-    //   tensor->CopyFromCpu<paddle::float16>((paddle::float16 *)buffer);
+    //   tensor->CopyFromCpu<paddle::float16>((const paddle::float16 *)buffer);
     //   return;
     case tensorflow::DataType::DT_FLOAT:
-      tensor->CopyFromCpu<float>((float*)buffer);
+      tensor->CopyFromCpu<float>((const float*)buffer);
       return;
     // case tensorflow::DataType::DT_DOUBLE:
-    //   tensor->CopyFromCpu<double>((double *)buffer);
+    //   tensor->CopyFromCpu<double>((const double *)buffer);
     //   return;
     // case tensorflow::DataType::DT_COMPLEX64:
-    //   tensor->CopyFromCpu<paddle::platform::complex64>((paddle::platform::complex64 *)buffer);
+    //   tensor->CopyFromCpu<paddle::platform::complex64>((const paddle::platform::complex64 *)buffer);
     //   return;
     // case tensorflow::DataType::DT_COMPLEX128:
-    //   tensor->CopyFromCpu<paddle::platform::complex128>((paddle::platform::complex128 *)buffer);
+    //   tensor->CopyFromCpu<paddle::platform::complex128>((const paddle::platform::complex128 *)buffer);
     //   return;
     default:
-      tensor->CopyFromCpu<float>((float*)buffer);
+      tensor->CopyFromCpu<float>((const float*)buffer);
       return;
   }
 }

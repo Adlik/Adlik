@@ -146,3 +146,12 @@ serving_cc_library(
         ":unique_batcher_model_wrapper",
     ],
 )
+
+serving_cc_library(
+    name = "datatype_size",
+    srcs = ["datatype_size.cc"],
+    hdrs = ["datatype_size.h"],
+    deps = [
+        "@org_tensorflow//tensorflow/core:protos_all_cc",
+    ],
+)

@@ -401,6 +401,7 @@ output_files = [
     "third_party/install/gflags/lib/libgflags.a",
 ]
 
+#Azure pipelines have limited memory, build paddle with 2 worker.
 genrule(
     name = "paddle_inference-libs",
     srcs = glob(["**/*"]),
@@ -416,8 +417,9 @@ genrule(
         "mkdir build",
         "cd build",
         "cmake .. -DPY_VERSION=3 -DWITH_TESTING=OFF -DWITH_MKL=ON -DWITH_GPU=OFF -DON_INFER=ON -DWITH_AVX=ON",
-        "sed 's/^CXX_FLAGS\\(.*\\)$$/CXX_FLAGS\\1 -Wno-error=pessimizing-move/' -i `find paddle -type f -name flags.make`",
-        "make inference_lib_dist -j",
+        "source /etc/os-release",
+        "if [ $${VERSION_ID%%.*} -ge 20 ]; then sed 's/^CXX_FLAGS\\(.*\\)$$/CXX_FLAGS\\1 -Wno-error=pessimizing-move/' -i `find paddle -type f -name flags.make` ; fi",
+        "make inference_lib_dist -j2",
         "echo $$INSTALL_DIR",
         "cd paddle_inference_install_dir",
         "cp -r paddle $$INSTALL_DIR",

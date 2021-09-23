@@ -11,6 +11,7 @@
 #include "adlik_serving/runtime/paddle/model/paddle_util.h"
 #include "adlik_serving/runtime/provider/predict_request_provider.h"
 #include "adlik_serving/runtime/provider/predict_response_provider.h"
+#include "adlik_serving/runtime/util/datatype_size.h"
 #include "cub/env/fs/path.h"
 #include "cub/log/log.h"
 #include "paddle/include/paddle_inference_api.h"
@@ -18,7 +19,6 @@
 #include "tensorflow/core/platform/env.h"
 
 using namespace adlik::serving;
-using paddle::DataType;
 using paddle_infer::Config;
 using paddle_infer::Predictor;
 using paddle_infer::services::PredictorPool;
@@ -34,6 +34,13 @@ namespace {
       return cub::Status(_status.code());               \
   } while (0)
 
+#define MY_RETURN_IF_ERROR_TF(...)                      \
+  do {                                                  \
+    const ::tensorflow::Status _status = (__VA_ARGS__); \
+    if (TF_PREDICT_FALSE(!_status.ok()))                \
+      return _status;                                   \
+  } while (0)
+
 struct IOBlob {
   IOBlob(std::string name, tensorflow::DataType data_type) : name(name), data_type(data_type) {
   }
@@ -46,7 +53,7 @@ struct IOBlob {
 };
 
 struct Instance : BatchProcessor {
-  Instance(const std::string& name, const adlik::serving::ModelConfigProto& config, Predictor* predictor)
+  Instance(const std::string& name, const adlik::serving::ModelConfigProto& config, Predictor& predictor)
       : name(name), config(config), predictor(predictor), max_batch_size(config.max_batch_size()) {
   }
   ~Instance() = default;
@@ -55,7 +62,7 @@ struct Instance : BatchProcessor {
 private:
   const std::string name;
   const adlik::serving::ModelConfigProto config;
-  Predictor* predictor;
+  Predictor& predictor;
   const int max_batch_size;
   std::vector<IOBlob> inputs;
   std::vector<IOBlob> outputs;
@@ -66,52 +73,30 @@ private:
 };
 
 tensorflow::Status Instance::init() {
+  auto init_blob = [&](IOBlob& blob, const adlik::serving::DimsList& dims) {
+    blob.shape.push_back(max_batch_size);
+    for (auto dim : dims)
+      blob.shape.push_back(dim);
+    size_t typesize = GetDataTypeSize(blob.data_type);
+    if (typesize <= 0)
+      return tensorflow::errors::InvalidArgument("unknow data_type ", blob.data_type);
+    blob.byte_1batch_size =
+        std::accumulate(++blob.shape.begin(), blob.shape.end(), 1, std::multiplies<int>()) * typesize;
+    blob.byte_size = blob.byte_1batch_size * max_batch_size;
+    blob.buffer.resize(blob.byte_size);
+    return tensorflow::Status::OK();
+  };
   // init inputs
   for (int i = 0; i < config.input_size(); ++i) {
     auto model_input = config.input(i);
     inputs.emplace_back(model_input.name(), model_input.data_type());
-    auto& input = inputs[i];
-    input.shape.push_back(max_batch_size);
-    for (auto dim : model_input.dims())
-      input.shape.push_back(dim);
-    size_t typesize = GetDataTypeSize(input.data_type);
-    if (typesize <= 0)
-      return tensorflow::errors::InvalidArgument("unknow data_type ", input.data_type);
-    input.byte_1batch_size =
-        std::accumulate(++input.shape.begin(), input.shape.end(), 1, std::multiplies<int>()) * typesize;
-    input.byte_size = input.byte_1batch_size * max_batch_size;
-    input.buffer.resize(input.byte_size);
+    MY_RETURN_IF_ERROR_TF(init_blob(inputs.back(), model_input.dims()));
   }
   // init outputs
   for (int i = 0; i < config.output_size(); ++i) {
     auto model_output = config.output(i);
     outputs.emplace_back(model_output.name(), model_output.data_type());
-    auto& output = outputs[i];
-    output.shape.push_back(max_batch_size);
-    for (auto dim : model_output.dims())
-      output.shape.push_back(dim);
-    size_t typesize = GetDataTypeSize(output.data_type);
-    if (typesize <= 0)
-      return tensorflow::errors::InvalidArgument("unknow data_type ", output.data_type);
-    output.byte_1batch_size =
-        std::accumulate(++output.shape.begin(), output.shape.end(), 1, std::multiplies<int>()) * typesize;
-    output.byte_size = output.byte_1batch_size * max_batch_size;
-    output.buffer.resize(output.byte_size);
-  }
-  // check
-  auto input_names = predictor->GetInputNames();
-  auto output_names = predictor->GetOutputNames();
-  if (input_names.size() != inputs.size() || output_names.size() != outputs.size())
-    return tensorflow::errors::InvalidArgument("Number of inputs and outputs not match.");
-  for (auto& input : inputs) {
-    if (std::find(input_names.begin(), input_names.end(), input.name) == input_names.end())
-      return tensorflow::errors::InvalidArgument(
-          "unexpected input name ", input.name, " in model config. Not match model file.");
-  }
-  for (auto& output : outputs) {
-    if (std::find(output_names.begin(), output_names.end(), output.name) == output_names.end())
-      return tensorflow::errors::InvalidArgument(
-          "unexpected output name ", output.name, " in model config. Not match model file.");
+    MY_RETURN_IF_ERROR_TF(init_blob(outputs.back(), model_output.dims()));
   }
   return tensorflow::Status::OK();
 }
@@ -124,16 +109,16 @@ tensorflow::Status Instance::processBatch(Batch<BatchingMessageTask>& payloads) 
     return status;
   }
   for (auto& input : inputs) {
-    auto input_t = predictor->GetInputHandle(input.name);
+    auto input_t = predictor.GetInputHandle(input.name);
     input_t->Reshape(input.shape);
     paddle_runtime::CopyFromCpu(std::move(input_t), input.buffer.data(), input.data_type);
   }
-  if (!predictor->Run()) {
+  if (!predictor.Run()) {
     ERR_LOG << "Error predict.\n";
     return tensorflow::errors::Internal("Error predict in paddle reference.");
   }
   for (auto& output : outputs) {
-    auto output_t = predictor->GetOutputHandle(output.name);
+    auto output_t = predictor.GetOutputHandle(output.name);
     std::vector<int> output_shape = output_t->shape();
     size_t out_num = std::accumulate(output_shape.begin(), output_shape.end(), 1, std::multiplies<int>());
     if (output.byte_size < out_num)
@@ -269,7 +254,7 @@ tensorflow::Status PaddleModel::init() {
     for (int i = 0; i != group.count(); ++i) {
       std::string instance_name = group.name() + "_" + std::to_string(i);
       std::unique_ptr<Instance> instance =
-          std::make_unique<Instance>(instance_name, config, predict_pool->Retrive(--instance_count));
+          std::make_unique<Instance>(instance_name, config, *predict_pool->Retrive(--instance_count));
       TF_RETURN_IF_ERROR(instance->init());
       add(std::move(instance));
     }
