@@ -97,12 +97,30 @@ class DataType(Enum):
         return precision_map[data_type]
 
     @staticmethod
+    def from_paddle_data_type(data_type: str):
+        precision_map = {
+            'paddle.uint8': DataType.UINT8,
+            'paddle.int8': DataType.INT8,
+            'paddle.int16': DataType.INT16,
+            'paddle.int32': DataType.INT32,
+            'paddle.int64': DataType.INT64,
+            'paddle.float16': DataType.FLOAT16,
+            'paddle.float32': DataType.FLOAT,
+            'paddle.float64': DataType.DOUBLE,
+            'paddle.bfloat16': DataType.BFLOAT16,
+            'paddle.bool': DataType.BOOL,
+            'paddle.complex64': DataType.COMPLEX64,
+            'paddle.complex128': DataType.COMPLEX128,
+        }
+        return precision_map[data_type]
+
+    @staticmethod
     def from_caffe_data_type(type_str):
         return DataType[type_str.upper()]
 
     @staticmethod
     def from_torch_data_type(type_str):
-        import torch    # pylint: disable=import-outside-toplevel
+        import torch  # pylint: disable=import-outside-toplevel
 
         torch_data_type_map = {
             'FLOAT': torch.float,
