@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package adlik.serving;
+option cc_enable_arenas = true;
+
+import "adlik_serving/framework/domain/version_policy.proto";
+import "tensorflow/core/framework/types.proto";
+
+// A group of one or more instances of a model and resources made available for
+// those instances.
+message ModelInstanceGroup {
+
+  // Kind of this instance group.
+  enum Kind {
+    // This instance group represents instances that can run on either CPU or
+    // GPU. If all GPUs listed in 'gpus' are available then instances will be
+    // created on GPU(s), otherwise instances will be created on CPU.
+    KIND_AUTO = 0;
+
+    // This instance group represents instances that must run on the GPU.
+    KIND_GPU = 1;
+
+    // This instance group represents instances that must run on the CPU.
+    KIND_CPU = 2;
+  }
+
+  // Optional name of this group of instances. If not specified the name will be
+  // formed as <model name>_<group number>. The name of individual instances
+  // will be further formed by a unique instance number and GPU index:
+  string name = 1;
+
+  // The kind of this instance group. Default is KIND_AUTO. If KIND_AUTO or
+  // KIND_GPU then both 'count' and 'gpu' are valid and  may be specified. If
+  // KIND_CPU only 'count' is valid and 'gpu'  cannot be specified.
+  Kind kind = 4;
+
+  // For a group assigned to GPU, the number of instances created for each GPU
+  // listed in 'gpus'. For a group assigned to CPU the number of instances
+  // created. Default is 1.
+  int32 count = 2;
+
+  // GPU(s) where instances should be available. For each GPU listed, 'count'
+  // instances of the model will be available. Setting 'gpus' to empty (or not
+  // specifying at all) is eqivalent to listing all  available GPUs.
+  repeated int32 gpus = 3;
+}
+
+message ModelInput {
+  enum Format {
+    FORMAT_NONE = 0;
+    FORMAT_NHWC = 1;
+    FORMAT_NCHW = 2;
+  }
+
+  string name = 1;
+
+  tensorflow.DataType data_type = 2;
+
+  Format format = 3;
+
+  repeated int64 dims = 4;
+}
+
+message ModelOutput {
+  string name = 1;
+
+  tensorflow.DataType data_type = 2;
+
+  repeated int64 dims = 3;
+
+  // The label file associated with this output. Should be specified only
+  // for outputs that represent classifications. Optional.
+  string label_filename = 4;
+}
+
+// Dynamic batching configuration. These settings control if/how dynamic
+// batching operates for the model.
+message ModelDynamicBatching {
+  // Preferred batch sizes for dynamic batching. If a batch of one of
+  // these sizes can be formed it will be executed immediately.  If
+  // not specified a preferred batch size will be chosen automatically
+  // based on model and GPU characteristics.
+  repeated int32 preferred_batch_size = 1;
+
+  // The maximum time, in microseconds, a request will be delayed in
+  // the scheduling queue to wait for additional requests for
+  // batching. Default is 0.
+  int32 max_queue_delay_microseconds = 2;
+
+  // The maximum length of the queue, in terms of the number of batches. (A
+  // batch that has been scheduled on a thread is considered to have been
+  // removed from the queue.)
+  int32 max_enqueued_batches = 3;
+
+  // Whether to pad variable-length inputs when a batch is formed.
+  bool pad_variable_length_inputs = 7;
+}
+
+message ModelConfigProto {
+
+  // The name of the model.
+  string name = 1;
+
+  // The framework for the model. Possible values "tensorrt", "tensorflow",
+  // "openvino".
+  string platform = 2;
+
+  // The version of framework for the model.
+  string platform_version = 3;
+
+  // Policy indicating which version(s) of the model will be served.
+  VersionPolicyProto version_policy = 4;
+
+  // Maximum batch size allowed for inference. This can only decrease
+  // what is allowed by the model itself. A max_batch_size value of 0
+  // indicates that batching is not allowed for the model and the
+  // dimension/shape of the input and output tensors must exactly
+  // match what is specified in the input and output configuration.
+  int32 max_batch_size = 5;
+
+  repeated ModelInput input = 6;
+
+  repeated ModelOutput output = 7;
+
+  // Dynamic batching configuration for the model. If not specified
+  // then dynamic batching is disabled for the model.
+  ModelDynamicBatching dynamic_batching = 12;
+
+  repeated ModelInstanceGroup instance_group = 8;
+
+  string algorithm = 20;
+}

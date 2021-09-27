@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
   // get model config
   ClientContext getModelContext;
   GetModelMetaRequest getModelMetaRequest;
-  getModelMetaRequest.mutable_model_spec()->set_name("textcnn");
+  getModelMetaRequest.mutable_model_spec()->set_name("mnist");
   getModelMetaRequest.mutable_model_spec()->set_signature_name("predict");
   GetModelMetaResponse getModelMetaResponse;
   Status getModelStatus =
