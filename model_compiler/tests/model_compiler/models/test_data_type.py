@@ -118,3 +118,17 @@ class DataTypeTestCase(TestCase):
 
         self.assertEqual(DataType.FLOAT16.to_tensorrt_data_type(), TrtDataType.HALF)
         self.assertEqual(DataType.FLOAT.to_tensorrt_data_type(), TrtDataType.FLOAT)
+
+    def test_from_paddle_data_type(self):
+        self.assertEqual(DataType.from_paddle_data_type("paddle.uint8"), DataType.UINT8)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.int8"), DataType.INT8)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.int16"), DataType.INT16)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.int32"), DataType.INT32)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.int64"), DataType.INT64)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.float16"), DataType.FLOAT16)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.float32"), DataType.FLOAT)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.float64"), DataType.DOUBLE)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.bfloat16"), DataType.BFLOAT16)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.bool"), DataType.BOOL)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.complex64"), DataType.COMPLEX64)
+        self.assertEqual(DataType.from_paddle_data_type("paddle.complex128"), DataType.COMPLEX128)

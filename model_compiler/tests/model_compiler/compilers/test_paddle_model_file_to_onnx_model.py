@@ -73,6 +73,7 @@ def get_paddle_model(model_path):
                 optimizer.step()
                 optimizer.clear_grad()
 
+    paddle.disable_static()
     model_layer = _LinearNet()
     loss_func = nn.CrossEntropyLoss()
     adam = opt.Adam(learning_rate=0.001, parameters=model_layer.parameters())

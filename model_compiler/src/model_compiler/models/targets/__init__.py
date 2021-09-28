@@ -3,7 +3,7 @@
 
 from types import ModuleType
 
-from . import saved_model, tflite_model
+from . import saved_model, tflite_model, paddle_model
 
 try:
     from . import tensorrt_model
@@ -15,5 +15,6 @@ __all__ = [
     'openvino_model',
     'saved_model',
     'tensorrt_model',
-    'tflite_model'
+    'tflite_model',
+    'paddle_model'
 ]
