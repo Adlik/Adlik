@@ -50,6 +50,11 @@ config_setting(
     values = {"define": "runtime=tvm"},
 )
 
+config_setting(
+    name = "paddle",
+    values = {"define": "runtime=paddle"},
+)
+
 serving_cc_library(
     name = "server_core",
     srcs = [
@@ -75,5 +80,6 @@ serving_cc_library(
         ":openvino": ["//adlik_serving/runtime/openvino/factory:openvino_runtime"],
         ":ml": ["//adlik_serving/runtime/ml/model:ml_runtime"],
         ":tvm": ["//adlik_serving/runtime/tvm:tvm_runtime"],
+        ":paddle": ["//adlik_serving/runtime/paddle/factory:paddle_runtime"],
     }),
 )

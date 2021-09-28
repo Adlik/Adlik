@@ -57,3 +57,8 @@ build:ml --define=runtime=ml
 # TVM runtime.
 
 build:tvm --define=runtime=tvm
+
+# Paddle runtime
+
+build:paddle --define=runtime=paddle
+build:paddle --define=paddle_link_static=true

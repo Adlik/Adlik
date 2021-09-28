@@ -86,3 +86,13 @@ def add_all_deps():
         strip_prefix = "dlib-19.19",
         build_file = str(Label("//third_party/dlib:BUILD")),
     )
+
+    http_archive(
+        name = "paddle_inference",
+        urls = [
+            "https://github.com/PaddlePaddle/Paddle/archive/refs/tags/v2.1.2.tar.gz",
+        ],
+        sha256 = "cd59e246958eb0bb1b19654cc1567c001888b241c69147e7503e825b1b7e0a17",
+        strip_prefix = "Paddle-2.1.2",
+        build_file = str(Label("//third_party/paddle:BUILD")),
+    )
