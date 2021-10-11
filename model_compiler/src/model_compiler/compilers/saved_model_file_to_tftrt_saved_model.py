@@ -74,11 +74,10 @@ def _get_outputs(meta_graph_def, signature_def_key):
             for output_name, output_tensor in sorted(outputs_tensor_info.items())]
 
 
-def _get_trt_conversion_params(precision_mode, max_batch_size):
+def _get_trt_conversion_params(precision_mode):
     conversion_params = trt.DEFAULT_TRT_CONVERSION_PARAMS
     conversion_params = conversion_params._replace(precision_mode=precision_mode)
     conversion_params = conversion_params._replace(use_calibration=precision_mode == 'INT8')
-    conversion_params = conversion_params._replace(max_batch_size=max_batch_size)
     return conversion_params
 
 
@@ -102,7 +101,6 @@ def compile_source(source: SavedModelFile, config: Config) -> TfTRTSavedModel:
             )
 
     precision = 'FP32'
-    max_batch_size = config.max_batch_size
 
     if config.enable_fp16:
         precision = 'FP16'
@@ -110,7 +108,7 @@ def compile_source(source: SavedModelFile, config: Config) -> TfTRTSavedModel:
     if config.enable_int8:
         precision = 'INT8'
 
-    params = _get_trt_conversion_params(precision_mode=precision, max_batch_size=max_batch_size)
+    params = _get_trt_conversion_params(precision_mode=precision)
 
     input_saved_model_signature_key = signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
     if config.signature_keys:
