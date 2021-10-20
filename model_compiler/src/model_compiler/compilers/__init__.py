@@ -17,11 +17,6 @@ try:
 except ImportError:  # pragma: no cover
     onnx_model_to_tensorrt_model = ModuleType('model_compiler.compilers.onnx_model_to_tensorrt_model')
 
-try:
-    from . import keras_model_file_to_tvm_model
-except ImportError:  # pragma: no cover
-    keras_model_file_to_tvm_model = ModuleType('model_compiler.compilers.keras_model_file_to_tvm_model')
-
 __all__ = [
     'caffe_model_file_to_onnx_model',
     'keras_model_file_to_keras_model',
