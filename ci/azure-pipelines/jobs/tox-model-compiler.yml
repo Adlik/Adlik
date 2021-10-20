@@ -5,7 +5,6 @@ jobs:
         vmImage: Ubuntu-18.04
     steps:
       - template: ../steps/install-tensorrt.yml
-      - template: ../steps/install-openvino-compiler.yml
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.6'
@@ -14,6 +13,8 @@ jobs:
         displayName: Install tox
       - script: sudo apt-get install --no-install-recommends -y protobuf-compiler
         displayName: Install Protocol Buffers
+      - script: sudo apt-get install --no-install-recommends -y libgl1 libgtk-3-0
+        displayName: Install openvino deps
       - script: tox -e py36-cpu
         displayName: Run tox
         workingDirectory: model_compiler

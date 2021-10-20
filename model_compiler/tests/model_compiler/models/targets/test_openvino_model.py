@@ -26,8 +26,7 @@ def _save_frozen_graph_model(model_file):
 
 
 def _get_optimize_params(input_model, output_dir):
-    params = {'script_name': 'mo_tf.py',
-              'model_name': 'model',
+    params = {'model_name': 'model',
               'input_model': input_model,
               'output_dir': output_dir,
               'batch': '1',

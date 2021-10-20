@@ -10,8 +10,7 @@ from ..openvino_util import Config, execute_optimize_action
 
 
 def _get_optimize_params(input_model, output_dir, config):
-    params = {'script_name': 'mo_tf.py',
-              'model_name': 'model',
+    params = {'model_name': 'model',
               'input_model': input_model,
               'output_dir': output_dir}
     # if enble_nhwc_to_nchw=None or False set --disable_nhwc_to_nchw

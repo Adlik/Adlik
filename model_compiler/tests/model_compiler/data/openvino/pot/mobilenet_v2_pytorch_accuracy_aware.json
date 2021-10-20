@@ -1,0 +1,21 @@
+{
+    "model": {
+        "model_name": "mobilenet-v2-pytorch",
+        "model": "",
+        "weights": ""
+    },
+    "engine": {
+        "config": ""
+    },
+    "compression": {
+        "algorithms": [
+            {
+                "name": "AccuracyAwareQuantization",
+                "params": {
+                    "preset": "mixed",
+                    "stat_subset_size": 1
+                }
+            }
+        ]
+    }
+}

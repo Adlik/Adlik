@@ -38,7 +38,6 @@ ENV CUDA_VERSION=${CUDA_VERSION}
 RUN . /etc/os-release && \
     apt-get update && \
     apt-get install --no-install-recommends -y wget && \
-    wget 'https://apt.repos.intel.com/openvino/2021/GPG-PUB-KEY-INTEL-OPENVINO-2021' -O /etc/apt/trusted.gpg.d/openvino.asc && \
     wget "https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/7fa2af80.pub" -O /etc/apt/trusted.gpg.d/cuda.asc && \
     apt-get autoremove --purge -y wget && \
     apt-get clean && \
@@ -54,7 +53,7 @@ RUN /script/tensorrt.sh
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-    intel-openvino-model-optimizer-"$OPENVINO_VERSION" && \
+        libgl1 libgtk-3-0 && \
     apt-get clean && \
     find /var/lib/apt/lists -delete &&\
     ln -s /usr/local/cuda-"$CUDA_VERSION" /usr/local/cuda
@@ -64,7 +63,6 @@ COPY --from=builder /src/dist/*.whl /tmp/model-compiler-package/
 RUN python3 -m pip install /tmp/model-compiler-package/*.whl && \
     rm -r /tmp/model-compiler-package ~/.cache/pip
 
-ENV INTEL_CVSDK_DIR=/opt/intel/openvino_$OPENVINO_VERSION
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH=/usr/local/cuda-$CUDA_VERSION/targets/x86_64-linux/lib
 ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$LD_LIBRARY_PATH

@@ -1,9 +1,7 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-import os
 import subprocess  # nosec
-import sys
 import xml.etree.ElementTree as xmlTree  # nosec
 from typing import Any, Dict, List, Mapping, NamedTuple, Optional
 
@@ -101,6 +99,7 @@ class ModelParser(NamedTuple):
                                      data_type=DataType.from_openvino_data_type(data_type).to_tf_data_type(),
                                      format=ModelInput.FORMAT_NONE,  # pylint: disable=no-member
                                      dims=[-1 if dim is None else dim for dim in shape[1:]]))
+        inputs.sort(key=lambda input_i: input_i.name)
         return inputs
 
     def get_outputs(self):
@@ -109,6 +108,7 @@ class ModelParser(NamedTuple):
             outputs.append(ModelOutput(name=name,
                                        data_type=DataType.from_openvino_data_type(data_type).to_tf_data_type(),
                                        dims=[-1 if dim is None else dim for dim in shape[1:]]))
+        outputs.sort(key=lambda output_i: output_i.name)
         return outputs
 
 
@@ -155,32 +155,12 @@ class Config(NamedTuple):
                       saved_model_tags=saved_model_tags.split(',') if saved_model_tags else None)
 
 
-def get_version():
-    version_txt = os.path.join(_acquire_optimizer_base_dir(), 'deployment_tools/model_optimizer/version.txt')
-
-    try:
-        file = open(version_txt)
-    except FileNotFoundError:
-        return 'unknown version'
-
-    with file:
-        return file.readline().rstrip()
-
-
 def execute_optimize_action(params: Dict[str, str]):
     subprocess.run(_args_dict_to_list(params), check=True)  # nosec
 
 
 def _args_dict_to_list(params: Dict[str, str]) -> List[str]:
-    args = [sys.executable, _acquire_optimizer_script_dir(params.pop('script_name'))]
+    args = ['mo']
     for key, value in params.items():
         args.extend(['--' + key] if value is None else ['--' + key, value])
     return args
-
-
-def _acquire_optimizer_script_dir(script_name):
-    return os.path.join(_acquire_optimizer_base_dir(), 'deployment_tools/model_optimizer', script_name)
-
-
-def _acquire_optimizer_base_dir():
-    return os.getenv('INTEL_CVSDK_DIR', '/opt/intel/openvino_2021.4.582')
