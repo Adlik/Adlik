@@ -4,8 +4,8 @@
 from types import ModuleType
 
 from . import caffe_model_file_to_onnx_model, keras_model_file_to_keras_model, keras_model_file_to_tflite_model, \
-    keras_model_to_tf_model, mxnet_model_file_to_onnx_model, onnx_model_file_to_onnx_model,\
-    onnx_model_to_onnx_model_file, onnx_model_to_openvino_model, onnx_model_to_tflite_model, \
+    keras_model_to_tf_model, onnx_model_file_to_onnx_model, onnx_model_to_onnx_model_file, \
+    onnx_model_to_openvino_model, onnx_model_to_tflite_model, \
     paddle_model_file_to_onnx_model, saved_model_file_to_openvino_model, saved_model_file_to_saved_model, \
     saved_model_file_to_tflite_model, saved_model_file_to_tftrt_saved_model, saved_model_to_openvino_model, \
     saved_model_to_tflite_model, tf_frozen_graph_model_file_to_openvino_model, tf_frozen_graph_model_file_to_tf_model, \
@@ -22,7 +22,6 @@ __all__ = [
     'keras_model_file_to_keras_model',
     'keras_model_file_to_tflite_model',
     'keras_model_to_tf_model',
-    'mxnet_model_file_to_onnx_model',  # Need to import mxnet first and then tvm
     'onnx_model_file_to_onnx_model',
     'onnx_model_to_onnx_model_file',
     'onnx_model_to_openvino_model',
