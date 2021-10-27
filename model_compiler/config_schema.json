@@ -9,7 +9,6 @@
         "tensorrt",
         "openvino",
         "tflite",
-        "tvm",
         "tftrt"
       ],
       "description": "target serving model type"
@@ -100,10 +99,6 @@
       },
       "description": "required when the saved model file has multiple tag_sets"
     },
-    "target": {
-      "type": "string",
-      "description": "set the appropriate target according to the running CPU and its optional functions，for example, for most processors {target = \"llvm\"}, for processors with the AVX-512 vector instruction set {target = \"llvm -mcpu=skylake-avx512\"}, required when serving_type is tvm"
-    },
     "model_filename": {
       "type": "string",
       "description": "the path of the model file of the paddlepaddle"
@@ -113,7 +108,7 @@
       "description": "the path of the model params file of the paddlepaddle"
     },
     "opset_version": {
-      "type": "int",
+      "type": "integer",
       "description": "the opset version used by the paddlepaddle model"
     },
     "enable_onnx_checker": {
