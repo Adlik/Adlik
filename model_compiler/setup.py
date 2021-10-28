@@ -65,7 +65,9 @@ setuptools.setup(
         'test-generator==0.1.1',
         'tf2onnx',
         'mxnet',
-        'tornado==6.1'
+        'tornado==6.1',
+        'pycuda<2021.1',
+        'torchvision'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={

@@ -74,15 +74,15 @@ RUN cd /tvm/python && sed -i 's/"scipy"/"scipy==1.5.4"/g' setup.py && \
 
 COPY --from=builder /src/dist/*.whl /tmp/model-compiler-package/
 
-RUN python3 -m pip install /tmp/model-compiler-package/*.whl && \
-    rm -r /tmp/model-compiler-package ~/.cache/pip
-
 ENV INTEL_CVSDK_DIR=/opt/intel/openvino_$OPENVINO_VERSION
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH=/usr/local/cuda-$CUDA_VERSION/targets/x86_64-linux/lib
 ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+
+RUN python3 -m pip install /tmp/model-compiler-package/*.whl && \
+    rm -r /tmp/model-compiler-package ~/.cache/pip
 
 RUN chmod +x /script/run_compiler.sh
 CMD /script/run_compiler.sh

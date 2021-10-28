@@ -5,7 +5,6 @@
 
 from typing import Any, Mapping, NamedTuple, Optional, List, Sequence
 from tempfile import NamedTemporaryFile
-import importlib.util
 import torch
 import onnx
 
@@ -44,13 +43,6 @@ class Config(NamedTuple):
                       input_formats=utilities.get_data_formats(utilities.split_by(env.get('INPUT_FORMATS'), ',')))
 
 
-def _load_module(file_path, name):
-    spec = importlib.util.spec_from_file_location(name=name, location=file_path)
-    module = importlib.util.module_from_spec(spec=spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 @repository.REPOSITORY.register(source_type=TorchModelFile, target_type=OnnxModel, config_type=Config)
 def compile_source(source: TorchModelFile, config: Config) -> OnnxModel:
     dummy_inputs = []
@@ -59,7 +51,7 @@ def compile_source(source: TorchModelFile, config: Config) -> OnnxModel:
         dummy_inputs.append(torch.ones(shape, dtype=config.data_type))
 
     if source.script_path:
-        model_module = _load_module(source.script_path, 'TheModelClass')
+        model_module = utilities.load_module(source.script_path, 'TheModelClass')
         model = model_module.TheModelClass()
         model.load_state_dict(torch.load(source.model_path))
     else:
