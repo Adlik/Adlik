@@ -17,6 +17,7 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
     ```sh
     git clone https://github.com/Adlik/Adlik.git
 
+
     cd Adlik/examples/keras_model
     
     python3 train_model.py
