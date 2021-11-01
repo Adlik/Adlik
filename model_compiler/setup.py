@@ -54,6 +54,7 @@ setuptools.setup(
     install_requires=[
         'future',
         'networkx',
+        'keras==2.6.0',
         'tensorflow==2.6.0',
         'torch',
         'onnx-tf',

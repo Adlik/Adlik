@@ -6,7 +6,6 @@ This is a script for training mnist model.
 """
 import os
 import tensorflow as tf
-import keras
 import numpy as np
 
 
@@ -23,7 +22,7 @@ def process_dataset():
 
 
 def create_model():
-    model = keras.models.Sequential()
+    model = tf.keras.Sequential()
     model.add(tf.keras.layers.Conv2D(32, kernel_size=(3, 3),
                                      activation='relu',
                                      input_shape=(28, 28, 1)))

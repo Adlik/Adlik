@@ -8,24 +8,6 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 def add_all_deps():
     """All Adlik serving external dependencies."""
 
-    # Python rules.
-
-    http_archive(
-        name = "rules_python",
-        sha256 = "64a3c26f95db470c32ad86c924b23a821cd16c3879eed732a7841779a32a60f8",
-        strip_prefix = "rules_python-748aa53d7701e71101dfd15d800e100f6ff8e5d1",
-        urls = ["https://github.com/bazelbuild/rules_python/archive/748aa53d7701e71101dfd15d800e100f6ff8e5d1.tar.gz"],
-    )
-
-    # C++ rules.
-
-    http_archive(
-        name = "rules_cc",
-        sha256 = "e637dc045e70e43b7431fbeacb68d569a84f9fe1cb5879c432aa0855097dce57",
-        strip_prefix = "rules_cc-34ca16f4aa4bf2a5d3e4747229202d6cb630ebab",
-        urls = ["https://github.com/bazelbuild/rules_cc/archive/34ca16f4aa4bf2a5d3e4747229202d6cb630ebab.tar.gz"],
-    )
-
     # Bazel extra actions proto file.
 
     http_file(
@@ -38,10 +20,10 @@ def add_all_deps():
 
     http_archive(
         name = "org_tensorflow",
-        sha256 = "9c94bfec7214853750c7cacebd079348046f246ec0174d01cd36eda375117628",
-        strip_prefix = "tensorflow-582c8d236cb079023657287c318ff26adb239002",
+        sha256 = "70a865814b9d773024126a6ce6fea68fefe907b7ae6f9ac7e656613de93abf87",
+        strip_prefix = "tensorflow-919f693420e35d00c8d0a42100837ae3718f7927",
         urls = [
-            "https://github.com/tensorflow/tensorflow/archive/582c8d236cb079023657287c318ff26adb239002.tar.gz",
+            "https://github.com/tensorflow/tensorflow/archive/919f693420e35d00c8d0a42100837ae3718f7927.tar.gz",
         ],
     )
 
