@@ -5,27 +5,35 @@ from typing import Any, Mapping, NamedTuple, Optional
 
 from . import repository
 from .. import utilities
+from .. import calibrator_torch
 from ..models.irs.onnx_model import OnnxModel
 from ..models.targets.tensorrt_model import TensorRTModel
 
 
 class Config(NamedTuple):
     max_batch_size: int
-    int8_calibrator: Optional[Any] = None  # Real type should be `Optional[tensorrt.IInt8Calibrator]`.
+    calibrator: Optional[Any] = None  # Real type should be `Optional[tensorrt.IInt8Calibrator]`.
     enable_fp16: bool = False
     enable_int8: bool = False
+    calibration_dataset: Optional[str] = None
     enable_strict_types: bool = False
 
     @staticmethod
     def from_json(value: Mapping[str, Any]) -> 'Config':
         return Config(max_batch_size=value['max_batch_size'],
+                      enable_int8=value.get('enable_int8', False),
                       enable_fp16=value.get('enable_fp16', False),
+                      calibrator=value.get('calibrator', None),
+                      calibration_dataset=value.get('calibration_dataset', None),
                       enable_strict_types=value.get('enable_strict_types', False))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
         return Config(max_batch_size=int(env['MAX_BATCH_SIZE']),
+                      enable_int8=bool(int(env.get('ENABLE_INT8', '0'))),
                       enable_fp16=bool(int(env.get('ENABLE_FP16', '0'))),
+                      calibrator=bool(int(env.get('CALIBRATOR', ''))),
+                      calibration_dataset=bool(int(env.get('CALIBRATION_DATASET', ''))),
                       enable_strict_types=bool(int(env.get('ENABLE_STRICT_TYPES', '0'))))
 
 
@@ -72,14 +80,21 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
 
             builder_config.add_optimization_profile(optimization_profile)
 
-        if config.int8_calibrator:
-            builder_config.int8_calibrator = config.int8_calibrator
-
         if config.enable_fp16:
             builder_config.set_flag(tensorrt.BuilderFlag.FP16)
 
         if config.enable_int8:
             builder_config.set_flag(tensorrt.BuilderFlag.INT8)
+
+            if config.calibrator:
+                calibrator_module = utilities.load_module(config.calibrator, 'MyCalibrator')
+                builder_config.int8_calibrator = calibrator_module.MyCalibrator(config.calibration_dataset,
+                                                                                config.max_batch_size)
+            else:
+                builder_config.int8_calibrator = calibrator_torch.MyCalibrator(config.calibration_dataset,
+                                                                               config.max_batch_size,
+                                                                               [network.get_input(i).shape
+                                                                          for i in range(network.num_inputs)])
 
         if config.enable_strict_types:
             builder_config.set_flag(tensorrt.BuilderFlag.STRICT_TYPES)

@@ -2,19 +2,50 @@
 
 if [[ ${CUDA_VERSION} = '10.0' ]]; then
   apt-get update && \
-  apt-get install --no-install-recommends -y cuda-nvrtc-10-0
+  apt-get install --no-install-recommends -y \
+        cuda-cublas-dev-10-0 \
+        cuda-cufft-dev-10-0 \
+        cuda-cupti-10-0 \
+        cuda-curand-dev-10-0 \
+        cuda-cusolver-dev-10-0 \
+        cuda-cusparse-dev-10-0 \
+        cuda-nvml-dev-10-0 \
+        cuda-nvrtc-10-0 \
+        libcudnn7=*+cuda10.0 \
+        libcudnn7-dev=*+cuda10.0 \
+        libnvinfer7=${TENSORRT_VERSION}-1+cuda10.0 \
+        libnvinfer-dev=${TENSORRT_VERSION}-1+cuda10.0 \
+        libnvonnxparsers7=${TENSORRT_VERSION}-1+cuda10.0 \
+        libnvonnxparsers-dev=${TENSORRT_VERSION}-1+cuda10.0
 elif [[ ${CUDA_VERSION} = '10.2' ]]; then
   apt-get update && \
-  apt-get install --no-install-recommends -y cuda-nvrtc-10-2
+  apt-get install --no-install-recommends -y \
+      cuda-cufft-dev-10-2 \
+      cuda-cupti-dev-10-2 \
+      cuda-curand-dev-10-2 \
+      cuda-cusolver-dev-10-2 \
+      cuda-cusparse-dev-10-2 \
+      cuda-nvml-dev-10-2 \
+      cuda-nvrtc-10-2 \
+      libcublas-dev=10.2.*
 elif [[ ${CUDA_VERSION} = '11.0' ]]; then
   apt-get update && \
   apt-get install --no-install-recommends -y \
-  cuda-nvrtc-11-0 \
-  cuda-cudart-dev-11-0 \
-  libcufft-dev-11-0 \
-  libcurand-dev-11-0 \
-  libcusolver-dev-11-0 \
-  libcusparse-dev-11-0
+      cuda-command-line-tools-11-0 \
+      cuda-cupti-dev-11-0 \
+      cuda-nvml-dev-11-0 \
+      cuda-nvrtc-dev-11-0 \
+      libcublas-dev-11-0 \
+      libcudnn8=*+cuda11.0 \
+      libcudnn8-dev=*+cuda11.0 \
+      libcufft-dev-11-0 \
+      libcurand-dev-11-0 \
+      libcusolver-dev-11-0 \
+      libcusparse-dev-11-0 \
+      libnvinfer7=${TENSORRT_VERSION}-1+cuda11.0 \
+      libnvinfer-dev=${TENSORRT_VERSION}-1+cuda11.0 \
+      libnvonnxparsers7=${TENSORRT_VERSION}-1+cuda11.0 \
+      libnvonnxparsers-dev=${TENSORRT_VERSION}-1+cuda11.0
 fi
 
 if [[ ${TENSORRT_VERSION} = 7.0.* ]] ; then

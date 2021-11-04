@@ -89,7 +89,7 @@ class PaddleModelFileTestCase(TestCase):
 
     def test_get_outputs(self):
         self.assertEqual(self.paddle_model.get_outputs(), [
-            ModelOutput(name='save_infer_model/scale_0.tmp_0',
+            ModelOutput(name='linear_1.tmp_1',
                         data_type=tf.float32.as_datatype_enum,
                         dims=[10])
         ])
