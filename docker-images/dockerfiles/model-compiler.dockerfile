@@ -46,31 +46,18 @@ RUN . /etc/os-release && \
 
 RUN . /etc/os-release && \
     echo "deb https://apt.repos.intel.com/openvino/2021 all main\n\
-deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
-deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /" >> /etc/apt/sources.list
+    deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
+    deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /" >> /etc/apt/sources.list
 
 RUN chmod +x /script/tensorrt.sh
 RUN /script/tensorrt.sh
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-        intel-openvino-model-optimizer-"$OPENVINO_VERSION" && \
+    intel-openvino-model-optimizer-"$OPENVINO_VERSION" && \
     apt-get clean && \
     find /var/lib/apt/lists -delete &&\
     ln -s /usr/local/cuda-"$CUDA_VERSION" /usr/local/cuda
-
-RUN apt-get update && \
-    apt-get install -y git python3-dev python3-setuptools gcc libtinfo-dev zlib1g-dev build-essential cmake libedit-dev libxml2-dev llvm
-
-RUN git clone --recursive -b v0.7 https://github.com/apache/tvm.git /tvm && \
-    cd /tvm && mkdir build && cp cmake/config.cmake build && \
-    sed -i 's/set(USE_LLVM OFF)/set(USE_LLVM ON)/g' build/config.cmake && \
-    cd build && cmake .. && make -j4
-
-RUN cd /tvm/python && sed -i 's/"scipy"/"scipy==1.5.4"/g' setup.py && \
-    python3 setup.py bdist_wheel && \
-    python3 -m pip install /tvm/python/dist/tvm-0.7.0-cp36-cp36m-linux_x86_64.whl && \
-    rm -rf /tvm
 
 COPY --from=builder /src/dist/*.whl /tmp/model-compiler-package/
 

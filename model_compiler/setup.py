@@ -64,7 +64,6 @@ setuptools.setup(
         'tensorflow_addons',
         'test-generator==0.1.1',
         'tf2onnx',
-        'mxnet',
         'tornado==6.1',
         'pycuda<2021.1',
         'torchvision'
