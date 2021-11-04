@@ -85,5 +85,8 @@ ENV CPLUS_INCLUDE_PATH=/usr/include/python3.6m
 RUN python3 -m pip install /tmp/model-compiler-package/*.whl && \
     rm -r /tmp/model-compiler-package ~/.cache/pip
 
+RUN python3 -m pip install /tmp/model-compiler-package/*.whl && \
+    rm -r /tmp/model-compiler-package ~/.cache/pip
+
 RUN chmod +x /script/run_compiler.sh
 CMD /script/run_compiler.sh

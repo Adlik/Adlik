@@ -5,7 +5,8 @@ from typing import Any, Mapping, NamedTuple, Optional
 
 from . import repository
 from .. import utilities
-from .. import calibrator_torch
+
+from .. import calibrator
 from ..models.irs.onnx_model import OnnxModel
 from ..models.targets.tensorrt_model import TensorRTModel
 
@@ -91,9 +92,9 @@ def compile_source(source: OnnxModel, config: Config) -> TensorRTModel:
                 builder_config.int8_calibrator = calibrator_module.MyCalibrator(config.calibration_dataset,
                                                                                 config.max_batch_size)
             else:
-                builder_config.int8_calibrator = calibrator_torch.MyCalibrator(config.calibration_dataset,
-                                                                               config.max_batch_size,
-                                                                               [network.get_input(i).shape
+                builder_config.int8_calibrator = calibrator.MyCalibrator(config.calibration_dataset,
+                                                                         config.max_batch_size,
+                                                                         [network.get_input(i).shape
                                                                           for i in range(network.num_inputs)])
 
         if config.enable_strict_types:
