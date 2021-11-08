@@ -1,0 +1,23 @@
+{
+    "model": {
+        "model_name": "mobilenet_v2_1.0_224",
+	"model": "",
+        "weights": ""
+    },
+    "engine": {
+        "type": "simplified",
+        "data_source": ""
+    },
+    "compression": {
+        "algorithms": [
+            {
+                "name": "DefaultQuantization",
+                "params": {
+                    "preset": "performance",
+                    "stat_subset_size": 1
+                }
+            }
+        ]
+    }
+}
+

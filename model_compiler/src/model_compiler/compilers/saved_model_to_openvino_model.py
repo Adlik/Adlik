@@ -10,8 +10,7 @@ from ..openvino_util import Config, execute_optimize_action
 
 
 def _get_optimize_params(input_model, output_dir, config, inputs, outputs):
-    params = {'script_name': 'mo_tf.py',
-              'model_name': 'model',
+    params = {'model_name': 'model',
               'saved_model_dir': input_model,
               'output_dir': output_dir,
               'input': ','.join(item.name.split(':')[0] for item in inputs),

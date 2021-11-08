@@ -52,7 +52,6 @@ setuptools.setup(
     package_dir={'': 'src'},
     package_data={'model_compiler': ['protos/src/*.proto']},
     install_requires=[
-        'defusedxml',
         'future',
         'networkx',
         'tensorflow==2.4.0',
@@ -64,7 +63,11 @@ setuptools.setup(
         'tensorflow_addons',
         'test-generator==0.1.1',
         'tf2onnx',
-        'tornado==6.1'
+        'mxnet',
+        'tornado==6.1',
+        'ruamel.yaml',
+        'openvino-dev',
+        'Cython',
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={

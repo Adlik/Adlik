@@ -5,9 +5,9 @@ import os
 from shutil import copytree
 from tempfile import TemporaryDirectory
 from typing import NamedTuple, Sequence, Tuple
-
+from mo.mo.utils.version import get_version
 from .. import repository
-from ...openvino_util import ModelParser, get_version
+from ...openvino_util import ModelParser
 from ...protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
