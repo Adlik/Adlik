@@ -3,14 +3,8 @@ jobs:
     displayName: Bazel build serving (TensorFlow CPU)
     condition: and(succeeded(), eq(dependencies.BazelBuildServingTensorFlowCheck.outputs['TensorflowBuildCheck.BuildTensorFlow'], 'true'))
     dependsOn: BazelBuildServingTensorFlowCheck
-    strategy:
-        matrix:
-            Linux:
-                vmImage: Ubuntu-18.04
-            macOS:
-                vmImage: macos-latest
     pool:
-        vmImage: $(vmImage)
+        vmImage: Ubuntu-18.04
     timeoutInMinutes: 0
     steps:
       - template: ../steps/install-automake.yml
