@@ -1,14 +1,8 @@
 jobs:
   - job: BazelCoverageTests
     displayName: Bazel coverage tests
-    strategy:
-        matrix:
-            Linux:
-                vmImage: Ubuntu-18.04
-            macOS:
-                vmImage: macos-latest
     pool:
-        vmImage: $(vmImage)
+        vmImage: Ubuntu-18.04
     timeoutInMinutes: 0
     variables:
         disable.coverage.autogenerate: 'true'

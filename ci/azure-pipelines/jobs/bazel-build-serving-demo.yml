@@ -1,14 +1,8 @@
 jobs:
   - job: BazelBuildServingDemo
     displayName: Bazel build serving demo
-    strategy:
-        matrix:
-            Linux:
-                vmImage: Ubuntu-18.04
-            macOS:
-                vmImage: macos-latest
     pool:
-        vmImage: $(vmImage)
+        vmImage: Ubuntu-18.04
     timeoutInMinutes: 0
     steps:
       - task: UsePythonVersion@0
