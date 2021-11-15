@@ -74,7 +74,7 @@ class Config(NamedTuple):
 
 def get_tflite_model(converter: tf.lite.TFLiteConverter, config: Config):
     if config.optimization:
-        converter.optimizations.append(tf.lite.Optimize.DEFAULT)
+        converter.optimizations.add(tf.lite.Optimize.DEFAULT)
 
     converter.representative_dataset = config.representative_dataset
 
@@ -83,7 +83,7 @@ def get_tflite_model(converter: tf.lite.TFLiteConverter, config: Config):
         converter.target_spec.supported_ops.update(config.supported_ops)
 
     if config.supported_types:
-        converter.target_spec.supported_types.extend(config.supported_types)
+        converter.target_spec.supported_types.update(config.supported_types)
 
     converter.inference_input_type = config.inference_input_type
     converter.inference_output_type = config.inference_output_type

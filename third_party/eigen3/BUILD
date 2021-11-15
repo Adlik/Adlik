@@ -22,6 +22,6 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@eigen_archive//:eigen",
+        "@eigen_archive//:eigen3",
     ],
 )

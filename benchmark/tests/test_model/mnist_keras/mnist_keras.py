@@ -5,14 +5,13 @@
 This is a script for training mnist model.
 """
 import os
-
-import keras
+import tensorflow as tf
 import numpy as np
 
 
 def process_dataset():
     # Import the data
-    (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
 
     x_train, x_test = x_train / 255.0, x_test / 255.0
 
@@ -23,17 +22,17 @@ def process_dataset():
 
 
 def create_model():
-    model = keras.models.Sequential()
-    model.add(keras.layers.Conv2D(32, kernel_size=(3, 3),
-                                  activation='relu',
-                                  input_shape=(28, 28, 1)))
-    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
-    model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
-    model.add(keras.layers.Dropout(0.25))
-    model.add(keras.layers.Reshape((9216,)))
-    model.add(keras.layers.Dense(128, activation='relu'))
-    model.add(keras.layers.Dropout(0.5))
-    model.add(keras.layers.Dense(10, activation='softmax'))
+    model = tf.keras.Sequential()
+    model.add(tf.keras.layers.Conv2D(32, kernel_size=(3, 3),
+                                     activation='relu',
+                                     input_shape=(28, 28, 1)))
+    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
+    model.add(tf.keras.layers.Dropout(0.25))
+    model.add(tf.keras.layers.Reshape((9216,)))
+    model.add(tf.keras.layers.Dense(128, activation='relu'))
+    model.add(tf.keras.layers.Dropout(0.5))
+    model.add(tf.keras.layers.Dense(10, activation='softmax'))
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
 

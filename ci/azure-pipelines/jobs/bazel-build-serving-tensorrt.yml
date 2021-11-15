@@ -23,7 +23,8 @@ jobs:
                     -c opt \
                     --disk_cache="$BAZEL_BUILD_CACHE" \
                     --action_env=LIBRARY_PATH=/usr/local/cuda-11.0/lib64/stubs \
-                    --incompatible_use_specific_tool_files=false
+                    --incompatible_use_specific_tool_files=false \
+                    --copt="-Ithird_party/cuda/include"
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts

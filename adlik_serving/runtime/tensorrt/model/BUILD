@@ -9,9 +9,11 @@ tf_cuda_library(
     name = "trt_util",
     srcs = ["trt_util.cc"],
     hdrs = ["trt_util.h"],
+    copts = ["-Ithird_party/cuda/include"],
     deps = [
         "//adlik_serving/framework/domain:dims_list",
         "//adlik_serving/framework/domain:model_config_proto",
+        "//third_party/cuda",
         "@local_config_cuda//cuda:cudart",
         "@org_tensorflow//tensorflow/core:lib",
     ],

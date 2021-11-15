@@ -5,7 +5,7 @@
 Resnet50 model
 """
 
-from keras.applications.resnet50 import ResNet50
+from tensorflow.keras.applications.resnet50 import ResNet50
 import os
 
 

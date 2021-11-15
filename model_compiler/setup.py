@@ -12,7 +12,7 @@ import setuptools
 from setuptools.command.build_py import build_py
 
 
-_TYPES_PROTO_URL = 'https://github.com/tensorflow/tensorflow/raw/v2.4.0/tensorflow/core/framework/types.proto'
+_TYPES_PROTO_URL = 'https://github.com/tensorflow/tensorflow/raw/v2.6.0/tensorflow/core/framework/types.proto'
 _PROJECT_PATH = path.dirname(path.abspath(__file__))
 
 
@@ -54,7 +54,8 @@ setuptools.setup(
     install_requires=[
         'future',
         'networkx',
-        'tensorflow==2.4.0',
+        'keras==2.6.0',
+        'tensorflow==2.6.0',
         'torch',
         'onnx-tf',
         'onnx-caffe2',
