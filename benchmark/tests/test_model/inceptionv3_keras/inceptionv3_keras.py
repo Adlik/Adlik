@@ -5,7 +5,7 @@
 InceptionV3 model
 """
 
-from keras.applications.inception_v3 import InceptionV3
+from tensorflow.keras.applications.inception_v3 import InceptionV3
 import os
 
 

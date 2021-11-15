@@ -13,12 +13,12 @@ _VERSION = '0.0.0'
 
 _REQUIRED_PACKAGES = [
     'astroid==2.5.3',
-    'h5py<3',
-    'keras==2.4.0',
+    'h5py==3.1.0',
+    'keras==2.6.0',
     'onnx==1.7.0',
     'torch==1.4.0',
     'requests',
-    'tensorflow==2.4.0',
+    'tensorflow==2.6.0',
     'jsonschema==3.2.0'
 ]
 
