@@ -55,7 +55,7 @@ setuptools.setup(
         'future',
         'networkx',
         'keras==2.6.0',
-        'tensorflow==2.6.0',
+        'tensorflow==2.6.1',
         'torch',
         'onnx-tf',
         'onnx-caffe2',
