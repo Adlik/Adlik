@@ -67,6 +67,8 @@ setuptools.setup(
         'ruamel.yaml',
         'openvino-dev',
         'Cython',
+        'pycuda<2021.1',
+        'torchvision'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={

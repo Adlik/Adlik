@@ -15,6 +15,11 @@ jobs:
         displayName: Install Protocol Buffers
       - script: sudo apt-get install --no-install-recommends -y libgl1 libgtk-3-0
         displayName: Install openvino deps
+      - script:
+            export PATH=/usr/local/nvidia/bin:/usr/local/cuda-11.0/bin:${PATH}
+            export LD_LIBRARY_PATH=/usr/local/cuda-11.0/targets/x86_64-linux/lib
+            export CPLUS_INCLUDE_PATH=/usr/include/python3.6m
+        displayName: Set environment variables
       - script: tox -e py36-cpu
         displayName: Run tox
         workingDirectory: model_compiler
