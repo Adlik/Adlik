@@ -9,7 +9,7 @@ import sys
 
 
 def _echo_var(value):
-    print(f'##vso[task.setvariable variable=BuildTensorFlow;isOutput=true]{value}')
+    print(f'##vso[task.setvariable variable=BuildJobs;isOutput=true]{value}')
 
 
 def _file_is_related_to_build(file_path):

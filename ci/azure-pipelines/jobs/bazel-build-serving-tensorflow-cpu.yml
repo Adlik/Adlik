@@ -1,8 +1,8 @@
 jobs:
   - job: BazelBuildServingTensorFlowCPU
     displayName: Bazel build serving (TensorFlow CPU)
-    condition: and(succeeded(), eq(dependencies.BazelBuildServingTensorFlowCheck.outputs['TensorflowBuildCheck.BuildTensorFlow'], 'true'))
-    dependsOn: BazelBuildServingTensorFlowCheck
+    condition: and(succeeded(), eq(dependencies.BazelLongTimeBuildCheck.outputs['BuildCheck.BuildJobs'], 'true'))
+    dependsOn: BazelLongTimeBuildCheck
     pool:
         vmImage: Ubuntu-18.04
     timeoutInMinutes: 0

@@ -12,7 +12,6 @@ stages:
     - template: ci/azure-pipelines/jobs/bazel-build-serving-demo.yml
     - template: ci/azure-pipelines/jobs/bazel-build-serving-ml.yml
     - template: ci/azure-pipelines/jobs/bazel-build-serving-openvino.yml
-    - template: ci/azure-pipelines/jobs/bazel-build-serving-paddle.yml
     - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-lite-cpu.yml
     - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorrt.yml
     - template: ci/azure-pipelines/jobs/bazel-build-serving-tvm.yml
@@ -29,6 +28,7 @@ stages:
   dependsOn: Stage1
   condition: succeeded('Stage1')
   jobs:
-    - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-checks.yml
+    - template: ci/azure-pipelines/jobs/bazel-long-time-build-check.yml
+    - template: ci/azure-pipelines/jobs/bazel-build-serving-paddle.yml
     - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-cpu.yml
     # - template: ci/azure-pipelines/jobs/bazel-build-serving-tensorflow-gpu.yml

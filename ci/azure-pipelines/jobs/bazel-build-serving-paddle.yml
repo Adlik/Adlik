@@ -1,6 +1,8 @@
 jobs:
   - job: BazelBuildServingPaddle
     displayName: Bazel build serving (Paddle)
+    condition: and(succeeded(), eq(dependencies.BazelLongTimeBuildCheck.outputs['BuildCheck.BuildJobs'], 'true'))
+    dependsOn: BazelLongTimeBuildCheck
     pool:
         vmImage: Ubuntu-18.04
     timeoutInMinutes: 0
@@ -19,7 +21,9 @@ jobs:
             ci/checks/bazel-build-serving.py \
                 --config=paddle \
                 -c opt \
-                --disk_cache="$BAZEL_BUILD_CACHE" --discard_analysis_cache --local_cpu_resources=1
+                --disk_cache="$BAZEL_BUILD_CACHE" \
+                --discard_analysis_cache \
+                --local_cpu_resources=1
         displayName: Bazel build serving
       - task: PublishBuildArtifacts@1
         displayName: Publish build artifacts
