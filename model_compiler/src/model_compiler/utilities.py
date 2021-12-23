@@ -7,6 +7,7 @@ import time
 import ast
 import requests
 import tensorflow as tf
+import importlib.util
 
 from .models.data_format import DataFormat
 
@@ -28,6 +29,13 @@ def create_named_tuple(type_class, kwargs):
             pass
 
     return type_class(**filtered_args)
+
+
+def load_module(file_path, name):
+    spec = importlib.util.spec_from_file_location(name=name, location=file_path)
+    module = importlib.util.module_from_spec(spec=spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def map_optional(value: Optional[_Type1], func: Callable[[_Type1], _Type2]) -> Optional[_Type2]:

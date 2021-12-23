@@ -56,6 +56,7 @@ setuptools.setup(
         'networkx',
         'tensorflow==2.6.2',
         'torch',
+        'torchvision',
         'onnx-tf',
         'onnx-caffe2',
         'paddlepaddle',
@@ -66,7 +67,7 @@ setuptools.setup(
         'tornado==6.1',
         'ruamel.yaml',
         'openvino-dev',
-        'Cython',
+        'Cython'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={
