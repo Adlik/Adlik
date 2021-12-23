@@ -6,6 +6,8 @@ steps:
         sudo apt-add-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /"
         sudo apt-add-repository -u "deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /"
         sudo apt-get install --no-install-recommends -y \
+            cuda-command-line-tools-11-0 \
+            cuda-compat-11-0 \
             cuda-cupti-dev-11-0 \
             cuda-nvml-dev-11-0 \
             cuda-nvrtc-11-0 \
