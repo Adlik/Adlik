@@ -46,6 +46,7 @@ namespace serving {
                                                       const ModelOperateRequest* req,
                                                       ModelOperateResponse* rsp) {
   auto status = ROLE(ModelOperateImpl).activateModel(*req, *rsp);
+  return toGrpcStatus(status);
 }
 ::grpc::Status GrpcModelOperateService::queryModel(::grpc::ServerContext* ctxt,
                                                    const ModelOperateRequest* req,
