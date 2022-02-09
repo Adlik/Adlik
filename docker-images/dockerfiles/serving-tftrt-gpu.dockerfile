@@ -3,7 +3,13 @@ ARG UBUNTU_VERSION
 # Base.
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
+
 COPY script/run_server.sh /script/run_server.sh
+
+
+# COPY docker-images/dockerfiles/sources.list /etc/apt/sources.list
+
+
 
 RUN . /etc/os-release && \
     apt-get update && \
@@ -11,6 +17,8 @@ RUN . /etc/os-release && \
     wget "https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/7fa2af80.pub" -O /etc/apt/trusted.gpg.d/cuda.asc && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
+
+COPY examples/keras_model/sources.list /etc/apt/sources.list
 
 RUN . /etc/os-release && \
     echo "deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
@@ -50,9 +58,10 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        git \
         automake \
         libpython2.7-stdlib \
-        bazel \
+        bazel-4.2.2 \
         libpython3-dev \
         libtool \
         make \
@@ -69,10 +78,11 @@ WORKDIR /src
 
 RUN env PYTHON_BIN_PATH=/usr/bin/python3 TF_NEED_TENSORRT=1\
         TF_CUDA_VERSION=11.0 \
-        bazel build //adlik_serving \
+        bazel-4.2.2 build //adlik_serving --jobs=3 \
          --config=tensorflow-tensorrt \
          -c opt \
          --incompatible_use_specific_tool_files=false
+
 
 # Runtime.
 

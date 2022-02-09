@@ -25,8 +25,9 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        git \
         automake \
-        bazel \
+        bazel-4.2.2 \
         libpython2.7-stdlib \
         libpython3-dev \
         libtool \
@@ -43,7 +44,7 @@ COPY . /src
 WORKDIR /src
 
 RUN env PYTHON_BIN_PATH=/usr/bin/python3 \
-        bazel build --config=tensorflow-lite-cpu -c opt //adlik_serving
+        bazel-4.2.2 build --config=tensorflow-lite-cpu -c opt //adlik_serving
 
 # Runtime.
 

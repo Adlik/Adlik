@@ -55,7 +55,7 @@ RUN apt-get update && \
         git \
         automake \
         libpython2.7-stdlib \
-        bazel \
+        bazel-4.2.2 \
         libpython3-dev \
         libtool \
         make \
@@ -72,7 +72,7 @@ WORKDIR /src
 
 RUN env PYTHON_BIN_PATH=/usr/bin/python3 TF_NEED_TENSORRT=1\
         TF_CUDA_VERSION=11.0 \
-        bazel build //adlik_serving \
+        bazel-4.2.2 build //adlik_serving --jobs=3 \
          --config=tensorflow-gpu \
          -c opt \
          --incompatible_use_specific_tool_files=false

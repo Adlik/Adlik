@@ -41,8 +41,9 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        git \
         automake \
-        bazel \
+        bazel-4.2.2 \
         libpython3-dev \
         libtool \
         make \
@@ -59,7 +60,7 @@ WORKDIR /src
 RUN env INTEL_CVSDK_DIR="/opt/intel/openvino_$OPENVINO_VERSION" \
         InferenceEngine_DIR="/opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/inference_engine/share" \
         PYTHON_BIN_PATH=/usr/bin/python3 \
-        bazel build --config=openvino -c opt //adlik_serving
+        bazel-4.2.2 build --config=openvino -c opt //adlik_serving
 
 # Runtime.
 

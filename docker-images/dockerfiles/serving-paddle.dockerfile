@@ -30,7 +30,7 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         automake \
-        bazel \
+        bazel-4.2.2 \
         cmake \
         git \
         libpython2.7-stdlib \
@@ -54,7 +54,7 @@ COPY . /src
 WORKDIR /src
 
 RUN env PYTHON_BIN_PATH=/usr/bin/python3 \
-        bazel build --config=paddle -c opt //adlik_serving \
+        bazel-4.2.2 build --config=paddle -c opt //adlik_serving \
         --action_env=http_proxy --action_env=https_proxy
 
 RUN mkdir -p /tmp/lib && \
