@@ -5,6 +5,13 @@ load("//adlik_serving:add_deps.bzl", "add_all_deps")
 
 add_all_deps()
 
+load(
+    "@build_bazel_rules_apple//apple:repositories.bzl",
+    "apple_rules_dependencies",
+)
+
+apple_rules_dependencies()
+
 load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
 
 tf_workspace3()
