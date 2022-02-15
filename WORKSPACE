@@ -5,6 +5,15 @@ load("//adlik_serving:add_deps.bzl", "add_all_deps")
 
 add_all_deps()
 
+# This apple rule is added to fix the following issue: https://github.com/bazelbuild/bazel/issues/13811
+# When upgrade TensorFlow to v2.8.0, try to delete this.
+load(
+    "@build_bazel_rules_apple//apple:repositories.bzl",
+    "apple_rules_dependencies",
+)
+
+apple_rules_dependencies()
+
 load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
 
 tf_workspace3()
@@ -24,14 +33,6 @@ tf_workspace0()
 load("//adlik_serving:workspace.bzl", "adlik_serving_workspace")
 
 adlik_serving_workspace()
-
-load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
-
-grpc_deps()
-
-load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
-
-grpc_extra_deps()
 
 load("@org_tensorflow//third_party/googleapis:repository_rules.bzl", "config_googleapis")
 
