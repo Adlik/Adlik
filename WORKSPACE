@@ -5,6 +5,8 @@ load("//adlik_serving:add_deps.bzl", "add_all_deps")
 
 add_all_deps()
 
+# This apple rule is added to fix the following issue: https://github.com/bazelbuild/bazel/issues/13811
+# When upgrade TensorFlow to v2.8.0, try to delete this.
 load(
     "@build_bazel_rules_apple//apple:repositories.bzl",
     "apple_rules_dependencies",

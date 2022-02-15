@@ -27,16 +27,6 @@ def add_all_deps():
         ],
     )
 
-    http_archive(
-        name = "io_bazel_rules_closure",
-        sha256 = "5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
-        strip_prefix = "rules_closure-308b05b2419edb5c8ee0471b67a40403df940149",
-        urls = [
-            "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
-            "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
-        ],
-    )
-
     # Xunit.
 
     http_archive(
@@ -79,6 +69,8 @@ def add_all_deps():
         build_file = str(Label("//third_party/paddle:BUILD")),
     )
 
+    # This archive is added to fix the following issue: https://github.com/bazelbuild/bazel/issues/13811
+    # When upgrade TensorFlow to v2.8.0, try to delete this.
     http_archive(
         name = "build_bazel_rules_apple",
         sha256 = "0052d452af7742c8f3a4e0929763388a66403de363775db7e90adecb2ba4944b",
