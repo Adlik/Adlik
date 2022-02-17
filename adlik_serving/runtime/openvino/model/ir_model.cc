@@ -148,7 +148,6 @@ tensorflow::Status PluginLoader::mergeInputs(MyBatch& batch) {
           }
           return copyBuffer2Blob(content, inputPtr, copyByteSize, offsetByteSize);
         }
-        return false;
       }
       return false;
     };
