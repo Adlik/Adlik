@@ -11,7 +11,8 @@ from . import caffe_model_file_to_onnx_model, keras_model_file_to_keras_model, k
     saved_model_to_tflite_model, tf_frozen_graph_model_file_to_openvino_model, tf_frozen_graph_model_file_to_tf_model, \
     tf_frozen_graph_model_to_onnx_model, tf_model_file_to_tf_model, tf_model_file_to_onnx_model, \
     tf_model_to_saved_model, tf_model_to_tf_frozen_graph_model, torch_model_file_to_onnx_model, \
-    paddle_model_file_to_paddle_model, tf_model_file_to_openvino_model
+    paddle_model_file_to_paddle_model, tf_model_file_to_openvino_model, \
+    openvino_model_file_to_openvino_model
 
 try:
     from . import onnx_model_to_tensorrt_model
@@ -27,6 +28,7 @@ __all__ = [
     'onnx_model_to_onnx_model_file',
     'onnx_model_to_openvino_model',
     'onnx_model_to_tflite_model',
+    'openvino_model_file_to_openvino_model',
     'paddle_model_file_to_onnx_model',
     'saved_model_file_to_openvino_model',
     'saved_model_file_to_saved_model',
