@@ -18,6 +18,8 @@ deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(ec
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        cuda-nvprune-11-0 \
+        cuda-nvtx-11-0 \
         cuda-cupti-dev-11-0 \
         libcublas-dev-11-0 \
         libcudnn8=*+cuda11.0 \
@@ -50,6 +52,7 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        git \
         automake \
         libpython2.7-stdlib \
         bazel \

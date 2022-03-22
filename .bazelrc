@@ -15,17 +15,15 @@ build:tensorflow-cpu --define=runtime=tensorflow
 
 # GPU.
 
-build:using_cuda --crosstool_top=@local_config_cuda//crosstool:toolchain
-build:using_cuda --define=using_cuda=true
-build:using_cuda --define=using_cuda_nvcc=true
-build:using_cuda --action_env=TF_NEED_CUDA=1
-build:using_cuda --action_env=TF_CUDA_COMPUTE_CAPABILITIES=7.0
+build:cuda --action_env=TF_NEED_CUDA=1
+build:cuda --crosstool_top=@local_config_cuda//crosstool:toolchain
+build:cuda --@local_config_cuda//:enable_cuda
+build:cuda --action_env=TF_CUDA_COMPUTE_CAPABILITIES=7.0
 
 # TensorFlow (GPU).
 
 build:tensorflow-gpu --define=runtime=tensorflow
-build:tensorflow-gpu --define=tensorflow_enable_mlir_generated_gpu_kernels=1
-build:tensorflow-gpu --config=using_cuda
+build:tensorflow-gpu --config=cuda
 build:tensorflow-gpu --copt=-DNDEBUG # https://github.com/tensorflow/tensorflow/issues/22766
 
 # TensorFlow Lite (CPU).
@@ -41,13 +39,13 @@ build:aarch64 --cpu=aarch64
 # TensorRT.
 
 build:tensorrt --define=runtime=tensorrt
-build:tensorrt --config=using_cuda
+build:tensorrt --config=cuda
 
 #Tensorflow Tensorrt (GPU).
 
 build:tensorflow-tensorrt --define=runtime=tensorflow-tensorrt
 build:tensorflow-tensorrt --define=tensorflow_enable_mlir_generated_gpu_kernels=1
-build:tensorflow-tensorrt --config=using_cuda
+build:tensorflow-tensorrt --config=cuda
 build:tensorflow-tensorrt --action_env=TF_NEED_TENSORRT=1
 
 # ML runtime.
