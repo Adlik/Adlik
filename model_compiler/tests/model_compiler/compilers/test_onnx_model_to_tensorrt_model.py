@@ -76,7 +76,7 @@ def _make_onnx_model(func, batch_size_1, batch_size_2):
 
 
 def _make_resnet50_onnx_model_file(file_path):
-    dummy_input = Variable(torch.randn(1, 3, 224, 224)).to(torch.device('cpu'))
+    dummy_input = Variable(torch.randn(1, 3, 224, 224)).to(torch.device('cpu'))  # pylint:disable=no-member
     model = torchvision.models.resnet50(pretrained=True)
     resnet50_onnx_model_path = os.path.join(file_path, 'model', 'resnet50.onnx')
     os.makedirs(os.path.dirname(resnet50_onnx_model_path), exist_ok=True)
