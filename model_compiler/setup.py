@@ -57,7 +57,7 @@ setuptools.setup(
         'tensorflow==2.6.2',
         'torch',
         'torchvision',
-        'onnx-tf',
+        'onnx-tf==1.9.0',
         'onnx-caffe2',
         'paddlepaddle',
         'paddle2onnx',
