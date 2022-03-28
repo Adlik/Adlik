@@ -5,9 +5,9 @@ from typing import Callable, List, Optional, TypeVar
 
 import time
 import ast
+import importlib.util
 import requests
 import tensorflow as tf
-import importlib.util
 
 from .models.data_format import DataFormat
 

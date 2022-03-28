@@ -4,11 +4,11 @@
 from unittest import TestCase
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 
+import os
 from torch.autograd import Variable
 import torch.onnx
 import torch
 import torchvision
-import os
 
 import pytest
 import tensorflow as tf
