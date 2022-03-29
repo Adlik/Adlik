@@ -39,6 +39,8 @@ RUN . /etc/os-release && \
         iwyu \
         libclang-common-5.0-dev \
         libclang-common-6.0-dev \
+        cuda-nvprune-11-0 \
+        cuda-nvtx-11-0 \
         cuda-command-line-tools-11-0 \
         cuda-compat-11-0 \
         libcublas-dev-11-0 \

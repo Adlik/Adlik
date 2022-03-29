@@ -246,6 +246,8 @@ Assume building with CUDA version 11.0.
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
+   - `cuda-nvprune-11-0`
+   - `cuda-nvtx-11-0`
    - `cuda-cupti-dev-11-0`
    - `libcublas-dev-11-0`
    - `libcudnn8=*+cuda11.0`
