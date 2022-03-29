@@ -57,7 +57,7 @@ setuptools.setup(
         'tensorflow==2.6.2',
         'torch',
         'torchvision',
-        'onnx-tf',
+        'onnx-tf==1.9.0',
         'onnx-caffe2',
         'paddlepaddle',
         'paddle2onnx',
@@ -66,7 +66,7 @@ setuptools.setup(
         'tf2onnx',
         'tornado==6.1',
         'ruamel.yaml',
-        'openvino-dev',
+        'openvino-dev==2021.4.2',
         'Cython'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
