@@ -41,6 +41,7 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        git \
         automake \
         libpython2.7-stdlib \
         bazel \
@@ -64,7 +65,9 @@ RUN env PYTHON_BIN_PATH=/usr/bin/python3 \
          --config=tensorrt \
          -c opt \
          --action_env=LIBRARY_PATH=/usr/local/cuda-${CUDA_VERSION}/lib64/stubs \
-         --incompatible_use_specific_tool_files=false
+         --incompatible_use_specific_tool_files=false \
+         --copt="-Ithird_party/cuda/include"
+
 
 # Runtime.
 

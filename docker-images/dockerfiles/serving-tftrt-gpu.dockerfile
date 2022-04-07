@@ -4,13 +4,13 @@ ARG UBUNTU_VERSION
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
 COPY script/run_server.sh /script/run_server.sh
-
 RUN . /etc/os-release && \
     apt-get update && \
     apt-get install --no-install-recommends -y wget ca-certificates && \
     wget "https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/7fa2af80.pub" -O /etc/apt/trusted.gpg.d/cuda.asc && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
+
 
 RUN . /etc/os-release && \
     echo "deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
@@ -50,6 +50,7 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        git \
         automake \
         libpython2.7-stdlib \
         bazel \
