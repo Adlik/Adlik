@@ -44,8 +44,8 @@ class _Net(oneflow.nn.Module):
             oneflow.nn.Linear(30, 5)
             )
 
-    def forward(self, net):
-        return self.linear(net)
+    def forward(self, *args, **kwargs):
+        return self.linear(*args, **kwargs)
 
 
 def get_oneflow_model():
@@ -72,8 +72,8 @@ class CompileSourceTestCase(TestCase):
                               "        self.linear = oneflow.nn.Sequential(\n"
                               "            oneflow.nn.Linear(10, 30),\n"
                               "            oneflow.nn.Linear(30, 5))\n\n"
-                              "    def forward(self, net):\n"
-                              "        return self.linear(net)\n"
+                              "    def forward(self, *args, **kwargs):\n"
+                              "        return self.linear(*args, **kwargs)\n"
                               )
             script_path.seek(0)
 

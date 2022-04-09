@@ -45,8 +45,8 @@ def compile_source(source: OneFlowModelFile, config: Config) -> OnnxModel:
             super().__init__()
             self.model = eager_model
 
-        def build(self, x):
-            return self.model(x)
+        def build(self, *args, **kwargs):
+            return self.model(*args, **kwargs)
 
     dummy_inputs = []
     for shape in config.input_shapes:
