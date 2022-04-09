@@ -68,7 +68,7 @@ setuptools.setup(
         'ruamel.yaml',
         'openvino-dev==2021.4.2',
         'Cython',
-        'oneflow',
+        'oneflow==0.7.0',
         'oneflow_onnx'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},

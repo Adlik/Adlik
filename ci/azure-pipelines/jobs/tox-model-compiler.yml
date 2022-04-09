@@ -16,6 +16,6 @@ jobs:
       - script: sudo apt-get install --no-install-recommends -y libgl1 libgtk-3-0
         displayName: Install openvino deps
         # These env variables are used for building pycuda
-      - script: env C_INCLUDE_PATH=/usr/local/cuda-11.0/include:${C_INCLUDE_PATH} PATH=/usr/local/cuda-11.0/bin:${PATH} tox -e py36-cpu
+      - script: env C_INCLUDE_PATH=/usr/local/cuda-11.0/include:${C_INCLUDE_PATH} PATH=/usr/local/cuda-11.0/bin:${PATH} PIP_FIND_LINKS='https://release.oneflow.info/' tox -e py36-cpu
         displayName: Run tox
         workingDirectory: model_compiler
