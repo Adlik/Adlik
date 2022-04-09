@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from os import path
-from typing import Any, Mapping, NamedTuple
+from typing import Mapping, NamedTuple
 from .. import repository
 
 
@@ -13,21 +13,21 @@ class OneFlowModelFile(NamedTuple):
 
     @staticmethod
     def from_json(value: Mapping[str, str]) -> 'OneFlowModelFile':
-        return OneFlowModelFile(model_path=value['input_model'], script_path=value.get('script_path'))
+        return OneFlowModelFile(model_path=value['input_model'], script_path=value['script_path'])
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'OneFlowModelFile':
-        return OneFlowModelFile(model_path=env['ONEFLOW_PATH'], script_path=env.get('SCRIPT_PATH'))
+        return OneFlowModelFile(model_path=env['ONEFLOW_PATH'], script_path=env['SCRIPT_PATH'])
 
     @staticmethod
-    def accepts_kwargs(kwargs: Mapping[str, Any]) -> bool:
+    def accepts_kwargs(kwargs: Mapping[str, str]) -> bool:
         input_model = kwargs.get('model_path')
         input_script = kwargs.get('script_path')
         return isinstance(input_model, str) and path.isdir(input_model) and \
             isinstance(input_script, str) and path.isfile(input_script)
 
     @staticmethod
-    def accepts_json(value: Mapping[str, Any]) -> bool:
+    def accepts_json(value: Mapping[str, str]) -> bool:
         input_model = value.get('input_model')
         input_script = value.get('script_path')
         return isinstance(input_model, str) and path.isdir(input_model) and \
