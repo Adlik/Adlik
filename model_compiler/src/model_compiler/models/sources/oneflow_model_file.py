@@ -12,7 +12,7 @@ class OneFlowModelFile(NamedTuple):
     script_path: str
 
     @staticmethod
-    def from_json(value: Mapping[str, Any]) -> 'OneFlowModelFile':
+    def from_json(value: Mapping[str, str]) -> 'OneFlowModelFile':
         return OneFlowModelFile(model_path=value['input_model'], script_path=value.get('script_path'))
 
     @staticmethod
