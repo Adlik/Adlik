@@ -69,7 +69,10 @@ setuptools.setup(
         'openvino-dev==2021.4.2',
         'Cython',
         'oneflow==0.7.0',
-        'oneflow_onnx'
+        'oneflow_onnx',
+        'onnxruntime',
+        'onnxoptimizer',
+        'onnx-simplifier'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={
