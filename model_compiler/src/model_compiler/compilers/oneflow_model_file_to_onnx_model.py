@@ -4,6 +4,7 @@
 # pylint: disable=no-member
 
 from typing import Any, Mapping, NamedTuple, Optional, List, Sequence
+from tempfile import TemporaryDirectory, NamedTemporaryFile
 import oneflow as flow
 import oneflow.nn as nn
 from oneflow_onnx.oneflow2onnx.util import convert_to_onnx_and_check
@@ -60,14 +61,14 @@ def compile_source(source: OneFlowModelFile, config: Config) -> OnnxModel:
     model_graph = Graph(model)
     model_graph(*dummy_inputs)
 
-    tmpdirname = 'temp'
-    flow.save(model.state_dict(), tmpdirname)
-    convert_to_onnx_and_check(model_graph,
-                              flow_weight_dir=tmpdirname,
-                              onnx_model_path=".",
-                              print_outlier=False)
+    with TemporaryDirectory() as tmpdirname, NamedTemporaryFile(mode='w+', suffix='.onnx') as model_file:
+        flow.save(model.state_dict(), tmpdirname)
+        convert_to_onnx_and_check(model_graph,
+                                  flow_weight_dir=tmpdirname,
+                                  onnx_model_path=".",
+                                  print_outlier=False)
+        onnx_model = onnx.load(model_file.name)
 
-    onnx_model = onnx.load('model.onnx')
     onnx.checker.check_model(onnx_model)
     graph = onnx_model.graph
     return OnnxModel(model_proto=onnx_model,
