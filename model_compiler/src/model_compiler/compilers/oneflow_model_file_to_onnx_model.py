@@ -55,7 +55,7 @@ def compile_source(source: OneFlowModelFile, config: Config) -> OnnxModel:
     for shape in config.input_shapes:
         shape.insert(0, config.max_batch_size)
         dummy_inputs.append(flow.ones(shape, dtype=config.data_type))
-    
+
     print('1.2')
     model_module = utilities.load_module(source.script_path, 'Model')
     model = model_module.Model()
@@ -63,7 +63,7 @@ def compile_source(source: OneFlowModelFile, config: Config) -> OnnxModel:
     model.eval()
     model_graph = Graph(model)
     model_graph(*dummy_inputs)
-    
+
     print('1.3')
     with TemporaryDirectory() as tmpdirname, TemporaryDirectory() as modeldirname:
         print('1.3.1')
