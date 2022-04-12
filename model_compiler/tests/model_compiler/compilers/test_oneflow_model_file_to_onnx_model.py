@@ -3,13 +3,10 @@
 
 # pylint: disable=no-member
 
-from tempfile import NamedTemporaryFile
 from unittest import TestCase
 import oneflow
 from model_compiler.models.data_format import DataFormat
 from model_compiler.compilers.oneflow_model_file_to_onnx_model import Config
-import model_compiler.compilers.oneflow_model_file_to_onnx_model as compiler
-from model_compiler.models.sources.oneflow_model_file import OneFlowModelFile
 
 
 class ConfigTestCase(TestCase):
