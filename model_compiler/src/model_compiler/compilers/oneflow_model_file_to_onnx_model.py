@@ -5,11 +5,11 @@
 
 from typing import Any, Mapping, NamedTuple, Optional, List, Sequence
 from tempfile import TemporaryDirectory
+import os
 import oneflow as flow
 import oneflow.nn as nn
 from oneflow_onnx.oneflow2onnx.util import convert_to_onnx_and_check
 import onnx
-import os
 
 from . import repository
 from .. import utilities
