@@ -3,6 +3,7 @@
 
 # pylint: disable=no-member
 
+from tempfile import NamedTemporaryFile
 from unittest import TestCase
 import oneflow
 from model_compiler.models.data_format import DataFormat
@@ -61,10 +62,13 @@ def get_oneflow_model():
 class CompileSourceTestCase(TestCase):
 
     def test_compile(self):
-        with open('model.py', 'w+') as script_path:
+        with NamedTemporaryFile('w+', suffix='.py') as script_file:
+            print('1')
             model = get_oneflow_model()
+            print('2')
             oneflow.save(model.state_dict(), 'model')
-            script_path.write("import oneflow\n"
+            print('3')
+            script_file.write("import oneflow\n"
                               "\n\n"
                               "class Model(oneflow.nn.Module):\n"
                               "    def __init__(self):\n"
@@ -75,13 +79,15 @@ class CompileSourceTestCase(TestCase):
                               "    def forward(self, *args, **kwargs):\n"
                               "        return self.linear(*args, **kwargs)\n"
                               )
-            script_path.seek(0)
+            script_file.seek(0)
 
+            print('4')
             config = Config(input_shapes=[[10]],
                             data_type=oneflow.float,
                             max_batch_size=2,
                             input_formats=[DataFormat.CHANNELS_LAST])
-            compiled = compiler.compile_source(OneFlowModelFile(model_path='model', script_path=script_path.name),
+            print('5')
+            compiled = compiler.compile_source(OneFlowModelFile(model_path='model', script_path=script_file.name),
                                                config)
-
+        print('6')
         self.assertEqual(compiled.input_data_formats, [DataFormat.CHANNELS_LAST])
