@@ -7,8 +7,8 @@ from . import keras_model_file, oneflow_model_file, onnx_model_file, openvino_mo
 __all__ = [
     'caffe_model_file',
     'keras_model_file',
-    'onnx_model_file',
     'oneflow_model_file',
+    'onnx_model_file',
     'openvino_model_file',
     'paddle_model_file',
     'saved_model_file',
