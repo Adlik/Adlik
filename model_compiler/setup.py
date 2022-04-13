@@ -68,7 +68,7 @@ setuptools.setup(
         'ruamel.yaml',
         'openvino-dev==2021.4.2',
         'Cython',
-        'oneflow==0.7.0',
+        'oneflow==0.7.0+cpu',
         'oneflow_onnx',
         'onnxruntime',
         'onnxoptimizer',
