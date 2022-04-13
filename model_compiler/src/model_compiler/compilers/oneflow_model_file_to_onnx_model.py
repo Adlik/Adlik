@@ -50,13 +50,11 @@ def compile_source(source: OneFlowModelFile, config: Config) -> OnnxModel:
         def build(self, *args, **kwargs):
             return self.model(*args, **kwargs)
 
-    print('1.1')
     dummy_inputs = []
     for shape in config.input_shapes:
         shape.insert(0, config.max_batch_size)
         dummy_inputs.append(flow.ones(shape, dtype=config.data_type))
 
-    print('1.2')
     model_module = utilities.load_module(source.script_path, 'Model')
     model = model_module.Model()
     model.load_state_dict(flow.load(source.model_path))
@@ -64,21 +62,15 @@ def compile_source(source: OneFlowModelFile, config: Config) -> OnnxModel:
     model_graph = Graph(model)
     model_graph(*dummy_inputs)
 
-    print('1.3')
     with TemporaryDirectory() as tmpdirname, TemporaryDirectory() as modeldirname:
-        print('1.3.1')
         flow.save(model.state_dict(), tmpdirname)
-        print('1.3.2')
         convert_to_onnx_and_check(model_graph,
                                   flow_weight_dir=tmpdirname,
                                   onnx_model_path=modeldirname,
                                   print_outlier=False)
-        print('1.3.3')
         onnx_model = onnx.load(os.path.join(modeldirname, 'model.onnx'))
 
-    print('1.4')
     onnx.checker.check_model(onnx_model)
-    print('1.5')
     graph = onnx_model.graph
     return OnnxModel(model_proto=onnx_model,
                      input_data_formats=utilities.get_onnx_model_input_data_formats(graph, config.input_formats))

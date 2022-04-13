@@ -62,13 +62,9 @@ def get_oneflow_model():
 class CompileSourceTestCase(TestCase):
 
     def test_compile(self):
-        print('start test compile')
         with NamedTemporaryFile('w+', suffix='.py') as script_file:
-            print('1')
             model = get_oneflow_model()
-            print('2')
             oneflow.save(model.state_dict(), 'model')
-            print('3')
             script_file.write("import oneflow\n"
                               "\n\n"
                               "class Model(oneflow.nn.Module):\n"
@@ -82,13 +78,10 @@ class CompileSourceTestCase(TestCase):
                               )
             script_file.seek(0)
 
-            print('4')
             config = Config(input_shapes=[[10]],
                             data_type=oneflow.float,
                             max_batch_size=2,
                             input_formats=[DataFormat.CHANNELS_LAST])
-            print('5')
             compiled = compiler.compile_source(OneFlowModelFile(model_path='model', script_path=script_file.name),
                                                config)
-        print('6')
         self.assertEqual(compiled.input_data_formats, [DataFormat.CHANNELS_LAST])
