@@ -19,3 +19,9 @@ class OneFlowModelFileTestCase(TestCase):
 
         self.assertEqual(config.model_path, 'model_dir')
         self.assertEqual(config.script_path, 'model.py')
+
+    def test_import_oneflow(self):
+        import oneflow as flow
+        x = flow.randn(3, 3)
+
+        self.assertEqual(x.shape, (3, 3))
