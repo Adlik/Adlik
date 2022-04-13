@@ -1,9 +1,10 @@
 # Copyright 2019 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+from unittest import TestCase
+
 import oneflow as flow
 
-from unittest import TestCase
 from model_compiler.models.sources.oneflow_model_file import OneFlowModelFile
 
 
