@@ -22,6 +22,6 @@ class OneFlowModelFileTestCase(TestCase):
 
     def test_import_oneflow(self):
         import oneflow as flow
-        x = flow.randn(3, 3)
+        rand_tensor = flow.randn(3, 3)
 
-        self.assertEqual(x.shape, (3, 3))
+        self.assertEqual(rand_tensor.shape, (3, 3))
