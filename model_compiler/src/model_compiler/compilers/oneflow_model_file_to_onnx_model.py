@@ -55,8 +55,7 @@ def compile_source(source: OneFlowModelFile, config: Config) -> OnnxModel:
         shape.insert(0, config.max_batch_size)
         dummy_inputs.append(flow.ones(shape, dtype=config.data_type))
 
-    model_module = utilities.load_module(source.script_path, 'Model')
-    model = model_module.Model()
+    model = utilities.load_module(source.script_path, 'Model').Model()
     model.load_state_dict(flow.load(source.model_path))
     model.eval()
     model_graph = Graph(model)
