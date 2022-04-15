@@ -67,7 +67,12 @@ setuptools.setup(
         'tornado==6.1',
         'ruamel.yaml',
         'openvino-dev==2021.4.2',
-        'Cython'
+        'Cython',
+        'oneflow==0.7.0+cpu',
+        'oneflow_onnx',
+        'onnxruntime',
+        'onnxoptimizer',
+        'onnx-simplifier'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={

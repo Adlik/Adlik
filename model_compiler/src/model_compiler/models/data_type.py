@@ -137,3 +137,20 @@ class DataType(Enum):
             'BOOL': torch.bool
         }
         return torch_data_type_map[type_str.upper()]
+
+    @staticmethod
+    def from_oneflow_data_type(type_str):
+        import oneflow  # pylint: disable=import-outside-toplevel
+
+        oneflow_data_type_map = {
+            'FLOAT': oneflow.float,
+            'DOUBLE': oneflow.double,
+            'FLOAT16': oneflow.float16,
+            'BFLOAT16': oneflow.bfloat16,
+            'UINT8': oneflow.uint8,
+            'INT8': oneflow.int8,
+            'INT32': oneflow.int32,
+            'INT64': oneflow.int64,
+            'BOOL': oneflow.bool
+        }
+        return oneflow_data_type_map[type_str.upper()]
