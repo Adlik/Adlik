@@ -129,23 +129,19 @@ represents the version of CUDA. The names and labels of serving mirrors are as f
 
 CPU:
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tflite-cpu:v0.3.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tflite-cpu:v0.4.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.3.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.4.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.3.0
-
-registry.cn-beijing.aliyuncs.com/adlik/serving-tvm-cpu:v0.3.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.4.0
 
 GPU:
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-gpu:v0.3.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-gpu:v0.4.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tftrt-gpu:v0.3.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tftrt-gpu:v0.4.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.3.0_trt7.2.1.6_cuda11.0
-
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.3.0_trt7.2.1.6_cuda10.2
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.4.0_trt7.2.1.6_cuda11.0
 
 ### Using the serving images for model inference
 

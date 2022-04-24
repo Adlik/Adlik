@@ -25,6 +25,7 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        git \
         automake \
         bazel \
         libpython2.7-stdlib \
