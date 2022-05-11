@@ -27,6 +27,7 @@ struct AutoLock {
 
   AutoLock& operator=(AutoLock&& lock) {
     std::swap(this->mu, lock.mu);
+    return *this;
   }
 
   ~AutoLock() {

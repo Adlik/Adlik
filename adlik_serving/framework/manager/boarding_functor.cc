@@ -141,11 +141,18 @@ class ModelAction {
 
 public:
   void exec(ManagedStore& store) {
-    if (action) {
-      action->exec(store);
+    INFO_LOG << "decide load(0)/unload(1): " << action;
+    switch (action) {
+      case LOAD:
+        CUB_ASSERT_SUCC_CALL_VOID(store.load(id));
+        break;
+      case UNLOAD:
+        CUB_ASSERT_SUCC_CALL_VOID(store.unload(id));
+        break;
+      default:
+        break;
     }
   }
-
   static ModelAction load(const ModelId& id) {
     return {id, LOAD};
   }
@@ -154,61 +161,16 @@ public:
     return {id, UNLOAD};
   }
 
-  static ModelAction nop() {
-    return {};
-  }
-
   bool operator<(const ModelAction& rhs) const {
-    if (!action) {
-      return false;
-    } else if (!rhs.action) {
-      return true;
-    } else {
-      return action.value() < rhs.action.value();
-    }
+    return action < rhs.action;
   }
 
 private:
-  struct ActionImpl {
-    ActionImpl(const ModelId& id, Action action) : id(id), action(action) {
-    }
+  ModelId id;
+  Action action;
 
-    void exec(ManagedStore& store) {
-      INFO_LOG << "decide load(0)/unload(1): " << action;
-      switch (action) {
-        case LOAD:
-          CUB_ASSERT_SUCC_CALL_VOID(store.load(id));
-          break;
-        case UNLOAD:
-          CUB_ASSERT_SUCC_CALL_VOID(store.unload(id));
-          break;
-        default:
-          break;
-      }
-    }
-
-    bool operator<(const ActionImpl& rhs) const {
-      if (action == UNLOAD) {
-        return true;
-      } else if (rhs.action == UNLOAD) {
-        return false;
-      } else {
-        return true;
-      }
-    }
-
-  private:
-    ModelId id;
-    Action action;
-  };
-
-  ModelAction(const ModelId& id, Action action) : action(cub::inplace, id, action) {
+  ModelAction(const ModelId& id, Action action) : id(id), action(action) {
   }
-
-  ModelAction() = default;
-
-private:
-  cub::Optional<ActionImpl> action;
 };
 
 class ActionMaker : public ManagedModelVisitor {
@@ -288,7 +250,7 @@ struct ModelExecutor : ManagedNameVisitor {
 
   void exec() {
     makeActions();
-    for (auto action : actions) {
+    for (auto& action : actions) {
       action.exec(store);
     }
   }

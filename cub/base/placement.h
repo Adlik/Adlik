@@ -69,13 +69,6 @@ private:
   typename std::aligned_storage<sizeof(T), alignof(T)>::type u;
 };
 
-template <typename T>
-struct DefaultPlacement : Placement<T> {
-  T* init() {
-    return new (Placement<T>::alloc()) T();
-  }
-};
-
 }  // namespace cub
 
 #endif
