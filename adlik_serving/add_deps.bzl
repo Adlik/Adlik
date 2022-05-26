@@ -5,6 +5,13 @@ Adlik serving dependencies, this file should be called before workspace.bzl
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
+def add_vision(name):
+    native.new_local_repository(
+        name = name,
+        path = "/vision-0.9.1",
+        build_file = "//third_party/torchvision:BUILD",
+    )
+
 def add_all_deps():
     """All Adlik serving external dependencies."""
 
@@ -77,4 +84,13 @@ def add_all_deps():
         urls = [
             "https://github.com/bazelbuild/rules_apple/releases/download/0.31.3/rules_apple.0.31.3.tar.gz",
         ],
+    )
+
+    http_archive(
+        name = "libtorch_archive",
+        strip_prefix = "libtorch",
+        sha256 = "f6032b9ed73161176201e501866e7b4878c8436fd64fc75a528243a2bbb88c72",
+        type = "zip",
+        urls = ["https://download.pytorch.org/libtorch/cu102/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcu102.zip"],
+        build_file = str(Label("//third_party/torch:BUILD")),
     )

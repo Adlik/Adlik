@@ -72,7 +72,8 @@ setuptools.setup(
         'oneflow_onnx',
         'onnxruntime',
         'onnxoptimizer',
-        'onnx-simplifier'
+        'onnx-simplifier',
+        'protobuf==3.19.1'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={

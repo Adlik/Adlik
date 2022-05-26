@@ -55,6 +55,11 @@ config_setting(
     values = {"define": "runtime=paddle"},
 )
 
+config_setting(
+    name = "libtorch",
+    values = {"define": "runtime=libtorch"},
+)
+
 serving_cc_library(
     name = "server_core",
     srcs = [
@@ -81,5 +86,6 @@ serving_cc_library(
         ":ml": ["//adlik_serving/runtime/ml/model:ml_runtime"],
         ":tvm": ["//adlik_serving/runtime/tvm:tvm_runtime"],
         ":paddle": ["//adlik_serving/runtime/paddle/factory:paddle_runtime"],
+        ":libtorch": ["//adlik_serving/runtime/libtorch/factory:libtorch_runtime"],
     }),
 )

@@ -21,7 +21,9 @@ _IMAGES = {
     'serving-tftrt-gpu': {},
     'serving-paddle': {},
     'serving-openvino': {'OPENVINO_VERSION': _OPENVINO_VERSION},
-    'serving-tensorflow-gpu': {}
+    'serving-tensorflow-gpu': {},
+    'serving-libtorch-cpu': {},
+    'serving-libtorch-gpu': {}
 }
 
 _BASE_DIR = path.dirname(path.abspath(__file__))
