@@ -60,3 +60,15 @@ build:tvm --define=runtime=tvm
 
 build:paddle --define=runtime=paddle
 build:paddle --define=paddle_link_static=true
+
+# Libtorch runtime
+
+build:libtorch --define=runtime=libtorch
+build:libtorch --define=haveCuda=noresourceCuda
+
+# Libtorch-GPU runtime
+
+build:libtorch-gpu --define=runtime=libtorch
+build:libtorch-gpu --define=haveCuda=resourceCuda
+build:libtorch-gpu --copt=-DMEMORY_CUDA
+build:libtorch-gpu --config=cuda

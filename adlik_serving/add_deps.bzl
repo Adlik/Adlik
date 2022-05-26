@@ -78,3 +78,20 @@ def add_all_deps():
             "https://github.com/bazelbuild/rules_apple/releases/download/0.31.3/rules_apple.0.31.3.tar.gz",
         ],
     )
+
+
+    http_archive(
+        name = "libtorch_archive",
+        strip_prefix = "libtorch",
+        #sha256 = "44ecf7f2fc671da7b67694fc9d64b2762039ad83de46407ae3e0868081b7ae2c",
+        sha256 = "f6032b9ed73161176201e501866e7b4878c8436fd64fc75a528243a2bbb88c72",
+        type = "zip",
+        urls = ["https://download.pytorch.org/libtorch/cu102/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcu102.zip"],
+        build_file = str(Label("//third_party/torch:BUILD"))
+    )
+
+    native.new_local_repository(
+        name = "torchvision",
+        path = "/vision-0.9.1",
+        build_file = "//third_party/torchvision:BUILD",
+    )
