@@ -1,9 +1,11 @@
 workspace(name = "adlik")
 
 # Adlik serving dependencies.
-load("//adlik_serving:add_deps.bzl", "add_all_deps")
+load("//adlik_serving:add_deps.bzl", "add_all_deps", "add_vision")
 
 add_all_deps()
+
+add_vision("torchvision")
 
 # This apple rule is added to fix the following issue: https://github.com/bazelbuild/bazel/issues/13811
 # When upgrade TensorFlow to v2.8.0, try to delete this.

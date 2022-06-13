@@ -1,0 +1,29 @@
+jobs:
+  - job: BazelBuildServingLibtorch
+    displayName: Bazel build serving (Libtorch)
+    pool:
+        vmImage: Ubuntu-18.04
+    timeoutInMinutes: 0
+    steps:
+      - template: ../steps/install-torch.yml
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
+        displayName: Install Python3.8
+      - script: pip install -U numpy six
+        displayName: Install additional dependencies
+      - template: ../steps/use-build-cache.yml
+        parameters:
+            key: bazel-build-serving-libtorch
+            path: $(BAZEL_BUILD_CACHE)
+      - script: |
+            ci/checks/bazel-build-serving.py \
+                --config=libtorch \
+                -c opt \
+                --disk_cache="$BAZEL_BUILD_CACHE"
+        displayName: Bazel build serving
+      - task: PublishBuildArtifacts@1
+        displayName: Publish build artifacts
+        inputs:
+            pathtoPublish: __adlik_serving/adlik_serving
+            artifactName: adlik-serving-libtorch

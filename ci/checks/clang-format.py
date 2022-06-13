@@ -28,7 +28,8 @@ def _needs_formatting(file_path):
 
     formatted_content = subprocess.check_output(args=['clang-format', f'-assume-filename={file_path}'],
                                                 input=original_content)
-
+    if formatted_content != original_content:
+        print(formatted_content)
     return formatted_content != original_content
 
 
