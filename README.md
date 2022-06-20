@@ -212,13 +212,13 @@ First, install the following packages:
 
 #### Build serving with OpenVINO runtime
 
-1. Install `intel-openvino-runtime-ubuntu<OS_VERSION>-<VERSION>` package from
-   [OpenVINO](https://docs.openvinotoolkit.org/2021.1/openvino_docs_install_guides_installing_openvino_apt.html).
+1. Install `openvino-<VERSION>` package from
+   [OpenVINO](https://docs.openvinotoolkit.org/2022.1/openvino_docs_install_guides_installing_openvino_apt.html).
 2. Assume the installation path of OpenVINO is `/opt/intel/openvino_VERSION`, run the following command:
 
    ```sh
-   export INTEL_CVSDK_DIR=/opt/intel/openvino_VERSION
-   export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share
+   export INTEL_CVSDK_DIR=/opt/intel/openvino_2022
+   export InferenceEngine_DIR=$INTEL_CVSDK_DIR/runtime/cmake
    bazel build //adlik_serving \
        --config=openvino \
        -c opt
@@ -374,7 +374,7 @@ Adlik. You can build Adlik with the Docker image.
 
 The version of the service engine Adlik supports.
 
-|              | TensorFlow 1.14 | TensorFlow 2.x | OpenVINO 2021 | TensorRT 6 | TensorRT 7 |
+|              | TensorFlow 1.14 | TensorFlow 2.x | OpenVINO 2022 | TensorRT 6 | TensorRT 7 |
 | ------------ | :-------------: | :------------: | :-----------: | :--------: | :--------: |
 | Keras        |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
 | TensorFlow   |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |

@@ -10,8 +10,8 @@
 _INTEL_CVSDK_DIR = "INTEL_CVSDK_DIR"
 _INFERENCE_ENGINE_DIR = "InferenceEngine_DIR"
 
-_INFERENCE_ENGINE_LIBS = ["inference_engine"]
-_INFERENCE_ENGINE_HEADERS = ["inference_engine.hpp"]  # just list a few of headers for checking
+_INFERENCE_ENGINE_LIBS = ["openvino"]
+_INFERENCE_ENGINE_HEADERS = ["openvino/openvino.hpp"]  # just list a few of headers for checking
 
 def auto_configure_fail(msg):
     """Output failure message when cuda configuration fails."""
@@ -119,29 +119,18 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "ie_headers",
-    hdrs = glob(["include/**/*.h*"]),
+    hdrs = glob(["include/**/**/*.h*"]),
     includes = [
         "include",
+        "include/ie",
     ],
     visibility = ["//visibility:public"],
 )
 
 cc_library(
-    name = "libinference_engine",
-    srcs = ["lib/libinference_engine.so"],
-    data = ["lib/libinference_engine.so"],
-    includes = [
-        "include",
-        "lib",
-    ],
-    linkstatic = 1,
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "libinference_engine_legacy",
-    srcs = ["lib/libinference_engine_legacy.so"],
-    data = ["lib/libinference_engine_legacy.so"],
+    name = "libopenvino",
+    srcs = ["lib/libopenvino.so"],
+    data = ["lib/libopenvino.so"],
     includes = [
         "include",
         "lib",

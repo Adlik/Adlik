@@ -4,7 +4,7 @@
 #ifndef ADLIK_SERVING_RUNTIME_OPENVINO_MODEL_OPENVINO_UTIL_H
 #define ADLIK_SERVING_RUNTIME_OPENVINO_MODEL_OPENVINO_UTIL_H
 
-#include <inference_engine.hpp>
+#include <openvino/openvino.hpp>
 
 #include "adlik_serving/framework/domain/dims_list.h"
 #include "adlik_serving/framework/domain/model_config.pb.h"
@@ -13,24 +13,13 @@
 
 OPENVINO_NS_BEGIN
 
-InferenceEngine::Blob::Ptr getBlob(InferenceEngine::Precision precision,
-                                   InferenceEngine::SizeVector dims,
-                                   InferenceEngine::Layout layout);
+tensorflow::DataType ConvertToTensorflowDatatype(ov::element::Type openvinoType);
 
-InferenceEngine::Layout ConvertToOpenVinoLayout(adlik::serving::ModelInput_Format format);
+bool ConvertDims(const ov::Shape& ovshape, adlik::serving::DimsList& dims);
 
-InferenceEngine::Precision ConvertToOpenVinoDataType(const tensorflow::DataType dtype);
+bool copyBlob2Buffer(void* content, const ov::Tensor& tensor, size_t copyByteSize, size_t offsetByteSize);
 
-tensorflow::DataType ConvertToTensorflowDatatype(InferenceEngine::Precision openvinoType);
-
-bool ConvertDims(const InferenceEngine::SizeVector& openvinDim, adlik::serving::DimsList& dims);
-
-bool copyBlob2Buffer(void* content, InferenceEngine::Blob::Ptr blobPtr, size_t copyByteSize, size_t offsetByteSize);
-
-bool copyBuffer2Blob(const void* content,
-                     InferenceEngine::Blob::Ptr blobPtr,
-                     size_t copyByteSize,
-                     size_t offsetByteSize);
+bool copyBuffer2Blob(const void* content, const ov::Tensor& tensor, size_t copyByteSize, size_t offsetByteSize);
 
 OPENVINO_NS_END
 

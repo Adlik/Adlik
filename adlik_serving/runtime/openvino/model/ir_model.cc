@@ -5,7 +5,8 @@
 
 #include <stdlib.h>
 
-#include <inference_engine.hpp>
+#include <openvino/openvino.hpp>
+#include <unordered_map>
 
 #include "adlik_serving/framework/domain/model_config.h"
 #include "adlik_serving/framework/domain/model_config_helper.h"
@@ -20,7 +21,6 @@
 
 OPENVINO_NS_BEGIN
 
-using namespace InferenceEngine;
 using namespace adlik::serving;
 
 namespace {
@@ -36,7 +36,7 @@ struct PluginLoader : BatchProcessor {
   PluginLoader(const std::string& name, const adlik::serving::ModelConfigProto& config) : name(name), config(config) {
   }
 
-  tensorflow::Status load(const CNNNetwork& network, ExecutableNetwork& executableNetwork);
+  tensorflow::Status load(const std::shared_ptr<ov::Model>& model, ov::CompiledModel& compiled_model);
 
   using MyBatch = Batch<BatchingMessageTask>;
   OVERRIDE(tensorflow::Status processBatch(MyBatch&));
@@ -44,63 +44,30 @@ struct PluginLoader : BatchProcessor {
 private:
   std::string name;
   adlik::serving::ModelConfigProto config;
-  mutable InferRequest infer_request;
-  BlobMap outputs;
-  BlobMap inputs;
-
-  tensorflow::Status setInputBlob(InputsDataMap inputsInfo);
-  tensorflow::Status setOutputBlob(OutputsDataMap outputsInfo);
+  mutable ov::InferRequest infer_request;
+  std::unordered_map<std::string, ov::Tensor> inputs;
+  std::unordered_map<std::string, ov::Tensor> outputs;
 
   tensorflow::Status mergeInputs(MyBatch&);
   tensorflow::Status splitOutputs(MyBatch&);
-  Precision getInputDataType(const std::string& inputName);
-  Precision getOutputDataType(const std::string& outputName);
-  Layout getInputLayout(const std::string& inputName);
 };
 
-tensorflow::Status PluginLoader::load(const CNNNetwork& network, ExecutableNetwork& executableNetwork) {
-  // 1.Prepare inputs and outputs format
-  TF_RETURN_IF_ERROR(setInputBlob(network.getInputsInfo()));
-  TF_RETURN_IF_ERROR(setOutputBlob(network.getOutputsInfo()));
+tensorflow::Status PluginLoader::load(const std::shared_ptr<ov::Model>& model, ov::CompiledModel& compiled_model) {
+  // 1. set inferrequest
+  infer_request = compiled_model.create_infer_request();
 
-  // 2. set inferrequest
-  infer_request = executableNetwork.CreateInferRequest();
-  infer_request.SetInput(inputs);
-  infer_request.SetOutput(outputs);
-
-  return tensorflow::Status::OK();
-}
-
-tensorflow::Status PluginLoader::setInputBlob(InputsDataMap inputsInfo) {
-  for (auto& item : inputsInfo) {
-    Precision itemPrecision = getInputDataType(item.first);
-    Layout itemLayout = getInputLayout(item.first);
-    INFO_LOG << "input layout:" << item.first << " " << itemLayout;
-    SizeVector inputDims = item.second->getTensorDesc().getDims();
-    INFO_LOG << "input dims:" << item.first << " " << inputDims.size();
-    Blob::Ptr input = getBlob(itemPrecision, inputDims, itemLayout);
-    if (input == nullptr) {
-      return tensorflow::errors::Internal("input blob allocate failure in the model ", config.name());
-    }
-    inputs[item.first] = input;
+  // 2. get input tensors
+  for (auto& input : model->inputs()) {
+    ov::Tensor tensor = infer_request.get_tensor(input);
+    inputs[input.get_any_name()] = tensor;
   }
-  return tensorflow::Status::OK();
-}
 
-tensorflow::Status PluginLoader::setOutputBlob(OutputsDataMap outputsInfo) {
-  for (auto& item : outputsInfo) {
-    Precision itemPrecision = getOutputDataType(item.first);
-    Layout layout = item.second->getLayout();
-    INFO_LOG << "output layout:" << item.first << " " << layout;
-    SizeVector outputDims = item.second->getTensorDesc().getDims();
-    INFO_LOG << "output dims:" << item.first << " " << outputDims.size();
-    item.second->setPrecision(itemPrecision);
-    Blob::Ptr output = getBlob(itemPrecision, outputDims, layout);
-    if (output == nullptr) {
-      return tensorflow::errors::Internal("output blob allocate failure in the model ", config.name());
-    }
-    outputs[item.first] = output;
+  // 3.  get output tensors
+  for (auto& output : model->outputs()) {
+    ov::Tensor tensor = infer_request.get_tensor(output);
+    outputs[output.get_any_name()] = tensor;
   }
+
   return tensorflow::Status::OK();
 }
 
@@ -112,8 +79,8 @@ tensorflow::Status PluginLoader::processBatch(MyBatch& batch) {
     ERR_LOG << "After merge inputs, error message: " << status.error_message() << std::endl;
     return status;
   }
-  infer_request.StartAsync();
-  infer_request.Wait(InferenceEngine::IInferRequest::RESULT_READY);
+  infer_request.start_async();
+  infer_request.wait();
   status = splitOutputs(batch);
   if (!status.ok()) {
     ERR_LOG << "After predict, error message: " << status.error_message();
@@ -135,18 +102,18 @@ tensorflow::Status PluginLoader::mergeInputs(MyBatch& batch) {
 
       for (auto& item : inputs) {
         if (name == item.first) {
-          Blob::Ptr inputPtr = item.second;
+          ov::Tensor tensor = item.second;
           size_t actualByteSizePerSample = totalByteSize / requestProvider->batchSize();
           size_t offsetByteSize = actualByteSizePerSample * offsetSize;
           size_t copyByteSize = actualByteSizePerSample * batchSize;
-          if (offsetByteSize + totalByteSize > inputPtr->byteSize()) {
+          if (offsetByteSize + totalByteSize > tensor.get_byte_size()) {
             status = tensorflow::errors::InvalidArgument("unexpected size ",
                                                          offsetByteSize + totalByteSize,
                                                          " biggger than input blob space, expecting ",
-                                                         inputPtr->byteSize());
+                                                         tensor.get_byte_size());
             return false;
           }
-          return copyBuffer2Blob(content, inputPtr, copyByteSize, offsetByteSize);
+          return copyBuffer2Blob(content, tensor, copyByteSize, offsetByteSize);
         }
       }
       return false;
@@ -159,14 +126,14 @@ tensorflow::Status PluginLoader::mergeInputs(MyBatch& batch) {
 
 tensorflow::Status PluginLoader::splitOutputs(MyBatch& batch) {
   for (auto& item : outputs) {
-    Blob::Ptr outputPtr = item.second;
+    ov::Tensor tensor = item.second;
     adlik::serving::DimsList dims;
-    if (!ConvertDims(outputPtr->getTensorDesc().getDims(), dims)) {
+    if (!ConvertDims(tensor.get_shape(), dims)) {
       INFO_LOG << "Invalid blob dims " << item.first << std::endl;
     }
-    tensorflow::DataType dtype = ConvertToTensorflowDatatype(outputPtr->getTensorDesc().getPrecision());
+    tensorflow::DataType dtype = ConvertToTensorflowDatatype(tensor.get_element_type());
     size_t offsetByteSize = 0;
-    size_t byteSizePerSample = outputPtr->byteSize() / outputPtr->getTensorDesc().getDims()[0];
+    size_t byteSizePerSample = tensor.get_byte_size() / tensor.get_shape()[0];
 
     for (int i = 0; i < batch.num_tasks(); ++i) {
       const BatchingMessageTask& task = batch.task(i);
@@ -178,15 +145,15 @@ tensorflow::Status PluginLoader::splitOutputs(MyBatch& batch) {
       if (content == nullptr) {
         // maybe not need this output
       } else {
-        if (offsetByteSize + expectedByteSize > outputPtr->byteSize()) {
+        if (offsetByteSize + expectedByteSize > tensor.get_byte_size()) {
           return tensorflow::errors::InvalidArgument("unexpected size ",
                                                      offsetByteSize + expectedByteSize,
                                                      " for inference output '",
                                                      item.first,
                                                      "', expecting maximum",
-                                                     outputPtr->byteSize());
+                                                     tensor.get_byte_size());
         } else {
-          if (!copyBlob2Buffer(content, outputPtr, expectedByteSize, offsetByteSize)) {
+          if (!copyBlob2Buffer(content, tensor, expectedByteSize, offsetByteSize)) {
             return tensorflow::errors::Internal("failed to copy output values from CPU for output '", item.first);
           }
         }
@@ -197,40 +164,13 @@ tensorflow::Status PluginLoader::splitOutputs(MyBatch& batch) {
   return tensorflow::Status::OK();
 }
 
-Precision PluginLoader::getInputDataType(const std::string& inputName) {
-  for (int i = 0; i < config.input_size(); i++) {
-    if (inputName == config.input(i).name()) {
-      return ConvertToOpenVinoDataType(config.input(i).data_type());
-    }
-  }
-  return Precision::UNSPECIFIED;
-}
-
-Layout PluginLoader::getInputLayout(const std::string& inputName) {
-  for (int i = 0; i < config.input_size(); i++) {
-    if (inputName == config.input(i).name()) {
-      return ConvertToOpenVinoLayout(config.input(i).format());
-    }
-  }
-  return Layout::ANY;
-}
-
-Precision PluginLoader::getOutputDataType(const std::string& outputName) {
-  for (int i = 0; i < config.output_size(); i++) {
-    if (outputName == config.output(i).name()) {
-      return ConvertToOpenVinoDataType(config.output(i).data_type());
-    }
-  }
-  return Precision::UNSPECIFIED;
-}
-
 tensorflow::Status createInstance(const std::string& instance_name,
                                   const ModelConfig& config,
-                                  const CNNNetwork& network,
-                                  ExecutableNetwork& executableNetwork,
+                                  const std::shared_ptr<ov::Model>& network,
+                                  ov::CompiledModel& compiled_model,
                                   std::unique_ptr<BatchProcessor>* model) {
   std::unique_ptr<PluginLoader> raw = std::make_unique<PluginLoader>(instance_name, config);
-  TF_RETURN_IF_ERROR(raw->load(network, executableNetwork));
+  TF_RETURN_IF_ERROR(raw->load(network, compiled_model));
   *model = std::move(raw);
   return tensorflow::Status::OK();
 }
@@ -244,34 +184,34 @@ tensorflow::Status IRModel::init() {
   std::string filePath = config.getModelPath(model_id);
   // 1.read model file
   INFO_LOG << "Read the openvino model";
-  std::string binFileName = tensorflow::io::JoinPath(filePath, "model.bin");
   std::string xmlFileName = tensorflow::io::JoinPath(filePath, "model.xml");
   // 2.load model
-  CNNNetwork network;
-  InferenceEngine::Core core;
+  std::shared_ptr<ov::Model> model;
+  ov::Core core;
   try {
-    network = core.ReadNetwork(xmlFileName, binFileName);
-  } catch (const details::InferenceEngineException& e) {
+    model = core.read_model(xmlFileName);
+  } catch (const ov::Exception& e) {
     INFO_LOG << "Cannot load the model";
     return tensorflow::errors::Internal("Cannot load the model ", e.what());
   }
   // 3.set batch size
-  auto currentBatchSize = network.getBatchSize();
+  model->get_parameters()[0]->set_layout("N...");
+  auto currentBatchSize = ov::get_batch(model);
   if (currentBatchSize != config.max_batch_size()) {
-    network.setBatchSize(config.max_batch_size());
+    ov::set_batch(model, config.max_batch_size());
   }
   // 4. set instance
   for (const auto& group : config.instance_group()) {
-    ExecutableNetwork executableNetwork;
+    ov::CompiledModel compiled_model;
     if (group.kind() != adlik::serving::ModelInstanceGroup::KIND_GPU) {
-      executableNetwork = core.LoadNetwork(network, "CPU");
+      compiled_model = core.compile_model(model, "CPU");
     } else {
-      executableNetwork = core.LoadNetwork(network, "GPU");
+      compiled_model = core.compile_model(model, "GPU");
     }
     for (int i = 0; i != group.count(); ++i) {
       std::unique_ptr<BatchProcessor> instance;
       std::string instance_name = group.name() + "_" + std::to_string(i);
-      TF_RETURN_IF_ERROR(createInstance(instance_name, config, network, executableNetwork, &instance));
+      TF_RETURN_IF_ERROR(createInstance(instance_name, config, model, compiled_model, &instance));
       add(std::move(instance));
     }
   }

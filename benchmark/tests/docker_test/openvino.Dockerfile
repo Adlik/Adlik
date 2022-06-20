@@ -26,14 +26,14 @@ RUN . /etc/os-release && \
     apt-get update && \
     apt-get install --no-install-recommends -y gnupg && \
     apt-key adv --fetch-keys \
-        https://apt.repos.intel.com/openvino/2021/GPG-PUB-KEY-INTEL-OPENVINO-2021 \
+        https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
         https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg && \
     apt-get autoremove --purge -y gnupg && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
 RUN . /etc/os-release && \
-    echo "deb https://apt.repos.intel.com/openvino/2021 all main\n\
+    echo "deb https://apt.repos.intel.com/openvino/2022 $VERSION_CODENAME main\n\
 deb https://storage.googleapis.com/bazel-apt stable jdk1.8" >> /etc/apt/sources.list
 
 RUN . /etc/os-release && \
@@ -44,8 +44,7 @@ RUN . /etc/os-release && \
         patch \
         git \
         make \
-        intel-openvino-runtime-ubuntu18-$OPENVINO_VERSION \
-        intel-openvino-dev-ubuntu18-$OPENVINO_VERSION \
+        libopenvino-dev-$OPENVINO_VERSION \
         libtbb2 \
         libtool \
         python3-setuptools \
@@ -70,8 +69,8 @@ RUN cd /usr/bin &&\
 RUN cd /home/john/Adlik &&\
     bazel build //adlik_serving/clients/python:build_pip_package -c opt &&\
     mkdir /tmp/pip-packages && bazel-bin/adlik_serving/clients/python/build_pip_package /tmp/pip-packages &&\
-    export INTEL_CVSDK_DIR=/opt/intel/openvino_${OPENVINO_VERSION}/ &&\
-    export InferenceEngine_DIR=$INTEL_CVSDK_DIR/deployment_tools/inference_engine/share &&\
+    export INTEL_CVSDK_DIR=/opt/intel/openvino_2022/ &&\
+    export InferenceEngine_DIR=$INTEL_CVSDK_DIR/runtime/cmake &&\
     bazel build //adlik_serving \
         --config=openvino \
         -c opt &&\

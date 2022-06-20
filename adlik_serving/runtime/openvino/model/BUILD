@@ -23,8 +23,7 @@ serving_cc_library(
         "//adlik_serving/runtime/provider:predict_response_provider",
         "//cub/log",
         "@local_config_openvino//:ie_headers",
-        "@local_config_openvino//:libinference_engine",
-        "@local_config_openvino//:libinference_engine_legacy",
+        "@local_config_openvino//:libopenvino",
         "@org_tensorflow//tensorflow/core:lib",
     ],
 )
