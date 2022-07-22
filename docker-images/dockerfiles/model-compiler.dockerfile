@@ -35,16 +35,15 @@ ENV TENSORRT_VERSION=${TENSORRT_VERSION}
 ENV CUDA_VERSION=${CUDA_VERSION}
 
 RUN . /etc/os-release && \
-    apt-get update && \
-    apt-get install --no-install-recommends -y wget && \
-    wget "https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/7fa2af80.pub" -O /etc/apt/trusted.gpg.d/cuda.asc && \
-    apt-get autoremove --purge -y wget && \
-    apt-get clean && \
-    find /var/lib/apt/lists -delete
-
-RUN . /etc/os-release && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
-    deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /" >> /etc/apt/sources.list
+	apt-get update && \
+	apt-get install --no-install-recommends -y gnupg curl software-properties-common && \
+	curl "https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/3bf863cc.pub" | apt-key add - && \
+	curl "https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/7fa2af80.pub" | apt-key add - && \
+	apt-add-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /" && \
+	apt-add-repository -u "deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /" && \
+	apt-get autoremove --purge -y curl gnupg software-properties-common && \
+	apt-get clean && \
+	find /var/lib/apt/lists -delete
 
 RUN chmod +x /script/tensorrt.sh
 RUN /script/tensorrt.sh
@@ -62,7 +61,7 @@ RUN apt-get update && apt-get install -y git gcc python3-dev libxml2-dev libxslt
 
 COPY --from=builder /src/dist/*.whl /tmp/model-compiler-package/
 
-RUN python3 -m pip install /tmp/model-compiler-package/*.whl && \
+RUN env PIP_FIND_LINKS='https://release.oneflow.info/' python3 -m pip install /tmp/model-compiler-package/*.whl && \
     rm -r /tmp/model-compiler-package ~/.cache/pip
 
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}

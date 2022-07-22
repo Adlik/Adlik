@@ -80,12 +80,10 @@ Docker pull command:
 
 The compiler docker images can be used in CPU and GPU. In the CPU, you can  compile the model from source type to TensorFlow
 model, OpenVino model and TensorFlow Lite model. And in the CPU, you can compile the model from source type to TensorFlow
-model, and TensorRT model. The names and labels of compiler mirrors are as follows, and the first half of label
+model, and TensorRT model. The name and label of compiler mirror are shown below, and the first half of label
 represents the version of TensorRT, the latter part of label represents the version of CUDA:
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda11.0
-
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda10.2
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.4.0_trt7.2.1.6_cuda11.0
 
 #### Using model compiler image compile model
 
@@ -93,7 +91,7 @@ registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda10.2
 
    ```shell script
    docker run -it --rm -v source_model:/mnt/model
-   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda11.0 bash
+   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.4.0_trt7.2.1.6_cuda11.0 bash
    ```
 
 2. Configure the json file or environment variables required to compile the model.
@@ -149,7 +147,7 @@ registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.4.0_trt7.2.1.6_cuda11
 
    ```shell script
    docker run -it --rm -p 8500:8500 -v compiled_model:/model
-   registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.3.0 bash
+   registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.4.0 bash
    ```
 
 2. Load the compiled model in the image and start the service.
@@ -179,7 +177,7 @@ First, install [Git](https://git-scm.com/download) and [Bazel](https://docs.baze
 Then, clone Adlik and change the working directory into the source directory:
 
    ```sh
-   git clone https://github.com/ZTE/Adlik.git
+   git clone https://github.com/Adlik/Adlik.git
    cd Adlik
    ```
 
