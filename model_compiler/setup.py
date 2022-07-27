@@ -66,7 +66,7 @@ setuptools.setup(
         'tf2onnx',
         'tornado==6.1',
         'ruamel.yaml',
-        'openvino-dev==2021.4.2',
+        'openvino-dev==2022.1.0',
         'Cython',
         'oneflow==0.7.0+cpu',
         'oneflow_onnx',
