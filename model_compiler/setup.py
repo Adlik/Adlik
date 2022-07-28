@@ -73,6 +73,8 @@ setuptools.setup(
         'onnxruntime',
         'onnxoptimizer',
         'onnx-simplifier',
+        # TODO: When the TensorRT version is upgraded to 8.x, delete this line
+        'onnx==1.11.0',
         'protobuf==3.19.1'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
