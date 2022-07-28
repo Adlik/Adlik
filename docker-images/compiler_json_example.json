@@ -4,7 +4,6 @@
   "export_path":  "/mnt/model/yolov3_repos",
   "input_names": ["000_net"],
   "input_formats":["channels_last"],
-  "enable_nhwc_to_nchw": "true",
   "output_names":["082_convolutional","094_convolutional","106_convolutional"],
   "input_signatures": [
     "image"

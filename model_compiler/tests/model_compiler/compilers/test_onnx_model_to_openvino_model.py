@@ -29,6 +29,23 @@ def _make_onnx_model():
         return onnx_model
 
 
+def _make_onnx_model_fp16():
+    with tf.compat.v1.Session(graph=tf.Graph()) as session:
+        input_x = tf.compat.v1.placeholder(dtype=tf.float16, shape=[None, 2, 3, 4], name='x')
+        input_y = tf.compat.v1.placeholder(dtype=tf.float16, shape=[None, 2, 3, 4], name='y')
+        weight = tf.Variable(initial_value=4.2, dtype=tf.float16)
+        tf.multiply(input_x + input_y, weight, name='z')
+        session.run(weight.initializer)
+        frozen_graph_def = tf_loader.freeze_session(session, input_names=['x:0', 'y:0'], output_names=['z:0'])
+
+    with tf.compat.v1.Session(graph=tf.Graph()) as session:
+        tf.import_graph_def(frozen_graph_def, name='')
+        onnx_model = tfonnx.process_tf_graph(tf_graph=session.graph,
+                                             input_names=['x:0', 'y:0'],
+                                             output_names=['z:0']).make_model(graph_doc='Test onnx model')
+        return onnx_model
+
+
 class CompileSourceTestCase(TestCase):
     def test_compile_with_no_params(self):
         onnx_model = _make_onnx_model()
@@ -51,15 +68,16 @@ class CompileSourceTestCase(TestCase):
                                    'max_batch_size': 1})
         compiled = compiler.compile_source(OnnxModel(model_proto=onnx_model, input_data_formats=[None, None]), config)
         self.assertEqual(compiled.get_inputs(),
-                         [ModelInput(name='add/placeholder_port_0', data_type=tf.float32.as_datatype_enum,
+                         [ModelInput(name='x:0', data_type=tf.float32.as_datatype_enum,
                                      format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
-                          ModelInput(name='add/placeholder_port_1', data_type=tf.float32.as_datatype_enum,
+                          ModelInput(name='y:0', data_type=tf.float32.as_datatype_enum,
                                      format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
         self.assertEqual(compiled.get_outputs(),
-                         [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
+                         [ModelOutput(name='z_raw_output___17:0',
+                                      data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
 
     def test_compile_with_fp16(self):
-        onnx_model = _make_onnx_model()
+        onnx_model = _make_onnx_model_fp16()
         config = Config.from_json({'max_batch_size': 1,
                                    'data_type': 'FP16'})
         compiled = compiler.compile_source(OnnxModel(model_proto=onnx_model, input_data_formats=[None, None]), config)

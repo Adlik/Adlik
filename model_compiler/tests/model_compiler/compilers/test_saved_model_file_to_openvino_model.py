@@ -37,6 +37,31 @@ def _save_saved_model_file(model_dir):
         builder.save()
 
 
+def _save_saved_model_file_16(model_dir):
+    with tf.compat.v1.Session(graph=tf.Graph()) as session:
+        input_x = tf.compat.v1.placeholder(dtype=tf.float16, shape=[None, 2, 3, 4], name='x')
+        input_y = tf.compat.v1.placeholder(dtype=tf.float16, shape=[None, 2, 3, 4], name='y')
+        weight = tf.Variable(initial_value=4.2, dtype=tf.float16)
+        output = tf.multiply(input_x + input_y, weight, name='z')
+
+        session.run(weight.initializer)
+
+        builder = tf.compat.v1.saved_model.builder.SavedModelBuilder(model_dir)
+        input_x_tensor_info = tf.compat.v1.saved_model.build_tensor_info(input_x)
+        input_y_tensor_info = tf.compat.v1.saved_model.build_tensor_info(input_y)
+        weight_tensor_info = tf.compat.v1.saved_model.build_tensor_info(weight)
+        output_tensor_info = tf.compat.v1.saved_model.build_tensor_info(output)
+
+        builder.add_meta_graph_and_variables(session, tags=[tf.compat.v1.saved_model.tag_constants.SERVING],
+                                             signature_def_map={
+                                                 'predict': tf.compat.v1.saved_model.build_signature_def(
+                                                     inputs={'x': input_x_tensor_info,
+                                                             'y': input_y_tensor_info,
+                                                             'weight': weight_tensor_info},
+                                                     outputs={'z': output_tensor_info})})
+        builder.save()
+
+
 def _save_saved_model_file_with_two_tags(model_dir):
     with tf.compat.v1.Session(graph=tf.Graph()) as session:
         input_x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[None, 2, 3, 4], name='x')
@@ -85,7 +110,7 @@ class CompileSourceTestCase(TestCase):
 
     def test_compile_with_fp16(self):
         with TemporaryDirectory() as model_dir:
-            _save_saved_model_file(model_dir)
+            _save_saved_model_file_16(model_dir)
             config = Config.from_json({'max_batch_size': 1,
                                        'data_type': 'FP16'})
             compiled = compiler.compile_source(SavedModelFile(model_path=model_dir), config)
@@ -102,8 +127,8 @@ class CompileSourceTestCase(TestCase):
             _save_saved_model_file(model_dir)
             config = Config.from_json({'input_names': ['x', 'y'],
                                        'input_shapes': [[1, 2, 3, 4], [1, 2, 3, 4]],
-                                       'output_names': ['z'],
-                                       'enable_nhwc_to_nchw': False})
+                                       'output_names': ['z']
+                                       })
             compiled = compiler.compile_source(SavedModelFile(model_path=model_dir), config)
             self.assertEqual(compiled.get_inputs(),
                              [ModelInput(name='x', data_type=tf.float32.as_datatype_enum,
@@ -113,52 +138,34 @@ class CompileSourceTestCase(TestCase):
             self.assertEqual(compiled.get_outputs(),
                              [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
 
-    def test_compile_with_all_params_with_enable_nhwc_to_nchw_true(self):
-        with TemporaryDirectory() as model_dir:
-            _save_saved_model_file(model_dir)
-            config = Config.from_json({'input_names': ['x', 'y'],
-                                       'output_names': ['z'],
-                                       'enable_nhwc_to_nchw': True,
-                                       'max_batch_size': 1})
-            compiled = compiler.compile_source(SavedModelFile(model_path=model_dir), config)
-            self.assertEqual(compiled.get_inputs(),
-                             [ModelInput(name='x', data_type=tf.float32.as_datatype_enum,
-                                         format=ModelInput.FORMAT_NONE, dims=[4, 2, 3]),  # pylint: disable=no-member
-                              ModelInput(name='y', data_type=tf.float32.as_datatype_enum,
-                                         format=ModelInput.FORMAT_NONE, dims=[4, 2, 3])])  # pylint: disable=no-member
-            self.assertEqual(compiled.get_outputs(),
-                             [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[4, 2, 3])])
-
     def test_compile_with_saved_model_tags(self):
         with TemporaryDirectory() as model_dir:
             _save_saved_model_file(model_dir)
             config = Config.from_json({'input_names': ['x', 'y'],
                                        'output_names': ['z'],
-                                       'enable_nhwc_to_nchw': True,
                                        'max_batch_size': 1,
                                        'saved_model_tags': ['serve']})
             compiled = compiler.compile_source(SavedModelFile(model_path=model_dir), config)
             self.assertEqual(compiled.get_inputs(),
                              [ModelInput(name='x', data_type=tf.float32.as_datatype_enum,
-                                         format=ModelInput.FORMAT_NONE, dims=[4, 2, 3]),  # pylint: disable=no-member
+                                         format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
                               ModelInput(name='y', data_type=tf.float32.as_datatype_enum,
-                                         format=ModelInput.FORMAT_NONE, dims=[4, 2, 3])])  # pylint: disable=no-member
+                                         format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
             self.assertEqual(compiled.get_outputs(),
-                             [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[4, 2, 3])])
+                             [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
 
     def test_compile_with_two_saved_model_tags(self):
         with TemporaryDirectory() as model_dir:
             _save_saved_model_file_with_two_tags(model_dir)
             config = Config.from_json({'input_names': ['x', 'y'],
                                        'output_names': ['z'],
-                                       'enable_nhwc_to_nchw': True,
                                        'max_batch_size': 1,
                                        'saved_model_tags': ['serve', 'graph2']})
             compiled = compiler.compile_source(SavedModelFile(model_path=model_dir), config)
             self.assertEqual(compiled.get_inputs(),
                              [ModelInput(name='x', data_type=tf.float32.as_datatype_enum,
-                                         format=ModelInput.FORMAT_NONE, dims=[4, 2, 3]),  # pylint: disable=no-member
+                                         format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
                               ModelInput(name='y', data_type=tf.float32.as_datatype_enum,
-                                         format=ModelInput.FORMAT_NONE, dims=[4, 2, 3])])  # pylint: disable=no-member
+                                         format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
             self.assertEqual(compiled.get_outputs(),
-                             [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[4, 2, 3])])
+                             [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
