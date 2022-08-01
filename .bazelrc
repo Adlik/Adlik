@@ -40,6 +40,7 @@ build:aarch64 --cpu=aarch64
 
 build:tensorrt --define=runtime=tensorrt
 build:tensorrt --config=cuda
+build:tensorrt --copt=-DGOOGLE_CUDA
 
 #Tensorflow Tensorrt (GPU).
 
