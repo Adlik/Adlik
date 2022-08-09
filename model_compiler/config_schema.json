@@ -148,10 +148,6 @@
       ],
       "description": "the data type of input, required when the source model format is Caffe format"
     },
-    "enable_nhwc_to_nchw": {
-      "type": "boolean",
-      "description": "required when serving_type is openvino, when model is channel last set the 'enable_nhwc_to_nchw' as true"
-    },
     "enable_fp16": {
       "type": "integer",
       "description": "control whether to quantify the model to fp16, used when serving_type is tensorrt or tf-trt"
