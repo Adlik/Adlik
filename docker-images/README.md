@@ -46,7 +46,7 @@ Steps for usage:
 
    ```shell script
    docker run -it --rm -v /media/B/work/source_model:/mnt/model 
-   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda11.0 bash
+   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.5.0_trt7.2.1.6_cuda11.0 bash
    ```
 
 3. Configure the json file or environment variables required to compile the model.

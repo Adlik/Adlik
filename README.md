@@ -83,7 +83,7 @@ model, OpenVino model and TensorFlow Lite model. And in the CPU, you can compile
 model, and TensorRT model. The name and label of compiler mirror are shown below, and the first half of label
 represents the version of TensorRT, the latter part of label represents the version of CUDA:
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.4.0_trt7.2.1.6_cuda11.0
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.5.0_trt7.2.1.6_cuda11.0
 
 #### Using model compiler image compile model
 
@@ -91,7 +91,7 @@ registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.4.0_trt7.2.1.6_cuda11.0
 
    ```shell script
    docker run -it --rm -v source_model:/mnt/model
-   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.4.0_trt7.2.1.6_cuda11.0 bash
+   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.5.0_trt7.2.1.6_cuda11.0 bash
    ```
 
 2. Configure the json file or environment variables required to compile the model.
