@@ -13,9 +13,6 @@ def _get_optimize_params(input_model, output_dir, config):
     params = {'model_name': 'model',
               'input_meta_graph': input_model,
               'output_dir': output_dir}
-    # if enble_nhwc_to_nchw=None or False set --disable_nhwc_to_nchw
-    if not config.enable_nhwc_to_nchw:
-        params['disable_nhwc_to_nchw'] = None
     if config.input_names is not None:
         params['input'] = ','.join(config.input_names)
     if config.input_shapes is not None:

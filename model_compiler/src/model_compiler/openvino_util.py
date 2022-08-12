@@ -38,7 +38,7 @@ class _Layer(NamedTuple):
 
     @staticmethod
     def _get_output_port_from_xml(xml_port):
-        output_shape = [int(dim.text) for dim in xml_port]
+        output_shape = [int(dim.text) for dim in xml_port if dim.tag == "dim"]
         return {xml_port.attrib['id']: (output_shape, xml_port.attrib['precision'])}
 
 
@@ -118,8 +118,6 @@ class Config(NamedTuple):
     output_names: Optional[List[str]] = None
     data_type: Optional[str] = None
     max_batch_size: Optional[int] = None
-    # if set enable_nhwc_to_nchw=True, the optimizer will transform the model format from channel_last to channel_first
-    enable_nhwc_to_nchw: Optional[bool] = None
     saved_model_tags: Optional[List[str]] = None
 
     @staticmethod
@@ -129,7 +127,6 @@ class Config(NamedTuple):
                       output_names=value.get('output_names'),
                       data_type=value.get('data_type'),
                       max_batch_size=value.get('max_batch_size'),
-                      enable_nhwc_to_nchw=value.get('enable_nhwc_to_nchw'),
                       saved_model_tags=value.get('saved_model_tags'))
 
     @staticmethod
@@ -140,9 +137,6 @@ class Config(NamedTuple):
         output_names = split_by(env.get('OUTPUT_NAMES'), ',')
         temp_max_batch_size = env.get('MAX_BATCH_SIZE')
         max_batch_size = int(temp_max_batch_size) if temp_max_batch_size else None
-        # if set enable_nhwc_to_nchw to a non-zero value, the optimizer will transform the model format
-        temp_enable_nhwc_to_nchw = env.get('ENABLE_NHWC_TO_NCHW')
-        enable_nhwc_to_nchw = bool(int(temp_enable_nhwc_to_nchw)) if temp_enable_nhwc_to_nchw else None
         saved_model_tags = env.get('SAVED_MODEL_TAGS')
         data_type = env.get('DATA_TYPE')
 
@@ -151,7 +145,6 @@ class Config(NamedTuple):
                       output_names=output_names,
                       data_type=data_type,
                       max_batch_size=max_batch_size,
-                      enable_nhwc_to_nchw=enable_nhwc_to_nchw,
                       saved_model_tags=saved_model_tags.split(',') if saved_model_tags else None)
 
 

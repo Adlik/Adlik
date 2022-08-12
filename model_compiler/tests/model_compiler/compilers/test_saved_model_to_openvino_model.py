@@ -25,6 +25,20 @@ def _make_saved_model() -> SavedModel:
                       session=session)
 
 
+def _make_saved_model_fp16() -> SavedModel:
+    with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
+        input_x = tf.compat.v1.placeholder(dtype=tf.float16, shape=[None, 2, 3, 4], name='x')
+        input_y = tf.compat.v1.placeholder(dtype=tf.float16, shape=[None, 2, 3, 4], name='y')
+        weight = tf.Variable(initial_value=4.2, dtype=tf.float16)
+        output_z = tf.multiply(input_x + input_y, weight, name='z')
+        session.run(weight.initializer)
+
+    return SavedModel(inputs=[Input(name='x', tensor=input_x, data_format=None),
+                              Input(name='y', tensor=input_y, data_format=None)],
+                      outputs=[Output(name='z', tensor=output_z)],
+                      session=session)
+
+
 class CompileSourceTestCase(TestCase):
     def test_compile_with_no_params(self):
         config = Config.from_json({'max_batch_size': 1})
@@ -40,7 +54,7 @@ class CompileSourceTestCase(TestCase):
     def test_compile_with_fp16(self):
         config = Config.from_json({'max_batch_size': 1,
                                    'data_type': 'FP16'})
-        compiled = compiler.compile_source(source=_make_saved_model(), config=config)
+        compiled = compiler.compile_source(source=_make_saved_model_fp16(), config=config)
         self.assertEqual(compiled.get_inputs(),
                          [ModelInput(name='x', data_type=tf.float16.as_datatype_enum,
                                      format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
@@ -52,8 +66,8 @@ class CompileSourceTestCase(TestCase):
     def test_compile_with_all_params_with_shape(self):
         config = Config.from_json({'input_names': ['x', 'y'],
                                    'input_shapes': [[1, 2, 3, 4], [1, 2, 3, 4]],
-                                   'output_names': ['z'],
-                                   'enable_nhwc_to_nchw': False})
+                                   'output_names': ['z']
+                                   })
         compiled = compiler.compile_source(source=_make_saved_model(), config=config)
         self.assertEqual(compiled.get_inputs(),
                          [ModelInput(name='x', data_type=tf.float32.as_datatype_enum,
@@ -62,17 +76,3 @@ class CompileSourceTestCase(TestCase):
                                      format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
         self.assertEqual(compiled.get_outputs(),
                          [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
-
-    def test_compile_with_all_params_with_enable_nhwc_to_nchw_true(self):
-        config = Config.from_json({'input_names': ['x', 'y'],
-                                   'output_names': ['z'],
-                                   'max_batch_size': 1,
-                                   'enable_nhwc_to_nchw': True})
-        compiled = compiler.compile_source(source=_make_saved_model(), config=config)
-        self.assertEqual(compiled.get_inputs(),
-                         [ModelInput(name='x', data_type=tf.float32.as_datatype_enum,
-                                     format=ModelInput.FORMAT_NONE, dims=[4, 2, 3]),  # pylint: disable=no-member
-                          ModelInput(name='y', data_type=tf.float32.as_datatype_enum,
-                                     format=ModelInput.FORMAT_NONE, dims=[4, 2, 3])])  # pylint: disable=no-member
-        self.assertEqual(compiled.get_outputs(),
-                         [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[4, 2, 3])])
