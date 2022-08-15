@@ -9,7 +9,7 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
 1. Pull the compiler docker image
 
     ```sh
-    docker pull registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda10.2
+    docker pull registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.5.0_trt7.2.1.6_cuda11.0
     ```
 
 2. Use the example code to train a simple keras model:
@@ -30,7 +30,7 @@ This example demonstrates how to use Adlik to compile a serving model and deploy
 
     ```sh
     docker run -it --rm -v $PWD:/home/john/model
-    registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.3.0_trt7.2.1.6_cuda10.2 bash
+    registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.5.0_trt7.2.1.6_cuda11.0 bash
     ```
 
 4. Compile the model: convert the .h5 file to TensorFlow serving model
