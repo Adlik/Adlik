@@ -3,13 +3,13 @@
 
 from typing import NamedTuple, Optional, Sequence
 
-from onnx import ModelProto
+import onnx
 
 from ..data_format import DataFormat
 
 
 class OnnxModel(NamedTuple):
-    model_proto: ModelProto
+    model_proto: onnx.onnx_ml_pb2.ModelProto
     input_data_formats: Sequence[Optional[DataFormat]]
 
     def get_inputs(self):
