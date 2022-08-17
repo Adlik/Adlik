@@ -1,5 +1,6 @@
-# Copyright 2021 ZTE corporation. All Rights Reserved.
+# Copyright 2022 ZTE corporation. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
+
 """
 This is a demo code which export PaddlePaddle ResNet50 model
 """
