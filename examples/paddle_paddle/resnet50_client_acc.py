@@ -42,14 +42,14 @@ def _gen_input_data():
     for filename in file_names:
         array = _preprocess(filename)
         image_data.append(array)
-    
+
     true_labels = None
     if FLAGS.true_label is not None:
         with open(FLAGS.true_label, 'r') as fid:
             true_label_lines = fid.read().replace('\r', '').split('\n')
             true_labels = {}
             for line in true_label_lines:
-                if len(line) and ' ' in line: 
+                if len(line) and ' ' in line:
                     key_val = line.split(' ')
                     true_labels[key_val[0]] = int(key_val[1])
 
@@ -106,7 +106,7 @@ def _postprocess(results, file_names, batch_size, labels, true_labels=None):
                     acc_num += 1
             print("Image: '{}', result: {}".format(file_names[i],
                   results.batch_classes[i]))
-    
+
     return acc_num
 
 
