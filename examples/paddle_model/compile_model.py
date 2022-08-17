@@ -23,7 +23,7 @@ def _main():
             "channels_first"
         ],
         "output_names": [
-            "save_infer_model/scale_0.tmp_0"
+            "linear_1.tmp_1"
         ],
         "input_signatures": [
             "image"

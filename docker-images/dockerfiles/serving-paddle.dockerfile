@@ -47,7 +47,7 @@ RUN apt-get update && \
         wget && \
     apt-get clean && \
     find /var/lib/apt/lists -delete && \
-    python3 -m pip install protobuf wheel
+    python3 -m pip install protobuf==3.19.4 wheel
 
 COPY . /src
 
