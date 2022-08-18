@@ -6,7 +6,7 @@ import subprocess
 from os import path
 
 _UBUNTU_VERSION = 'bionic'
-_TENSORRT_VERSION = '7.2.1.6'
+_TENSORRT_VERSION = '8.2.5.1'
 _CUDA_VERSION = '11.0'
 _OPENVINO_VERSION = '2022.1.0'
 
