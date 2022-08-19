@@ -101,9 +101,9 @@ class CompileSourceTestCase(TestCase):
             config = Config.from_json({'max_batch_size': 1})
             compiled = compiler.compile_source(SavedModelFile(model_path=model_dir), config)
             self.assertEqual(compiled.get_inputs(),
-                             [ModelInput(name='x', data_type=tf.float32.as_datatype_enum,
+                             [ModelInput(name='x:0', data_type=tf.float32.as_datatype_enum,
                                          format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
-                              ModelInput(name='y', data_type=tf.float32.as_datatype_enum,
+                              ModelInput(name='y:0', data_type=tf.float32.as_datatype_enum,
                                          format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
             self.assertEqual(compiled.get_outputs(),
                              [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
@@ -115,9 +115,9 @@ class CompileSourceTestCase(TestCase):
                                        'data_type': 'FP16'})
             compiled = compiler.compile_source(SavedModelFile(model_path=model_dir), config)
             self.assertEqual(compiled.get_inputs(),
-                             [ModelInput(name='x', data_type=tf.float16.as_datatype_enum,
+                             [ModelInput(name='x:', data_type=tf.float16.as_datatype_enum,
                                          format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
-                              ModelInput(name='y', data_type=tf.float16.as_datatype_enum,
+                              ModelInput(name='y:', data_type=tf.float16.as_datatype_enum,
                                          format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
             self.assertEqual(compiled.get_outputs(),
                              [ModelOutput(name='z', data_type=tf.float16.as_datatype_enum, dims=[2, 3, 4])])

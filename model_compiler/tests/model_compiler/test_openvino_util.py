@@ -40,10 +40,6 @@ class ModelParserTestCase(TestCase):
             temp_path = TemporaryDirectory()
             optimize_params = _get_optimize_params(pb_model_file.name, temp_path.name)
             openvino_util.execute_optimize_action(optimize_params)
-            model_parser = openvino_util.ModelParser.from_xml(os.path.join(temp_path.name, 'model.xml'))
-            layer = next(layer for layer in model_parser.layers if layer.type == 'Result')
-            fake_layer = openvino_util._Layer(ports=layer.ports, type=layer.type,  # pylint: disable=protected-access
-                                              id='xxx', name=layer.name)
-            model_parser.layers.append(fake_layer)
+            model_parser = openvino_util.ModelParser.from_model(os.path.join(temp_path.name, 'model.xml'))
             with self.assertRaises(ValueError):
                 model_parser.get_outputs()
