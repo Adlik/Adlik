@@ -139,7 +139,7 @@ registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-gpu:v0.4.0
 
 registry.cn-beijing.aliyuncs.com/adlik/serving-tftrt-gpu:v0.4.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.4.0_trt7.2.1.6_cuda11.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.5.0_trt7.2.1.6_cuda11.0
 
 ### Using the serving images for model inference
 
