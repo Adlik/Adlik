@@ -4,20 +4,22 @@ ARG UBUNTU_VERSION
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
 COPY script/run_server.sh /script/run_server.sh
+
 RUN . /etc/os-release && \
     apt-get update && \
-    apt-get install --no-install-recommends -y wget ca-certificates && \
-    wget "https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/7fa2af80.pub" -O /etc/apt/trusted.gpg.d/cuda.asc && \
+    apt-get install --no-install-recommends -y gnupg curl software-properties-common && \
+    curl "https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/3bf863cc.pub" | apt-key add - && \
+    curl "https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64/7fa2af80.pub" | apt-key add - && \
+    apt-add-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /" && \
+    apt-add-repository -u "deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /" && \
+    apt-get autoremove --purge -y curl gnupg software-properties-common && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-
-RUN . /etc/os-release && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /\n\
-deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /" >> /etc/apt/sources.list
-
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+        cuda-nvprune-11-0 \
+        cuda-nvtx-11-0 \
         cuda-cupti-dev-11-0 \
         libcublas-dev-11-0 \
         libcudnn8=*+cuda11.0 \
@@ -41,6 +43,7 @@ FROM base as builder
 
 RUN . /etc/os-release && \
     apt-get update && \
+    apt-get install --no-install-recommends -y wget && \
     wget 'https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg' -O /etc/apt/trusted.gpg.d/bazel.asc && \
     apt-get autoremove --purge -y wget && \
     apt-get clean && \
