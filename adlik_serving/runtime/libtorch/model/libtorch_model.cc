@@ -169,26 +169,26 @@ tensorflow::Status Instance::processBatch(Batch<BatchingMessageTask>& payloads) 
       at::Tensor torch_output = torch_list[i];
       // memcpy can't used on cuda
       torch_output = torch_output.to(torch::kCPU);
-      size_t out_num = torch_output.numel();
-      if (output.byte_size < out_num * output.data_type)
-        return tensorflow::errors::Internal("Get out put size ", out_num, ", bigger than output blob.");
-      output.shape[0] = out_num / output.byte_1batch_size;
+      size_t out_byte_num = torch_output.nbytes();
+      if (output.byte_size < out_byte_num)
+        return tensorflow::errors::Internal("Get out put size ", out_byte_num, ", bigger than output blob.");
+      output.shape[0] = out_byte_num / output.byte_1batch_size;
       void* ptr = torch_output.data_ptr();
-      std::memcpy(output.buffer.data(), ptr, output.byte_size);
-      offsetSize += output.byte_size;
+      std::memcpy(output.buffer.data(), ptr, out_byte_num);
+      offsetSize += out_byte_num;
       i = i + 1;
     }
   } else {
     for (auto& output : outputs) {
       auto torch_output = torch_outputs.toTensor();
       torch_output = torch_output.to(torch::kCPU);
-      size_t out_num = torch_output.numel();
-      if (output.byte_size < out_num * output.data_type)
-        return tensorflow::errors::Internal("Get out put size ", out_num, ", bigger than output blob.");
-      output.shape[0] = out_num / output.byte_1batch_size;
+      size_t out_byte_num = torch_output.nbytes();
+      if (output.byte_size < out_byte_num)
+        return tensorflow::errors::Internal("Get out put size ", out_byte_num, ", bigger than output blob.");
+      output.shape[0] = out_byte_num / output.byte_1batch_size;
       void* ptr = torch_output.data_ptr();
-      std::memcpy(output.buffer.data(), ptr, output.byte_size);
-      offsetSize += output.byte_size;
+      std::memcpy(output.buffer.data(), ptr, out_byte_num);
+      offsetSize += out_byte_num;
     }
   }
 
