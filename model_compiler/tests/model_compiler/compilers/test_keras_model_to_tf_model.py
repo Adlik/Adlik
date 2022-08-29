@@ -5,6 +5,8 @@ from unittest import TestCase
 
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow.python.keras import Model   # pylint: disable=no-name-in-module
+from tensorflow.python.keras import layers   # pylint: disable=no-name-in-module
 
 import model_compiler.compilers.keras_model_to_tf_model as compiler
 from model_compiler.compilers.keras_model_to_tf_model import KerasModel
@@ -137,10 +139,10 @@ class CompileSourceTestCase(TestCase):
 
     def test_compile_with_input_name_to_input_layer(self):
         with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-            input_tensor = keras.layers.Input(shape=[16], name='l0')
-            output_tensor = keras.layers.Dense(units=8)(input_tensor)
+            input_tensor = layers.Input(shape=[16], name='l0')
+            output_tensor = layers.Dense(units=8)(input_tensor)
 
-        model = KerasModel(model=keras.Model(inputs=[input_tensor], outputs=[output_tensor]), session=session)
+        model = KerasModel(model=Model(inputs=[input_tensor], outputs=[output_tensor]), session=session)
         compiled = compiler.compile_source(source=model, config=Config(input_nodes=[NodeSpec(layer_name='l0')]))
 
         self.assertEqual(len(compiled.inputs), 1)
@@ -198,14 +200,14 @@ class CompileSourceTestCase(TestCase):
                                                  ('channels_last', DataFormat.CHANNELS_LAST)]:
             with self.subTest(data_format=keras_data_format):
                 with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-                    input_x = keras.layers.Input(shape=(28, 28, 3), name='l0')
+                    input_x = layers.Input(shape=(28, 28, 3), name='l0')
 
-                    output_y = keras.layers.Conv2D(filters=4,
-                                                   kernel_size=(3, 3),
-                                                   data_format=keras_data_format,
-                                                   name='l1')(input_x)
+                    output_y = layers.Conv2D(filters=4,
+                                             kernel_size=(3, 3),
+                                             data_format=keras_data_format,
+                                             name='l1')(input_x)
 
-                model = KerasModel(model=keras.Model(inputs=[input_x], outputs=[output_y]), session=session)
+                model = KerasModel(model=Model(inputs=[input_x], outputs=[output_y]), session=session)
                 compiled = compiler.compile_source(source=model, config=Config(input_nodes=[NodeSpec(layer_name='l0')]))
 
                 self.assertEqual(len(compiled.inputs), 1)
@@ -222,14 +224,14 @@ class CompileSourceTestCase(TestCase):
                                                  ('channels_last', DataFormat.CHANNELS_LAST)]:
             with self.subTest(data_format=keras_data_format):
                 with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-                    input_x = keras.layers.Input(shape=(28, 28, 3), name='l0')
+                    input_x = layers.Input(shape=(28, 28, 3), name='l0')
 
-                    output_y = keras.layers.Conv2D(filters=4,
-                                                   kernel_size=(3, 3),
-                                                   data_format=keras_data_format,
-                                                   name='l1')(input_x)
+                    output_y = layers.Conv2D(filters=4,
+                                             kernel_size=(3, 3),
+                                             data_format=keras_data_format,
+                                             name='l1')(input_x)
 
-                model = KerasModel(model=keras.Model(inputs=[input_x], outputs=[output_y]), session=session)
+                model = KerasModel(model=Model(inputs=[input_x], outputs=[output_y]), session=session)
                 compiled = compiler.compile_source(source=model, config=Config(input_nodes=[NodeSpec(layer_name='l0')]))
 
                 self.assertEqual(len(compiled.inputs), 1)
@@ -246,19 +248,19 @@ class CompileSourceTestCase(TestCase):
                                                  ('channels_last', DataFormat.CHANNELS_LAST)]:
             with self.subTest(data_format=keras_data_format):
                 with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-                    input_x = keras.layers.Input(shape=(28, 28, 3), name='l0')
+                    input_x = layers.Input(shape=(28, 28, 3), name='l0')
 
-                    output_y_1 = keras.layers.Conv2D(filters=4,
-                                                     kernel_size=(3, 3),
-                                                     data_format=keras_data_format,
-                                                     name='l1')(input_x)
+                    output_y_1 = layers.Conv2D(filters=4,
+                                               kernel_size=(3, 3),
+                                               data_format=keras_data_format,
+                                               name='l1')(input_x)
 
-                    output_y_2 = keras.layers.Conv2D(filters=4,
-                                                     kernel_size=(3, 3),
-                                                     data_format=keras_data_format,
-                                                     name='l2')(input_x)
+                    output_y_2 = layers.Conv2D(filters=4,
+                                               kernel_size=(3, 3),
+                                               data_format=keras_data_format,
+                                               name='l2')(input_x)
 
-                model = KerasModel(model=keras.Model(inputs=[input_x], outputs=[output_y_1, output_y_2]),
+                model = KerasModel(model=Model(inputs=[input_x], outputs=[output_y_1, output_y_2]),
                                    session=session)
 
                 compiled = compiler.compile_source(source=model, config=Config(input_nodes=[NodeSpec(layer_name='l0')]))
@@ -275,19 +277,18 @@ class CompileSourceTestCase(TestCase):
 
     def test_compile_with_conflicting_data_format_1(self):
         with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-            input_x = keras.layers.Input(shape=(28, 28, 3), name='l0')
+            input_x = layers.Input(shape=(28, 28, 3), name='l0')
 
-            input_y_1 = keras.layers.Conv2D(filters=4,
-                                            kernel_size=(3, 3),
-                                            data_format='channels_first',
-                                            name='l1')(input_x)
+            input_y_1 = layers.Conv2D(filters=4,
+                                      kernel_size=(3, 3),
+                                      data_format='channels_first',
+                                      name='l1')(input_x)
 
-            input_y_2 = keras.layers.Conv2D(filters=4,
-                                            kernel_size=(3, 3),
-                                            data_format='channels_last',
-                                            name='l2')(input_x)
-
-        model = KerasModel(model=keras.Model(inputs=[input_x], outputs=[input_y_1, input_y_2]), session=session)
+            input_y_2 = layers.Conv2D(filters=4,
+                                      kernel_size=(3, 3),
+                                      data_format='channels_last',
+                                      name='l2')(input_x)
+        model = KerasModel(model=Model(inputs=[input_x], outputs=[input_y_1, input_y_2]), session=session)
         compiled = compiler.compile_source(source=model, config=Config(input_nodes=[NodeSpec(layer_name='l0')]))
 
         self.assertEqual(len(compiled.inputs), 1)
@@ -302,19 +303,19 @@ class CompileSourceTestCase(TestCase):
 
     def test_compile_with_conflicting_data_format_2(self):
         with tf.Graph().as_default(), tf.compat.v1.Session().as_default() as session:
-            input_x = keras.layers.Input(shape=(28, 28, 3), name='l0')
+            input_x = layers.Input(shape=(28, 28, 3), name='l0')
 
-            input_y_1 = keras.layers.Conv2D(filters=4,
-                                            kernel_size=(3, 3),
-                                            data_format='channels_last',
-                                            name='l1')(input_x)
+            input_y_1 = layers.Conv2D(filters=4,
+                                      kernel_size=(3, 3),
+                                      data_format='channels_last',
+                                      name='l1')(input_x)
 
-            input_y_2 = keras.layers.Conv2D(filters=4,
-                                            kernel_size=(3, 3),
-                                            data_format='channels_first',
-                                            name='l2')(input_x)
+            input_y_2 = layers.Conv2D(filters=4,
+                                      kernel_size=(3, 3),
+                                      data_format='channels_first',
+                                      name='l2')(input_x)
 
-        model = KerasModel(model=keras.Model(inputs=[input_x], outputs=[input_y_1, input_y_2]), session=session)
+        model = KerasModel(model=Model(inputs=[input_x], outputs=[input_y_1, input_y_2]), session=session)
         compiled = compiler.compile_source(source=model, config=Config(input_nodes=[NodeSpec(layer_name='l0')]))
 
         self.assertEqual(len(compiled.inputs), 1)

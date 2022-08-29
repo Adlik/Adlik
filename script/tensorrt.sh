@@ -38,17 +38,7 @@ fi
 if [[ ${TENSORRT_VERSION} = 7.0.* ]] ; then
   apt-get install --no-install-recommends -y \
     libcudnn7=*+cuda${CUDA_VERSION} \
-    libcudnn7-dev=*+cuda${CUDA_VERSION}
-elif [[ ${TENSORRT_VERSION} = 7.1.* ]] || [[ ${TENSORRT_VERSION} = 7.2.* ]] ; then
-  apt-get install --no-install-recommends -y \
-    libcudnn8=*+cuda${CUDA_VERSION} \
-    libcudnn8-dev=*+cuda${CUDA_VERSION}
-else
-  echo "Not support this CUDA version and TensorRT version"
-fi
-
-apt-get update && \
-apt-get install --no-install-recommends -y \
+    libcudnn7-dev=*+cuda${CUDA_VERSION} \
     libnvinfer7=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
     libnvinfer-dev=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
     libnvinfer-plugin7=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
@@ -56,9 +46,47 @@ apt-get install --no-install-recommends -y \
     libnvonnxparsers7=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
     libnvonnxparsers-dev=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
     python3-libnvinfer=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION}
+elif [[ ${TENSORRT_VERSION} = 7.1.* ]] || [[ ${TENSORRT_VERSION} = 7.2.* ]]; then
+  apt-get install --no-install-recommends -y \
+    libcudnn8=*+cuda${CUDA_VERSION} \
+    libcudnn8-dev=*+cuda${CUDA_VERSION} \
+    libnvinfer7=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
+    libnvinfer-dev=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
+    libnvinfer-plugin7=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
+    libnvparsers7=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
+    libnvonnxparsers7=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
+    libnvonnxparsers-dev=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION} \
+    python3-libnvinfer=${TENSORRT_VERSION}-1+cuda${CUDA_VERSION}
+elif [[ ${TENSORRT_VERSION} = 8.2.* ]] && [[ ${CUDA_VERSION} = '10.2' ]] ; then
+  apt-get install --no-install-recommends -y \
+    libcudnn8=*+cuda${CUDA_VERSION} \
+    libcudnn8-dev=*+cuda${CUDA_VERSION} \
+    libnvinfer8=${TENSORRT_VERSION}-1+cuda10.2 \
+    libnvinfer-dev=${TENSORRT_VERSION}-1+cuda10.2 \
+    libnvinfer-plugin8=${TENSORRT_VERSION}-1+cuda10.2 \
+    libnvparsers8=${TENSORRT_VERSION}-1+cuda10.2 \
+    libnvonnxparsers8=${TENSORRT_VERSION}-1+cuda10.2 \
+    libnvonnxparsers-dev=${TENSORRT_VERSION}-1+cuda10.2 \
+    python3-libnvinfer=${TENSORRT_VERSION}-1+cuda10.2
+elif [[ ${TENSORRT_VERSION} = 8.2.* ]] && [[ ${CUDA_VERSION} = '11.0' ]] ; then
+  apt-get install --no-install-recommends -y \
+    libcudnn8=*+cuda${CUDA_VERSION} \
+    libcudnn8-dev=*+cuda${CUDA_VERSION} \
+    libnvinfer8=${TENSORRT_VERSION}-1+cuda11.4\
+    libnvinfer-dev=${TENSORRT_VERSION}-1+cuda11.4 \
+    libnvinfer-plugin8=${TENSORRT_VERSION}-1+cuda11.4 \
+    libnvparsers8=${TENSORRT_VERSION}-1+cuda11.4 \
+    libnvonnxparsers8=${TENSORRT_VERSION}-1+cuda11.4 \
+    libnvonnxparsers-dev=${TENSORRT_VERSION}-1+cuda11.4 \
+    python3-libnvinfer=${TENSORRT_VERSION}-1+cuda11.4
+else
+  echo "Not support this CUDA version and TensorRT version"
+fi
 
 if [[ ${TENSORRT_VERSION} = 7.0.* ]] ; then
   apt-mark hold libcudnn7 libcudnn7-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
 elif [[ ${TENSORRT_VERSION} = 7.1.* ]] || [[ ${TENSORRT_VERSION} = 7.2.* ]] ; then
   apt-mark hold libcudnn8 libcudnn8-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
+elif [[ ${TENSORRT_VERSION} = 8.2.* ]]; then
+  apt-mark hold libcudnn8 libcudnn8-dev libnvinfer8 libnvinfer-dev libnvonnxparsers8 libnvonnxparsers-dev
 fi

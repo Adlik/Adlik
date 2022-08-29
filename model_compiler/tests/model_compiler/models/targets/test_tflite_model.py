@@ -28,13 +28,15 @@ class TfLiteModelFileTestCase(TestCase):
     def test_get_single_inputs(self):
         tflite_model = _make_simple_tflite_model()
 
-        self.assertEqual(tflite_model.get_inputs(), [ModelInput(name='input_input', data_type='DT_FLOAT',
-                                                                format='FORMAT_NHWC', dims=[1])])
+        self.assertEqual(tflite_model.get_inputs(),
+                         [ModelInput(name='serving_default_input_input:0', data_type='DT_FLOAT',
+                                     format='FORMAT_NHWC', dims=[1])])
 
     def test_get_outputs(self):
         tflite_model = _make_simple_tflite_model()
 
-        self.assertEqual(tflite_model.get_outputs(), [ModelOutput(name='Identity', data_type='DT_FLOAT', dims=[1])])
+        self.assertEqual(tflite_model.get_outputs(),
+                         [ModelOutput(name='StatefulPartitionedCall:0', data_type='DT_FLOAT', dims=[1])])
 
     def test_save(self):
         tflite_model = _make_simple_tflite_model()
@@ -60,5 +62,7 @@ class TfLiteModelFileTestCase(TestCase):
                                    input_formats=[DataFormat.CHANNELS_LAST, DataFormat.CHANNELS_FIRST])
 
         self.assertEqual(tflite_model.get_inputs(),
-                         [ModelInput(name='input_1', data_type='DT_FLOAT', format='FORMAT_NHWC', dims=[100]),
-                          ModelInput(name='input_2', data_type='DT_FLOAT', format='FORMAT_NCHW', dims=[300])])
+                         [ModelInput(name='serving_default_input_1:0', data_type='DT_FLOAT',
+                                     format='FORMAT_NHWC', dims=[100]),
+                          ModelInput(name='serving_default_input_2:0', data_type='DT_FLOAT',
+                                     format='FORMAT_NCHW', dims=[300])])

@@ -62,7 +62,7 @@ class CompileSourceTestCase(TestCase):
 
     def test_compile_with_all_params(self):
         onnx_model = _make_onnx_model()
-        config = Config.from_json({'input_names': ['0:add', '1:add'],
+        config = Config.from_json({'input_names': ['x:0', 'y:0'],
                                    'input_shapes': [[2, 3, 4], [2, 3, 4]],
                                    'output_names': ['z'],
                                    'max_batch_size': 1})

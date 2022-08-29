@@ -7,7 +7,7 @@ from unittest import TestCase
 
 import tensorrt
 import tensorflow as tf
-
+import pytest
 import model_compiler.compilers.repository as compiler_repository
 from model_compiler.models.sources.saved_model_file import SavedModelFile
 from model_compiler.models.targets.tftrt_saved_model import TfTRTSavedModel
@@ -48,6 +48,7 @@ def _make_tftrt_saved_model(model_dir) -> TfTRTSavedModel:
                                                   'input_formats': ['channels_last', 'channels_last']}))
 
 
+@pytest.mark.gpu_test
 class TfTRTSavedModelTestCase(TestCase):
     def test_get_inputs(self):
         with TemporaryDirectory() as model_dir:

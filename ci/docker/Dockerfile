@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y ca-certificates && \
@@ -50,12 +50,12 @@ RUN . /etc/os-release && \
         libcurand-dev-11-0 \
         libcusolver-dev-11-0 \
         libcusparse-dev-11-0 \
-        'libnvinfer7=7.2.*+cuda11.0' \
-        'libnvinfer-dev=7.2.*+cuda11.0' \
-        'libnvinfer-plugin7=7.2.*+cuda11.0' \
-        'libnvonnxparsers7=7.2.*+cuda11.0' \
-        'libnvonnxparsers-dev=7.2.*+cuda11.0' \
-        'libnvparsers7=7.2.*+cuda11.0' \
+        'libnvinfer8=8.2.*+cuda11.4' \
+        'libnvinfer-dev=8.2.*+cuda11.4' \
+        'libnvinfer-plugin8=8.2.*+cuda11.4' \
+        'libnvonnxparsers8=8.2.*+cuda11.4' \
+        'libnvonnxparsers-dev=8.2.*+cuda11.4' \
+        'libnvparsers8=8.2.*+cuda11.4'
         libtool \
         protobuf-compiler \
         python3-dev \
@@ -71,7 +71,7 @@ RUN python3 -m pip install -U pip setuptools wheel
 
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda-11.0/bin:${PATH}
 ENV LD_LIBRARY_PATH=/usr/local/cuda-11.0/targets/x86_64-linux/lib:$LD_LIBRARY_PATH
-ENV CPLUS_INCLUDE_PATH=/usr/include/python3.6m:$CPLUS_INCLUDE_PATH
+ENV CPLUS_INCLUDE_PATH=/usr/include/python3.8m:$CPLUS_INCLUDE_PATH
 
 RUN python3 -c 'import shutil, sys, urllib.request; shutil.copyfileobj(urllib.request.urlopen(sys.argv[1]), sys.stdout.buffer)' \
         https://github.com/bazelbuild/buildtools/releases/download/3.4.0/buildifier > /usr/local/bin/buildifier && \
