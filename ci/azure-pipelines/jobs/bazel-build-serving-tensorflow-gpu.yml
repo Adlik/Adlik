@@ -4,7 +4,7 @@ jobs:
     condition: and(succeeded(), eq(dependencies.BazelLongTimeBuildCheck.outputs['BuildCheck.BuildJobs'], 'true'))
     dependsOn: BazelLongTimeBuildCheck
     pool:
-        vmImage: Ubuntu-18.04
+        vmImage: Ubuntu-20.04
     timeoutInMinutes: 0
     steps:
       - template: ../steps/intsall-tf-serving-gpu-deps.yml

@@ -7,22 +7,22 @@ steps:
         sudo apt-add-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /"
         sudo apt-add-repository -u "deb https://developer.download.nvidia.com/compute/machine-learning/repos/$ID$(echo $VERSION_ID | tr -d .)/x86_64 /"
         sudo apt-get install --no-install-recommends -y \
-            cuda-command-line-tools-11-0 \
-            cuda-compat-11-0 \
-            cuda-cupti-dev-11-0 \
-            cuda-nvml-dev-11-0 \
-            cuda-nvrtc-11-0 \
-            libcublas-dev-11-0 \
-            'libcudnn8=*+cuda11.0' \
-            'libcudnn8-dev=*+cuda11.0' \
-            libcufft-dev-11-0 \
-            libcurand-dev-11-0 \
-            libcusolver-dev-11-0 \
-            libcusparse-dev-11-0 \
-            'libnvinfer8=8.2.*+cuda11.4' \
-            'libnvinfer-dev=8.2.*+cuda11.4' \
-            'libnvinfer-plugin8=8.2.*+cuda11.4' \
-            'libnvonnxparsers8=8.2.*+cuda11.4' \
-            'libnvonnxparsers-dev=8.2.*+cuda11.4' \
-            'libnvparsers8=8.2.*+cuda11.4'
+            cuda-command-line-tools-11-6 \
+            cuda-compat-11-6 \
+            cuda-cupti-dev-11-6 \
+            cuda-nvml-dev-11-6 \
+            cuda-nvrtc-11-6 \
+            libcublas-dev-11-6 \
+            'libcudnn8=*+cuda11.6' \
+            'libcudnn8-dev=*+cuda11.6' \
+            libcufft-dev-11-6 \
+            libcurand-dev-11-6 \
+            libcusolver-dev-11-6 \
+            libcusparse-dev-11-6 \
+            'libnvinfer8=8.4.*+cuda11.6' \
+            'libnvinfer-dev=8.4.*+cuda11.6' \
+            'libnvinfer-plugin8=8.4.*+cuda11.6' \
+            'libnvonnxparsers8=8.4.*+cuda11.6' \
+            'libnvonnxparsers-dev=8.4.*+cuda11.6' \
+            'libnvparsers8=8.4.*+cuda11.6'
     displayName: Install TensorRT libraries

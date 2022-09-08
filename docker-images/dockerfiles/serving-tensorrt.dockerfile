@@ -44,13 +44,12 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         git \
         automake \
-        libpython2.7-stdlib \
         bazel \
+        python \
         libpython3-dev \
         libtool \
         make \
         patch \
-        python-minimal \
         python3-distutils \
         python3-numpy && \
     apt-get clean && \
@@ -59,6 +58,8 @@ RUN apt-get update && \
 COPY . /src
 
 WORKDIR /src
+
+RUN ln -s /usr/local/cuda-"$CUDA_VERSION"/include /src/third_party/cuda
 
 RUN env PYTHON_BIN_PATH=/usr/bin/python3 \
         TF_CUDA_VERSION=${CUDA_VERSION} \

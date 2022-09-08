@@ -11,13 +11,17 @@ from os import path
 from subprocess import Popen
 from tempfile import TemporaryDirectory
 
-_BASE_URL = 'https://developer.download.nvidia.com/compute/cuda/repos/'
-_PACKAGE = 'python3-libnvinfer_8.2.5-1+cuda11.4_amd64.deb'
+_PACKAGE = 'python3-libnvinfer_8.4.3-1+cuda11.6_amd64.deb'
 
 _TENSORRT_SOURCES = {
     (3, 5): 'ubuntu1604',
     (3, 6): 'ubuntu1804',
     (3, 8): 'ubuntu2004'
+}
+
+_BASE_URL_SOURCES = {
+    (3, 6): 'https://developer.download.nvidia.com/compute/cuda/repos/',
+    (3, 8): 'https://developer.download.nvidia.com/compute/cuda/repos/'
 }
 
 _TOOLS_DIR = path.dirname(path.abspath(__file__))
@@ -41,8 +45,9 @@ def _get_cuda_version():
 def _get_tensorrt_url():
     python_version = sys.version_info
     source_os = _TENSORRT_SOURCES[(python_version.major, python_version.minor)]
+    base_url = _BASE_URL_SOURCES[(python_version.major, python_version.minor)]
 
-    return '{}/{}/x86_64/{}'.format(_BASE_URL, source_os, _PACKAGE)
+    return '{}/{}/x86_64/{}'.format(base_url, source_os, _PACKAGE)
 
 
 def main():

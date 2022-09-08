@@ -161,7 +161,6 @@ tensorflow::Status Instance::loadPlan(const std::vector<char>& model_data) {
     return tensorflow::errors::Internal("Unable to create TensorRT engine");
   }
 
-  // tensorrt >= 8.4, getMaxBatchSize() will be deprecated
   if (max_batch_size > engine->getMaxBatchSize()) {
     return tensorflow::errors::InvalidArgument("unexpected configuration maximum batch size ",
                                                max_batch_size,

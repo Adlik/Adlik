@@ -2,7 +2,7 @@ jobs:
   - job: BazelBuildServingLibtorch
     displayName: Bazel build serving (Libtorch)
     pool:
-        vmImage: Ubuntu-18.04
+        vmImage: Ubuntu-20.04
     timeoutInMinutes: 0
     steps:
       - template: ../steps/install-torch.yml

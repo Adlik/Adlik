@@ -5,6 +5,7 @@ ARG UBUNTU_VERSION
 FROM "ubuntu:$UBUNTU_VERSION" as base
 COPY script/run_compiler.sh /script/run_compiler.sh
 COPY script/tensorrt.sh /script/tensorrt.sh
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install --no-install-recommends -y python3-pip && \
     apt-get clean && \

@@ -1,7 +1,7 @@
 common --experimental_repo_remote_exec
 
-build --cxxopt=-std=c++14
-build --host_cxxopt=-std=c++14
+build --cxxopt=-std=c++17
+build --host_cxxopt=-std=c++17
 
 build --define=grpc_no_ares=true
 

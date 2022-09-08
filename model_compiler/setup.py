@@ -54,9 +54,9 @@ setuptools.setup(
     install_requires=[
         'future',
         'networkx',
-        'tensorflow==2.9.1',
-        'torch==1.10.1',
-        'torchvision==0.11.2',
+        'tensorflow==2.10.0',
+        'torch==1.8.1',
+        'torchvision==0.9.1',
         'onnx-tf==1.9.0',
         'onnx-caffe2',
         'paddlepaddle',
@@ -66,7 +66,7 @@ setuptools.setup(
         'tf2onnx',
         'tornado==6.1',
         'ruamel.yaml',
-        'openvino-dev==2022.2.0.dev20220829',
+        'openvino-dev==2022.2.0',
         'opencv-python',
         'Cython',
         'oneflow==0.7.0+cpu',
@@ -83,7 +83,7 @@ setuptools.setup(
             'flake8',
             'mypy',
             'pylint==2.6.2',
-            'pytest-cov',
+            'pytest-cov==3.0.0',
             'pytest-xdist'
         ]
     },

@@ -2,7 +2,7 @@ jobs:
   - job: BazelBuildServingTensorRT
     displayName: Bazel build serving (TensorRT)
     pool:
-        vmImage: Ubuntu-18.04
+        vmImage: Ubuntu-20.04
     timeoutInMinutes: 0
     steps:
       - template: ../steps/install-tensorrt.yml
@@ -17,12 +17,12 @@ jobs:
             key: bazel-build-serving-tensorrt
             path: $(BAZEL_BUILD_CACHE)
       - script: |
-            env TF_CUDA_VERSION=11.0 \
+            env TF_CUDA_VERSION=11.6 \
                 ci/checks/bazel-build-serving.py \
                     --config=tensorrt \
                     -c opt \
                     --disk_cache="$BAZEL_BUILD_CACHE" \
-                    --action_env=LIBRARY_PATH=/usr/local/cuda-11.0/lib64/stubs \
+                    --action_env=LIBRARY_PATH=/usr/local/cuda-11.6/lib64/stubs \
                     --incompatible_use_specific_tool_files=false \
                     --copt="-Ithird_party/cuda/include"
         displayName: Bazel build serving
