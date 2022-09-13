@@ -36,13 +36,13 @@ serving_cc_library(
         "//adlik_serving/runtime/provider:predict_response_provider",
         "//adlik_serving/runtime/util:datatype_size",
         "//cub/log",
-        "@libtorch_archive//:torch_cpu",
         "@torchvision//:torchvision",
     ] + select({
         ":resourceCuda": [
+            "@libtorch_gpu_archive//:torch_gpu",
             "//third_party/cuda",
             "@local_config_cuda//cuda:cudart",
         ],
-        ":noresourceCuda": [],
+        ":noresourceCuda": ["@libtorch_cpu_archive//:torch_cpu"],
     }),
 )
