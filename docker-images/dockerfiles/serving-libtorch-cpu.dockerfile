@@ -62,15 +62,7 @@ RUN apt-get update && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y wget unzip && \
-    cd / && rm -rf /libtorch && \
-    wget "https://download.pytorch.org/libtorch/cu102/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcu102.zip" && \
-    unzip libtorch-cxx11-abi-shared-with-deps-1.8.1+cu102.zip && \
-    rm libtorch-cxx11-abi-shared-with-deps-1.8.1+cu102.zip && \
-    apt-get autoremove --purge -y wget unzip && \
-    apt-get clean && \
-    find /var/lib/apt/lists -delete
+
 
 COPY . /src
 
