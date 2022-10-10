@@ -74,7 +74,7 @@ setuptools.setup(
         'onnxruntime',
         'onnxoptimizer==0.2.7',
         'onnx-simplifier',
-        'protobuf==3.19.1'
+        'protobuf==3.19.5'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
     extras_require={
