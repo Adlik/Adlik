@@ -54,9 +54,9 @@ setuptools.setup(
     install_requires=[
         'future',
         'networkx',
-        'tensorflow==2.6.2',
-        'torch',
-        'torchvision',
+        'tensorflow==2.10.0',
+        'torch==1.8.1',
+        'torchvision==0.9.1',
         'onnx-tf==1.9.0',
         'onnx-caffe2',
         'paddlepaddle',
@@ -66,15 +66,14 @@ setuptools.setup(
         'tf2onnx',
         'tornado==6.1',
         'ruamel.yaml',
-        'openvino-dev==2022.1.0',
+        'openvino-dev==2022.2.0',
+        'opencv-python',
         'Cython',
         'oneflow==0.7.0+cpu',
         'oneflow_onnx',
         'onnxruntime',
         'onnxoptimizer==0.2.7',
         'onnx-simplifier',
-        # TODO: When the TensorRT version is upgraded to 8.x, delete this line
-        'onnx==1.11.0',
         'protobuf==3.19.1'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
@@ -84,9 +83,9 @@ setuptools.setup(
             'flake8',
             'mypy',
             'pylint==2.6.2',
-            'pytest-cov',
+            'pytest-cov==3.0.0',
             'pytest-xdist'
         ]
     },
-    python_requires='>= 3.6'
+    python_requires='>= 3.8'
 )

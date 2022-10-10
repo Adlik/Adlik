@@ -18,20 +18,21 @@ RUN . /etc/os-release && \
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-        cuda-nvprune-11-0 \
-        cuda-nvtx-11-0 \
-        cuda-cupti-dev-11-0 \
-        libcublas-dev-11-0 \
-        libcudnn8=*+cuda11.0 \
-        libcudnn8-dev=*+cuda11.0 \
-        libcufft-dev-11-0 \
-        libcurand-dev-11-0 \
-        libcusolver-dev-11-0 \
-        libcusparse-dev-11-0 \
-        libnvinfer7=7.2.*+cuda11.0 \
-        libnvinfer-dev=7.2.*+cuda11.0 \
-        libnvinfer-plugin7=7.2.*+cuda11.0 \
-        libnvinfer-plugin-dev=7.2.*+cuda11.0 && \
+        cuda-nvprune-11-6 \
+        cuda-nvtx-11-6 \
+        cuda-cupti-dev-11-6 \
+        cuda-nvml-dev-11-6 \
+        libcublas-dev-11-6 \
+        libcudnn8=*+cuda11.6 \
+        libcudnn8-dev=*+cuda11.6 \
+        libcufft-dev-11-6 \
+        libcurand-dev-11-6 \
+        libcusolver-dev-11-6 \
+        libcusparse-dev-11-6 \
+        libnvinfer8=8.4.*+cuda11.6 \
+        libnvinfer-dev=8.4.*+cuda11.6 \
+        libnvinfer-plugin8=8.4.*+cuda11.6 \
+        libnvinfer-plugin-dev=8.4.*+cuda11.6 && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
@@ -55,13 +56,12 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         git \
         automake \
-        libpython2.7-stdlib \
         bazel \
+        python \
         libpython3-dev \
         libtool \
         make \
         patch \
-        python-minimal \
         python3-distutils \
         python3-numpy && \
     apt-get clean && \
@@ -72,11 +72,12 @@ COPY . /src
 WORKDIR /src
 
 RUN env PYTHON_BIN_PATH=/usr/bin/python3 TF_NEED_TENSORRT=1\
-        TF_CUDA_VERSION=11.0 \
+        TF_CUDA_VERSION=11.6 \
         bazel build //adlik_serving \
          --config=tensorflow-tensorrt \
          -c opt \
-         --incompatible_use_specific_tool_files=false
+         --incompatible_use_specific_tool_files=false \
+         --verbose_failures
 
 # Runtime.
 

@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y ca-certificates && \
@@ -29,9 +29,9 @@ RUN . /etc/os-release && \
         bazel \
         clang-format \
         clang-tidy \
-        cuda-cupti-dev-11-0 \
-        cuda-nvml-dev-11-0 \
-        cuda-nvrtc-11-0 \
+        cuda-cupti-dev-11-6 \
+        cuda-nvml-dev-11-6 \
+        cuda-nvrtc-11-6 \
         default-jdk-headless \
         flake8 \
         git \
@@ -39,23 +39,23 @@ RUN . /etc/os-release && \
         iwyu \
         libclang-common-5.0-dev \
         libclang-common-6.0-dev \
-        cuda-nvprune-11-0 \
-        cuda-nvtx-11-0 \
-        cuda-command-line-tools-11-0 \
-        cuda-compat-11-0 \
-        libcublas-dev-11-0 \
-        'libcudnn8=*+cuda11.0' \
-        'libcudnn8-dev=*+cuda11.0' \
-        libcufft-dev-11-0 \
-        libcurand-dev-11-0 \
-        libcusolver-dev-11-0 \
-        libcusparse-dev-11-0 \
-        'libnvinfer7=7.2.*+cuda11.0' \
-        'libnvinfer-dev=7.2.*+cuda11.0' \
-        'libnvinfer-plugin7=7.2.*+cuda11.0' \
-        'libnvonnxparsers7=7.2.*+cuda11.0' \
-        'libnvonnxparsers-dev=7.2.*+cuda11.0' \
-        'libnvparsers7=7.2.*+cuda11.0' \
+        cuda-nvprune-11-6 \
+        cuda-nvtx-11-6 \
+        cuda-command-line-tools-11-6 \
+        cuda-compat-11-6 \
+        libcublas-dev-11-6 \
+        'libcudnn8=*+cuda11.6' \
+        'libcudnn8-dev=*+cuda11.6' \
+        libcufft-dev-11-6 \
+        libcurand-dev-11-6 \
+        libcusolver-dev-11-6 \
+        libcusparse-dev-11-6 \
+        'libnvinfer8=8.4.*+cuda11.6' \
+        'libnvinfer-dev=8.4.*+cuda11.6' \
+        'libnvinfer-plugin8=8.4.*+cuda11.6' \
+        'libnvonnxparsers8=8.4.*+cuda11.6' \
+        'libnvonnxparsers-dev=8.4.*+cuda11.6' \
+        'libnvparsers8=8.4.*+cuda11.6'
         libtool \
         protobuf-compiler \
         python3-dev \
@@ -65,13 +65,13 @@ RUN . /etc/os-release && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
-RUN apt-mark hold libcudnn8 libcudnn8-dev libnvinfer7 libnvinfer-dev libnvonnxparsers7 libnvonnxparsers-dev
+RUN apt-mark hold libcudnn8 libcudnn8-dev libnvinfer8 libnvinfer-dev libnvonnxparsers8 libnvonnxparsers-dev
 
 RUN python3 -m pip install -U pip setuptools wheel
 
-ENV PATH /usr/local/nvidia/bin:/usr/local/cuda-11.0/bin:${PATH}
-ENV LD_LIBRARY_PATH=/usr/local/cuda-11.0/targets/x86_64-linux/lib:$LD_LIBRARY_PATH
-ENV CPLUS_INCLUDE_PATH=/usr/include/python3.6m:$CPLUS_INCLUDE_PATH
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda-11.6/bin:${PATH}
+ENV LD_LIBRARY_PATH=/usr/local/cuda-11.6/targets/x86_64-linux/lib:$LD_LIBRARY_PATH
+ENV CPLUS_INCLUDE_PATH=/usr/include/python3.8m:$CPLUS_INCLUDE_PATH
 
 RUN python3 -c 'import shutil, sys, urllib.request; shutil.copyfileobj(urllib.request.urlopen(sys.argv[1]), sys.stdout.buffer)' \
         https://github.com/bazelbuild/buildtools/releases/download/3.4.0/buildifier > /usr/local/bin/buildifier && \

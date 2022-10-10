@@ -72,7 +72,7 @@ public:
     return this->func(*this->inner);
   }
 
-  auto operator-> () const {
+  auto operator->() const {
     return pointer{&**this};
   }
 };

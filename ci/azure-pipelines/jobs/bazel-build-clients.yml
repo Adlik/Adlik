@@ -2,7 +2,7 @@ jobs:
   - job: BazelBuildClients
     displayName: Bazel build clients
     pool:
-        vmImage: Ubuntu-18.04
+        vmImage: Ubuntu-20.04
     steps:
       - task: UsePythonVersion@0
         inputs:
