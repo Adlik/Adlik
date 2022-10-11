@@ -19,7 +19,7 @@ _REQUIRED_PACKAGES = [
     'requests',
     'tensorflow==2.6.2',
     'jsonschema==3.2.0',
-    'protobuf==3.20.1'
+    'protobuf==3.20.2'
 ]
 
 _TEST_REQUIRES = [
