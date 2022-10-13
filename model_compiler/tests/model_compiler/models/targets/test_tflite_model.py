@@ -19,6 +19,8 @@ def _make_simple_tflite_model() -> TfLiteModel:
     model.compile(optimizer='sgd', loss='mean_squared_error')
     model.fit(input_x, output_y, epochs=1)
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    # tensorflow>=2.7.0, if batch size is -1, to avoid using tf_select_ops
+    converter._experimental_default_to_single_batch_in_tensor_list_ops = True  # pylint: disable=protected-access
     tflite_model = converter.convert()
 
     return TfLiteModel(tflite_model=tflite_model, input_formats=[DataFormat.CHANNELS_LAST])
@@ -56,6 +58,8 @@ class TfLiteModelFileTestCase(TestCase):
         output_y = tf.keras.layers.Dense(10)(input_x)
         model = tf.keras.models.Model(inputs=[input_1, input_2], outputs=[output_y])
         converter = tf.lite.TFLiteConverter.from_keras_model(model)
+        # tensorflow>=2.7.0, if batch size is -1, to avoid using tf_select_ops
+        converter._experimental_default_to_single_batch_in_tensor_list_ops = True  # pylint: disable=protected-access
         tflite_model = converter.convert()
 
         tflite_model = TfLiteModel(tflite_model=tflite_model,
