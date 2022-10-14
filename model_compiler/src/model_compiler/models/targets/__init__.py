@@ -3,7 +3,7 @@
 
 from types import ModuleType
 
-from . import saved_model, tflite_model, paddle_model
+from . import saved_model, tflite_model, paddle_model, enflame_model
 
 try:
     from . import tensorrt_model
@@ -11,6 +11,7 @@ except ImportError:  # pragma: no cover
     tensorrt_model = ModuleType('model_compiler.models.targets.tensorrt_model')
 
 __all__ = [
+    'enflame_model',
     'onnx_model',
     'openvino_model',
     'saved_model',
