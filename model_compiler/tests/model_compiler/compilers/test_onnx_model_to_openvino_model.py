@@ -62,7 +62,7 @@ class CompileSourceTestCase(TestCase):
 
     def test_compile_with_all_params(self):
         onnx_model = _make_onnx_model()
-        config = Config.from_json({'input_names': ['0:add', '1:add'],
+        config = Config.from_json({'input_names': ['x:0', 'y:0'],
                                    'input_shapes': [[2, 3, 4], [2, 3, 4]],
                                    'output_names': ['z'],
                                    'max_batch_size': 1})
@@ -73,7 +73,7 @@ class CompileSourceTestCase(TestCase):
                           ModelInput(name='y:0', data_type=tf.float32.as_datatype_enum,
                                      format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
         self.assertEqual(compiled.get_outputs(),
-                         [ModelOutput(name='z_raw_output___17:0',
+                         [ModelOutput(name='z_raw_output___18:0',
                                       data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
 
     def test_compile_with_fp16(self):

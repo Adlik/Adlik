@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 from unittest import TestCase
 
 import numpy as np
-
+import pytest
 import tensorflow as tf
 from tensorflow.core.framework.types_pb2 import DataType as TfDataType  # pylint: disable=no-name-in-module
 
@@ -105,6 +105,7 @@ def _input_fn():
         yield [tf.constant(np.zeros(x).astype(np.float32)) for x in shapes]
 
 
+@pytest.mark.gpu_test
 class CompileSourceTestCase(TestCase):
     def test_compile_simple(self):
         with TemporaryDirectory() as model_dir:

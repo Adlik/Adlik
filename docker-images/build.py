@@ -5,10 +5,10 @@ import os
 import subprocess
 from os import path
 
-_UBUNTU_VERSION = 'bionic'
-_TENSORRT_VERSION = '7.2.1.6'
-_CUDA_VERSION = '11.0'
-_OPENVINO_VERSION = '2022.1.0'
+_UBUNTU_VERSION = 'focal'
+_TENSORRT_VERSION = '8.4.3.1'
+_CUDA_VERSION = '11.6'
+_OPENVINO_VERSION = '2022.2.0.dev20220829'
 
 _IMAGES = {
     'model-compiler': {'OPENVINO_VERSION': _OPENVINO_VERSION, 'TENSORRT_VERSION': _TENSORRT_VERSION.rpartition('.')[0],

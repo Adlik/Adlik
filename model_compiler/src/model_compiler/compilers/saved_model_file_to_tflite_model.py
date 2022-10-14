@@ -19,6 +19,8 @@ def compile_source(source: SavedModelFile, config: Config) -> TfLiteModel:
         signature_keys = tf.saved_model.load(source.model_path, tags=['serve']).signatures
 
     converter = tf.lite.TFLiteConverter.from_saved_model(source.model_path, signature_keys=signature_keys)
+    # tensorflow>=2.7.0, if batch size is -1, to avoid using tf_select_ops
+    converter._experimental_default_to_single_batch_in_tensor_list_ops = True  # pylint: disable=protected-access
     tflite_model = get_tflite_model(converter, config)
 
     return TfLiteModel(tflite_model, config.input_formats)

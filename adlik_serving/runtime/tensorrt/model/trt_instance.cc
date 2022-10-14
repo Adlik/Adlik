@@ -25,7 +25,7 @@ using namespace adlik::serving;
 namespace {
 
 struct Logger : public nvinfer1::ILogger {
-  void log(Severity severity, const char* msg) override {
+  void log(Severity severity, const nvinfer1::AsciiChar* msg) noexcept {
     switch (severity) {
       case Severity::kINTERNAL_ERROR:
         ERR_LOG << msg;
@@ -51,7 +51,8 @@ Logger tensorrt_logger;
 struct DestroyDeleter {
   template <typename T>
   void operator()(T* p) const {
-    p->destroy();
+    if (p)
+      p->destroy();
   }
 };
 
@@ -155,7 +156,7 @@ tensorflow::Status Instance::loadPlan(const std::vector<char>& model_data) {
     return tensorflow::errors::Internal("Unable to create TensorRT runtime");
   }
 
-  engine.reset(runtime->deserializeCudaEngine(&model_data[0], model_data.size(), nullptr));
+  engine.reset(runtime->deserializeCudaEngine(&model_data[0], model_data.size()));
   if (!engine) {
     return tensorflow::errors::Internal("Unable to create TensorRT engine");
   }

@@ -5,6 +5,7 @@ ARG UBUNTU_VERSION
 FROM "ubuntu:$UBUNTU_VERSION" as base
 COPY script/run_compiler.sh /script/run_compiler.sh
 COPY script/tensorrt.sh /script/tensorrt.sh
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install --no-install-recommends -y python3-pip && \
     apt-get clean && \
@@ -69,7 +70,7 @@ ENV LD_LIBRARY_PATH=/usr/local/cuda-$CUDA_VERSION/targets/x86_64-linux/lib:$LD_L
 ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV CPLUS_INCLUDE_PATH=/usr/include/python3.6m:$CPLUS_INCLUDE_PATH
+ENV CPLUS_INCLUDE_PATH=/usr/include/python3.8m:$CPLUS_INCLUDE_PATH
 
 RUN chmod +x /script/run_compiler.sh
 CMD /script/run_compiler.sh

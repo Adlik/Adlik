@@ -20,10 +20,7 @@ def _load_module(file_path, name):
 
 
 def _iterate_tensors(tensors: Union[tf.Tensor, Iterable[tf.Tensor]]):
-    if isinstance(tensors, tf.Tensor):
-        yield tensors
-    else:
-        yield tensors
+    yield tensors
 
 
 def _get_data_format(tensor: tf.Tensor):

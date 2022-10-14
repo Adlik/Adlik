@@ -27,10 +27,10 @@ def add_all_deps():
 
     http_archive(
         name = "org_tensorflow",
-        sha256 = "add5982a3ce3b9964b7122dd0d28927b6a9d9abd8f95a89eda18ca76648a0ae8",
-        strip_prefix = "tensorflow-c2363d6d025981c661f8cbecf4c73ca7fbf38caf",
+        sha256 = "bc4e9bbeb0136163f283ab8b695bec747cad738963e153ce3b7e414ebffe408f",
+        strip_prefix = "tensorflow-359c3cdfc5fabac82b3c70b3b6de2b0a8c16874f",
         urls = [
-            "https://github.com/tensorflow/tensorflow/archive/c2363d6d025981c661f8cbecf4c73ca7fbf38caf.tar.gz",
+            "https://github.com/tensorflow/tensorflow/archive/359c3cdfc5fabac82b3c70b3b6de2b0a8c16874f.tar.gz",
         ],
     )
 
@@ -87,10 +87,19 @@ def add_all_deps():
     )
 
     http_archive(
-        name = "libtorch_archive",
+        name = "libtorch_gpu_archive",
         strip_prefix = "libtorch",
         sha256 = "f6032b9ed73161176201e501866e7b4878c8436fd64fc75a528243a2bbb88c72",
         type = "zip",
         urls = ["https://download.pytorch.org/libtorch/cu102/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcu102.zip"],
-        build_file = str(Label("//third_party/torch:BUILD")),
+        build_file = str(Label("//third_party/torch_gpu:BUILD")),
+    )
+
+    http_archive(
+        name = "libtorch_cpu_archive",
+        strip_prefix = "libtorch",
+        sha256 = "44ecf7f2fc671da7b67694fc9d64b2762039ad83de46407ae3e0868081b7ae2c",
+        type = "zip",
+        urls = ["https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcpu.zip"],
+        build_file = str(Label("//third_party/torch_cpu:BUILD")),
     )

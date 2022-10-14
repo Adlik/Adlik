@@ -2,7 +2,7 @@ jobs:
   - job: BazelBuildServingML
     displayName: Bazel build serving (ML)
     pool:
-        vmImage: Ubuntu-18.04
+        vmImage: Ubuntu-20.04
     timeoutInMinutes: 0
     steps:
       - task: UsePythonVersion@0

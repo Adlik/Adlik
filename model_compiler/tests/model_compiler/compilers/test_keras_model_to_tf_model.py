@@ -4,7 +4,7 @@
 from unittest import TestCase
 
 import tensorflow as tf
-from tensorflow import keras
+from tensorflow.python import keras     # pylint: disable=no-name-in-module
 
 import model_compiler.compilers.keras_model_to_tf_model as compiler
 from model_compiler.compilers.keras_model_to_tf_model import KerasModel
@@ -286,7 +286,6 @@ class CompileSourceTestCase(TestCase):
                                             kernel_size=(3, 3),
                                             data_format='channels_last',
                                             name='l2')(input_x)
-
         model = KerasModel(model=keras.Model(inputs=[input_x], outputs=[input_y_1, input_y_2]), session=session)
         compiled = compiler.compile_source(source=model, config=Config(input_nodes=[NodeSpec(layer_name='l0')]))
 

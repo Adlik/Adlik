@@ -2,20 +2,19 @@ jobs:
   - job: ToxModelCompiler
     displayName: Tox model compiler
     pool:
-        vmImage: Ubuntu-18.04
+        vmImage: Ubuntu-20.04
     steps:
       - template: ../steps/install-tensorrt.yml
       - task: UsePythonVersion@0
         inputs:
-          versionSpec: '3.6'
-        displayName: Install Python3.6
+          versionSpec: '3.8'
+        displayName: Install Python3.8
       - script: pip install -U tox
         displayName: Install tox
       - script: sudo apt-get install --no-install-recommends -y protobuf-compiler
         displayName: Install Protocol Buffers
       - script: sudo apt-get install --no-install-recommends -y libgl1 libgtk-3-0
         displayName: Install openvino deps
-        # These env variables are used for building pycuda
-      - script: env C_INCLUDE_PATH=/usr/local/cuda-11.0/include:${C_INCLUDE_PATH} PATH=/usr/local/cuda-11.0/bin:${PATH} PIP_FIND_LINKS='https://release.oneflow.info/' tox -e py36-cpu
+      - script: env PIP_FIND_LINKS='https://release.oneflow.info/' tox -e py38-cpu
         displayName: Run tox
         workingDirectory: model_compiler

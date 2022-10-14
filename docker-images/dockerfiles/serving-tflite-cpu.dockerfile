@@ -33,7 +33,7 @@ RUN apt-get update && \
         libtool \
         make \
         patch \
-        python-minimal \
+        python3-minimal \
         python3-distutils \
         python3-numpy && \
     apt-get clean && \
