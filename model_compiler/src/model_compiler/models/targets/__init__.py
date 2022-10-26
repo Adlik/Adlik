@@ -10,6 +10,11 @@ try:
 except ImportError:  # pragma: no cover
     tensorrt_model = ModuleType('model_compiler.models.targets.tensorrt_model')
 
+try:
+    from . import enflame_model
+except ImportError:  # pragma: no cover
+    enflame_model = ModuleType('model_compiler.models.targets.enflame_model')
+
 __all__ = [
     'onnx_model',
     'openvino_model',
