@@ -27,24 +27,24 @@ RUN . /etc/os-release && \
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-        cuda-cufft-dev-10-2 \
-        cuda-cupti-dev-10-2 \
-        cuda-curand-dev-10-2 \
-        cuda-cusolver-dev-10-2 \
-        cuda-cusparse-dev-10-2 \
-        cuda-nvml-dev-10-2 \
-        cuda-nvrtc-10-2 \
-        cuda-nvrtc-dev-10-2 \
-        cuda-nvtx-10-2 \
-        libcublas-dev=10.2.* \
-        'libcudnn8=*+cuda10.2' \
-        'libcudnn8-dev=*+cuda10.2' && \
+        libcufft-dev-11-6 \
+        cuda-cupti-dev-11-6 \
+        libcurand-dev-11-6 \
+        libcusolver-dev-11-6 \
+        libcusparse-dev-11-6 \
+        cuda-nvml-dev-11-6 \
+        cuda-nvrtc-11-6 \
+        cuda-nvrtc-dev-11-6 \
+        cuda-nvtx-11-6 \
+        libcublas-dev-11-6 \
+        'libcudnn8=*+cuda11.6' \
+        'libcudnn8-dev=*+cuda11.6' && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
 RUN apt-mark hold libcudnn8 libcudnn8-dev
 
-RUN ln -s /usr/local/cuda-10.2 /usr/local/cuda
+RUN ln -s /usr/local/cuda-11.6 /usr/local/cuda
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
 
@@ -56,13 +56,12 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         git \
         automake \
-        libpython2.7-stdlib \
+        python \
         libpython3-dev \
         libtool \
         libssl-dev \
         make \
         patch \
-        python-minimal \
         python3-distutils \
         python3-numpy && \
     apt-get clean && \
@@ -82,9 +81,9 @@ WORKDIR /
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y wget unzip && \
-    wget "https://download.pytorch.org/libtorch/cu102/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcu102.zip" && \
-    unzip libtorch-cxx11-abi-shared-with-deps-1.8.1+cu102.zip && \
-    rm libtorch-cxx11-abi-shared-with-deps-1.8.1+cu102.zip && \
+    wget "https://download.pytorch.org/libtorch/cu116/libtorch-cxx11-abi-shared-with-deps-1.12.1%2Bcu116.zip" && \
+    unzip libtorch-cxx11-abi-shared-with-deps-1.12.1+cu116.zip && \
+    rm libtorch-cxx11-abi-shared-with-deps-1.12.1+cu116.zip && \
     wget "https://github.com/pytorch/vision/archive/refs/tags/v0.9.1.zip" && \
     unzip v0.9.1.zip && rm v0.9.1.zip && \
     apt-get autoremove --purge -y wget unzip && \
@@ -102,7 +101,7 @@ COPY . /src
 
 WORKDIR /src
 
-RUN ln -s /usr/local/cuda-10.2/include /src/third_party/cuda
+RUN ln -s /usr/local/cuda-11.6/include /src/third_party/cuda
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y wget && \
@@ -115,12 +114,12 @@ RUN echo 'deb https://storage.googleapis.com/bazel-apt stable jdk1.8' >> /etc/ap
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-    bazel=4.2.2 && \
+    bazel && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
 
-RUN bazel build --config=libtorch-gpu --cxxopt='-std=c++14' //adlik_serving
+RUN bazel build --config=libtorch-gpu --cxxopt='-std=c++17' //adlik_serving
 
 # Runtime.
 
