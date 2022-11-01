@@ -33,13 +33,12 @@ RUN apt-get update && \
         bazel \
         cmake \
         git \
-        libpython2.7-stdlib \
         libpython3-dev \
         libtool \
         make \
         patch \
         patchelf \
-        python-minimal \
+        python3-minimal \
         python3-distutils \
         python3-pip \
         python3-numpy \

@@ -28,7 +28,6 @@ RUN apt-get update && \
         git \
         automake \
         bazel \
-        libpython2.7-stdlib \
         libpython3-dev \
         libtool \
         make \

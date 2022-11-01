@@ -89,9 +89,9 @@ def add_all_deps():
     http_archive(
         name = "libtorch_gpu_archive",
         strip_prefix = "libtorch",
-        sha256 = "f6032b9ed73161176201e501866e7b4878c8436fd64fc75a528243a2bbb88c72",
+        sha256 = "5a392132fbff9db1482eae72a30f74b09f53a47edf8305fe9688d4ce7ddb0b6b",
         type = "zip",
-        urls = ["https://download.pytorch.org/libtorch/cu102/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcu102.zip"],
+        urls = ["https://download.pytorch.org/libtorch/cu116/libtorch-cxx11-abi-shared-with-deps-1.12.1%2Bcu116.zip"],
         build_file = str(Label("//third_party/torch_gpu:BUILD")),
     )
 
