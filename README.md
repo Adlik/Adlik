@@ -131,7 +131,7 @@ registry.cn-beijing.aliyuncs.com/adlik/serving-tflite-cpu:v0.5.0
 
 registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.5.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.4.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.5.0
 
 registry.cn-beijing.aliyuncs.com/adlik/serving-libtorch-cpu:v0.5.0
 
@@ -149,7 +149,7 @@ registry.cn-beijing.aliyuncs.com/adlik/serving-libtorch-gpu:v0.5.0
 
    ```shell script
    docker run -it --rm -p 8500:8500 -v compiled_model:/model
-   registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.4.0 bash
+   registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.5.0 bash
    ```
 
 2. Load the compiled model in the image and start the service.
