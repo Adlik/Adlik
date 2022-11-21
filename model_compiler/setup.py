@@ -54,7 +54,7 @@ setuptools.setup(
     install_requires=[
         'future',
         'networkx',
-        'tensorflow==2.10.0',
+        'tensorflow==2.10.1',
         'torch==1.8.1',
         'torchvision==0.9.1',
         'onnx-tf==1.9.0',
