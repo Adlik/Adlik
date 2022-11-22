@@ -8,20 +8,20 @@ from os import path
 _UBUNTU_VERSION = 'focal'
 _TENSORRT_VERSION = '8.4.3.1'
 _CUDA_VERSION = '11.6'
-_OPENVINO_VERSION = '2022.2.0.dev20220829'
+_OPENVINO_VERSION = '2022.3.0.dev20221103'
 
 _IMAGES = {
-    'model-compiler': {'OPENVINO_VERSION': _OPENVINO_VERSION, 'TENSORRT_VERSION': _TENSORRT_VERSION.rpartition('.')[0],
-                       'CUDA_VERSION': _CUDA_VERSION},
-    'serving-tensorrt': {'TENSORRT_VERSION': _TENSORRT_VERSION.rpartition('.')[0], 'CUDA_VERSION': _CUDA_VERSION},
-    'serving-tensorflow-cpu': {},
-    'serving-tflite-cpu': {},
-    'serving-tftrt-gpu': {},
-    'serving-paddle': {},
-    'serving-openvino': {'OPENVINO_VERSION': _OPENVINO_VERSION},
-    'serving-tensorflow-gpu': {},
-    'serving-libtorch-cpu': {},
-    'serving-libtorch-gpu': {}
+     'model-compiler': {'OPENVINO_VERSION': _OPENVINO_VERSION, 'TENSORRT_VERSION': _TENSORRT_VERSION.rpartition('.')[0],
+                        'CUDA_VERSION': _CUDA_VERSION},
+     'serving-tensorrt': {'TENSORRT_VERSION': _TENSORRT_VERSION.rpartition('.')[0], 'CUDA_VERSION': _CUDA_VERSION},
+     'serving-tensorflow-cpu': {},
+     'serving-tflite-cpu': {},
+     'serving-tftrt-gpu': {},
+     'serving-paddle': {},
+     'serving-openvino': {'OPENVINO_VERSION': _OPENVINO_VERSION},
+     'serving-tensorflow-gpu': {},
+     'serving-libtorch-cpu': {},
+     'serving-libtorch-gpu': {}
 }
 
 _BASE_DIR = path.dirname(path.abspath(__file__))
