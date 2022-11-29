@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from collections import deque
-from typing import Any, Callable, Deque, Dict, List, Mapping, NamedTuple, Optional, Sequence, Tuple, Type
+from typing import Any, Callable, Dict, List, Mapping, NamedTuple, Optional, Sequence, Type
 
 from .. import utilities
 
