@@ -73,7 +73,7 @@ class CompileSourceTestCase(TestCase):
                           ModelInput(name='y:0', data_type=tf.float32.as_datatype_enum,
                                      format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
         self.assertEqual(compiled.get_outputs(),
-                         [ModelOutput(name='z_raw_output___18:0',
+                         [ModelOutput(name='z_raw_output___17:0',
                                       data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
 
     def test_compile_with_fp16(self):
