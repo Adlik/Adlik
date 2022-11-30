@@ -1,0 +1,7 @@
+model/
+model_repos/
+models_repo/
+pb_models/
+pb_models.zip
+log/
+models-serving/
