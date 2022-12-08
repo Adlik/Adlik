@@ -119,7 +119,7 @@ class DataType(Enum):
         return DataType[type_str.upper()]
 
     @staticmethod
-    def from_torch_data_type(type_str):
+    def to_torch_data_type(type_str):
         import torch  # pylint: disable=import-outside-toplevel
 
         torch_data_type_map = {
@@ -137,6 +137,26 @@ class DataType(Enum):
             'BOOL': torch.bool
         }
         return torch_data_type_map[type_str.upper()]
+
+    @staticmethod
+    def from_torch_data_type(type_str):
+        import torch  # pylint: disable=import-outside-toplevel
+
+        precision_map = {
+            torch.float: DataType.FLOAT,
+            torch.double: DataType.DOUBLE,
+            torch.complex64: DataType.COMPLEX64,
+            torch.complex128: DataType.COMPLEX128,
+            torch.float16: DataType.FLOAT16,
+            torch.bfloat16: DataType.BFLOAT16,
+            torch.uint8: DataType.UINT8,
+            torch.int8: DataType.INT8,
+            torch.int16: DataType.INT16,
+            torch.int32: DataType.INT32,
+            torch.int64: DataType.INT64,
+            torch.bool: DataType.BOOL
+        }
+        return precision_map[type_str]
 
     @staticmethod
     def from_oneflow_data_type(type_str):

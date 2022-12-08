@@ -3,7 +3,7 @@
 
 from types import ModuleType
 
-from . import saved_model, tflite_model, paddle_model
+from . import saved_model, tflite_model, paddle_model, torchscript_model
 
 try:
     from . import tensorrt_model
@@ -21,5 +21,6 @@ __all__ = [
     'saved_model',
     'tensorrt_model',
     'tflite_model',
-    'paddle_model'
+    'paddle_model',
+    'torchscript_model'
 ]
