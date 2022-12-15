@@ -51,4 +51,4 @@ class EnflameModel(NamedTuple):
     def get_platform() -> Tuple[str, str]:
         import TopsInference  # pylint: disable=import-outside-toplevel,import-error
 
-        return 'TopsInference', TopsInference.__version__
+        return 'topsInference', TopsInference.__version__

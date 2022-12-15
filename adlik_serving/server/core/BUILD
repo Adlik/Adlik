@@ -56,6 +56,11 @@ config_setting(
 )
 
 config_setting(
+    name = "topsinference",
+    values = {"define": "runtime=topsinference"},
+)
+
+config_setting(
     name = "libtorch",
     values = {"define": "runtime=libtorch"},
 )
@@ -86,6 +91,7 @@ serving_cc_library(
         ":ml": ["//adlik_serving/runtime/ml/model:ml_runtime"],
         ":tvm": ["//adlik_serving/runtime/tvm:tvm_runtime"],
         ":paddle": ["//adlik_serving/runtime/paddle/factory:paddle_runtime"],
+        ":topsinference": ["//adlik_serving/runtime/topsinference/factory:topsinference_runtime"],
         ":libtorch": ["//adlik_serving/runtime/libtorch/factory:libtorch_runtime"],
     }),
 )

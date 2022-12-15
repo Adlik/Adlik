@@ -62,6 +62,10 @@ build:tvm --define=runtime=tvm
 build:paddle --define=runtime=paddle
 build:paddle --define=paddle_link_static=true
 
+# TopsInference runtime
+
+build:topsinference --define=runtime=topsinference
+
 # Libtorch runtime
 
 build:libtorch --define=runtime=libtorch
