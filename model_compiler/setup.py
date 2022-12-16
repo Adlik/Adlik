@@ -186,5 +186,5 @@ setuptools.setup(
             'types-urllib3==1.26.25.4'
         ]
     },
-    python_requires='== 3.8.14'
+    python_requires='== 3.8.15'
 )

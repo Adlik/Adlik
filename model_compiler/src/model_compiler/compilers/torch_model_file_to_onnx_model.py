@@ -27,14 +27,14 @@ class Config(NamedTuple):
     def from_json(value: Mapping[str, Any]) -> 'Config':
         return Config(input_names=value['input_names'],
                       input_shapes=utilities.get_input_shapes(value.get('input_shapes')),
-                      data_type=DataType.from_torch_data_type(value['data_type']),
+                      data_type=DataType.to_torch_data_type(value['data_type']),
                       max_batch_size=value['max_batch_size'],
                       input_formats=utilities.get_data_formats(value.get('input_formats')))
 
     @staticmethod
     def from_env(env: Mapping[str, str]) -> 'Config':
         input_shapes = utilities.get_input_shapes_from_env(env.get('INPUT_SHAPES'))
-        data_type = DataType.from_torch_data_type(env.get('DATA_TYPE'))
+        data_type = DataType.to_torch_data_type(env.get('DATA_TYPE'))
 
         return Config(input_names=env['INPUT_NAMES'].split(','),
                       input_shapes=input_shapes,
