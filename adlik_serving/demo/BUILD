@@ -20,5 +20,6 @@ serving_cc_binary(
         "//adlik_serving/server/core:tensorrt": ["//adlik_serving/runtime/tensorrt/factory:trt_runtime"],
         "//adlik_serving/server/core:openvino": ["//adlik_serving/runtime/openvino/factory:openvino_runtime"],
         "//adlik_serving/server/core:ml": ["//adlik_serving/runtime/ml/model:ml_runtime"],
+        "//adlik_serving/server/core:topsinference": ["//adlik_serving/runtime/topsinference/factory:topsinference_runtime"],
     }),
 )
