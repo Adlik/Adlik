@@ -84,17 +84,16 @@ class DataType(Enum):
     @staticmethod
     def from_openvino_data_type(data_type):
         precision_map = {
-            'FP32': DataType.FLOAT,
-            'FP16': DataType.FLOAT16,
+            'F32': DataType.FLOAT,
+            'F16': DataType.FLOAT16,
             'I64': DataType.INT64,
             'I32': DataType.INT32,
             'I8': DataType.INT8,
             'U8': DataType.UINT8,
-            'U1': DataType.UINT8,
-            'BOOL': DataType.BOOL,
-            'BIN': DataType.UINT8,
+            'U32': DataType.UINT32,
+            'BOOLEAN': DataType.BOOL
         }
-        return precision_map[data_type]
+        return precision_map[data_type.upper()]
 
     @staticmethod
     def from_paddle_data_type(data_type: str):
