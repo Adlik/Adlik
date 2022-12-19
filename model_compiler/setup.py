@@ -101,7 +101,7 @@ setuptools.setup(
         'opt-einsum==3.3.0',
         'paddle-bfloat==0.1.7',
         'paddle2onnx==1.0.0',
-        'paddlepaddle==2.3.2',
+        'paddlepaddle==2.4.0',
         'pandas==1.1.5',
         'Pillow==9.3.0',
         'progress==1.6',
