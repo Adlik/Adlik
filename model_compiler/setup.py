@@ -12,7 +12,7 @@ import setuptools
 from setuptools.command.build_py import build_py
 
 
-_TYPES_PROTO_URL = 'https://github.com/tensorflow/tensorflow/raw/v2.6.2/tensorflow/core/framework/types.proto'
+_TYPES_PROTO_URL = 'https://github.com/tensorflow/tensorflow/raw/v2.10.1/tensorflow/core/framework/types.proto'
 _PROJECT_PATH = path.dirname(path.abspath(__file__))
 
 
