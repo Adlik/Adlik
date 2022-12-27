@@ -32,5 +32,5 @@ class OpenvinoModel(NamedTuple):
 
     @staticmethod
     def from_directory(temp_path: TemporaryDirectory) -> 'OpenvinoModel':
-        model_parser = ModelParser.from_xml(os.path.join(temp_path.name, 'model.xml'))
+        model_parser = ModelParser.from_model(os.path.join(temp_path.name, 'model.xml'))
         return OpenvinoModel(model_parser.get_inputs(), model_parser.get_outputs(), temp_path)

@@ -7,6 +7,7 @@ from unittest import TestCase
 
 import tensorflow as tf
 from model_compiler import openvino_util
+from model_compiler.protos.generated.model_config_pb2 import ModelInput, ModelOutput
 
 
 def _save_frozen_graph_model(model_file):
@@ -34,16 +35,17 @@ def _get_optimize_params(input_model, output_dir):
 
 
 class ModelParserTestCase(TestCase):
-    def test_invalid_layer_id(self):
+    def test_model_parser(self):
         with NamedTemporaryFile(suffix='.pb') as pb_model_file:
             _save_frozen_graph_model(pb_model_file)
             temp_path = TemporaryDirectory()
             optimize_params = _get_optimize_params(pb_model_file.name, temp_path.name)
             openvino_util.execute_optimize_action(optimize_params)
-            model_parser = openvino_util.ModelParser.from_xml(os.path.join(temp_path.name, 'model.xml'))
-            layer = next(layer for layer in model_parser.layers if layer.type == 'Result')
-            fake_layer = openvino_util._Layer(ports=layer.ports, type=layer.type,  # pylint: disable=protected-access
-                                              id='xxx', name=layer.name)
-            model_parser.layers.append(fake_layer)
-            with self.assertRaises(ValueError):
-                model_parser.get_outputs()
+            model_parser = openvino_util.ModelParser.from_model(os.path.join(temp_path.name, 'model.xml'))
+            self.assertEqual(model_parser.get_inputs(),
+                             [ModelInput(name='x', data_type=tf.float32.as_datatype_enum,
+                                         format=ModelInput.FORMAT_NONE, dims=[2, 3, 4]),  # pylint: disable=no-member
+                              ModelInput(name='y', data_type=tf.float32.as_datatype_enum,
+                                         format=ModelInput.FORMAT_NONE, dims=[2, 3, 4])])  # pylint: disable=no-member
+            self.assertEqual(model_parser.get_outputs(),
+                             [ModelOutput(name='z', data_type=tf.float32.as_datatype_enum, dims=[2, 3, 4])])
