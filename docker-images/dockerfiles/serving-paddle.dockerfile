@@ -4,6 +4,7 @@ ARG UBUNTU_VERSION
 
 FROM "ubuntu:$UBUNTU_VERSION" as base
 COPY script/run_server.sh /script/run_server.sh
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install --no-install-recommends -y libgomp1 && \
     apt-get clean && \
@@ -67,7 +68,7 @@ FROM base
 COPY --from=builder /src/bazel-bin/adlik_serving/adlik_serving /usr/local/bin/adlik-serving
 COPY --from=builder /tmp/lib/libmklml_intel.so /usr/local/lib/libmklml_intel.so
 COPY --from=builder /tmp/lib/libiomp5.so /usr/local/lib/libiomp5.so
-COPY --from=builder /tmp/lib/libdnnl.so.2 /usr/local/lib/libdnnl.so.2
+COPY --from=builder /tmp/lib/libmkldnn.so.0 /usr/local/lib/libmkldnn.so.0
 
 RUN chmod +x /script/run_server.sh && ldconfig
 CMD /script/run_server.sh

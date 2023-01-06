@@ -159,15 +159,15 @@ registry.cn-beijing.aliyuncs.com/adlik/serving-libtorch-gpu:v0.5.0
    ```
 
 3. Install the client wheel package [adlik serving package](
-   https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl) or [adlik
+   <https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl>) or [adlik
    serving gpu package](
-      https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl) locally,
+      <https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl>) locally,
       execute the inference code, and perform inference.
 
 Note: If the service port is not mapped when you run the mirror, you need install the [adlik serving package](
-   https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl) or [adlik
+   <https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api-0.3.0-py2.py3-none-any.whl>) or [adlik
    serving gpu package](
-      https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl) in the
+      <https://github.com/Adlik/Adlik/releases/download/v0.3.0/adlik_serving_api_gpu-0.3.0-py2.py3-none-any.whl>) in the
       container. Then execute the inference code, and perform inference in the container.
 
 ## Build

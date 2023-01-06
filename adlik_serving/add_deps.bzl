@@ -69,10 +69,10 @@ def add_all_deps():
     http_archive(
         name = "paddle_inference",
         urls = [
-            "https://github.com/PaddlePaddle/Paddle/archive/refs/tags/v2.1.2.tar.gz",
+            "https://paddle-inference-library-base-product.oss-cn-beijing.aliyuncs.com/paddle-inference-library-2.4.0.zip",
         ],
-        sha256 = "cd59e246958eb0bb1b19654cc1567c001888b241c69147e7503e825b1b7e0a17",
-        strip_prefix = "Paddle-2.1.2",
+        sha256 = "0282e9d2fff851f3a5665fbff5a24d7f7ffa274cb27e4091eb1ebcce682b4d3f",
+        strip_prefix = "paddle-inference-library",
         build_file = str(Label("//third_party/paddle:BUILD")),
     )
 
