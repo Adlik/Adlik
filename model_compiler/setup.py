@@ -131,7 +131,7 @@ setuptools.setup(
         'test-generator==0.1.1',
         'texttable==1.6.7',
         'tf2onnx==1.13.0',
-        'torch==1.8.1',
+        'torch==1.13.1',
         'torchvision==0.9.1',
         'tornado==6.1',
         'tqdm==4.64.1',
