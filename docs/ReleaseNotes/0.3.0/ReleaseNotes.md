@@ -7,7 +7,7 @@ Compatibility: The functional interfaces of Adlik r0.3 are compatible with r0.2 
 
 ### Compiler
 
- 1. Integrate deep learning frameworks including PaddlePaddle, Caffe and MXNet
+ 1. Integrate deep learning frameworks including PaddlePaddle and MXNet
  2. Support compiling into TVM
  3. Support FP16 quantization for OpenVINO
  4. Support TVM auto scheduling

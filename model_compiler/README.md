@@ -1,6 +1,6 @@
 # Model Compiler
 
-1. Support optimization for models from different kinds of deep learning architecture, e.g. TensorFlow/Caffe/PyTorch.
+1. Support optimization for models from different kinds of deep learning architecture, e.g. TensorFlow/PyTorch.
 
 2. Support compiling models for different runtime, e.g. OpenVINO IR/TensorFlow Serving/TensorFlow Lite/TensorRT.
 

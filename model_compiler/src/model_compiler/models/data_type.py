@@ -114,10 +114,6 @@ class DataType(Enum):
         return precision_map[data_type]
 
     @staticmethod
-    def from_caffe_data_type(type_str):
-        return DataType[type_str.upper()]
-
-    @staticmethod
     def to_torch_data_type(type_str):
         import torch  # pylint: disable=import-outside-toplevel
 
