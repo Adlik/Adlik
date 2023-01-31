@@ -105,7 +105,7 @@ setuptools.setup(
         'pandas==1.1.5',
         'Pillow==9.3.0',
         'progress==1.6',
-        'protobuf==3.19.1',
+        'protobuf==3.20.2',
         'py-cpuinfo==9.0.0',
         'pyasn1==0.4.8',
         'pyasn1-modules==0.2.8',
