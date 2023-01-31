@@ -8,7 +8,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 def add_vision(name):
     native.new_local_repository(
         name = name,
-        path = "/vision-0.9.1",
+        path = "/vision-0.14.1",
         build_file = "//third_party/torchvision:BUILD",
     )
 
@@ -89,17 +89,17 @@ def add_all_deps():
     http_archive(
         name = "libtorch_gpu_archive",
         strip_prefix = "libtorch",
-        sha256 = "5a392132fbff9db1482eae72a30f74b09f53a47edf8305fe9688d4ce7ddb0b6b",
+        sha256 = "017175695bc2acb32f315b3f4abc537509756f1b97b201011b169d3c173794ee",
         type = "zip",
-        urls = ["https://download.pytorch.org/libtorch/cu116/libtorch-cxx11-abi-shared-with-deps-1.12.1%2Bcu116.zip"],
+        urls = ["https://download.pytorch.org/libtorch/cu116/libtorch-cxx11-abi-shared-with-deps-1.13.1%2Bcu116.zip"],
         build_file = str(Label("//third_party/torch_gpu:BUILD")),
     )
 
     http_archive(
         name = "libtorch_cpu_archive",
         strip_prefix = "libtorch",
-        sha256 = "44ecf7f2fc671da7b67694fc9d64b2762039ad83de46407ae3e0868081b7ae2c",
+        sha256 = "ba09da961c54cbf278c174fd697095e77c1de2c4df0c5d356b5f0470ee1788b4",
         type = "zip",
-        urls = ["https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcpu.zip"],
+        urls = ["https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.13.1%2Bcpu.zip"],
         build_file = str(Label("//third_party/torch_cpu:BUILD")),
     )
