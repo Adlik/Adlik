@@ -125,7 +125,7 @@
     },
     "input_shapes": {
       "type": "array",
-      "description": "the shape of input, required when the source model format is Caffe format and optional when serving_type is openvino"
+      "description": "the shape of input is optional when serving_type is openvino"
     },
     "data_type": {
       "type": "string",

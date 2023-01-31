@@ -3,7 +3,7 @@
 
 from types import ModuleType
 
-from . import caffe_model_file_to_onnx_model, keras_model_file_to_keras_model, keras_model_file_to_tflite_model, \
+from . import keras_model_file_to_keras_model, keras_model_file_to_tflite_model, \
     keras_model_to_tf_model, oneflow_model_file_to_onnx_model, onnx_model_file_to_onnx_model, \
     onnx_model_to_onnx_model_file, onnx_model_to_openvino_model, onnx_model_to_tflite_model, \
     paddle_model_file_to_onnx_model, saved_model_file_to_openvino_model, saved_model_file_to_saved_model, \
@@ -25,7 +25,6 @@ except ImportError:  # pragma: no cover
     onnx_model_file_to_enflame_model = ModuleType('model_compiler.compilers.onnx_model_file_to_enflame_model')
 
 __all__ = [
-    'caffe_model_file_to_onnx_model',
     'keras_model_file_to_keras_model',
     'keras_model_file_to_tflite_model',
     'keras_model_to_tf_model',

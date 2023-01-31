@@ -88,7 +88,6 @@ setuptools.setup(
         'oneflow==0.7.0+cpu',
         'oneflow-onnx==0.6.1',
         'onnx==1.12.0',
-        'onnx-caffe2==1.0.0',
         'onnx-simplifier==0.4.10',
         'onnx-tf==1.9.0',
         'onnxoptimizer==0.3.2',
@@ -131,8 +130,8 @@ setuptools.setup(
         'test-generator==0.1.1',
         'texttable==1.6.7',
         'tf2onnx==1.13.0',
-        'torch==1.8.1',
-        'torchvision==0.9.1',
+        'torch==1.13.1',
+        'torchvision==0.14.1',
         'tornado==6.1',
         'tqdm==4.64.1',
         'typeguard==2.13.3',
@@ -186,5 +185,5 @@ setuptools.setup(
             'types-urllib3==1.26.25.4'
         ]
     },
-    python_requires='== 3.8.15'
+    python_requires='== 3.8.16'
 )

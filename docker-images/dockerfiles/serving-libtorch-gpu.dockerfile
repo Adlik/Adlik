@@ -81,18 +81,18 @@ WORKDIR /
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y wget unzip && \
-    wget "https://download.pytorch.org/libtorch/cu116/libtorch-cxx11-abi-shared-with-deps-1.12.1%2Bcu116.zip" && \
-    unzip libtorch-cxx11-abi-shared-with-deps-1.12.1+cu116.zip && \
-    rm libtorch-cxx11-abi-shared-with-deps-1.12.1+cu116.zip && \
-    wget "https://github.com/pytorch/vision/archive/refs/tags/v0.9.1.zip" && \
-    unzip v0.9.1.zip && rm v0.9.1.zip && \
+    wget "https://download.pytorch.org/libtorch/cu116/libtorch-cxx11-abi-shared-with-deps-1.13.1%2Bcu116.zip" && \
+    unzip libtorch-cxx11-abi-shared-with-deps-1.13.1+cu116.zip && \
+    rm libtorch-cxx11-abi-shared-with-deps-1.13.1+cu116.zip && \
+    wget "https://github.com/pytorch/vision/archive/refs/tags/v0.14.1.zip" && \
+    unzip v0.14.1.zip && rm v0.14.1.zip && \
     apt-get autoremove --purge -y wget unzip && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
 
 RUN apt-get update && \
-    cd /vision-0.9.1 && mkdir build && cd build && \
-    cmake -DCMAKE_PREFIX_PATH=/libtorch -DCMAKE_INSTALL_PREFIX=/vision-0.9.1 -DWITH_CUDA=ON -DCMAKE_BUILD_TYPE=Release .. && \
+    cd /vision-0.14.1 && mkdir build && cd build && \
+    cmake -DCMAKE_PREFIX_PATH=/libtorch -DCMAKE_INSTALL_PREFIX=/vision-0.14.1 -DWITH_CUDA=ON -DCMAKE_BUILD_TYPE=Release .. && \
     cmake --build . && make install && \
     apt-get clean && \
     find /var/lib/apt/lists -delete
@@ -127,7 +127,7 @@ FROM base
 
 COPY --from=builder /src/bazel-bin/adlik_serving/adlik_serving /usr/local/bin/adlik-serving
 COPY --from=builder /libtorch/lib/ /usr/local/lib/
-COPY --from=builder /vision-0.9.1/lib/libtorchvision.so /usr/local/lib/libtorchvision.so
+COPY --from=builder /vision-0.14.1/lib/libtorchvision.so /usr/local/lib/libtorchvision.so
 
 ENV LD_LIBRARY_PATH=/usr/local/lib
 

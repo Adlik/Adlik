@@ -42,7 +42,6 @@ equipment, including latency, throughput, and various performance indicators und
 ## Fixed issues
 
 - [Fix broken link in Readme.](https://github.com/Adlik/Adlik/issues/504)
-- [The model conversion from caffe2 to tensorrt does not recognize the MAX_BATCH_SIZE parameter.](https://github.com/Adlik/Adlik/issues/511)
 - [The compiler image deployed using kubernetes does not support the compilation of checkpoint to TensorRT.](https://github.com/Adlik/Adlik/issues/491)
 - [Add C++ interface and example for calling Adlik.](https://github.com/Adlik/Adlik/issues/486)
 - [Add CI For Compiling TVM Runtime.](https://github.com/Adlik/Adlik/issues/487)
