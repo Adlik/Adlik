@@ -65,7 +65,7 @@ setuptools.setup(
         'decorator==5.1.1',
         'defusedxml==0.7.1',
         'flatbuffers==2.0.7',
-        'future==0.18.2',
+        'future==0.18.3',
         'gast==0.4.0',
         'google-auth==2.12.0',
         'google-auth-oauthlib==0.4.6',
