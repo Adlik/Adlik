@@ -4,5 +4,5 @@ steps:
         . /etc/os-release
         curl https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | sudo apt-key add -
         sudo apt-add-repository -u "deb https://apt.repos.intel.com/openvino/2022 $VERSION_CODENAME main"
-        sudo apt-get install --no-install-recommends -y "libopenvino-dev-2022.1.0"
+        sudo apt-get install --no-install-recommends -y "libopenvino-dev-2022.3.0"
     displayName: Install OpenVINO libraries
