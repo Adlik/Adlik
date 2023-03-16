@@ -32,7 +32,7 @@ if 'adlik-serving-api-gpu' in project_name:
 REQUIRED_PACKAGES = [
     'numpy',
     'requests',
-    'grpcio>=1.0<2',
+    'grpcio==1.50.0',
     'protobuf>=3.6.0',
 ] + _TF_REQ
 
