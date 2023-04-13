@@ -83,7 +83,7 @@ model, OpenVino model and TensorFlow Lite model. And in the CPU, you can compile
 model, and TensorRT model. The name and label of compiler mirror are shown below, and the first half of label
 represents the version of TensorRT, the latter part of label represents the version of CUDA:
 
-registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.5.0_trt7.2.1.6_cuda11.0
+registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v1.0
 
 #### Using model compiler image compile model
 
@@ -91,7 +91,7 @@ registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.5.0_trt7.2.1.6_cuda11.0
 
    ```shell script
    docker run -it --rm -v source_model:/mnt/model
-   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v0.5.0_trt7.2.1.6_cuda11.0 bash
+   registry.cn-beijing.aliyuncs.com/adlik/model-compiler:v1.0 bash
    ```
 
 2. Configure the json file or environment variables required to compile the model.
@@ -127,21 +127,21 @@ represents the version of CUDA. The names and labels of serving mirrors are as f
 
 CPU:
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tflite-cpu:v0.5.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tflite-cpu:v1.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v0.5.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorflow-cpu:v1.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.5.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v1.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-libtorch-cpu:v0.5.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-libtorch-cpu:v1.0
 
 GPU:
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tftrt-gpu:v0.5.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tftrt-gpu:v1.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v0.5.0_trt7.2.1.6_cuda11.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-tensorrt:v1.0
 
-registry.cn-beijing.aliyuncs.com/adlik/serving-libtorch-gpu:v0.5.0
+registry.cn-beijing.aliyuncs.com/adlik/serving-libtorch-gpu:v1.0
 
 ### Using the serving images for model inference
 
@@ -149,7 +149,7 @@ registry.cn-beijing.aliyuncs.com/adlik/serving-libtorch-gpu:v0.5.0
 
    ```shell script
    docker run -it --rm -p 8500:8500 -v compiled_model:/model
-   registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v0.5.0 bash
+   registry.cn-beijing.aliyuncs.com/adlik/serving-openvino:v1.0 bash
    ```
 
 2. Load the compiled model in the image and start the service.
@@ -213,7 +213,7 @@ First, install the following packages:
 #### Build serving with OpenVINO runtime
 
 1. Install `openvino-<VERSION>` package from
-   [OpenVINO](https://docs.openvinotoolkit.org/2022.1/openvino_docs_install_guides_installing_openvino_apt.html).
+   [OpenVINO](https://docs.openvinotoolkit.org/2022.3/openvino_docs_install_guides_installing_openvino_apt.html).
 2. Assume the installation path of OpenVINO is `/opt/intel/openvino_VERSION`, run the following command:
 
    ```sh
@@ -236,31 +236,31 @@ First, install the following packages:
 
 #### Build serving with TensorFlow GPU runtime
 
-Assume building with CUDA version 11.0.
+Assume building with CUDA version 11.6.
 
 1. Install the following packages from
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
-   - `cuda-nvprune-11-0`
-   - `cuda-nvtx-11-0`
-   - `cuda-cupti-dev-11-0`
-   - `libcublas-dev-11-0`
-   - `libcudnn8=*+cuda11.0`
-   - `libcudnn8-dev=*+cuda11.0`
-   - `libcufft-dev-11-0`
-   - `libcurand-dev-11-0`
-   - `libcusolver-dev-11-0`
-   - `libcusparse-dev-11-0`
-   - `libnvinfer7=7.2.*+cuda11.0`
-   - `libnvinfer-dev=7.2.*+cuda11.0`
-   - `libnvinfer-plugin7=7.2.*+cuda11.0`
-   - `libnvinfer-plugin-dev=7.2.*+cuda11.0`
+   - `cuda-nvprune-11-6`
+   - `cuda-nvtx-11-6`
+   - `cuda-cupti-dev-11-6`
+   - `libcublas-dev-11-6`
+   - `libcudnn8=*+cuda11.6`
+   - `libcudnn8-dev=*+cuda11.6`
+   - `libcufft-dev-11-6`
+   - `libcurand-dev-11-6`
+   - `libcusolver-dev-11-6`
+   - `libcusparse-dev-11-6`
+   - `libnvinfer8=8.4.*+cuda11.6`
+   - `libnvinfer-dev=8.4.*+cuda11.6`
+   - `libnvinfer-plugin7=8.4.*+cuda11.6`
+   - `libnvinfer-plugin-dev=8.4.*+cuda11.6`
 
 2. Run the following command:
 
    ```sh
-   env TF_CUDA_VERSION=11.0 TF_NEED_TENSORRT=1 \
+   env TF_CUDA_VERSION=11.6 TF_NEED_TENSORRT=1 \
        bazel build //adlik_serving \
            --config=tensorflow-gpu \
            -c opt \
@@ -285,24 +285,24 @@ Assume building with CUDA version 11.0.
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
-   - `cuda-cupti-dev-11-0`
-   - `cuda-nvml-dev-11-0`
-   - `cuda-nvrtc-11-0`
-   - `libcublas-dev-11-0`
-   - `libcudnn8=*+cuda11.0`
-   - `libcudnn8-dev=*+cuda11.0`
+   - `cuda-cupti-dev-11-6`
+   - `cuda-nvml-dev-11-6`
+   - `cuda-nvrtc-11-6`
+   - `libcublas-dev-11-6`
+   - `libcudnn8=*+cuda11.6`
+   - `libcudnn8-dev=*+cuda11.6`
    - `libcufft-dev-11-0`
    - `libcurand-dev-11-0`
-   - `libcusolver-dev-11-0`
-   - `libcusparse-dev-11-0`
-   - `libnvinfer7=7.2.*+cuda11.0`
-   - `libnvinfer-dev=7.2.*+cuda11.0`
-   - `libnvonnxparsers7=7.2.*+cuda11.0`
-   - `libnvonnxparsers-dev=7.2.*+cuda11.0`
+   - `libcusolver-dev-11-6`
+   - `libcusparse-dev-11-6`
+   - `libnvinfer8=8.4.*+cuda11.6`
+   - `libnvinfer-dev=8.4.*+cuda11.6`
+   - `libnvonnxparsers8=8.4.*+cuda11.6`
+   - `libnvonnxparsers-dev=8.4.*+cuda11.6`
 2. Run the following command:
 
    ```sh
-   env TF_CUDA_VERSION=11.0 \
+   env TF_CUDA_VERSION=11.6 \
        bazel build //adlik_serving \
            --config=TensorRT \
            -c opt \
@@ -318,23 +318,23 @@ Assume building with CUDA version 11.0.
    [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation) and
    [here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#ubuntu-network-installation):
 
-   - `cuda-cupti-dev-11-0`
-   - `libcublas-dev-11-0`
-   - `libcudnn8=*+cuda11.0`
-   - `libcudnn8-dev=*+cuda11.0`
-   - `libcufft-dev-11-0`
-   - `libcurand-dev-11-0`
-   - `libcusolver-dev-11-0`
-   - `libcusparse-dev-11-0`
-   - `libnvinfer7=7.2.*+cuda11.0`
-   - `libnvinfer-dev=7.2.*+cuda11.0`
-   - `libnvinfer-plugin7=7.2.*+cuda11.0`
-   - `libnvinfer-plugin-dev=7.2.*+cuda11.0`
+   - `cuda-cupti-dev-11-6`
+   - `libcublas-dev-11-6`
+   - `libcudnn8=*+cuda11.6`
+   - `libcudnn8-dev=*+cuda11.6`
+   - `libcufft-dev-11-6`
+   - `libcurand-dev-11-6`
+   - `libcusolver-dev-11-6`
+   - `libcusparse-dev-11-6`
+   - `libnvinfer8=8.4.*+cuda11.6`
+   - `libnvinfer-dev=8.4.*+cuda11.6`
+   - `libnvinfer-plugin8=8.4.*+cuda11.6`
+   - `libnvinfer-plugin-dev=8.4.*+cuda11.6`
 
 2. Run the following command:
 
    ```sh
-   env TF_CUDA_VERSION=11.0 TF_NEED_TENSORRT=1 \
+   env TF_CUDA_VERSION=11.6 TF_NEED_TENSORRT=1 \
        bazel build //adlik_serving \
            --config=tensorflow-tensorrt \
            -c opt \
@@ -374,12 +374,14 @@ Adlik. You can build Adlik with the Docker image.
 
 The version of the service engine Adlik supports.
 
-|              | TensorFlow 1.14 | TensorFlow 2.x | OpenVINO 2022 | TensorRT 6 | TensorRT 7 |
-| ------------ | :-------------: | :------------: | :-----------: | :--------: | :--------: |
-| Keras        |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
-| TensorFlow   |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
-| PyTorch      |        ✗        |       ✗        |       ✓       |     ✓      |     ✓      |
-| PaddlePaddle |        ✓        |       ✓        |       ✓       |     ✓      |     ✓      |
+|              | Enflame 2.0 | TensorFlow 2.10.1 | OpenVINO 2022.3.0 | TensorRT 8.4.3.1 | PaddlePaddle 2.4.0 |
+| ------------ | :---------: | :---------------: | :---------------: | :--------------: | :----------------: |
+| Keras        |       ✓     |        ✓          |        ✓          |       ✓          |          ✗         |
+| TensorFlow   |       ✓     |        ✓          |        ✓          |       ✓          |          ✗         |
+| PyTorch      |       ✓     |        ✗          |        ✓          |       ✓          |          ✗         |
+| PaddlePaddle |       ✓     |        ✗          |        ✓          |       ✓          |          ✓         |
+| OneFLow      |       ✓     |        ✓          |        ✓          |       ✓          |          ✗         |
+| OpenVINO     |       ✗     |        ✗          |        ✓          |       ✗          |          ✗         |
 
 ## License
 
