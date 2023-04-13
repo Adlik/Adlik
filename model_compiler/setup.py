@@ -87,7 +87,7 @@ setuptools.setup(
         'oauthlib==3.2.2',
         'oneflow==0.7.0+cpu',
         'oneflow-onnx==0.6.1',
-        'onnx==1.12.0',
+        'onnx==1.13.0',
         'onnx-simplifier==0.4.10',
         'onnx-tf==1.9.0',
         'onnxoptimizer==0.3.2',
