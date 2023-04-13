@@ -136,7 +136,7 @@ setuptools.setup(
         'tqdm==4.64.1',
         'typeguard==2.13.3',
         'urllib3==1.26.12',
-        'Werkzeug==2.2.2',
+        'Werkzeug==2.2.3',
         'zipp==3.10.0'
     ],
     entry_points={'console_scripts': ['model-compiler=model_compiler.main:main']},
