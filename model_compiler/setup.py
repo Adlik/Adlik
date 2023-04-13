@@ -122,7 +122,7 @@ setuptools.setup(
         'tensorboard==2.10.1',
         'tensorboard-data-server==0.6.1',
         'tensorboard-plugin-wit==1.8.1',
-        'tensorflow==2.10.1',
+        'tensorflow==2.11.1',
         'tensorflow-addons==0.18.0',
         'tensorflow-estimator==2.10.0',
         'tensorflow-io-gcs-filesystem==0.28.0',
